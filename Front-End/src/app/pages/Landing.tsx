@@ -5,8 +5,6 @@ import { HeroNew } from "../components/HeroNew";
 import { SocialProof } from "../components/SocialProof";
 import { Features } from "../components/Features";
 import { HowItWorks } from "../components/HowItWorks";
-import { LeaderboardPreview } from "../components/LeaderboardPreview";
-import { CTASection } from "../components/CTASection";
 
 export function Landing() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -34,9 +32,6 @@ export function Landing() {
               </a>
               <a href="#how-it-works" className="text-sm text-zinc-400 hover:text-white transition-colors">
                 How It Works
-              </a>
-              <a href="#leaderboard" className="text-sm text-zinc-400 hover:text-white transition-colors">
-                Leaderboard
               </a>
        <Link to="/pricing" className="text-sm text-zinc-400 hover:text-white transition-colors">
            Pricing
@@ -72,9 +67,6 @@ export function Landing() {
                 <a href="#how-it-works" className="text-sm text-zinc-400 hover:text-white transition-colors py-2">
                   How It Works
                 </a>
-                <a href="#leaderboard" className="text-sm text-zinc-400 hover:text-white transition-colors py-2">
-                  Leaderboard
-                </a>
            <Link to="/pricing" className="text-sm text-zinc-400 hover:text-white transition-colors py-2">
                   Pricing
                </Link>
@@ -98,8 +90,6 @@ export function Landing() {
         <SocialProof />
         <Features />
         <HowItWorks />
-        <LeaderboardPreview />
-        <CTASection />
       </main>
 
       {/* Footer */}
