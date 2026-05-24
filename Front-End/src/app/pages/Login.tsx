@@ -21,33 +21,40 @@ export function Login() {
   // =========================
   // 🔹 FORM SUBMIT HANDLER
   // =========================
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault(); // page reload rokta hai
+  const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
 
-    // 👉 Step 1: check karo user ne fields fill ki ya nahi
-    if (!email || !password) {
-      alert("Fill all fields");
+  if (!email || !password) {
+    alert("Fill all fields");
+    return;
+  }
+
+  try {
+    const res = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password })
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      alert(data.message || "Login failed");
       return;
     }
 
-    // 👉 Step 2: abhi ke liye fake login check (practice purpose)
-    if (!email.includes("@")) {
-      alert("Please enter a valid email");
-      return;
+    localStorage.setItem("token", data.token);
+
+    if (data.onboardingComplete === false) {
+      window.location.href = "/onboarding";
+    } else {
+      window.location.href = "/dashboard";
     }
-    
-    // Set dummy token so App.tsx auth guard works
-    localStorage.setItem("token", "dummy_test_token");
 
-    // 👉 Step 3: login success (future me yahan API call hoga)
-    console.log("Login Success");
-
-    // 👉 Step 4: thoda delay (real app jaisa feel dene ke liye)
-    setTimeout(() => {
-      window.location.href = "/dashboard"; // Hard reload to trigger global Auth Guard
-    }, 1000);
-  };
-
+  } catch (err) {
+    alert("Server error. Try again.");
+  }
+};
 
   // =========================
   // 🔹 UI PART (JSX)
@@ -173,168 +180,3 @@ export function Login() {
     </div>
   );
 }
-
-// 👉 Agar interviewer bole:
-// “Itni classes kaise manage karte ho?”
-// 👉 Tu bol:
-// I don’t memorize Tailwind classes. I understand them as utility patterns like spacing, layout, color, and effects.
-// Since Tailwind follows a consistent naming convention, it becomes easy to compose UI quickly.
-// 💥 Perfect answer
-
-
-
-
-
-
-// Perfect 🔥 ab tu **exact interview mindset** me aa gaya hai — yehi smart move hai.
-
-// Maine tera login page code dekh liya hai 
-// 👉 Ab main tujhe **sirf wahi questions de raha hoon jo REAL me puchenge** (no bakwas)
-
-// ---
-
-// # 🎯 🔥 TOP QUESTIONS (TERE LOGIN PAGE SE)
-
-// ## 🔹 1. “Explain this component”
-
-// 👉 **Sabse pehla question 100%**
-
-// **Answer:**
-
-// > This is a login component built using React.
-// > It uses useState to manage email and password inputs, and a controlled form approach.
-// > On form submission, it validates user input and navigates to the dashboard using React Router.
-
-// ---
-
-// ## 🔹 2. “What is controlled input?”
-
-// 👉 ⚠️ VERY IMPORTANT
-
-// **Answer:**
-
-// > Controlled input means the input field value is controlled by React state.
-// > In my code, value is linked to state and updated using onChange.
-
-// ---
-
-// ## 🔹 3. “How does form submission work here?”
-
-// **Answer:**
-
-// > The form uses onSubmit handler.
-// > When the user clicks login, handleSubmit is triggered, which validates inputs and handles login logic.
-
-// ---
-
-// ## 🔹 4. “Why use e.preventDefault()?”
-
-// **Answer:**
-
-// > It prevents the default form submission behavior, which reloads the page.
-
-// ---
-
-// ## 🔹 5. “What is useNavigate used for?”
-
-// **Answer:**
-
-// > It is used to programmatically navigate between routes.
-// > After successful login, I redirect the user to the dashboard.
-
-// ---
-
-// ## 🔹 6. “How are you handling validation?”
-
-// **Answer:**
-
-// > I check if email and password are empty, and also validate credentials using a dummy condition.
-// > In real-world apps, this would be replaced with API validation.
-
-// ---
-
-// ## 🔹 7. “Why are you using useState?”
-
-// **Answer:**
-
-// > To store and update dynamic data like email and password in the component.
-
-// ---
-
-// ## 🔹 8. “What is SPA?”
-
-// **Answer:**
-
-// > Single Page Application where navigation happens without full page reload.
-// > React Router handles this in my app.
-
-// ---
-
-// ## 🔹 9. “Why Tailwind CSS?”
-
-// **Answer:**
-
-// > It allows faster UI development using utility classes without writing custom CSS.
-
-// ---
-
-// ## 🔹 10. “How did you design this UI?”
-
-// 👉 🔥 IMP (alag level ka question)
-
-// **Answer:**
-
-// > I used Tailwind utilities like flexbox for layout, spacing for structure, and effects like blur, gradient, and shadow to create a modern UI.
-
-// ---
-
-// # 🎯 🔥 THODA DEEP (INTERVIEWER SMART HUA TO)
-
-// ## 🔹 11. “What happens when user clicks login?”
-
-// **Answer:**
-
-// > The form triggers handleSubmit → validation runs → if valid, login success is simulated → then user is redirected.
-
-// ---
-
-// ## 🔹 12. “What will you change in production?”
-
-// 👉 🔥 VERY IMP
-
-// **Answer:**
-
-// > I will replace dummy validation with API-based authentication, add proper error handling UI, and use secure token-based authentication.
-
-// ---
-
-// ## 🔹 13. “Difference between Link and useNavigate?”
-
-// **Answer:**
-
-// > Link is used for navigation via UI (clickable), while useNavigate is used programmatically inside functions.
-
-// ---
-
-// # 🧠 FINAL CHEAT (YAAD KAR LE)
-
-// 👉 Agar kuch bhi puch le aur tu atak jaaye:
-
-// > This is a controlled form using React hooks, where state manages inputs, validation is handled on submit, and navigation is done using React Router.
-
-// 💥 Safe answer
-
-// ---
-
-// # 🚀 REAL TALK
-
-// 👉 Agar tu ye 13 questions confidently bol gaya:
-// 💯 **login page se koi tujhe fail nahi karega**
-
-// ---
-
-// Agar tu next level jaana chahta hai:
-
-// 👉 main tera pura project ka **mock interview le sakta hoon (real jaisa)**
-
-// Bol: **“mock interview le”** 🎯

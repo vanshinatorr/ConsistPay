@@ -10,11 +10,40 @@ export function Signup() {
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log("Signup:", { name, email, password });
-    navigate("/dashboard");
-  };
+  const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+
+  if (!name || !email || !password) {
+    alert("Fill all fields");
+    return;
+  }
+
+  try {
+    const res = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/register`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name, email, password })
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      alert(data.message || "Signup failed");
+      return;
+    }
+
+    localStorage.setItem("token", data.token);
+
+    if (data.onboardingComplete === false) {
+      window.location.href = "/onboarding";
+    } else {
+      window.location.href = "/dashboard";
+    }
+
+  } catch (err) {
+    alert("Server error. Try again.");
+  }
+};
 
   return (
     <div className="min-h-screen text-white relative overflow-hidden flex items-center justify-center px-4 py-12" style={{ backgroundColor: '#0D0D0F' }}>
