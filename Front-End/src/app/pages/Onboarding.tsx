@@ -18,28 +18,33 @@ export function Onboarding() {
       const token = localStorage.getItem("token") || "";
       
       // Step 1: Create Order
-      const orderRes = await fetch("/api/payment/create-order", {
+const orderRes = await fetch(`${import.meta.env.VITE_API_URL}/api/payment/create-order`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           "Authorization": `Bearer ${token}`
         },
-        body: JSON.stringify({ plan, amount })
+       body: JSON.stringify({ 
+  plan, 
+  dailyCommitment: amount,
+  depositAmount: amount ? amount * 7 : 0,
+  totalAmount: amount ? amount * 7 : 0
+})
       });
       const orderData = await orderRes.json();
 
       // Step 2: Open Razorpay Checkout
       const options = {
-        key: "rzp_test_YOUR_KEY_HERE", // Placeholder Test Key
+       key: import.meta.env.VITE_RAZORPAY_KEY, // Placeholder Test Key
         amount: orderData.amount, // Amount is in currency subunits (paise)
         currency: "INR",
         name: "ConsistPay",
         description: `${plan} Plan - Daily Commitment: ₹${amount}`,
-        order_id: orderData.id,
+        order_id: orderData.order_id,
         handler: async function (response: any) {
           
           // Step 3: Verify Payment
-          const verifyRes = await fetch("/api/payment/verify", {
+          const verifyRes = await fetch(`${import.meta.env.VITE_API_URL}/api/payment/verify`, {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
@@ -53,12 +58,16 @@ export function Onboarding() {
           });
           const verifyData = await verifyRes.json();
 
-          if (verifyData.success) {
-            // Step 4: Redirect on success
-            navigate("/dashboard");
-          } else {
-            alert("Payment verification failed! Please contact support.");
-          }
+
+
+         if (verifyData.onboardingComplete) {
+  // Step 4: Redirect on success
+  navigate("/dashboard");
+} else {
+  alert("Payment verification failed! Please contact support.");
+}
+
+
         },
         prefill: {
           name: "Coding Warrior",
