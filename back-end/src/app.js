@@ -21,4 +21,9 @@ app.use("/api/auth", authRoutes);
 const submissionRoutes = require("./routes/submissions");
 app.use("/api/submissions", submissionRoutes);
 
+
+const userRoutes = require("./routes/users");
+app.use("/api/users", userRoutes);
+
+
 module.exports = app;

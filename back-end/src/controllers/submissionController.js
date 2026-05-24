@@ -82,4 +82,22 @@ const getMySubmissions = async (req, res) => {
   }
 };
 
-module.exports = { submitSolution, getMySubmissions };
+
+const getCalendar = async (req, res) => {
+  try {
+    const { month, year } = req.query;
+
+    const startDate = `${year}-${month.padStart(2, "0")}-01`;
+    const endDate = `${year}-${month.padStart(2, "0")}-31`;
+
+    const submissions = await Submission.find({
+      userId: req.user._id,
+      date: { $gte: startDate, $lte: endDate },
+    });
+
+    res.status(200).json(submissions);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+module.exports = { submitSolution, getMySubmissions, getCalendar };
