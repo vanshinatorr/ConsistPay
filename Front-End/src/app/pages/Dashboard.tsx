@@ -1,5 +1,10 @@
-import { Code2, Bell, Calendar, TrendingUp, Target, Award, Users, ChevronRight, CheckCircle, Lock } from "lucide-react";
-import { Link } from "react-router-dom";
+import {
+  Code2, Bell, Calendar, TrendingUp, Target, Award, Users,
+  ChevronRight, ChevronLeft, CheckCircle, Lock, Bot,
+  ChevronDown, HelpCircle, Linkedin,
+  AlertTriangle, BarChart3, Flame, TrendingDown
+} from "lucide-react";
+import { Link, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { Input } from "../components/ui/input";
 
@@ -22,12 +27,40 @@ const motivationalLines = [
 ];
 
 export function Dashboard() {
+  const location = useLocation();
   const [solutionLink, setSolutionLink] = useState("");
-  const [hasActiveChallenge, setHasActiveChallenge] = useState(false);
   const [showJoinModal, setShowJoinModal] = useState(false);
   const [joinCode, setJoinCode] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [timeLeft, setTimeLeft] = useState({ h: 0, m: 0, s: 0 });
+  const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null);
+
+  // ── FAQ Data ──
+  const faqs = [
+    {
+      q: "What is ConsistPay?",
+      a: "A platform designed to build unshakable coding habits by putting small stakes on the line. Show up, code, and keep your stake. Miss a day, and you lose it."
+    },
+    {
+      q: "How do you verify my submissions?",
+      a: "Simply paste your daily problem-solving link. We support LeetCode, GeeksforGeeks, Code360, and GitHub commits to verify your daily consistency."
+    },
+    {
+      q: "What happens if I miss a day?",
+      a: "If you fail to submit proof by midnight, you lose your daily commitment stake, which is distributed to the community or burned."
+    },
+    {
+      q: "How do grace coins work?",
+      a: "Life happens. Grace coins act as a safety net. If you forget to submit one day, a grace coin is automatically consumed to protect your streak and your stake."
+    },
+    {
+      q: "Is the platform free to use?",
+      a: "We offer a free tier with basic habit tracking. To join real-stakes challenges and earn rewards, you can upgrade or join specific premium challenges."
+    }
+  ];
+
+  // Calendar year state
+  const [calendarYear, setCalendarYear] = useState(new Date().getFullYear());
 
   // Daily motivational line — same all day, changes next day
   const todayLine = motivationalLines[new Date().getDate() % motivationalLines.length];
@@ -54,8 +87,16 @@ export function Dashboard() {
     setSubmitted(true);
   };
 
+  // ── Nav links ──
+  const navLinks = [
+    { label: "Dashboard", path: "/dashboard" },
+    { label: "Challenges", path: "/create-challenge" },
+    { label: "Leaderboard", path: "/leaderboard" },
+    { label: "Pricing", path: "/pricing" },
+    { label: "Profile", path: "/profile" },
+  ];
 
-  // Mock data
+  // ── Mock data ──
   const currentStreak = 47;
   const completedDays = 38;
   const missedDays = 9;
@@ -66,52 +107,102 @@ export function Dashboard() {
   const monthlyCoins = 150;
   const coinsUsed = monthlyCoins - coins;
 
-  // Calendar data for March 2026
-  const currentMonth = "March 2026";
-  const daysInMonth = 31;
+  // ── Calendar logic — GitHub-style yearly heatmap ──
+  const shortMonths = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  const dayLabels = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
+  // Group by month to add space between them
+  const buildMonthsGrid = () => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const months = [];
 
-  const firstDayOfMonth = 0; // Sunday
-  
-  const calendarDays = Array.from({ length: daysInMonth }, (_, i) => {
-    const day = i + 1;
-    let status: 'completed' | 'missed' | 'pending' = 'pending';
-    if (day < 20) {
-      status = Math.random() > 0.2 ? 'completed' : 'missed';
+    for (let m = 0; m < 12; m++) {
+      const daysInMonth = new Date(calendarYear, m + 1, 0).getDate();
+      const firstDay = new Date(calendarYear, m, 1).getDay(); // 0=Sun
+
+      const weeks: ({ status: "completed" | "missed" | "pending" | "empty"; date?: Date })[][] = [];
+      let currentWeek: ({ status: "completed" | "missed" | "pending" | "empty"; date?: Date })[] = [];
+
+      // Fill empty cells before 1st
+      for (let i = 0; i < firstDay; i++) {
+        currentWeek.push({ status: "empty" });
+      }
+
+      for (let d = 1; d <= daysInMonth; d++) {
+        const cellDate = new Date(calendarYear, m, d);
+        let status: "completed" | "missed" | "pending" = "pending";
+        if (cellDate < today) {
+          status = d % 5 === 0 ? "missed" : "completed";
+        }
+        currentWeek.push({ status, date: cellDate });
+        if (currentWeek.length === 7) {
+          weeks.push(currentWeek);
+          currentWeek = [];
+        }
+      }
+      
+      // Fill remaining empty to complete the week
+      if (currentWeek.length > 0) {
+        while (currentWeek.length < 7) {
+          currentWeek.push({ status: "empty" });
+        }
+        weeks.push(currentWeek);
+      }
+      
+      months.push({ monthIndex: m, name: shortMonths[m], weeks });
     }
-    return { day, status };
-  });
+    return months;
+  };
 
-  const leaderboard = [
-    { rank: 1, name: "Sarah Chen", streak: 156, avatar: "SC" },
-    { rank: 2, name: "Alex Kumar", streak: 134, avatar: "AK" },
-    { rank: 3, name: "Jordan Smith", streak: 98, avatar: "JS" },
-    { rank: 8, name: "You", streak: 47, avatar: "YU", isCurrentUser: true },
+  const yearMonths = buildMonthsGrid();
+
+  // ── Recent Solves (hardcoded) ──
+  const recentSolves = [
+    { platform: "LC", name: "Two Sum", difficulty: "Easy", topic: "Arrays", time: "2h ago" },
+    { platform: "GFG", name: "Binary Search", difficulty: "Easy", topic: "Searching", time: "Yesterday" },
+    { platform: "LC", name: "LRU Cache", difficulty: "Hard", topic: "Design", time: "3d ago" },
+    { platform: "LC", name: "Valid Parentheses", difficulty: "Easy", topic: "Stacks", time: "4d ago" },
+    { platform: "GFG", name: "Merge Sort", difficulty: "Medium", topic: "Sorting", time: "5d ago" },
   ];
 
-  const friendChallenge = {
-    friendName: "Alex Kumar",
-    friendAvatar: "AK",
-    yourProgress: 47,
-    friendProgress: 134,
-    daysRemaining: 13,
-    totalDays: 60
+  // ── AI Insights (hardcoded) ──
+  const aiInsights = [
+    { icon: AlertTriangle, text: "High streak-break risk this weekend", color: "text-yellow-400" },
+    { icon: Target, text: "Recommended Focus: Medium Binary Search", color: "text-violet-400" },
+    { icon: BarChart3, text: "Consistency improved by 12% this week", color: "text-emerald-400" },
+    { icon: Flame, text: "Strongest Topic: Arrays", color: "text-orange-400" },
+    { icon: TrendingDown, text: "Weakest Topic: Dynamic Programming", color: "text-red-400" },
+  ];
+
+  // ── Helpers ──
+  const getDifficultyColor = (d: string) => {
+    if (d === "Easy") return "text-emerald-400";
+    if (d === "Medium") return "text-orange-400";
+    if (d === "Hard") return "text-red-400";
+    return "text-zinc-400";
+  };
+
+  const getPlatformStyle = (p: string) => {
+    if (p === "LC") return "bg-blue-500/20 text-blue-400 border-blue-500/30";
+    if (p === "GFG") return "bg-green-500/20 text-green-400 border-green-500/30";
+    return "bg-white/10 text-zinc-400 border-white/20";
   };
 
   return (
-    <div className="min-h-screen text-white" style={{ backgroundColor: '#0D0D0F' }}>
+    <div className="min-h-screen text-white" style={{ backgroundColor: "#0D0D0F" }}>
       {/* Background Gradient */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-0 right-1/4 w-96 h-96 bg-violet-500/10 rounded-full blur-[120px]" />
         <div className="absolute bottom-1/4 left-1/4 w-96 h-96 bg-emerald-500/10 rounded-full blur-[120px]" />
       </div>
 
-      {/* Navbar */}
+      {/* ════════════════ NAVBAR ════════════════ */}
       <nav className="sticky top-0 z-50 border-b border-white/10 bg-[#0D0D0F]/80 backdrop-blur-xl">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
           <div className="flex items-center justify-between">
             {/* Logo */}
-            <Link to="/" className="flex items-center gap-3">
+            <Link to="/dashboard" className="flex items-center gap-3 shrink-0">
               <div className="w-10 h-10 bg-gradient-to-br from-violet-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg shadow-violet-500/30">
                 <Code2 className="w-6 h-6 text-white" />
               </div>
@@ -120,29 +211,52 @@ export function Dashboard() {
               </span>
             </Link>
 
-            {/* Title */}
-            <h1 className="absolute left-1/2 -translate-x-1/2 text-lg sm:text-xl font-semibold">Dashboard</h1>
+            {/* Nav Links */}
+            <div className="hidden md:flex items-center gap-1">
+              {navLinks.map(({ label, path }) => {
+                const isActive = location.pathname === path;
+                return (
+                  <Link
+                    key={path}
+                    to={path}
+                    className={`relative px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                      isActive
+                        ? "text-violet-300"
+                        : "text-zinc-400 hover:text-white hover:bg-white/5"
+                    }`}
+                  >
+                    {label}
+                    {isActive && (
+                      <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-3/4 h-0.5 bg-violet-500 rounded-full" />
+                    )}
+                  </Link>
+                );
+              })}
+            </div>
 
-  
-  {/* User Controls */}
-            <div className="flex items-center gap-3">
-<Link to="/notifications" className="relative p-2 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 transition-colors">
-<Bell className="w-5 h-5" />
-<span className="absolute top-1 right-1 w-2 h-2 bg-violet-500 rounded-full"></span>
-</Link>
-<Link to="/profile" className="w-10 h-10 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-full flex items-center justify-center font-semibold text-sm">
-  YU
-</Link>
-
-
+            {/* User Controls */}
+            <div className="flex items-center gap-3 shrink-0">
+              {/* Bell — decoration only */}
+              <div className="relative p-2 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 transition-colors cursor-default">
+                <Bell className="w-5 h-5" />
+                <span className="absolute top-1 right-1 w-2 h-2 bg-violet-500 rounded-full" />
+              </div>
+              {/* YU Avatar */}
+              <Link
+                to="/profile"
+                className="w-10 h-10 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-full flex items-center justify-center font-semibold text-sm"
+              >
+                YU
+              </Link>
             </div>
           </div>
         </div>
       </nav>
 
-      {/* Main Content */}
+      {/* ════════════════ MAIN CONTENT ════════════════ */}
       <main className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Stats Row */}
+
+        {/* ──── Stats Row ──── */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
           {/* Current Streak */}
           <div className="relative group">
@@ -196,204 +310,138 @@ export function Dashboard() {
           </div>
         </div>
 
-        {/* Bento Grid Layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Left Column */}
-          <div className="lg:col-span-2 space-y-6">
-
-
-
-            {/* Today's Task Card */}
-            
-<div className="relative">
-  <div className={`absolute inset-0 bg-gradient-to-br ${submitted ? 'from-emerald-500/20 to-teal-500/20' : 'from-violet-500/20 to-purple-500/20'} rounded-2xl blur-xl opacity-50`} />
-  <div className="relative bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6">
-
-    {/* Header */}
-    <div className="flex items-center justify-between mb-6">
-      <h2 className="text-xl font-bold">Today's Challenge</h2>
-      <span className={`flex items-center gap-1.5 text-sm px-3 py-1 rounded-full border
-        ${submitted
-          ? 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20'
-          : 'text-zinc-400 bg-white/5 border-white/10'
-        }`}>
-        {submitted ? <CheckCircle className="w-3.5 h-3.5" /> : <div className="w-2 h-2 rounded-full bg-zinc-500" />}
-        {submitted ? 'Completed' : 'Pending'}
-      </span>
-    </div>
-
-    {/* STATE 1 — Pending */}
-    {!submitted && (
-      <>
-        <div className="mb-6">
-          <h3 className="text-2xl font-semibold mb-2">Solved a coding problem today?</h3>
-          <p className="text-zinc-400 text-sm">
-            Paste your solution link from LeetCode, Code360 or any platform
-          </p>
-        </div>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label htmlFor="solution" className="block text-sm text-zinc-400 mb-2">
-              Paste your solution link
-            </label>
-            <Input
-              id="solution"
-              type="url"
-              placeholder="https://leetcode.com/submissions/detail/..."
-              value={solutionLink}
-              onChange={(e) => setSolutionLink(e.target.value)}
-              className="bg-white/5 border-white/10 text-white placeholder:text-zinc-500 focus:border-violet-500/50 focus:ring-violet-500/20"
-            />
-          </div>
-          <button
-            type="submit"
-            disabled={!solutionLink}
-            className={`w-full py-3 font-semibold rounded-lg transition-all duration-300
-              ${solutionLink
-                ? 'bg-gradient-to-r from-violet-500 to-purple-600 hover:from-violet-400 hover:to-purple-500 shadow-lg shadow-violet-500/30 hover:shadow-violet-500/50'
-                : 'bg-white/5 text-zinc-600 cursor-not-allowed border border-white/10'
-              }`}
-          >
-            Submit Solution
-          </button>
-        </form>
-      </>
-    )}
-
-    {/* STATE 2 — Success */}
-    {submitted && (
-      <div className="text-center py-4">
-        {/* Green Check */}
-        <div className="w-16 h-16 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg shadow-emerald-500/30">
-          <CheckCircle className="w-8 h-8 text-white" />
-        </div>
-
-        <h3 className="text-xl font-bold mb-1">Proof Submitted!</h3>
-        <p className="text-zinc-400 text-sm mb-5">Today's coding session is locked in.</p>
-
-        {/* Stats */}
-        <div className="grid grid-cols-2 gap-3 mb-5">
-          <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-xl p-3">
-            <div className="text-2xl font-black text-emerald-400">48</div>
-            <div className="text-xs text-zinc-400 mt-0.5">🔥 Day Streak</div>
-          </div>
-          <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-xl p-3">
-            <div className="text-2xl font-black text-yellow-400">₹5</div>
-            <div className="text-xs text-zinc-400 mt-0.5">🪙 Secured today</div>
-          </div>
-        </div>
-
-        {/* Motivational Line */}
-        <div className="bg-white/5 border border-white/10 rounded-xl px-4 py-3 mb-5">
-          <p className="text-sm text-zinc-300 italic">"{todayLine}"</p>
-        </div>
-
-        {/* Countdown Timer */}
-        <div className="bg-white/5 border border-white/10 rounded-xl p-4">
-          <div className="flex items-center justify-center gap-1.5 text-xs text-zinc-500 mb-3">
-            <Lock className="w-3.5 h-3.5" />
-            Next submission unlocks in
-          </div>
-          <div className="flex items-center justify-center gap-3">
-            {[
-              { val: timeLeft.h, label: 'hrs' },
-              { val: timeLeft.m, label: 'min' },
-              { val: timeLeft.s, label: 'sec' },
-            ].map(({ val, label }) => (
-              <div key={label} className="text-center">
-                <div className="w-14 h-14 bg-white/5 border border-white/10 rounded-xl flex items-center justify-center text-2xl font-black text-white">
-                  {String(val).padStart(2, '0')}
-                </div>
-                <div className="text-xs text-zinc-500 mt-1">{label}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    )}
-
-  </div>
-</div>
-
-            {/* Calendar Section */}
+        {/* ──── Today's Challenge (left) + Coin Balance (right) ──── */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+          {/* Today's Challenge — 2/3 */}
+          <div className="lg:col-span-2">
             <div className="relative">
-              <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/10 to-violet-500/10 rounded-2xl blur-xl opacity-50" />
+              <div
+                className={`absolute inset-0 bg-gradient-to-br ${
+                  submitted
+                    ? "from-emerald-500/20 to-teal-500/20"
+                    : "from-violet-500/20 to-purple-500/20"
+                } rounded-2xl blur-xl opacity-50`}
+              />
               <div className="relative bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6">
+                {/* Header */}
                 <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-xl font-bold flex items-center gap-2">
-                    <Calendar className="w-5 h-5" />
-                    {currentMonth}
-                  </h2>
+                  <h2 className="text-xl font-bold">Today's Challenge</h2>
+                  <span
+                    className={`flex items-center gap-1.5 text-sm px-3 py-1 rounded-full border ${
+                      submitted
+                        ? "text-emerald-400 bg-emerald-500/10 border-emerald-500/20"
+                        : "text-zinc-400 bg-white/5 border-white/10"
+                    }`}
+                  >
+                    {submitted ? (
+                      <CheckCircle className="w-3.5 h-3.5" />
+                    ) : (
+                      <div className="w-2 h-2 rounded-full bg-zinc-500" />
+                    )}
+                    {submitted ? "Completed" : "Pending"}
+                  </span>
                 </div>
 
-                {/* Calendar Grid */}
-                <div className="space-y-2">
-                  {/* Day headers */}
-                  <div className="grid grid-cols-7 gap-2 mb-3">
-                    {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
-                      <div key={day} className="text-center text-xs text-zinc-500 font-medium">
-                        {day}
+                {/* STATE 1 — Pending */}
+                {!submitted && (
+                  <>
+                    <div className="mb-6">
+                      <h3 className="text-2xl font-semibold mb-2">
+                        Solved a coding problem today?
+                      </h3>
+                      <p className="text-zinc-400 text-sm">
+                        Paste your solution link from LeetCode, Code360 or any platform
+                      </p>
+                    </div>
+                    <form onSubmit={handleSubmit} className="space-y-4">
+                      <div>
+                        <label htmlFor="solution" className="block text-sm text-zinc-400 mb-2">
+                          Paste your solution link
+                        </label>
+                        <Input
+                          id="solution"
+                          type="url"
+                          placeholder="https://leetcode.com/submissions/detail/..."
+                          value={solutionLink}
+                          onChange={(e) => setSolutionLink(e.target.value)}
+                          className="bg-white/5 border-white/10 text-white placeholder:text-zinc-500 focus:border-violet-500/50 focus:ring-violet-500/20"
+                        />
                       </div>
-                    ))}
-                  </div>
-
-                  {/* Calendar days */}
-                  <div className="grid grid-cols-7 gap-2">
-                    {/* Empty cells for days before month starts */}
-                    {Array.from({ length: firstDayOfMonth }).map((_, i) => (
-                      <div key={`empty-${i}`} />
-                    ))}
-                    
-                    {/* Actual days */}
-                    {calendarDays.map(({ day, status }) => (
-                      <div
-                        key={day}
-                        className={`
-                          aspect-square rounded-lg flex items-center justify-center text-sm font-medium
-                          ${status === 'completed' ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : ''}
-                          ${status === 'missed' ? 'bg-red-500/20 text-red-400 border border-red-500/30' : ''}
-                          ${status === 'pending' ? 'bg-white/5 text-zinc-400 border border-white/10' : ''}
-                        `}
+                      <button
+                        type="submit"
+                        disabled={!solutionLink}
+                        className={`w-full py-3 font-semibold rounded-lg transition-all duration-300 ${
+                          solutionLink
+                            ? "bg-gradient-to-r from-violet-500 to-purple-600 hover:from-violet-400 hover:to-purple-500 shadow-lg shadow-violet-500/30 hover:shadow-violet-500/50"
+                            : "bg-white/5 text-zinc-600 cursor-not-allowed border border-white/10"
+                        }`}
                       >
-                        {day}
-                      </div>
-                    ))}
-                  </div>
-                </div>
+                        Submit Solution
+                      </button>
+                    </form>
+                  </>
+                )}
 
-                {/* Legend */}
-                <div className="flex items-center justify-center gap-6 mt-6 pt-6 border-t border-white/10">
-                  <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 rounded bg-emerald-500/40 border border-emerald-500/50" />
-                    <span className="text-xs text-zinc-400">Completed</span>
+                {/* STATE 2 — Success */}
+                {submitted && (
+                  <div className="text-center py-4">
+                    <div className="w-16 h-16 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg shadow-emerald-500/30">
+                      <CheckCircle className="w-8 h-8 text-white" />
+                    </div>
+                    <h3 className="text-xl font-bold mb-1">Proof Submitted!</h3>
+                    <p className="text-zinc-400 text-sm mb-5">
+                      Today's coding session is locked in.
+                    </p>
+                    <div className="grid grid-cols-2 gap-3 mb-5">
+                      <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-xl p-3">
+                        <div className="text-2xl font-black text-emerald-400">48</div>
+                        <div className="text-xs text-zinc-400 mt-0.5">🔥 Day Streak</div>
+                      </div>
+                      <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-xl p-3">
+                        <div className="text-2xl font-black text-yellow-400">₹5</div>
+                        <div className="text-xs text-zinc-400 mt-0.5">🪙 Secured today</div>
+                      </div>
+                    </div>
+                    <div className="bg-white/5 border border-white/10 rounded-xl px-4 py-3 mb-5">
+                      <p className="text-sm text-zinc-300 italic">"{todayLine}"</p>
+                    </div>
+                    <div className="bg-white/5 border border-white/10 rounded-xl p-4">
+                      <div className="flex items-center justify-center gap-1.5 text-xs text-zinc-500 mb-3">
+                        <Lock className="w-3.5 h-3.5" />
+                        Next submission unlocks in
+                      </div>
+                      <div className="flex items-center justify-center gap-3">
+                        {[
+                          { val: timeLeft.h, label: "hrs" },
+                          { val: timeLeft.m, label: "min" },
+                          { val: timeLeft.s, label: "sec" },
+                        ].map(({ val, label }) => (
+                          <div key={label} className="text-center">
+                            <div className="w-14 h-14 bg-white/5 border border-white/10 rounded-xl flex items-center justify-center text-2xl font-black text-white">
+                              {String(val).padStart(2, "0")}
+                            </div>
+                            <div className="text-xs text-zinc-500 mt-1">{label}</div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 rounded bg-red-500/40 border border-red-500/50" />
-                    <span className="text-xs text-zinc-400">Missed</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 rounded bg-white/10 border border-white/20" />
-                    <span className="text-xs text-zinc-400">Pending</span>
-                  </div>
-                </div>
+                )}
               </div>
             </div>
           </div>
 
-          {/* Right Column */}
-          <div className="space-y-6">
-            {/* Coin Balance Card */}
-            <div className="relative">
+          {/* Coin Balance — 1/3 */}
+          <div>
+            <div className="relative h-full">
               <div className="absolute inset-0 bg-gradient-to-br from-yellow-500/20 to-orange-500/20 rounded-2xl blur-xl opacity-50" />
-              <div className="relative bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6">
+              <div className="relative bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 h-full">
                 <h2 className="text-xl font-bold mb-6">Coin Balance</h2>
-                
                 <div className="text-center mb-6">
                   <div className="text-5xl mb-2">🪙</div>
                   <div className="text-4xl font-bold mb-1">{coins}</div>
                   <div className="text-sm text-zinc-400">coins remaining</div>
                 </div>
-
                 <div className="space-y-4 mb-6">
                   <div className="flex justify-between text-sm">
                     <span className="text-zinc-400">Daily commitment:</span>
@@ -404,215 +452,345 @@ export function Dashboard() {
                     <span className="font-semibold text-emerald-400">{graceCoins} available</span>
                   </div>
                 </div>
-
                 <div>
                   <div className="flex justify-between text-sm mb-2">
                     <span className="text-zinc-400">Monthly usage</span>
-                    <span className="text-xs text-zinc-500">{coinsUsed} / {monthlyCoins}</span>
+                    <span className="text-xs text-zinc-500">
+                      {coinsUsed} / {monthlyCoins}
+                    </span>
                   </div>
                   <div className="h-2 bg-white/5 rounded-full overflow-hidden">
-                    <div 
+                    <div
                       className="h-full bg-gradient-to-r from-yellow-500 to-orange-500 rounded-full transition-all duration-500"
-                      style={{ width: `${(coinsUsed / monthlyCoins) * 100}%` }}
+                      style={{ width: `${Math.max(0, (coinsUsed / monthlyCoins) * 100)}%` }}
                     />
                   </div>
                 </div>
               </div>
             </div>
+          </div>
+        </div>
 
+        {/* ──── Consistency Calendar — GitHub-style Heatmap ──── */}
+        <div className="mb-6">
+          <div className="relative">
+            <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/10 to-violet-500/10 rounded-2xl blur-xl opacity-50" />
+            <div className="relative bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6">
+              {/* Header */}
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-xl font-bold flex items-center gap-2">
+                  <Calendar className="w-5 h-5" />
+                  Consistency Calendar
+                </h2>
+                <div className="flex items-center gap-3">
+                  <button
+                    onClick={() => setCalendarYear(calendarYear - 1)}
+                    className="p-1.5 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 transition-colors"
+                  >
+                    <ChevronLeft className="w-4 h-4" />
+                  </button>
+                  <span className="text-sm font-medium min-w-[60px] text-center">
+                    {calendarYear}
+                  </span>
+                  <button
+                    onClick={() => setCalendarYear(calendarYear + 1)}
+                    className="p-1.5 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 transition-colors"
+                  >
+                    <ChevronRight className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
 
+              {/* Heatmap */}
+              <div className="overflow-x-auto pb-4">
+                <div className="flex gap-4 min-w-max">
+                  {/* Day labels */}
+                  <div className="flex flex-col gap-[3px] mt-[20px] shrink-0">
+                    {dayLabels.map((d) => (
+                      <div key={d} className="h-[13px] flex items-center">
+                        <span className="text-[10px] text-zinc-500 w-6 text-right">
+                          {d}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
 
-
-
-
-{/* Friend Challenge Card */}
-<div className="relative">
-<div className="absolute inset-0 bg-gradient-to-br from-violet-500/20 to-pink-500/20 rounded-2xl blur-xl opacity-50" />
-<div className="relative bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6">
-<h2 className="text-xl font-bold mb-6 flex items-center gap-2">
-<Users className="w-5 h-5" />
-      Friend Challenge
-</h2>
-{hasActiveChallenge ? (
-// State 2 — Active Challenge
-<div className="space-y-4">
-<div className="flex items-center justify-between p-3 bg-white/5 rounded-lg border border-white/10">
-<div className="flex items-center gap-3">
-<div className="w-10 h-10 bg-gradient-to-br from-violet-400 to-purple-600 rounded-full flex items-center justify-center font-semibold text-sm">
-{friendChallenge.friendAvatar}
-</div>
-<div>
-<div className="font-semibold">{friendChallenge.friendName}</div>
-<div className="text-xs text-zinc-400">{friendChallenge.daysRemaining} days left</div>
-</div>
-</div>
-<span className="text-xs font-semibold text-red-400 bg-red-500/10 px-2 py-1 rounded-full">
-            🔴 Behind
-</span>
-</div>
-<div className="space-y-3">
-<div>
-<div className="flex justify-between text-sm mb-2">
-<span className="text-zinc-400">You</span>
-<span className="font-semibold">{friendChallenge.yourProgress}/{friendChallenge.totalDays} days</span>
-</div>
-<div className="h-2 bg-white/5 rounded-full overflow-hidden">
-<div
-className="h-full bg-gradient-to-r from-emerald-500 to-emerald-400 rounded-full"
-style={{ width: `${(friendChallenge.yourProgress / friendChallenge.totalDays) * 100}%` }}
-/>
-</div>
-</div>
-<div>
-<div className="flex justify-between text-sm mb-2">
-<span className="text-zinc-400">{friendChallenge.friendName}</span>
-<span className="font-semibold">{friendChallenge.friendProgress}/{friendChallenge.totalDays} days</span>
-</div>
-<div className="h-2 bg-white/5 rounded-full overflow-hidden">
-<div
-className="h-full bg-gradient-to-r from-violet-500 to-purple-400 rounded-full"
-style={{ width: `${(friendChallenge.friendProgress / friendChallenge.totalDays) * 100}%` }}
-/>
-</div>
-</div>
-</div>
-</div>
-    ) : (
-
-
-
-      // State 1 — No Active Challenge
-<div className="space-y-4">
-<div className="text-center py-4">
-<div className="text-4xl mb-3">🤝</div>
-<p className="text-zinc-400 text-sm mb-1">No active challenge</p>
-<p className="text-zinc-500 text-xs">Challenge a friend and put your streak to the test!</p>
-</div>
-<Link
-to="/create-challenge"
-className="block w-full py-3 text-center bg-gradient-to-r from-violet-500 to-purple-600 hover:from-violet-400 hover:to-purple-500 text-white font-semibold rounded-lg transition-all duration-300 text-sm"
->
-  + Create Challenge
-</Link>
-<button
-  onClick={() => setShowJoinModal(true)}
-  className="w-full py-3 bg-white/5 border border-white/10 hover:bg-white/10 text-white font-semibold rounded-lg transition-all duration-300 text-sm"
->
-  Join with Code
-</button>
-<p className="text-center text-xs text-zinc-500">Pro feature • ₹19 entry + stake</p>
-</div>
-    )}
-</div>
-</div>
-
-
-{/* Leaderboard Preview */}
-            <div className="relative">
-<div className="absolute inset-0 bg-gradient-to-br from-emerald-500/20 to-violet-500/20 rounded-2xl blur-xl opacity-50" />
-<div className="relative bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6">
-<div className="flex items-center justify-between mb-6">
-<h2 className="text-xl font-bold flex items-center gap-2">
-<Award className="w-5 h-5" />
-                    Leaderboard
-</h2>
-<Link to="/leaderboard" className="text-sm text-violet-400 hover:text-violet-300 flex items-center gap-1">
-                    View All
-<ChevronRight className="w-4 h-4" />
-</Link>
-</div>
-<div className="space-y-3">
-{leaderboard.map((user) => (
-<div
-key={user.rank}
-className={`
-                        flex items-center justify-between p-3 rounded-lg border transition-all
-${user.isCurrentUser 
-? 'bg-violet-500/10 border-violet-500/30 shadow-lg shadow-violet-500/10' 
-: 'bg-white/5 border-white/10 hover:border-white/20'
-                        }
-                      `}
->
-<div className="flex items-center gap-3">
-<div className={`
-                          w-8 h-8 flex items-center justify-center font-bold text-sm rounded-lg
-${user.rank === 1 ? 'bg-yellow-500/20 text-yellow-400' : ''}
-${user.rank === 2 ? 'bg-zinc-400/20 text-zinc-300' : ''}
-${user.rank === 3 ? 'bg-orange-500/20 text-orange-400' : ''}
-${user.rank > 3 ? 'bg-white/10 text-zinc-400' : ''}
-                        `}>
-{user.rank}
-</div>
-<div className={`
-                          w-10 h-10 rounded-full flex items-center justify-center font-semibold text-sm
-${user.isCurrentUser 
-? 'bg-gradient-to-br from-emerald-400 to-emerald-600' 
-: 'bg-gradient-to-br from-violet-400 to-purple-600'
-                          }
-                        `}>
-{user.avatar}
-</div>
-<div>
-<div className={`font-semibold ${user.isCurrentUser ? 'text-violet-300' : ''}`}>
-{user.name}
-</div>
-<div className="text-xs text-zinc-400">🔥 {user.streak} day streak</div>
-</div>
-</div>
-{user.rank <= 3 && (
-<div className="text-2xl">
-{user.rank === 1 ? '🥇' : user.rank === 2 ? '🥈' : '🥉'}
-</div>
-                      )}
-</div>
+                  {/* Months */}
+                  {yearMonths.map((month) => (
+                    <div key={month.name} className="flex flex-col gap-1">
+                      {/* Month label */}
+                      <div className="text-xs text-zinc-500 font-medium ml-1">
+                        {month.name}
+                      </div>
+                      {/* Month grid */}
+                      <div className="flex gap-[3px]">
+                        {month.weeks.map((week, weekIdx) => (
+                          <div key={weekIdx} className="flex flex-col gap-[3px]">
+                            {week.map((cell, dayIdx) => (
+                              <div
+                                key={dayIdx}
+                                className={`w-[13px] h-[13px] rounded-[3px] transition-colors ${
+                                  cell.status === "completed" ? "bg-[#10B981]/25 border border-[#10B981]/40" :
+                                  cell.status === "missed" ? "bg-[#EF4444]/25 border border-[#EF4444]/40" :
+                                  cell.status === "pending" ? "bg-[#374151]" :
+                                  "bg-transparent"
+                                }`}
+                                title={
+                                  cell.date
+                                    ? `${cell.date.toLocaleDateString()} — ${cell.status}`
+                                    : ""
+                                }
+                              />
+                            ))}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
                   ))}
-</div>
-</div>
-</div>
-</div>
-</div>
+                </div>
+              </div>
 
+              {/* Legend */}
+              <div className="flex items-center justify-end gap-4 mt-4 pt-4 border-t border-white/10">
+                <div className="flex items-center gap-2">
+                  <div className="w-3 h-3 rounded-[3px] bg-[#10B981]/25 border border-[#10B981]/40" />
+                  <span className="text-xs text-zinc-400">Completed</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-3 h-3 rounded-[3px] bg-[#EF4444]/25 border border-[#EF4444]/40" />
+                  <span className="text-xs text-zinc-400">Missed</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-3 h-3 rounded-[3px] bg-[#374151]" />
+                  <span className="text-xs text-zinc-400">Pending</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
 
+        {/* ──── Recent Solves (55%) + AI Insights (45%) ──── */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-6">
+          {/* Recent Solves — Left */}
+          <div className="lg:col-span-7">
+            <div className="relative h-full">
+              <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-violet-500/10 rounded-2xl blur-xl opacity-50" />
+              <div className="relative bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 h-full">
+                <h2 className="text-xl font-bold mb-5">Recent Solves</h2>
+                <div className="space-y-3">
+                  {recentSolves.map((solve, idx) => (
+                    <div
+                      key={idx}
+                      className="flex items-center gap-3 p-3 bg-white/5 rounded-lg border border-white/10 hover:border-white/20 transition-colors"
+                    >
+                      {/* Platform Badge */}
+                      <span
+                        className={`shrink-0 px-2.5 py-1 text-xs font-bold rounded border ${getPlatformStyle(
+                          solve.platform
+                        )}`}
+                      >
+                        {solve.platform}
+                      </span>
+                      {/* Problem Name */}
+                      <span className="font-semibold text-sm">{solve.name}</span>
+                      {/* Difficulty */}
+                      <span className={`text-xs font-medium ${getDifficultyColor(solve.difficulty)}`}>
+                        {solve.difficulty}
+                      </span>
+                      <span className="text-zinc-600">•</span>
+                      {/* Topic */}
+                      <span className="text-xs text-zinc-500">{solve.topic}</span>
+                      <span className="text-zinc-600">•</span>
+                      {/* Time */}
+                      <span className="text-xs text-zinc-500 ml-auto shrink-0">{solve.time}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
 
-     {/* Join with Code Modal */}
-      {showJoinModal && (
-<div className="fixed inset-0 z-50 flex items-center justify-center px-4">
-<div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setShowJoinModal(false)} />
-<div className="relative bg-[#1a1a2e] border border-white/10 rounded-2xl p-6 w-full max-w-sm shadow-2xl">
-<h2 className="text-xl font-bold mb-2">Join a Challenge</h2>
-<p className="text-zinc-400 text-sm mb-6">Enter the invite code shared by your friend</p>
-<div className="mb-4">
-<label className="block text-sm text-zinc-400 mb-2">Invite Code</label>
-<input
-type="text"
-placeholder="e.g. CP-X7K2M"
-value={joinCode}
-onChange={(e) => setJoinCode(e.target.value.toUpperCase())}
-className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder:text-zinc-600 focus:outline-none focus:border-violet-500/50 font-mono tracking-widest text-center text-lg uppercase"
-/>
-</div>
-<div className="flex gap-3">
-<button
-onClick={() => setShowJoinModal(false)}
-className="flex-1 py-3 rounded-xl font-semibold bg-white/5 border border-white/10 hover:bg-white/10 transition-all text-sm"
->
-                Cancel
-</button>
-<Link
-  to={`/join-challenge/${joinCode}`}
-  className={`flex-1 py-3 rounded-xl font-semibold transition-all text-sm text-center
-    ${joinCode.length >= 5
-      ? "bg-gradient-to-r from-violet-500 to-purple-600 hover:from-violet-400 hover:to-purple-500 shadow-lg shadow-violet-500/30 pointer-events-auto"
-      : "bg-white/5 text-zinc-600 pointer-events-none"
-    }`}
->
-  Join Challenge
-</Link>
-</div>
-</div>
-</div>
-      )}
-</main>
-</div>
+          {/* AI Performance Insights — Right */}
+          <div className="lg:col-span-5">
+            <div className="relative h-full">
+              <div className="absolute inset-0 bg-gradient-to-br from-violet-500/20 to-pink-500/20 rounded-2xl blur-xl opacity-50" />
+              <div className="relative bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 h-full">
+                <h2 className="text-xl font-bold mb-5 flex items-center gap-2">
+                  <Bot className="w-5 h-5 text-violet-400" />
+                  AI Performance Insights
+                </h2>
+
+                {/* Placement Readiness */}
+                <div className="mb-5">
+                  <div className="flex items-center justify-between text-sm mb-2">
+                    <span className="text-zinc-400">Placement Readiness</span>
+                    <span className="font-bold text-emerald-400">82%</span>
+                  </div>
+                  <div className="h-2 bg-white/5 rounded-full overflow-hidden">
+                    <div
+                      className="h-full bg-gradient-to-r from-violet-500 to-emerald-500 rounded-full transition-all duration-500"
+                      style={{ width: "82%" }}
+                    />
+                  </div>
+                </div>
+
+                {/* Insight Items */}
+                <div className="space-y-3">
+                  {aiInsights.map(({ icon: Icon, text, color }, idx) => (
+                    <div
+                      key={idx}
+                      className="flex items-start gap-3 p-3 bg-white/5 rounded-lg border border-white/10"
+                    >
+                      <Icon className={`w-4 h-4 mt-0.5 shrink-0 ${color}`} />
+                      <span className="text-sm text-zinc-300">{text}</span>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Powered by */}
+                <p className="text-xs text-zinc-600 mt-4 text-center">Powered by Gemini AI</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* ──── Join with Code Modal ──── */}
+        {showJoinModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
+            <div
+              className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+              onClick={() => setShowJoinModal(false)}
+            />
+            <div className="relative bg-[#1a1a2e] border border-white/10 rounded-2xl p-6 w-full max-w-sm shadow-2xl">
+              <h2 className="text-xl font-bold mb-2">Join a Challenge</h2>
+              <p className="text-zinc-400 text-sm mb-6">
+                Enter the invite code shared by your friend
+              </p>
+              <div className="mb-4">
+                <label className="block text-sm text-zinc-400 mb-2">Invite Code</label>
+                <input
+                  type="text"
+                  placeholder="e.g. CP-X7K2M"
+                  value={joinCode}
+                  onChange={(e) => setJoinCode(e.target.value.toUpperCase())}
+                  className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder:text-zinc-600 focus:outline-none focus:border-violet-500/50 font-mono tracking-widest text-center text-lg uppercase"
+                />
+              </div>
+              <div className="flex gap-3">
+                <button
+                  onClick={() => setShowJoinModal(false)}
+                  className="flex-1 py-3 rounded-xl font-semibold bg-white/5 border border-white/10 hover:bg-white/10 transition-all text-sm"
+                >
+                  Cancel
+                </button>
+                <Link
+                  to={`/join-challenge/${joinCode}`}
+                  className={`flex-1 py-3 rounded-xl font-semibold transition-all text-sm text-center ${
+                    joinCode.length >= 5
+                      ? "bg-gradient-to-r from-violet-500 to-purple-600 hover:from-violet-400 hover:to-purple-500 shadow-lg shadow-violet-500/30 pointer-events-auto"
+                      : "bg-white/5 text-zinc-600 pointer-events-none"
+                  }`}
+                >
+                  Join Challenge
+                </Link>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ════════════════ FOOTER ════════════════ */}
+        <footer className="mt-16 pt-16 border-t border-white/10">
+          
+          {/* FAQ SECTION */}
+          <div className="mb-16 max-w-3xl mx-auto">
+            <div className="text-center mb-8">
+              <h2 className="text-2xl font-bold flex items-center justify-center gap-2 mb-2">
+                <HelpCircle className="w-6 h-6 text-violet-400" />
+                Frequently Asked Questions
+              </h2>
+              <p className="text-sm text-zinc-400">Everything you need to know about building your coding habit.</p>
+            </div>
+            <div className="space-y-3">
+              {faqs.map((faq, idx) => (
+                <div
+                  key={idx}
+                  className="bg-white/5 border border-white/10 rounded-xl overflow-hidden transition-all duration-300 hover:border-white/20"
+                >
+                  <button
+                    onClick={() => setOpenFaqIndex(openFaqIndex === idx ? null : idx)}
+                    className="w-full flex items-center justify-between p-4 text-left focus:outline-none"
+                  >
+                    <span className="font-medium text-zinc-200">{faq.q}</span>
+                    <ChevronDown
+                      className={`w-5 h-5 text-zinc-400 transition-transform duration-300 ${
+                        openFaqIndex === idx ? "rotate-180" : ""
+                      }`}
+                    />
+                  </button>
+                  <div
+                    className={`overflow-hidden transition-all duration-300 ${
+                      openFaqIndex === idx ? "max-h-40 opacity-100" : "max-h-0 opacity-0"
+                    }`}
+                  >
+                    <p className="p-4 pt-0 text-sm text-zinc-400 leading-relaxed">
+                      {faq.a}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+            {/* Brand Column */}
+            <div>
+              <Link to="/dashboard" className="flex items-center gap-3 mb-4">
+                <div className="w-8 h-8 bg-gradient-to-br from-violet-500 to-purple-600 rounded-lg flex items-center justify-center shadow-lg shadow-violet-500/30">
+                  <Code2 className="w-5 h-5 text-white" />
+                </div>
+                <span className="text-lg font-bold bg-gradient-to-r from-white to-zinc-400 bg-clip-text text-transparent">
+                  ConsistPay
+                </span>
+              </Link>
+              <p className="text-sm text-zinc-400 mb-6 max-w-xs">
+                Building the 1% of developers who show up every day.
+              </p>
+              <div className="flex items-center gap-4">
+                <a href="https://www.linkedin.com/in/vansh-vijay/" target="_blank" rel="noreferrer" className="text-zinc-400 hover:text-white transition-colors" title="Vansh Vijay LinkedIn">
+                  <Linkedin className="w-5 h-5" />
+                </a>
+                <a href="https://www.linkedin.com/in/prateekpatidar1008/" target="_blank" rel="noreferrer" className="text-zinc-400 hover:text-white transition-colors" title="Prateek Patidar LinkedIn">
+                  <Linkedin className="w-5 h-5" />
+                </a>
+              </div>
+            </div>
+
+            {/* Quick Links */}
+            <div>
+              <h3 className="font-bold mb-4">Quick Links</h3>
+              <ul className="space-y-2">
+                <li><Link to="/dashboard" className="text-sm text-zinc-400 hover:text-white transition-colors">Dashboard</Link></li>
+                <li><Link to="/create-challenge" className="text-sm text-zinc-400 hover:text-white transition-colors">Challenges</Link></li>
+                <li><Link to="/pricing" className="text-sm text-zinc-400 hover:text-white transition-colors">Pricing</Link></li>
+              </ul>
+            </div>
+
+            {/* Legal */}
+            <div>
+              <h3 className="font-bold mb-4">Legal</h3>
+              <ul className="space-y-2">
+                <li><Link to="#" className="text-sm text-zinc-400 hover:text-white transition-colors">Privacy Policy</Link></li>
+                <li><Link to="#" className="text-sm text-zinc-400 hover:text-white transition-colors">Terms of Service</Link></li>
+                <li><Link to="#" className="text-sm text-zinc-400 hover:text-white transition-colors">Refund Policy</Link></li>
+              </ul>
+            </div>
+          </div>
+          <div className="pt-8 border-t border-white/5 flex flex-col md:flex-row items-center justify-between text-xs text-zinc-500">
+            <p>© 2026 ConsistPay. All rights reserved.</p>
+            <p className="mt-2 md:mt-0">Built with persistence.</p>
+          </div>
+        </footer>
+      </main>
+    </div>
   );
 }
