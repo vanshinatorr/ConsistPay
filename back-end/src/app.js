@@ -25,5 +25,7 @@ app.use("/api/submissions", submissionRoutes);
 const userRoutes = require("./routes/users");
 app.use("/api/users", userRoutes);
 
+const aiRoutes = require("./routes/ai");
+app.use("/api/ai", aiRoutes);
 
 module.exports = app;
