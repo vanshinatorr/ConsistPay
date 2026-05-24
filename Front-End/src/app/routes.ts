@@ -11,11 +11,13 @@ import { Leaderboard } from "./pages/Leaderboard";
 import { Profile } from "./pages/Profile";
 import { Notifications } from "./pages/Notifications";
 import { Settings } from "./pages/Settings"; // 👈 add
+import { Onboarding } from "./pages/Onboarding";
 
 export const router = createBrowserRouter([
   { path: "/", Component: Landing },
   { path: "/login", Component: Login },
   { path: "/signup", Component: Signup },
+  { path: "/onboarding", Component: Onboarding },
   { path: "/dashboard", Component: Dashboard },
   { path: "/pricing", Component: Pricing },
   { path: "/create-challenge", Component: CreateChallenge },

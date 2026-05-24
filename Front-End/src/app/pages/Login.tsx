@@ -31,17 +31,20 @@ export function Login() {
     }
 
     // 👉 Step 2: abhi ke liye fake login check (practice purpose)
-    if (email !== "test@gmail.com" || password !== "123456") {
-      alert("Invalid credentials");
+    if (!email.includes("@")) {
+      alert("Please enter a valid email");
       return;
     }
+    
+    // Set dummy token so App.tsx auth guard works
+    localStorage.setItem("token", "dummy_test_token");
 
     // 👉 Step 3: login success (future me yahan API call hoga)
     console.log("Login Success");
 
     // 👉 Step 4: thoda delay (real app jaisa feel dene ke liye)
     setTimeout(() => {
-      navigate("/dashboard"); // dashboard pe redirect
+      window.location.href = "/dashboard"; // Hard reload to trigger global Auth Guard
     }, 1000);
   };
 
