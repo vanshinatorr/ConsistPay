@@ -56,14 +56,27 @@ const submitSolution = async (req, res) => {
 
     // 5. Streak + Coins update karo
     const user = await User.findById(userId);
-    user.streak += 1;
-    user.coins += 5;
+
+const yesterday = new Date();
+yesterday.setDate(yesterday.getDate() - 1);
+const yesterdayStr = yesterday.toISOString().split("T")[0];
+
+const yesterdaySubmission = await Submission.findOne({ 
+  userId, 
+  date: yesterdayStr, 
+  status: "completed" 
+});
+
+// Agar kal submit kiya tha → streak badhao, warna 1 se start
+user.streak = yesterdaySubmission ? user.streak + 1 : 1;
+
+    user.balance += user.dailyCommitment;
     await user.save();
 
     res.status(201).json({
       message: "Solution submitted successfully!",
       streak: user.streak,
-      coins: user.coins,
+       balance: user.balance,
       submission,
     });
   } catch (error) {

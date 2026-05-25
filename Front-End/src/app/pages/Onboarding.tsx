@@ -27,8 +27,8 @@ const orderRes = await fetch(`${import.meta.env.VITE_API_URL}/api/payment/create
        body: JSON.stringify({ 
   plan, 
   dailyCommitment: amount,
-  depositAmount: amount ? amount * 7 : 0,
-  totalAmount: amount ? amount * 7 : 0
+  depositAmount: amount ? amount * 30 : 0,
+  totalAmount: amount ? amount * 30 : 0
 })
       });
       const orderData = await orderRes.json();
@@ -211,10 +211,10 @@ const orderRes = await fetch(`${import.meta.env.VITE_API_URL}/api/payment/create
               </div>
               <div className="flex justify-between items-center text-[#7C3AED]">
                 <span className="font-medium">Total to Pay (Setup)</span>
-                <span className="font-bold text-2xl">₹{amount ? amount * 7 : 0}</span>
+                <span className="font-bold text-2xl">₹{amount ? amount * 30 : 0}</span>
               </div>
               <p className="text-xs text-zinc-500 mt-4 text-center">
-                * We collect 7 days of stake upfront for your initial commitment wallet.
+                * We collect 30 days of stake upfront for your initial commitment wallet.
               </p>
             </div>
 
@@ -233,7 +233,7 @@ const orderRes = await fetch(`${import.meta.env.VITE_API_URL}/api/payment/create
                 {loading ? (
                   <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
                 ) : (
-                  `Pay ₹${amount ? amount * 7 : 0}`
+                  `Pay ₹${amount ? amount * 30 : 0}`
                 )}
               </button>
             </div>
