@@ -83,13 +83,19 @@ const createChallenge = async (req, res) => {
     const { duration, stake } = req.body;
     const userId = req.user._id;
 
+    console.log("Create challenge request received:", { duration, stake, userId });
+
     // Enforce Pro Plan Gating
     const user = await User.findById(userId);
+    console.log("User details for challenge:", { name: user.name, plan: user.plan });
+    
     if (user.plan !== "pro") {
+      console.log("Create challenge rejected: user plan is not pro");
       return res.status(403).json({ message: "Only Pro users can create custom challenges." });
     }
 
     if (!duration || !stake) {
+      console.log("Create challenge rejected: duration or stake missing");
       return res.status(400).json({ message: "Duration and stake amount are required." });
     }
 
@@ -112,12 +118,15 @@ const createChallenge = async (req, res) => {
       status: "pending"
     });
 
+    console.log("Challenge created in DB:", challenge);
+
     res.status(201).json({
       message: "Challenge created successfully!",
       inviteCode: challenge.inviteCode,
       balance: user.balance
     });
   } catch (error) {
+    console.error("Error creating challenge:", error);
     res.status(500).json({ message: error.message });
   }
 };
