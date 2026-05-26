@@ -289,7 +289,7 @@ export function Dashboard() {
         <div className="absolute bottom-1/4 left-1/4 w-96 h-96 bg-emerald-500/10 rounded-full blur-[120px]" />
       </div>
 
-      <Navbar initials={initials} />
+      <Navbar initials={initials} plan={userData?.plan} />
 
       <main className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <StatsRow
