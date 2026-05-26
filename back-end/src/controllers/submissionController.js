@@ -6,8 +6,7 @@ const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
 const verifyScreenshot = async (base64Image) => {
   // Model version ko confirm karo
-  const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-
+const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash-latest" });
   // Prefix hatao
   const base64Data = base64Image.split(",")[1] || base64Image;
 

@@ -11,7 +11,7 @@ Streak: ${streak} days, Solved: ${totalSolved}, Missed: ${totalMissed}, Coins: $
 Respond with this exact JSON:
 {"placementReadiness":75,"riskLevel":"Medium","riskMessage":"Stay consistent this weekend","recommendedFocus":"Binary Search","consistencyMessage":"Good progress this week","strongestTopic":"Arrays","weakestTopic":"Dynamic Programming"}`;
 
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash-latest" });
     const result = await model.generateContent(prompt);
     const text = result.response.text();
     const clean = text.replace(/```json|```/g, "").trim();
