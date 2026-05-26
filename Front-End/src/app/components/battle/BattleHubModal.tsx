@@ -64,17 +64,20 @@ export function BattleHubModal({ isOpen, onClose, plan = "free" }: BattleHubModa
 
   const handleJoin = (e: React.FormEvent) => {
     e.preventDefault();
+    console.log("BattleHubModal: handleJoin called with code:", inviteCode);
     if (!inviteCode.trim()) return;
     onClose();
     navigate(`/join-challenge/${inviteCode.trim()}`);
   };
 
   const handleCreate = () => {
+    console.log("BattleHubModal: handleCreate called. Navigating to /create-challenge...");
     onClose();
     navigate("/create-challenge");
   };
 
   const handleUnlockPro = () => {
+    console.log("BattleHubModal: handleUnlockPro called. Navigating to /pricing...");
     onClose();
     navigate("/pricing");
   };
