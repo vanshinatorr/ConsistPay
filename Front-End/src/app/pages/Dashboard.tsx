@@ -91,8 +91,16 @@ export function Dashboard() {
         `${API}/api/submissions/calendar?month=${month}&year=${year}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
+      if (!res.ok) {
+        console.error("Calendar fetch failed:", res.status);
+        return;
+      }
       const data = await res.json();
-      setCalendarData(data);
+      if (Array.isArray(data)) {
+        setCalendarData(data);
+      } else {
+        console.error("Calendar data is not an array:", data);
+      }
     } catch (err) {
       console.error("Calendar fetch error:", err);
     }
@@ -224,7 +232,13 @@ export function Dashboard() {
   const dayLabels = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
 
   const calendarMap = new Map<string, "completed" | "missed">();
-  calendarData.forEach((item) => calendarMap.set(item.date.split("T")[0], item.status));
+  if (Array.isArray(calendarData)) {
+    calendarData.forEach((item) => {
+      if (item && item.date) {
+        calendarMap.set(item.date.split("T")[0], item.status);
+      }
+    });
+  }
 
   const buildMonthsGrid = () => {
     const today = new Date();
