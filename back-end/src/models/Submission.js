@@ -14,10 +14,10 @@ const submissionSchema = new mongoose.Schema(
     platform: {
       type: String,
       enum: ["LeetCode", "GFG", "Code360", "Unknown"],
-      default: "Unknown",
+      required: true, // Hum ise AI se nikaal rahe hain toh required hona chahiye
     },
     date: {
-      type: String,
+      type: String, // Format: YYYY-MM-DD
       required: true,
     },
     status: {
