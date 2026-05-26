@@ -46,24 +46,21 @@ interface CalendarDay {
 }
 
 export function Dashboard() {
-  const [solutionLink, setSolutionLink] = useState("");
+  // ✅ UPDATED: problemName + screenshot instead of solutionLink
+  const [problemName, setProblemName] = useState("");
+  const [screenshot, setScreenshot] = useState<File | null>(null);
+
   const [showJoinModal, setShowJoinModal] = useState(false);
   const [joinCode, setJoinCode] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [timeLeft, setTimeLeft] = useState({ h: 0, m: 0, s: 0 });
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null);
   const [calendarYear, setCalendarYear] = useState(new Date().getFullYear());
-
   const [userData, setUserData] = useState<UserData | null>(null);
   const [calendarData, setCalendarData] = useState<CalendarDay[]>([]);
   const [loading, setLoading] = useState(true);
   const [submitError, setSubmitError] = useState("");
-
-  const [aiInsights, setAiInsights] = useState<{
-    icon: any;
-    text: string;
-    color: string;
-  }[]>([]);
+  const [aiInsights, setAiInsights] = useState<{ icon: any; text: string; color: string }[]>([]);
   const [aiLoading, setAiLoading] = useState(false);
 
   const API = import.meta.env.VITE_API_URL;
@@ -105,17 +102,12 @@ export function Dashboard() {
     try {
       setAiLoading(true);
       if (!userData) {
-        setAiInsights([
-          { icon: AlertTriangle, text: "Complete a challenge to get AI insights", color: "text-zinc-400" },
-        ]);
+        setAiInsights([{ icon: AlertTriangle, text: "Complete a challenge to get AI insights", color: "text-zinc-400" }]);
         return;
       }
       const res = await fetch(`${API}/api/ai/insights`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
         body: JSON.stringify({
           streak: userData.streak,
           coins: userData.balance,
@@ -131,32 +123,14 @@ export function Dashboard() {
           text: data.riskMessage || "Stay consistent",
           color: data.riskLevel === "High" ? "text-red-400" : "text-yellow-400",
         },
-        {
-          icon: Target,
-          text: `Recommended Focus: ${data.recommendedFocus}`,
-          color: "text-violet-400",
-        },
-        {
-          icon: BarChart3,
-          text: data.consistencyMessage,
-          color: "text-emerald-400",
-        },
-        {
-          icon: Flame,
-          text: `Strongest Topic: ${data.strongestTopic}`,
-          color: "text-orange-400",
-        },
-        {
-          icon: TrendingDown,
-          text: `Weakest Topic: ${data.weakestTopic}`,
-          color: "text-red-400",
-        },
+        { icon: Target, text: `Recommended Focus: ${data.recommendedFocus}`, color: "text-violet-400" },
+        { icon: BarChart3, text: data.consistencyMessage, color: "text-emerald-400" },
+        { icon: Flame, text: `Strongest Topic: ${data.strongestTopic}`, color: "text-orange-400" },
+        { icon: TrendingDown, text: `Weakest Topic: ${data.weakestTopic}`, color: "text-red-400" },
       ]);
     } catch (err) {
       console.error("AI fetch error:", err);
-      setAiInsights([
-        { icon: AlertTriangle, text: "AI insights temporarily unavailable", color: "text-zinc-400" },
-      ]);
+      setAiInsights([{ icon: AlertTriangle, text: "AI insights temporarily unavailable", color: "text-zinc-400" }]);
     } finally {
       setAiLoading(false);
     }
@@ -176,9 +150,7 @@ export function Dashboard() {
   }, [calendarYear]);
 
   useEffect(() => {
-    if (userData && !loading) {
-      fetchAiInsights();
-    }
+    if (userData && !loading) fetchAiInsights();
   }, [userData]);
 
   useEffect(() => {
@@ -197,25 +169,36 @@ export function Dashboard() {
     return () => clearInterval(interval);
   }, [submitted]);
 
+  // ✅ UPDATED: screenshot base64 convert karke bhejo
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!solutionLink) return;
+    if (!problemName || !screenshot) return;
     setSubmitError("");
+
     try {
+      // Screenshot → base64
+      const base64 = await new Promise<string>((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve((reader.result as string).split(",")[1]);
+        reader.onerror = () => reject("File read failed");
+        reader.readAsDataURL(screenshot);
+      });
+
       const res = await fetch(`${API}/api/submissions/submit`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ link: solutionLink }),
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ problemName, screenshot: base64 }),
       });
+
       const data = await res.json();
       if (!res.ok) {
         setSubmitError(data.message || "Submission failed.");
         return;
       }
+
       setSubmitted(true);
+      setProblemName("");
+      setScreenshot(null);
       await fetchUserData();
       await fetchCalendar();
     } catch (err) {
@@ -228,7 +211,6 @@ export function Dashboard() {
   const missedDays = userData?.totalMissed ?? 0;
   const total = completedDays + missedDays;
   const consistencyScore = total > 0 ? Math.round((completedDays / total) * 100) : 0;
-  const balance = userData?.balance ?? 0;
   const dailyCommitment = userData?.dailyCommitment ?? 0;
   const graceCoins = userData?.graceCoins ?? 0;
   const monthlyBudget = dailyCommitment * 30;
@@ -238,14 +220,11 @@ export function Dashboard() {
     : "??";
 
   const todayLine = motivationalLines[new Date().getDate() % motivationalLines.length];
-
   const shortMonths = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
   const dayLabels = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
 
   const calendarMap = new Map<string, "completed" | "missed">();
-  calendarData.forEach((item) => {
-    calendarMap.set(item.date.split("T")[0], item.status);
-  });
+  calendarData.forEach((item) => calendarMap.set(item.date.split("T")[0], item.status));
 
   const buildMonthsGrid = () => {
     const today = new Date();
@@ -261,9 +240,7 @@ export function Dashboard() {
         const cellDate = new Date(calendarYear, m, d);
         const dateStr = cellDate.toISOString().split("T")[0];
         let status: "completed" | "missed" | "pending" = "pending";
-        if (cellDate < today) {
-          status = calendarMap.get(dateStr) ?? "missed";
-        }
+        if (cellDate < today) status = calendarMap.get(dateStr) ?? "missed";
         currentWeek.push({ status, date: cellDate });
         if (currentWeek.length === 7) { weeks.push(currentWeek); currentWeek = []; }
       }
@@ -288,7 +265,7 @@ export function Dashboard() {
 
   const faqs = [
     { q: "What is ConsistPay?", a: "A platform designed to build unshakable coding habits by putting small stakes on the line." },
-    { q: "How do you verify my submissions?", a: "Paste your daily problem-solving link. We support LeetCode, GeeksforGeeks, Code360, and GitHub commits." },
+    { q: "How do you verify my submissions?", a: "Upload your accepted submission screenshot. We support LeetCode, GFG, and Code360." },
     { q: "What happens if I miss a day?", a: "If you fail to submit by midnight, your daily commitment amount is deducted from your balance." },
     { q: "How do grace coins work?", a: "Grace coins protect your streak on days you forget to submit. Auto-consumed to save your streak." },
     { q: "Is the platform free to use?", a: "We offer a free tier with basic tracking. Upgrade to Pro for challenges and rewards." },
@@ -307,7 +284,6 @@ export function Dashboard() {
 
   return (
     <div className="min-h-screen text-white" style={{ backgroundColor: "#0D0D0F" }}>
-      {/* Background Gradient */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-0 right-1/4 w-96 h-96 bg-violet-500/10 rounded-full blur-[120px]" />
         <div className="absolute bottom-1/4 left-1/4 w-96 h-96 bg-emerald-500/10 rounded-full blur-[120px]" />
@@ -315,10 +291,8 @@ export function Dashboard() {
 
       <Navbar initials={initials} />
 
-      {/* MAIN CONTENT */}
       <main className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        
-        <StatsRow 
+        <StatsRow
           currentStreak={currentStreak}
           completedDays={completedDays}
           missedDays={missedDays}
@@ -326,18 +300,21 @@ export function Dashboard() {
         />
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
-          <TodaysChallenge 
+          {/* ✅ UPDATED props */}
+          <TodaysChallenge
             submitted={submitted}
             handleSubmit={handleSubmit}
-            solutionLink={solutionLink}
-            setSolutionLink={setSolutionLink}
+            problemName={problemName}
+            setProblemName={setProblemName}
+            screenshot={screenshot}
+            setScreenshot={setScreenshot}
             submitError={submitError}
             currentStreak={currentStreak}
             dailyCommitment={dailyCommitment}
             todayLine={todayLine}
             timeLeft={timeLeft}
           />
-          <WalletCard 
+          <WalletCard
             plan={userData?.plan}
             monthlyBudget={monthlyBudget}
             completedDays={completedDays}
@@ -347,7 +324,7 @@ export function Dashboard() {
           />
         </div>
 
-        <ConsistencyCalendar 
+        <ConsistencyCalendar
           calendarYear={calendarYear}
           setCalendarYear={setCalendarYear}
           dayLabels={dayLabels}
@@ -356,21 +333,21 @@ export function Dashboard() {
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-6">
           <RecentSolves recentSolves={recentSolves} />
-          <AiInsights 
+          <AiInsights
             consistencyScore={consistencyScore}
             aiLoading={aiLoading}
             aiInsights={aiInsights}
           />
         </div>
 
-        <JoinModal 
+        <JoinModal
           showJoinModal={showJoinModal}
           setShowJoinModal={setShowJoinModal}
           joinCode={joinCode}
           setJoinCode={setJoinCode}
         />
 
-        <Footer 
+        <Footer
           faqs={faqs}
           openFaqIndex={openFaqIndex}
           setOpenFaqIndex={setOpenFaqIndex}

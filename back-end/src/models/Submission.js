@@ -7,9 +7,14 @@ const submissionSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
-    link: {
+    problemName: {
       type: String,
       required: true,
+    },
+    platform: {
+      type: String,
+      enum: ["LeetCode", "GFG", "Code360", "Unknown"],
+      default: "Unknown",
     },
     date: {
       type: String,

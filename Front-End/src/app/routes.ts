@@ -1,4 +1,5 @@
 import { createBrowserRouter } from "react-router-dom";
+
 import { Landing } from "./pages/Landing";
 import { Login } from "./pages/Login";
 import { Signup } from "./pages/Signup";
@@ -12,23 +13,35 @@ import { Profile } from "./pages/Profile";
 import { Notifications } from "./pages/Notifications";
 import { Settings } from "./pages/Settings";
 import { Onboarding } from "./pages/Onboarding";
-import { Payment } from "./pages/Payment"; // 👈 add
+import { Payment } from "./pages/Payment";
+import FaqPage from "./pages/FaqPage"; // 👈 add this
 
 export const router = createBrowserRouter([
   { path: "/", Component: Landing },
+
   { path: "/login", Component: Login },
   { path: "/signup", Component: Signup },
+
   { path: "/onboarding", Component: Onboarding },
-  { path: "/payment", Component: Payment }, // 👈 add
+  { path: "/payment", Component: Payment },
+
   { path: "/dashboard", Component: Dashboard },
+
   { path: "/pricing", Component: Pricing },
+
+  { path: "/faq", Component: FaqPage }, // 👈 add this
+
   { path: "/create-challenge", Component: CreateChallenge },
+
   { path: "/join-challenge/:code", Component: JoinChallenge },
+
   { path: "/leaderboard", Component: Leaderboard },
+
   { path: "/profile", Component: Profile },
+
   { path: "/notifications", Component: Notifications },
+
   { path: "/settings", Component: Settings },
+
   { path: "*", Component: NotFound },
 ]);
-
-
