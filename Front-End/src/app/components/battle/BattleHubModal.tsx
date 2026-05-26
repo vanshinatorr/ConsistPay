@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { 
   X, Lock, Trophy, Users, ShieldAlert, Sparkles, 
@@ -17,7 +17,48 @@ export function BattleHubModal({ isOpen, onClose, plan = "free" }: BattleHubModa
   const navigate = useNavigate();
   const [inviteCode, setInviteCode] = useState("");
   const [activeTab, setActiveTab] = useState<TabType>("actions");
+  const [activeChallenges, setActiveChallenges] = useState<any[]>([]);
+  const [historyChallenges, setHistoryChallenges] = useState<any[]>([]);
+  const [loadingStats, setLoadingStats] = useState(false);
+  const [error, setError] = useState("");
+  
   const isPro = plan.toLowerCase() === "pro";
+  const API_URL = import.meta.env.VITE_API_URL;
+  const token = localStorage.getItem("token") || "";
+
+  useEffect(() => {
+    if (!isOpen || !isPro) return;
+
+    const fetchBattles = async () => {
+      setLoadingStats(true);
+      setError("");
+      try {
+        const [activeRes, historyRes] = await Promise.all([
+          fetch(`${API_URL}/api/challenges/active`, {
+            headers: { Authorization: `Bearer ${token}` }
+          }),
+          fetch(`${API_URL}/api/challenges/history`, {
+            headers: { Authorization: `Bearer ${token}` }
+          })
+        ]);
+
+        if (activeRes.ok && historyRes.ok) {
+          const activeData = await activeRes.json();
+          const historyData = await historyRes.json();
+          setActiveChallenges(activeData);
+          setHistoryChallenges(historyData);
+        } else {
+          setError("Failed to load battle statistics.");
+        }
+      } catch (err) {
+        setError("Network error. Could not fetch battles.");
+      } finally {
+        setLoadingStats(false);
+      }
+    };
+
+    fetchBattles();
+  }, [isOpen, isPro]);
 
   if (!isOpen) return null;
 
@@ -38,8 +79,13 @@ export function BattleHubModal({ isOpen, onClose, plan = "free" }: BattleHubModa
     navigate("/pricing");
   };
 
+  // Calculate dynamic stats
+  const totalWins = historyChallenges.filter(c => c.outcome === "WON").length;
+  const winRate = historyChallenges.length > 0 ? Math.round((totalWins / historyChallenges.length) * 100) : 0;
+  const totalStakesEarned = historyChallenges.reduce((sum, c) => sum + (c.payoutChange || 0), 0);
+
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-in fade-in duration-200">
       {/* Backdrop */}
       <div 
         className="absolute inset-0 bg-[#060608]/70 backdrop-blur-md transition-opacity duration-300"
@@ -74,7 +120,7 @@ export function BattleHubModal({ isOpen, onClose, plan = "free" }: BattleHubModa
           </button>
         </div>
 
-        {/* Main Body (Scrollable if needed) */}
+        {/* Main Body */}
         <div className="p-6 overflow-y-auto relative z-10 space-y-6 flex-1 custom-scrollbar">
           
           {/* ======================================================== */}
@@ -149,7 +195,7 @@ export function BattleHubModal({ isOpen, onClose, plan = "free" }: BattleHubModa
 
               </div>
 
-              {/* Locked Preview / Future Scalability teaser */}
+              {/* Locked Preview */}
               <div className="border border-white/5 bg-white/2 rounded-xl p-4 relative overflow-hidden">
                 <div className="absolute inset-0 bg-[#0D0D10]/40 backdrop-blur-[2px] flex items-center justify-center z-10">
                   <div className="text-center px-4 py-2 bg-zinc-950/80 border border-white/10 rounded-lg flex items-center gap-2">
@@ -287,77 +333,85 @@ export function BattleHubModal({ isOpen, onClose, plan = "free" }: BattleHubModa
 
                 {/* --- SUB-TAB 2: ACTIVE BATTLES --- */}
                 {activeTab === "active" && (
-                  <div className="space-y-3">
-                    
-                    {/* Battle Card 1 */}
-                    <div className="relative bg-white/3 border border-white/5 rounded-xl p-4 flex flex-col sm:flex-row justify-between gap-4 items-start sm:items-center">
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-gradient-to-br from-violet-400 to-purple-600 rounded-full flex items-center justify-center font-bold text-sm shrink-0">
-                          AK
-                        </div>
-                        <div>
-                          <div className="flex items-center gap-2">
-                            <span className="font-bold text-sm">vs Alex Kumar</span>
-                            <span className="text-[10px] bg-emerald-500/20 border border-emerald-500/30 text-emerald-300 px-2 py-0.5 rounded-full">Active</span>
-                          </div>
-                          <div className="text-zinc-400 text-xs mt-1">
-                            Your Streak: 🔥 5 days • Alex: 🔥 4 days
-                          </div>
-                          <div className="w-32 h-1.5 bg-zinc-800 rounded-full mt-2 overflow-hidden">
-                            <div className="w-[33%] h-full bg-violet-500 rounded-full"></div>
-                          </div>
-                        </div>
+                  <div className="space-y-3 animate-in fade-in duration-200">
+                    {loadingStats && (
+                      <div className="text-center py-8">
+                        <div className="w-8 h-8 border-2 border-violet-500 border-t-transparent rounded-full animate-spin mx-auto mb-2" />
+                        <p className="text-zinc-500 text-xs">Loading active battles...</p>
                       </div>
-                      <div className="text-left sm:text-right shrink-0">
-                        <div className="text-xs text-zinc-400">Day 5 of 15</div>
-                        <div className="text-xs font-bold text-yellow-400 mt-1">Stakes: ₹1,000 Pool</div>
-                      </div>
-                    </div>
+                    )}
 
-                    {/* Battle Card 2 */}
-                    <div className="relative bg-white/3 border border-white/5 rounded-xl p-4 flex flex-col sm:flex-row justify-between gap-4 items-start sm:items-center">
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center font-bold text-sm shrink-0">
-                          SC
-                        </div>
-                        <div>
-                          <div className="flex items-center gap-2">
-                            <span className="font-bold text-sm">vs Sarah Chen</span>
-                            <span className="text-[10px] bg-emerald-500/20 border border-emerald-500/30 text-emerald-300 px-2 py-0.5 rounded-full">Active</span>
-                          </div>
-                          <div className="text-zinc-400 text-xs mt-1">
-                            Your Streak: 🔥 12 days • Sarah: ❌ Missed (Saved by Grace)
-                          </div>
-                          <div className="w-32 h-1.5 bg-zinc-800 rounded-full mt-2 overflow-hidden">
-                            <div className="w-[40%] h-full bg-violet-500 rounded-full"></div>
-                          </div>
-                        </div>
+                    {!loadingStats && error && (
+                      <p className="text-red-400 text-xs text-center">{error}</p>
+                    )}
+
+                    {!loadingStats && !error && activeChallenges.length === 0 && (
+                      <div className="text-center py-8 bg-white/2 border border-white/5 rounded-xl">
+                        <p className="text-zinc-500 text-xs">No active consistency battles.</p>
+                        <button
+                          onClick={() => setActiveTab("actions")}
+                          className="mt-3 text-xs text-violet-400 hover:underline"
+                        >
+                          Start one now →
+                        </button>
                       </div>
-                      <div className="text-left sm:text-right shrink-0">
-                        <div className="text-xs text-zinc-400">Day 12 of 30</div>
-                        <div className="text-xs font-bold text-yellow-400 mt-1">Stakes: ₹2,000 Pool</div>
-                      </div>
-                    </div>
+                    )}
+
+                    {!loadingStats && !error && activeChallenges.map((ch) => {
+                      const opponent = ch.userRole === "creator" ? ch.opponent : ch.creator;
+                      const userScore = ch.userRole === "creator" ? ch.creator.score : ch.opponent.score;
+                      const oppScore = ch.userRole === "creator" ? ch.opponent.score : ch.creator.score;
+                      const progressPercentage = Math.round((ch.currentDay / ch.duration) * 100);
+                      const oppAvatar = opponent.name ? opponent.name.split(" ").map((n: string) => n[0]).join("").toUpperCase().slice(0, 2) : "??";
+
+                      return (
+                        <div key={ch.id} className="relative bg-white/3 border border-white/5 rounded-xl p-4 flex flex-col sm:flex-row justify-between gap-4 items-start sm:items-center">
+                          <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 bg-gradient-to-br from-violet-400 to-purple-600 rounded-full flex items-center justify-center font-bold text-sm shrink-0">
+                              {oppAvatar}
+                            </div>
+                            <div>
+                              <div className="flex items-center gap-2">
+                                <span className="font-bold text-sm">vs {opponent.name}</span>
+                                <span className="text-[10px] bg-emerald-500/20 border border-emerald-500/30 text-emerald-300 px-2 py-0.5 rounded-full">Active</span>
+                              </div>
+                              <div className="text-zinc-400 text-xs mt-1">
+                                Your Score: {userScore} / {ch.currentDay} days • Opponent: {oppScore} / {ch.currentDay} days
+                              </div>
+                              <div className="w-32 h-1.5 bg-zinc-800 rounded-full mt-2 overflow-hidden">
+                                <div className="h-full bg-violet-500 rounded-full" style={{ width: `${progressPercentage}%` }}></div>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="text-left sm:text-right shrink-0">
+                            <div className="text-xs text-zinc-400">Day {ch.currentDay} of {ch.duration}</div>
+                            <div className="text-xs font-bold text-yellow-400 mt-1">Stakes: ₹{ch.pool} Pool</div>
+                          </div>
+                        </div>
+                      );
+                    })}
 
                   </div>
                 )}
 
                 {/* --- SUB-TAB 3: BATTLE STATS --- */}
                 {activeTab === "stats" && (
-                  <div className="space-y-4">
+                  <div className="space-y-4 animate-in fade-in duration-200">
                     
                     {/* Stats Blocks */}
                     <div className="grid grid-cols-3 gap-3">
                       <div className="bg-white/3 border border-white/5 rounded-xl p-3 text-center">
-                        <div className="text-xl font-bold text-emerald-400">75%</div>
+                        <div className="text-xl font-bold text-emerald-400">{winRate}%</div>
                         <div className="text-[10px] text-zinc-500 mt-1 uppercase tracking-wider font-semibold">Win Rate</div>
                       </div>
                       <div className="bg-white/3 border border-white/5 rounded-xl p-3 text-center">
-                        <div className="text-xl font-bold text-yellow-400">₹3,500</div>
-                        <div className="text-[10px] text-zinc-500 mt-1 uppercase tracking-wider font-semibold">Stakes Won</div>
+                        <div className={`text-xl font-bold ${totalStakesEarned >= 0 ? "text-emerald-400" : "text-red-400"}`}>
+                          {totalStakesEarned >= 0 ? "+" : ""}₹{totalStakesEarned}
+                        </div>
+                        <div className="text-[10px] text-zinc-500 mt-1 uppercase tracking-wider font-semibold">Stakes Earned</div>
                       </div>
                       <div className="bg-white/3 border border-white/5 rounded-xl p-3 text-center">
-                        <div className="text-xl font-bold text-violet-400">4</div>
+                        <div className="text-xl font-bold text-violet-400">{historyChallenges.length + activeChallenges.length}</div>
                         <div className="text-[10px] text-zinc-500 mt-1 uppercase tracking-wider font-semibold">Total Battles</div>
                       </div>
                     </div>
@@ -366,21 +420,33 @@ export function BattleHubModal({ isOpen, onClose, plan = "free" }: BattleHubModa
                     <div className="space-y-2">
                       <p className="text-zinc-500 text-[10px] font-semibold uppercase tracking-wider">History</p>
                       
-                      <div className="bg-white/2 border border-white/5 rounded-lg p-3 flex justify-between items-center text-xs">
-                        <div className="flex items-center gap-2">
-                          <span className="text-emerald-400 font-bold">🏆 WON</span>
-                          <span className="text-zinc-300">vs Jordan Smith (15 Days)</span>
+                      {loadingStats && (
+                        <div className="text-center py-4">
+                          <div className="w-6 h-6 border-2 border-violet-500 border-t-transparent rounded-full animate-spin mx-auto" />
                         </div>
-                        <span className="text-emerald-400 font-bold">+₹1,000</span>
-                      </div>
+                      )}
 
-                      <div className="bg-white/2 border border-white/5 rounded-lg p-3 flex justify-between items-center text-xs">
-                        <div className="flex items-center gap-2">
-                          <span className="text-red-400 font-bold">❌ LOST</span>
-                          <span className="text-zinc-300">vs Priya Patel (7 Days)</span>
+                      {!loadingStats && error && (
+                        <p className="text-red-400 text-xs text-center">{error}</p>
+                      )}
+
+                      {!loadingStats && !error && historyChallenges.length === 0 && (
+                        <p className="text-zinc-500 text-xs text-center py-4 bg-white/2 rounded-xl">No completed battles in history.</p>
+                      )}
+
+                      {!loadingStats && !error && historyChallenges.map((ch) => (
+                        <div key={ch.id} className="bg-white/2 border border-white/5 rounded-lg p-3 flex justify-between items-center text-xs">
+                          <div className="flex items-center gap-2">
+                            <span className={`font-bold ${ch.outcome === "WON" ? "text-emerald-400" : ch.outcome === "LOST" ? "text-red-400" : "text-zinc-400"}`}>
+                              {ch.outcome}
+                            </span>
+                            <span className="text-zinc-300">vs {ch.opponentName} ({ch.duration} Days)</span>
+                          </div>
+                          <span className={`font-bold ${ch.payoutChange > 0 ? "text-emerald-400" : ch.payoutChange < 0 ? "text-red-400" : "text-zinc-400"}`}>
+                            {ch.payoutChange > 0 ? "+" : ""}₹{ch.payoutChange}
+                          </span>
                         </div>
-                        <span className="text-red-400 font-bold">-₹500</span>
-                      </div>
+                      ))}
 
                     </div>
 

@@ -40,6 +40,9 @@ app.use("/api/submissions", submissionRoutes);
 const userRoutes = require("./routes/users");
 app.use("/api/users", userRoutes);
 
+const challengeRoutes = require("./routes/challenges");
+app.use("/api/challenges", challengeRoutes);
+
 const aiRoutes = require("./routes/ai");
 app.use("/api/ai", aiRoutes);
 

@@ -1,6 +1,6 @@
 import { Code2, ArrowLeft, Shield, Zap, CheckCircle, Users } from "lucide-react";
 import { Link, useParams, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 type Screen = "preview" | "joined";
 
@@ -8,22 +8,108 @@ export function JoinChallenge() {
   const { code } = useParams();
   const navigate = useNavigate();
   const [screen, setScreen] = useState<Screen>("preview");
+  const [challengeData, setChallengeData] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [joinLoading, setJoinLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [joinedData, setJoinedData] = useState<any>(null);
 
-  // Mock challenge data based on code
-  const challengeData = {
-    code: code || "CP-X7K2M",
-    createdBy: "Alex Kumar",
-    createdByAvatar: "AK",
-    duration: 15,
-    stake: 500,
-    entryFee: 19,
-    startDate: "March 23, 2026",
+  const API_URL = import.meta.env.VITE_API_URL;
+  const token = localStorage.getItem("token") || "";
+
+  useEffect(() => {
+    const fetchInviteDetails = async () => {
+      if (!code) {
+        setError("Invite code is missing.");
+        setLoading(false);
+        return;
+      }
+      try {
+        const res = await fetch(`${API_URL}/api/challenges/invite/${code}`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          setError(data.message || "Failed to fetch invite details.");
+          return;
+        }
+        setChallengeData(data);
+      } catch (err) {
+        setError("Network error. Please try again.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchInviteDetails();
+  }, [code]);
+
+  const handleAccept = async () => {
+    if (!code) return;
+    setError("");
+    setJoinLoading(true);
+
+    try {
+      const res = await fetch(`${API_URL}/api/challenges/join/${code}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        }
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        setError(data.message || "Failed to join challenge.");
+        return;
+      }
+
+      setJoinedData(data);
+      setScreen("joined");
+    } catch (err) {
+      setError("Network error. Please try again.");
+    } finally {
+      setJoinLoading(false);
+    }
   };
 
-  const total = challengeData.stake + challengeData.entryFee;
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-[#0D0D0F] flex items-center justify-center text-white animate-pulse">
+        <div className="text-center">
+          <div className="w-12 h-12 border-2 border-violet-500 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-zinc-400 text-sm">Fetching challenge details...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error && screen === "preview") {
+    return (
+      <div className="min-h-screen bg-[#0D0D0F] flex items-center justify-center text-white p-4">
+        <div className="max-w-md w-full bg-white/5 border border-white/10 rounded-2xl p-6 text-center space-y-4">
+          <div className="text-3xl">⚠️</div>
+          <h2 className="text-xl font-bold text-red-400 font-sans">Failed to Load Invite</h2>
+          <p className="text-zinc-400 text-sm leading-relaxed">{error}</p>
+          <Link
+            to="/dashboard"
+            className="block w-full py-3 rounded-xl font-bold text-center bg-violet-600 hover:bg-violet-500 transition-colors text-sm"
+          >
+            Go to Dashboard
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+  const creatorAvatar = challengeData?.createdBy
+    ? challengeData.createdBy.split(" ").map((n: string) => n[0]).join("").toUpperCase().slice(0, 2)
+    : "??";
+
+  const total = challengeData ? challengeData.stake + challengeData.entryFee : 0;
 
   return (
-    <div className="min-h-screen text-white" style={{ backgroundColor: "#0D0D0F" }}>
+    <div className="min-h-screen text-white animate-in fade-in duration-200" style={{ backgroundColor: "#0D0D0F" }}>
       {/* Background */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-0 right-1/4 w-96 h-96 bg-violet-500/10 rounded-full blur-[120px]" />
@@ -88,11 +174,11 @@ export function JoinChallenge() {
                 <p className="text-zinc-400 text-sm mb-4 text-center">Challenge created by</p>
                 <div className="flex items-center justify-center gap-4">
                   <div className="w-14 h-14 bg-gradient-to-br from-violet-400 to-purple-600 rounded-full flex items-center justify-center font-bold text-lg">
-                    {challengeData.createdByAvatar}
+                    {creatorAvatar}
                   </div>
                   <div>
                     <div className="text-xl font-bold">{challengeData.createdBy}</div>
-                    <div className="text-zinc-400 text-sm">🔥 134 day streak</div>
+                    <div className="text-zinc-400 text-sm">🔥 {challengeData.creatorStreak ?? 0} day streak</div>
                   </div>
                 </div>
               </div>
@@ -106,7 +192,7 @@ export function JoinChallenge() {
                 <div className="space-y-4">
                   {[
                     { label: "Duration", value: `${challengeData.duration} days` },
-                    { label: "Start Date", value: challengeData.startDate },
+                    { label: "Start Date", value: "Upon Acceptance (Starts Today)" },
                     { label: "Stake per person", value: `₹${challengeData.stake}` },
                     { label: "Entry fee", value: `₹${challengeData.entryFee}` },
                     { label: "You pay now", value: `₹${total}`, highlight: "emerald" },
@@ -163,6 +249,10 @@ export function JoinChallenge() {
               ))}
             </div>
 
+            {error && (
+              <p className="text-sm text-red-400 text-center font-medium">{error}</p>
+            )}
+
             {/* CTAs */}
             <div className="flex gap-3">
               <Link
@@ -172,10 +262,11 @@ export function JoinChallenge() {
                 Decline
               </Link>
               <button
-                onClick={() => setScreen("joined")}
-                className="flex-1 py-4 rounded-xl font-bold bg-gradient-to-r from-violet-500 to-purple-600 hover:from-violet-400 hover:to-purple-500 shadow-lg shadow-violet-500/30 transition-all hover:-translate-y-0.5 text-sm"
+                disabled={joinLoading}
+                onClick={handleAccept}
+                className="flex-1 py-4 rounded-xl font-bold bg-gradient-to-r from-violet-500 to-purple-600 hover:from-violet-400 hover:to-purple-500 shadow-lg shadow-violet-500/30 transition-all hover:-translate-y-0.5 text-sm disabled:opacity-50"
               >
-                Accept & Pay ₹{total}
+                {joinLoading ? "Joining..." : `Accept & Pay ₹${total}`}
               </button>
             </div>
           </div>
@@ -218,10 +309,10 @@ export function JoinChallenge() {
                   {/* Opponent */}
                   <div className="text-center flex-1">
                     <div className="w-14 h-14 bg-gradient-to-br from-violet-400 to-purple-600 rounded-full flex items-center justify-center font-bold text-lg mx-auto mb-2">
-                      {challengeData.createdByAvatar}
+                      {creatorAvatar}
                     </div>
                     <div className="font-bold">{challengeData.createdBy}</div>
-                    <div className="text-xs text-zinc-400">🔥 134 day streak</div>
+                    <div className="text-xs text-zinc-400">🔥 {challengeData.creatorStreak ?? 0} day streak</div>
                   </div>
                 </div>
               </div>

@@ -9,9 +9,13 @@ export function CreateChallenge() {
   const [selectedDuration, setSelectedDuration] = useState<7 | 15 | 30 | null>(null);
   const [stakeAmount, setStakeAmount] = useState("");
   const [copied, setCopied] = useState(false);
+  const [generatedInviteCode, setGeneratedInviteCode] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const ENTRY_FEE = 19;
-  const inviteCode = "CP-X7K2M";
+  const API_URL = import.meta.env.VITE_API_URL;
+  const token = localStorage.getItem("token") || "";
 
   const stake = parseInt(stakeAmount) || 0;
   const total = stake + ENTRY_FEE;
@@ -25,9 +29,43 @@ export function CreateChallenge() {
   const isSetupValid = selectedDuration && stake >= 100 && stake <= 1000;
 
   const handleCopy = () => {
-    navigator.clipboard.writeText(inviteCode);
+    navigator.clipboard.writeText(generatedInviteCode || "CP-X7K2M");
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
+  };
+
+  const handleCreateChallenge = async () => {
+    if (!selectedDuration || !stakeAmount) return;
+    setError("");
+    setLoading(true);
+
+    try {
+      const res = await fetch(`${API_URL}/api/challenges/create`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          duration: selectedDuration,
+          stake: stake
+        })
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        setError(data.message || "Failed to create challenge.");
+        setLoading(false);
+        return;
+      }
+
+      setGeneratedInviteCode(data.inviteCode);
+      setScreen("generated");
+    } catch (err) {
+      setError("Network error. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -263,18 +301,26 @@ export function CreateChallenge() {
               ))}
             </div>
 
+            {error && (
+              <p className="text-sm text-red-400 text-center font-medium">{error}</p>
+            )}
+
             <div className="flex gap-3">
               <button
-                onClick={() => setScreen("setup")}
+                onClick={() => {
+                  setError("");
+                  setScreen("setup");
+                }}
                 className="flex-1 py-4 rounded-xl font-semibold bg-white/5 border border-white/10 hover:bg-white/10 transition-all"
               >
                 ← Back
               </button>
               <button
-                onClick={() => setScreen("generated")}
-                className="flex-2 w-full py-4 rounded-xl font-bold bg-gradient-to-r from-violet-500 to-purple-600 hover:from-violet-400 hover:to-purple-500 shadow-lg shadow-violet-500/30 transition-all hover:-translate-y-0.5"
+                disabled={loading}
+                onClick={handleCreateChallenge}
+                className="flex-2 w-full py-4 rounded-xl font-bold bg-gradient-to-r from-violet-500 to-purple-600 hover:from-violet-400 hover:to-purple-500 shadow-lg shadow-violet-500/30 transition-all hover:-translate-y-0.5 disabled:opacity-50"
               >
-                Pay ₹{total} & Create
+                {loading ? "Processing..." : `Pay ₹${total} & Create`}
               </button>
             </div>
           </div>
@@ -297,8 +343,8 @@ export function CreateChallenge() {
               <div className="absolute inset-0 bg-gradient-to-br from-violet-500/20 to-emerald-500/20 rounded-2xl blur-xl opacity-70" />
               <div className="relative bg-white/5 backdrop-blur-xl border border-violet-500/30 rounded-2xl p-8 text-center">
                 <p className="text-zinc-400 text-sm mb-3">Your Invite Code</p>
-                <div className="text-5xl font-black tracking-widest text-white mb-6 font-mono">
-                  {inviteCode}
+                <div className="text-5xl font-black tracking-widest text-white mb-6 font-mono select-all">
+                  {generatedInviteCode}
                 </div>
 
                 <div className="flex gap-3 justify-center">
