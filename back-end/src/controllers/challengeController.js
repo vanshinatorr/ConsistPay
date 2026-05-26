@@ -101,15 +101,6 @@ const createChallenge = async (req, res) => {
     const entryFee = 19;
     const totalCost = stakeVal + entryFee;
 
-    // Check Balance
-    if (user.balance < totalCost) {
-      return res.status(400).json({ message: `Insufficient balance in wallet. You need ₹${totalCost} to lock stakes.` });
-    }
-
-    // Deduct Balance
-    user.balance -= totalCost;
-    await user.save();
-
     const inviteCode = await generateInviteCode();
 
     const challenge = await Challenge.create({
@@ -174,15 +165,6 @@ const joinChallenge = async (req, res) => {
 
     const totalCost = challenge.stake + challenge.entryFee;
     const user = await User.findById(userId);
-
-    // Check Balance
-    if (user.balance < totalCost) {
-      return res.status(400).json({ message: `Insufficient balance in wallet. You need ₹${totalCost} to join.` });
-    }
-
-    // Deduct Balance
-    user.balance -= totalCost;
-    await user.save();
 
     // Start Challenge Dates
     const startDate = new Date();
