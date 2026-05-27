@@ -285,141 +285,36 @@ export default function FaqPage() {
         })}
 
         {/* STILL NEED HELP */}
-        <div>
-          <div className="rounded-3xl border border-white/[0.08] bg-gradient-to-b from-white/[0.04] to-white/[0.01] p-8 sm:p-10 relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-64 h-64 bg-violet-500/5 rounded-full blur-3xl pointer-events-none" />
+        <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-white/[0.02] p-8 sm:p-12 text-center flex flex-col items-center">
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-md h-full bg-violet-500/10 blur-[100px] pointer-events-none" />
+          
+          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-violet-500/20 to-fuchsia-500/20 border border-violet-500/20 flex items-center justify-center mb-6 relative z-10">
+            <MessageCircle className="w-8 h-8 text-violet-400" />
+          </div>
 
-            <div className="relative">
-              {/* Header */}
-              <div className="max-w-2xl mb-10">
-                <div className="flex items-center gap-4 mb-5">
-                  <div className="w-12 h-12 rounded-2xl bg-violet-500/10 border border-violet-500/20 flex items-center justify-center">
-                    <MessageCircle className="w-5 h-5 text-violet-400" />
-                  </div>
+          <h3 className="text-3xl font-bold text-white mb-4 relative z-10">
+            Still have questions?
+          </h3>
 
-                  <div>
-                    <h3 className="text-2xl font-bold text-white">
-                      Still Need Help?
-                    </h3>
+          <p className="text-zinc-400 max-w-lg mx-auto mb-8 relative z-10 text-lg leading-relaxed">
+            Can't find the answer you're looking for? Reach out to our founders directly via WhatsApp or Email. We usually reply within a few hours.
+          </p>
 
-                    <p className="text-sm text-zinc-500 mt-1">
-                      Questions about support, streaks, battles, subscriptions,
-                      or platform issues.
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Grid */}
-              <div className="grid lg:grid-cols-2 gap-5">
-                {/* Support Card */}
-                <div className="rounded-2xl border border-white/[0.08] bg-white/[0.02] p-6">
-                  <div className="flex items-center gap-3 mb-6">
-                    <div className="w-11 h-11 rounded-xl bg-violet-500/10 flex items-center justify-center">
-                      <MessageCircle className="w-5 h-5 text-violet-400" />
-                    </div>
-
-                    <div>
-                      <p className="text-base font-semibold text-white">
-                        Support & Assistance
-                      </p>
-
-                      <p className="text-sm text-zinc-500">
-                        Usually replies within 24 hours
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="space-y-4">
-                    <div className="rounded-xl border border-white/[0.06] bg-black/20 px-4 py-3">
-                      <p className="text-xs uppercase tracking-[0.15em] text-zinc-500 mb-1">
-                        Email Support
-                      </p>
-
-                      <p className="text-sm text-white font-medium">
-                        support@consistpay.com
-                      </p>
-                    </div>
-
-                    <div className="rounded-xl border border-white/[0.06] bg-black/20 px-4 py-3">
-                      <p className="text-xs uppercase tracking-[0.15em] text-zinc-500 mb-1">
-                        Platform Focus
-                      </p>
-
-                      <p className="text-sm text-zinc-300 leading-relaxed">
-                        Accountability systems, coding consistency, AI proof
-                        verification, and competitive streak tracking.
-                      </p>
-                    </div>
-
-                    <button className="w-full h-12 rounded-xl bg-white text-black font-semibold text-sm hover:bg-zinc-200 transition-all duration-300">
-                      Contact Support
-                    </button>
-                  </div>
-                </div>
-
-                {/* About */}
-                <div className="rounded-2xl border border-white/[0.08] bg-white/[0.02] p-6">
-                  <div className="flex items-center gap-3 mb-6">
-                    <div className="w-11 h-11 rounded-xl bg-white/[0.06] flex items-center justify-center">
-                      <Sparkles className="w-5 h-5 text-white" />
-                    </div>
-
-                    <div>
-                      <p className="text-base font-semibold text-white">
-                        About ConsistPay
-                      </p>
-
-                      <p className="text-sm text-zinc-500">
-                        Built for serious consistency
-                      </p>
-                    </div>
-                  </div>
-
-                  <p className="text-sm leading-7 text-zinc-400 mb-6">
-                    ConsistPay helps developers build long-term coding
-                    consistency using accountability systems, proof-based
-                    tracking, behavioral commitment, and competitive motivation.
-                  </p>
-
-                  <div className="grid grid-cols-2 gap-3 mb-6">
-                    <div className="rounded-xl border border-white/[0.06] bg-black/20 p-4">
-                      <p className="text-xl font-bold text-white mb-1">
-                        AI
-                      </p>
-
-                      <p className="text-xs text-zinc-500">
-                        Proof verification
-                      </p>
-                    </div>
-
-                    <div className="rounded-xl border border-white/[0.06] bg-black/20 p-4">
-                      <p className="text-xl font-bold text-white mb-1">
-                        Daily
-                      </p>
-
-                      <p className="text-xs text-zinc-500">
-                        Consistency tracking
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="pt-4 border-t border-white/[0.06]">
-                    <p className="text-xs text-zinc-600">
-                      Built by Vansh Vijay & Prateek Patidar
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Bottom Note */}
-              <div className="mt-8 pt-6 border-t border-white/[0.06]">
-                <p className="text-sm text-zinc-500 text-center leading-relaxed max-w-2xl mx-auto">
-                  ConsistPay continuously evolves using developer feedback,
-                  accountability psychology, and real user behavior insights.
-                </p>
-              </div>
-            </div>
+          <div className="flex flex-col sm:flex-row items-center gap-4 relative z-10 w-full sm:w-auto">
+            <a 
+              href="mailto:vanshvijay9784@gmail.com" 
+              className="px-8 py-4 rounded-xl bg-white text-black font-semibold hover:bg-zinc-200 transition-colors duration-300 w-full sm:w-auto"
+            >
+              Email Support
+            </a>
+            <a 
+              href="https://wa.me/918529975095" 
+              target="_blank" 
+              rel="noreferrer"
+              className="px-8 py-4 rounded-xl bg-white/[0.05] border border-white/10 text-white font-semibold hover:bg-white/[0.1] hover:border-white/20 transition-all duration-300 w-full sm:w-auto"
+            >
+              WhatsApp Us
+            </a>
           </div>
         </div>
       </div>

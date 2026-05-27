@@ -15,7 +15,7 @@ export function BattleHubModal({ isOpen, onClose, plan = "free" }: BattleHubModa
   const navigate = useNavigate();
   const [inviteCode, setInviteCode] = useState("");
   
-  const isPro = plan.toLowerCase() === "pro";
+  const isPro = plan?.toLowerCase() === "pro";
 
   useEffect(() => {
     if (isOpen) {

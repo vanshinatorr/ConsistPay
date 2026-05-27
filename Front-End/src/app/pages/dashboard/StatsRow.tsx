@@ -5,6 +5,7 @@ interface StatsRowProps {
   completedDays: number;
   missedDays: number;
   consistencyScore: number;
+  onboardingComplete?: boolean;
 }
 
 export function StatsRow({
@@ -12,6 +13,7 @@ export function StatsRow({
   completedDays,
   missedDays,
   consistencyScore,
+  onboardingComplete = true,
 }: StatsRowProps) {
   return (
     <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
@@ -26,7 +28,7 @@ export function StatsRow({
           </div>
 
           <div className="text-3xl font-bold mb-1">
-            {currentStreak}
+            {onboardingComplete ? currentStreak : "-"}
           </div>
 
           <div className="text-sm text-zinc-300">
@@ -50,7 +52,7 @@ export function StatsRow({
           </div>
 
           <div className="text-3xl font-bold mb-1">
-            {completedDays}
+            {onboardingComplete ? completedDays : "-"}
           </div>
 
           <div className="text-sm text-zinc-300">
@@ -73,7 +75,7 @@ export function StatsRow({
           </div>
 
           <div className="text-3xl font-bold mb-1">
-            {missedDays}
+            {onboardingComplete ? missedDays : "-"}
           </div>
 
           <div className="text-sm text-zinc-300">
@@ -97,7 +99,7 @@ export function StatsRow({
           </div>
 
           <div className="text-3xl font-bold mb-1">
-            {consistencyScore}
+            {onboardingComplete ? consistencyScore : "-"}
           </div>
 
           <div className="text-sm text-zinc-300">

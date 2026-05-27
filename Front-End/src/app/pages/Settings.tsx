@@ -530,7 +530,7 @@ export function Settings() {
                       <span className="text-xs bg-emerald-500/20 border border-emerald-500/30 text-emerald-300 px-2 py-1 rounded-full">✅ Active</span>
                     </div>
                     
-                    {plan === "pro" ? (
+                    {plan?.toLowerCase() === "pro" ? (
                       <div className="flex items-center justify-between p-4 bg-violet-500/10 border border-violet-500/20 rounded-xl">
                         <div>
                           <div className="font-bold text-violet-300 text-lg">⚡ Pro Plan</div>
@@ -558,13 +558,13 @@ export function Settings() {
                       {[
                         "Daily commitment up to ₹50/day",
                         "Friend challenges (₹100–₹1000 stake)",
-                        "2 Grace coins per month",
+                        "1 Grace coin + 1 at 15-day streak",
                         "Advanced analytics dashboard",
                         "Full global leaderboard",
                         "10% referral commission",
                       ].map((feature) => (
-                        <div key={feature} className={`flex items-center gap-2 text-sm ${plan === "pro" ? "text-zinc-300" : "text-zinc-500"}`}>
-                          <Check className={`w-4 h-4 shrink-0 ${plan === "pro" ? "text-emerald-400" : "text-zinc-600"}`} />
+                        <div key={feature} className={`flex items-center gap-2 text-sm ${plan?.toLowerCase() === "pro" ? "text-zinc-300" : "text-zinc-500"}`}>
+                          <Check className={`w-4 h-4 shrink-0 ${plan?.toLowerCase() === "pro" ? "text-emerald-400" : "text-zinc-600"}`} />
                           {feature}
                         </div>
                       ))}
@@ -578,7 +578,7 @@ export function Settings() {
                   <div className="relative bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6">
                     <h2 className="text-lg font-bold mb-4">Billing</h2>
                     
-                    {plan === "pro" ? (
+                    {plan?.toLowerCase() === "pro" ? (
                       <div className="space-y-3">
                         {[
                           { label: "Next billing date", value: "Next Month" },
@@ -602,10 +602,10 @@ export function Settings() {
                         to="/pricing"
                         className="flex-1 py-3 rounded-xl font-semibold text-center bg-white/5 border border-white/10 hover:bg-white/10 transition-all text-sm flex items-center justify-center gap-1"
                       >
-                        {plan === "pro" ? "Manage Plan" : "Upgrade to Pro"}
+                        {plan?.toLowerCase() === "pro" ? "Manage Plan" : "Upgrade to Pro"}
                         <ChevronRight className="w-4 h-4" />
                       </Link>
-                      {plan === "pro" && (
+                      {plan?.toLowerCase() === "pro" && (
                         <button className="flex-1 py-3 rounded-xl font-semibold bg-red-500/10 border border-red-500/20 text-red-400 hover:bg-red-500/20 transition-all text-sm">
                           Cancel Plan
                         </button>

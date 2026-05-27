@@ -6,7 +6,7 @@ import { SocialProof } from "../components/SocialProof";
 import { MoreFeatures } from "../components/MoreFeatures";
 import { HowItWorks } from "../components/HowItWorks";
 import { WhyConsistPay } from "../components/WhyConsistPay";
-import { LandingFaq } from "../components/LandingFaq";
+import { Footer } from "./dashboard/Footer";
 
 export function Landing() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -100,7 +100,6 @@ export function Landing() {
         <WhyConsistPay />
         <HowItWorks />
         <MoreFeatures />
-        <LandingFaq />
       </main>
 
       {/* Pre-Footer CTA */}
@@ -120,76 +119,7 @@ export function Landing() {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="border-t border-white/5 bg-[#0A0C10]">
-        <div className="max-w-7xl mx-auto px-6 py-16">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
-            {/* Brand */}
-            <div className="md:col-span-2">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 bg-gradient-to-br from-violet-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg shadow-violet-900/20">
-                  <Code2 className="w-6 h-6 text-white" />
-                </div>
-                <span className="text-lg font-bold text-slate-200">ConsistPay</span>
-              </div>
-              <p className="text-sm text-slate-400 mb-2 max-w-xs leading-relaxed">
-                Built for developers who struggle with consistency.
-              </p>
-              <p className="text-sm text-slate-500 max-w-xs">
-                Stake your commitment, submit daily proof, and earn your rewards.
-              </p>
-            </div>
-
-            {/* Links */}
-            <div>
-              <h4 className="font-semibold mb-6 text-sm text-slate-300">Product</h4>
-              <ul className="space-y-4">
-                {["Features", "Pricing", "Leaderboard"].map((item) => (
-                  <li key={item}>
-                    <a href="#" className="text-sm text-slate-500 hover:text-violet-400 transition-colors">
-                      {item}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            <div>
-              <h4 className="font-semibold mb-6 text-sm text-slate-300">Company</h4>
-              <ul className="space-y-4">
-                {["Discord Community", "Privacy Policy", "Terms of Service", "Contact Us"].map((item) => (
-                  <li key={item}>
-                    <a href="#" className="text-sm text-slate-500 hover:text-violet-400 transition-colors">
-                      {item}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-
-          {/* Bottom Bar */}
-          <div className="pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4">
-            <p className="text-sm text-slate-500">
-              © 2026 ConsistPay. All rights reserved.
-            </p>
-
-            <div className="flex items-center gap-3">
-              {["𝕏", "Discord", "GitHub"].map((social) => (
-                <a
-                  key={social}
-                  href="#"
-                  className="w-9 h-9 rounded-lg bg-slate-800/50 border border-slate-700/50 flex items-center justify-center hover:bg-slate-700 hover:border-violet-500/50 transition-all group"
-                >
-                  <span className="text-xs text-slate-400 group-hover:text-violet-400 transition-colors">
-                    {social}
-                  </span>
-                </a>
-              ))}
-            </div>
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }

@@ -1,9 +1,41 @@
 import { Code2, Check, X, Info, Trophy, Zap, Users, TrendingUp, Gift, Shield } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 
 export function Pricing() {
   const [showModal, setShowModal] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+  const token = localStorage.getItem("token");
+  const API = import.meta.env.VITE_API_URL;
+
+  const handleUpgrade = async () => {
+    if (!token) {
+      navigate("/signup");
+      return;
+    }
+    setLoading(true);
+    try {
+      const res = await fetch(`${API}/api/payment/upgrade`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        }
+      });
+      if (res.ok) {
+        import("sonner").then((mod) => mod.toast.success("Upgraded to Pro!"));
+        navigate("/dashboard");
+      } else {
+        const data = await res.json();
+        import("sonner").then((mod) => mod.toast.error(data.message || "Failed to upgrade"));
+      }
+    } catch (err) {
+      import("sonner").then((mod) => mod.toast.error("Network error"));
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const freePlanFeatures = [
     { text: "Daily commitment: ₹5 or ₹10/day", included: true },
@@ -11,7 +43,7 @@ export function Pricing() {
     { text: "1 Grace coin per month", included: true },
     { text: "Basic global leaderboard", included: true },
     { text: "Basic analytics", included: true },
-    { text: "Friend challenges", included: false },
+    { text: "Versus Mode challenges", included: false },
     { text: "Referral commission", included: false },
     { text: "Full analytics dashboard", included: false },
   ];
@@ -19,10 +51,10 @@ export function Pricing() {
   const proPlanFeatures = [
     { text: "Daily commitment: ₹5, ₹10, ₹20, ₹50/day", included: true },
     { text: "Monthly deposit: ₹150 to ₹1500", included: true },
-    { text: "2 Grace coins (1 base + 1 bonus on 15 day streak)", included: true },
+    { text: "1 Grace coin + 1 bonus on 15-day streak", included: true },
     { text: "Full global leaderboard", included: true },
     { text: "Advanced analytics dashboard", included: true },
-    { text: "Friend challenges", included: true, highlight: true },
+    { text: "Versus Mode challenges", included: true, highlight: true },
     { text: "10% referral commission", included: true },
     { text: "Priority support", included: true },
   ];
@@ -145,12 +177,13 @@ export function Pricing() {
                 </div>
               </div>
 
-              <Link
-                to="/signup"
-                className="block w-full py-3 bg-gradient-to-r from-violet-500 to-purple-600 hover:from-violet-400 hover:to-purple-500 text-white font-semibold rounded-lg transition-all duration-300 text-center mb-8 shadow-lg shadow-violet-500/30 hover:shadow-violet-500/50"
+              <button
+                onClick={handleUpgrade}
+                disabled={loading}
+                className="block w-full py-3 bg-gradient-to-r from-violet-500 to-purple-600 hover:from-violet-400 hover:to-purple-500 text-white font-semibold rounded-lg transition-all duration-300 text-center mb-8 shadow-lg shadow-violet-500/30 hover:shadow-violet-500/50 disabled:opacity-50"
               >
-                Get Started with Pro
-              </Link>
+                {loading ? "Upgrading..." : (token ? "Upgrade to Pro" : "Get Started with Pro")}
+              </button>
 
               <div className="space-y-4">
 
@@ -201,9 +234,9 @@ export function Pricing() {
                 <div className="w-12 h-12 bg-emerald-500/10 rounded-lg flex items-center justify-center mb-4">
                   <Users className="w-6 h-6 text-emerald-400" />
                 </div>
-                <h3 className="font-semibold mb-2">Friend Challenges</h3>
+                <h3 className="font-semibold mb-2">Versus Mode</h3>
                 <p className="text-sm text-zinc-400">
-                  Compete with friends. Winner takes all. Build habits together.
+                  Compete with friends in 1v1 challenges. Winner takes all. Build habits together.
                 </p>
               </div>
             </div>
@@ -256,7 +289,7 @@ export function Pricing() {
                 <span className="text-zinc-400 group-open:rotate-180 transition-transform">▼</span>
               </summary>
               <p className="text-sm text-zinc-400 mt-4">
-                Grace coins let you skip a day without losing your deposit. Free plan gets 1/month. Pro plan gets 2 (1 base + 1 bonus after 15-day streak).
+                Grace coins let you skip a day without losing your deposit. Free plan gets 1/month. Pro plan gets 1 base + 1 bonus after 15-day streak.
               </p>
             </details>
 
@@ -289,9 +322,9 @@ export function Pricing() {
                 <div>
                   <h3 className="text-2xl font-bold mb-2 flex items-center gap-2">
                     <Users className="w-6 h-6 text-violet-400" />
-                    Friend Challenges
+                    Versus Mode
                   </h3>
-                  <p className="text-zinc-400 text-sm">Compete with friends, winner takes all</p>
+                  <p className="text-zinc-400 text-sm">Compete 1v1 with friends, winner takes all</p>
                 </div>
                 <button
                   onClick={() => setShowModal(false)}
@@ -316,7 +349,7 @@ export function Pricing() {
                   </div>
                 </div>
                 <p className="text-sm text-zinc-300">
-                  Create 1-on-1 coding challenges with your friends. The most consistent coder wins the entire stake. Build better habits together!
+                  Create 1-on-1 coding challenges with your friends. The most consistent coder wins the entire stake pool. Build better habits through competition!
                 </p>
               </div>
 
@@ -394,8 +427,8 @@ export function Pricing() {
                 </h4>
                 <ul className="space-y-2 text-sm text-zinc-300">
                   <li className="flex items-start gap-2">
-                    <Check className="w-4 h-4 text-emerald-400 flex-shrink-0 mt-0.5" />
-                    <span>Grace coins can be used in challenges</span>
+                    <X className="w-4 h-4 text-red-400 flex-shrink-0 mt-0.5" />
+                    <span><strong className="text-red-300">Grace coins CANNOT be used</strong> during active Versus Mode challenges.</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <Check className="w-4 h-4 text-emerald-400 flex-shrink-0 mt-0.5" />

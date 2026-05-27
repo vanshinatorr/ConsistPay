@@ -9,6 +9,8 @@ import { RecentSolves } from "./dashboard/RecentSolves";
 import { AiInsights } from "./dashboard/AiInsights";
 import { JoinModal } from "./dashboard/JoinModal";
 import { Footer } from "./dashboard/Footer";
+import { CommitmentModal } from "../components/CommitmentModal";
+import { Check } from "lucide-react";
 
 const motivationalLines = [
   "You showed up. That's what counts.",
@@ -39,6 +41,7 @@ interface UserData {
   totalSolved: number;
   totalMissed: number;
   battleBalance: number;
+  onboardingComplete: boolean;
 }
 
 interface CalendarDay {
@@ -64,6 +67,7 @@ export function Dashboard() {
   const [todaySubmission, setTodaySubmission] = useState<any>(null);
   const [recentSolves, setRecentSolves] = useState<any[]>([]);
   const [aiLoading, setAiLoading] = useState(false);
+  const [showSetupModal, setShowSetupModal] = useState(false);
 
   const API = import.meta.env.VITE_API_URL;
   const token = localStorage.getItem("token") || "";
@@ -330,11 +334,50 @@ export function Dashboard() {
       <Navbar initials={initials} plan={userData?.plan} avatar={avatar} isAvatarUrl={isAvatarUrl} />
 
       <main className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        
+        {userData && !userData.onboardingComplete && (
+          <div className="mb-8 bg-gradient-to-r from-violet-500/10 to-purple-500/10 border border-violet-500/20 rounded-2xl p-6 relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-64 h-64 bg-violet-500/20 rounded-full blur-[80px]" />
+            <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+              <div>
+                <h3 className="text-xl font-bold text-white mb-2 flex items-center gap-2">
+                  <Target className="w-6 h-6 text-violet-400" />
+                  Initialize Your Journey
+                </h3>
+                <p className="text-zinc-400 text-sm">Complete these steps to unlock the full potential of your consistency tracker.</p>
+              </div>
+              <div className="flex flex-col gap-3 w-full md:w-auto">
+                <div className="flex items-center gap-3 text-sm text-zinc-300">
+                  <div className="w-5 h-5 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0">
+                    <Check className="w-3 h-3" />
+                  </div>
+                  <span>Create Account</span>
+                </div>
+                <div className="flex items-center gap-3 text-sm text-zinc-300">
+                  <div className="w-5 h-5 rounded-full border border-white/20 flex items-center justify-center shrink-0" />
+                  <span>Choose Plan & Commitment</span>
+                </div>
+                <div className="flex items-center gap-3 text-sm text-zinc-300">
+                  <div className="w-5 h-5 rounded-full border border-white/20 flex items-center justify-center shrink-0" />
+                  <span>Submit your first proof</span>
+                </div>
+              </div>
+              <button
+                onClick={() => setShowSetupModal(true)}
+                className="mt-4 md:mt-0 px-6 py-3 bg-violet-600 hover:bg-violet-500 text-white font-medium rounded-xl transition-all w-full md:w-auto shadow-lg shadow-violet-500/25"
+              >
+                Setup Commitment
+              </button>
+            </div>
+          </div>
+        )}
+
         <StatsRow
           currentStreak={currentStreak}
           completedDays={completedDays}
           missedDays={missedDays}
           consistencyScore={consistencyScore}
+          onboardingComplete={userData?.onboardingComplete ?? true}
         />
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
@@ -352,6 +395,8 @@ export function Dashboard() {
             todayLine={todayLine}
             timeLeft={timeLeft}
             aiLoading={aiLoading}
+            onboardingComplete={userData?.onboardingComplete ?? true}
+            onSetupClick={() => setShowSetupModal(true)}
           />
           <WalletCard
             plan={userData?.plan}
@@ -361,15 +406,13 @@ export function Dashboard() {
             dailyCommitment={dailyCommitment}
             graceCoins={graceCoins}
             battleBalance={userData?.battleBalance ?? 0}
+            balance={userData?.balance ?? 0}
+            onboardingComplete={userData?.onboardingComplete ?? true}
+            onRefreshRequest={fetchUserData}
           />
         </div>
 
-        <ConsistencyCalendar
-          calendarYear={calendarYear}
-          setCalendarYear={setCalendarYear}
-          dayLabels={dayLabels}
-          yearMonths={yearMonths}
-        />
+        <ConsistencyCalendar yearMonths={yearMonths} setCalendarYear={setCalendarYear} calendarYear={calendarYear} onboardingComplete={userData?.onboardingComplete ?? true} dayLabels={dayLabels} />
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-6">
           <RecentSolves recentSolves={recentSolves} />
@@ -380,11 +423,15 @@ export function Dashboard() {
           />
         </div>
 
-        <JoinModal
-          showJoinModal={showJoinModal}
-          setShowJoinModal={setShowJoinModal}
-          joinCode={joinCode}
-          setJoinCode={setJoinCode}
+        {/* Modals */}
+        <JoinModal isOpen={showJoinModal} onClose={() => setShowJoinModal(false)} joinCode={joinCode} setJoinCode={setJoinCode} />
+        <CommitmentModal 
+          isOpen={showSetupModal} 
+          onClose={() => setShowSetupModal(false)} 
+          onComplete={() => {
+            setShowSetupModal(false);
+            fetchUserData();
+          }} 
         />
 
         <Footer

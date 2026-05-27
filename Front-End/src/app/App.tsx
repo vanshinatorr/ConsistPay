@@ -26,9 +26,8 @@ export default function App() {
 
         if (res.ok) {
           const data = await res.json();
-          if (data.onboardingComplete === false && path !== "/onboarding") {
-            window.location.href = "/onboarding";
-          } else if (data.onboardingComplete === true && path === "/onboarding") {
+          // Onboarding checks have been moved to components directly.
+          if (data.onboardingComplete === true && path === "/onboarding") {
             window.location.href = "/dashboard";
           }
         } else {

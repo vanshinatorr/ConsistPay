@@ -88,7 +88,9 @@
 
 
 import React, { useState } from "react";
-import { Wallet, Swords, Lock } from "lucide-react";
+import { Wallet, Swords, Lock, Info } from "lucide-react";
+import TopupModal from "../../components/battle/TopupModal";
+import VersusInfoModal from "../../components/battle/VersusInfoModal";
 
 interface WalletCardProps {
   plan?: string;
@@ -98,6 +100,9 @@ interface WalletCardProps {
   dailyCommitment: number;
   graceCoins: number;
   battleBalance: number;
+  balance?: number;
+  onboardingComplete?: boolean;
+  onRefreshRequest?: () => void;
 }
 
 export function WalletCard({
@@ -108,24 +113,19 @@ export function WalletCard({
   dailyCommitment,
   graceCoins,
   battleBalance,
+  onboardingComplete = true,
+  onRefreshRequest,
 }: WalletCardProps) {
   const [activeTab, setActiveTab] = useState<"consistency" | "battle">("consistency");
-  const [isDepositing, setIsDepositing] = useState(false);
+  const [showTopupModal, setShowTopupModal] = useState(false);
+  const [showInfoModal, setShowInfoModal] = useState(false);
 
-  const handleDeposit = async () => {
-    setIsDepositing(true);
-    try {
-      const token = localStorage.getItem("token");
-      await fetch(import.meta.env.VITE_API_URL + "/api/users/add-battle-funds", {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
-        body: JSON.stringify({ amount: 100 })
-      });
+  const handleTopupSuccess = (newBalance: number) => {
+    if (onRefreshRequest) {
+      onRefreshRequest();
+    } else {
       window.location.reload();
-    } catch (err) {
-      console.error(err);
     }
-    setIsDepositing(false);
   };
 
   return (
@@ -162,7 +162,7 @@ export function WalletCard({
                   : "text-zinc-500 hover:text-zinc-300 hover:bg-white/5"
               }`}
             >
-              <Swords className="w-3.5 h-3.5" /> PVP
+              <Swords className="w-3.5 h-3.5" /> Versus
             </button>
           </div>
 
@@ -170,12 +170,12 @@ export function WalletCard({
           {activeTab === "consistency" && (
             <span
               className={`text-[10px] px-2 py-1 rounded-full font-bold border uppercase tracking-wider ${
-                plan === "pro"
+                plan?.toLowerCase() === "pro"
                   ? "text-violet-400 bg-violet-500/10 border-violet-500/20"
                   : "text-zinc-400 bg-white/5 border-white/10"
               }`}
             >
-              {plan === "pro" ? "⚡ Pro" : "Free"}
+              {plan?.toLowerCase() === "pro" ? "⚡ Pro" : "Free"}
             </span>
           )}
         </div>
@@ -187,9 +187,9 @@ export function WalletCard({
               <div className="text-xs text-zinc-500 mb-1">
                 Total Deposited
               </div>
-              <div className="text-2xl font-bold text-white">
-                ₹{monthlyBudget}
-              </div>
+              <span className="text-xl font-bold font-mono">
+                ₹{onboardingComplete ? monthlyBudget.toFixed(2) : "0.00"}
+              </span>
               <div className="text-xs text-zinc-500 mt-0.5">
                 ₹{dailyCommitment}/day commitment • 30-day challenge active
               </div>
@@ -219,6 +219,7 @@ export function WalletCard({
                   {missedDays} days
                 </div>
               </div>
+
             </div>
 
             <div className="mb-4">
@@ -254,12 +255,17 @@ export function WalletCard({
               </div>
             </div>
 
-            <div className="flex items-center justify-between mt-4 pt-4 border-t border-white/10">
-              <span className="text-sm text-zinc-400">
-                🛡️ Grace Coins
-              </span>
-              <span className="text-sm font-semibold text-emerald-400">
-                {graceCoins} available
+            <div className="mt-4 pt-4 border-t border-white/10 flex items-start justify-between">
+              <div>
+                <div className="text-sm text-zinc-400">🛡️ Grace Coins</div>
+                <div className="text-[10px] text-zinc-500 mt-1">
+                  {plan?.toLowerCase() === "pro" 
+                    ? "1 base coin • +1 bonus at 15-day streak" 
+                    : "1 base coin • Upgrade to Pro for streak bonuses"}
+                </div>
+              </div>
+              <span className="text-xl font-bold font-mono text-zinc-100 group-hover:text-amber-300 transition-colors">
+                {onboardingComplete ? graceCoins : "0"}
               </span>
             </div>
           </div>
@@ -268,7 +274,7 @@ export function WalletCard({
         {/* Tab Content: BATTLE */}
         {activeTab === "battle" && (
           <div className="flex flex-col flex-1 h-full animate-in fade-in zoom-in-95 duration-200">
-            {plan !== "pro" ? (
+            {plan?.toLowerCase() !== "pro" ? (
               <div className="flex flex-col items-center justify-center text-center h-full px-4">
                 
                 <div className="w-14 h-14 bg-white/5 border border-white/10 rounded-2xl flex items-center justify-center mb-5 relative">
@@ -280,12 +286,20 @@ export function WalletCard({
                   </div>
                 </div>
 
-                <h3 className="text-xl font-semibold text-white mb-2">
-                  Unlock Battles
-                </h3>
+                <div className="flex items-start justify-between mb-2">
+                  <h3 className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-violet-400 to-purple-400">
+                    Versus Mode
+                  </h3>
+                  <button 
+                    onClick={() => setShowInfoModal(true)}
+                    className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-violet-500/10 hover:bg-violet-500/20 text-violet-300 hover:text-violet-200 text-[10px] font-bold uppercase tracking-wider transition-colors border border-violet-500/20"
+                  >
+                    <Info className="w-3 h-3" /> What is this?
+                  </button>
+                </div>
                 
                 <p className="text-sm text-zinc-400 mb-8 max-w-[220px] leading-relaxed">
-                  Challenge friends, set stakes, and prove your consistency in PVP mode.
+                  Challenge friends, set stakes, and prove your consistency in Versus mode.
                 </p>
 
                 <a 
@@ -297,28 +311,30 @@ export function WalletCard({
               </div>
             ) : (
               <>
-                <div className="bg-violet-500/10 border border-violet-500/20 rounded-xl p-5 mb-4 text-center">
+                <div className="bg-violet-500/10 border border-violet-500/20 rounded-xl p-5 mb-4 text-center relative">
+                  <button 
+                    onClick={() => setShowInfoModal(true)}
+                    className="absolute top-3 right-3 p-1.5 rounded-lg bg-violet-500/20 hover:bg-violet-500/30 text-violet-300 transition-colors flex items-center gap-1 text-[10px] uppercase font-bold tracking-wider"
+                    title="What is Versus Mode?"
+                  >
+                    <Info className="w-3.5 h-3.5" /> Info
+                  </button>
                   <div className="w-12 h-12 bg-violet-500/20 rounded-full flex items-center justify-center mx-auto mb-3 shadow-[0_0_15px_rgba(139,92,246,0.3)]">
                     <Swords className="w-6 h-6 text-violet-400" />
                   </div>
                   <div className="text-xs text-zinc-400 mb-1 uppercase tracking-wider font-semibold">Available for Stakes</div>
                   <div className="text-4xl font-black text-white mb-2">₹{battleBalance}</div>
                   <p className="text-xs text-violet-300/70">
-                    Use this balance to challenge friends in PVP consistency battles.
+                    Use this balance to challenge friends in Head-to-Head consistency battles.
                   </p>
                 </div>
                 
                 <div className="mt-auto pt-4 space-y-3">
                   <button 
-                    onClick={handleDeposit}
-                    disabled={isDepositing}
+                    onClick={() => setShowTopupModal(true)}
                     className="w-full py-3.5 rounded-xl font-bold bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-500 hover:to-purple-500 text-white transition-all shadow-lg shadow-violet-500/25 flex items-center justify-center gap-2"
                   >
-                    {isDepositing ? (
-                      <div className="w-4 h-4 border-2 border-white/50 border-t-white rounded-full animate-spin" />
-                    ) : (
-                      "Add ₹100 (Mock)"
-                    )}
+                    Add Funds
                   </button>
                   
                   <div className="text-[10px] text-zinc-500 text-center leading-relaxed px-2">
@@ -331,6 +347,19 @@ export function WalletCard({
         )}
 
       </div>
+
+      {showTopupModal && (
+        <TopupModal 
+          onClose={() => setShowTopupModal(false)} 
+          onSuccess={handleTopupSuccess} 
+        />
+      )}
+
+      {showInfoModal && (
+        <VersusInfoModal 
+          onClose={() => setShowInfoModal(false)} 
+        />
+      )}
     </div>
   );
 }

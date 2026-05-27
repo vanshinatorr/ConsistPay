@@ -58,12 +58,40 @@ const sendOtp = async (req, res) => {
 
     if (isEmail) {
       if (process.env.EMAIL_USER && process.env.EMAIL_PASS) {
+        const emailHtml = `
+          <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 40px 20px; background-color: #ffffff; color: #1a1a1a;">
+            <div style="text-align: center; margin-bottom: 30px;">
+              <h1 style="color: #8b5cf6; margin: 0; font-size: 28px; font-weight: 800; letter-spacing: -0.5px;">ConsistPay</h1>
+            </div>
+            
+            <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 40px 30px; text-align: center;">
+              <h2 style="margin-top: 0; color: #0f172a; font-size: 20px; font-weight: 600;">Your Verification Code</h2>
+              <p style="color: #64748b; font-size: 16px; line-height: 1.5; margin-bottom: 30px;">
+                Please use the following verification code to securely access your ConsistPay account.
+              </p>
+              
+              <div style="background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 15px; margin: 0 auto 30px auto; max-width: 250px; letter-spacing: 8px; font-size: 32px; font-weight: 700; color: #0f172a; text-align: center;">
+                ${otp}
+              </div>
+              
+              <p style="color: #94a3b8; font-size: 14px; margin: 0;">
+                This code is valid for <strong>5 minutes</strong>. If you didn't request this, you can safely ignore this email.
+              </p>
+            </div>
+            
+            <div style="text-align: center; margin-top: 30px; color: #94a3b8; font-size: 12px;">
+              <p style="margin: 0 0 10px 0; text-transform: uppercase; letter-spacing: 1px;">Commit First. Motivation Later.</p>
+              <p style="margin: 0;">&copy; ${new Date().getFullYear()} ConsistPay. All rights reserved.</p>
+            </div>
+          </div>
+        `;
+
         await transporter.sendMail({
           from: `"ConsistPay" <${process.env.EMAIL_USER}>`,
           to: identifier,
-          subject: "Your ConsistPay Login Code",
-          text: `Your OTP is: ${otp}. It is valid for 5 minutes.`,
-          html: `<h3>Your OTP is: <strong>${otp}</strong></h3><p>It is valid for 5 minutes.</p>`
+          subject: `${otp} is your ConsistPay verification code`,
+          text: `Your ConsistPay verification code is: ${otp}. It is valid for 5 minutes.`,
+          html: emailHtml
         });
         console.log(`[AUTH] Sent real email OTP to ${identifier}`);
       } else {

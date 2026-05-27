@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { X } from "lucide-react";
 import {
   CheckCircle2,
   Zap,
@@ -21,13 +21,19 @@ import {
   ArrowLeft
 } from "lucide-react";
 
-export function Onboarding() {
+interface CommitmentModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onComplete: () => void;
+}
+
+export function CommitmentModal({ isOpen, onClose, onComplete }: CommitmentModalProps) {
   const [step, setStep] = useState(1);
   const [plan, setPlan] = useState<"Free" | "Pro" | null>(null);
   const [amount, setAmount] = useState<number | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const navigate = useNavigate();
+  const [processingStep, setProcessingStep] = useState(0);
 
   const API = import.meta.env.VITE_API_URL;
   const token = localStorage.getItem("token") || "";
@@ -139,38 +145,56 @@ export function Onboarding() {
     try {
       setLoading(true);
       setError("");
+      setProcessingStep(1); // Connecting to secure server
+      
+      setTimeout(() => setProcessingStep(2), 1200); // Processing payment
+
       const depositAmount = amount ? amount * 30 : 0;
 
-      const res = await fetch(`${API}/api/payment/skip`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          plan,
-          dailyCommitment: amount,
-          depositAmount,
-        }),
-      });
+      setTimeout(async () => {
+        try {
+          const res = await fetch(`${API}/api/payment/skip`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({
+              plan,
+              dailyCommitment: amount,
+              depositAmount,
+            }),
+          });
+          const data = await res.json();
+          if (!res.ok) throw new Error(data.message || "Failed to process.");
 
-      const data = await res.json();
-      if (res.ok && data.onboardingComplete) {
-        setStep(7); // Jump to success screen
-      } else {
-        throw new Error(data.message || "Registration failed.");
-      }
+          setProcessingStep(3); // Success
+          setTimeout(() => {
+            setStep(7);
+            setProcessingStep(0);
+            setLoading(false);
+          }, 500);
+
+        } catch (err: any) {
+          setError(err.message);
+          setLoading(false);
+          setProcessingStep(0);
+        }
+      }, 2500);
+
     } catch (err: any) {
-      setError(err.message || "Connection error. Ensure backend is running.");
-    } finally {
+      setError(err.message || "Could not skip payment.");
       setLoading(false);
+      setProcessingStep(0);
     }
   };
 
   const depositTotal = amount ? amount * 30 : 0;
 
+  if (!isOpen) return null;
+
   return (
-    <div className="min-h-screen text-white flex flex-col items-center justify-center p-6 relative overflow-hidden" style={{ backgroundColor: "#08080B" }}>
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 overflow-hidden bg-black/60 backdrop-blur-md">
       
       {/* Background Decorative Ambient Blobs */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
@@ -186,9 +210,17 @@ export function Onboarding() {
             <Code2 className="w-5 h-5 text-white" />
           </div>
           <span className="text-xl font-bold tracking-tight bg-gradient-to-r from-white to-zinc-400 bg-clip-text text-transparent">
-            ConsistPay
+            ConsistPay Setup
           </span>
         </div>
+
+        {/* Close Button */}
+        <button
+          onClick={onClose}
+          className="absolute -top-12 right-0 p-2 text-zinc-400 hover:text-white bg-white/5 hover:bg-white/10 rounded-full transition-colors"
+        >
+          <X className="w-5 h-5" />
+        </button>
 
         {/* Wizard Container */}
         <div className="bg-white/[0.02] border border-white/[0.06] backdrop-blur-xl rounded-2xl p-8 shadow-2xl relative">
@@ -216,7 +248,7 @@ export function Onboarding() {
             </div>
           )}
 
-          {error && (
+          {error && step !== 6 && (
             <div className="mb-6 p-4 bg-red-500/10 border border-red-500/20 text-red-400 rounded-xl text-sm flex items-start gap-3 animate-in fade-in duration-300">
               <AlertTriangle className="w-5 h-5 shrink-0 mt-0.5" />
               <span>{error}</span>
@@ -619,83 +651,125 @@ export function Onboarding() {
           {/* ──────────────── STEP 6: SECURE CHECKOUT ──────────────── */}
           {step === 6 && (
             <div className="space-y-6 animate-in fade-in duration-500">
-              <div className="text-center space-y-2 mb-2">
-                <div className="w-10 h-10 rounded-full bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center mx-auto text-emerald-400">
-                  <Lock className="w-5 h-5" />
-                </div>
-                <h2 className="text-xl font-bold text-white">Secure Checkout</h2>
-                <p className="text-zinc-400 text-xs">
-                  Your refundable deposit secures your accountability challenge.
-                </p>
-              </div>
-
-              {/* Simple Premium Summary Card */}
-              <div className="bg-[#0C0C10] border border-white/[0.04] rounded-xl p-5 space-y-3.5">
-                <div className="flex justify-between items-center text-xs">
-                  <span className="text-zinc-500 uppercase tracking-wide">Product / Plan</span>
-                  <span className="font-semibold text-white">{plan === "Pro" ? "Pro Plan Setup + Challenge" : "Free Plan Challenge"}</span>
-                </div>
-
-                <div className="flex justify-between items-center text-xs">
-                  <span className="text-zinc-500 uppercase tracking-wide">Duration</span>
-                  <span className="font-semibold text-white">30 Days</span>
-                </div>
-
-                <div className="flex justify-between items-center text-xs">
-                  <span className="text-zinc-500 uppercase tracking-wide">Refundable Deposit</span>
-                  <span className="font-semibold text-white">₹{depositTotal}</span>
-                </div>
-
-                {plan === "Pro" && (
-                  <div className="flex justify-between items-center text-xs">
-                    <span className="text-zinc-500 uppercase tracking-wide">Pro Setup Fee</span>
-                    <span className="font-semibold text-white">₹49</span>
+              {loading && processingStep > 0 ? (
+                <div className="py-12 flex flex-col items-center justify-center text-center space-y-6">
+                  <div className="relative">
+                    <div className="w-20 h-20 border-4 border-violet-500/20 border-t-violet-500 rounded-full animate-spin"></div>
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <Shield className="w-8 h-8 text-violet-400" />
+                    </div>
                   </div>
-                )}
-
-                <div className="border-t border-white/[0.04] pt-3.5 flex justify-between items-center">
-                  <span className="text-sm font-semibold text-zinc-300">Amount Due Now</span>
-                  <span className="text-2xl font-bold text-white">
-                    ₹{plan === "Pro" ? depositTotal + 49 : depositTotal}
-                  </span>
+                  <div className="space-y-2">
+                    <h3 className="text-lg font-semibold text-white animate-pulse">
+                      {processingStep === 1 ? "Connecting to Bank..." : "Verifying Transaction..."}
+                    </h3>
+                    <p className="text-zinc-500 text-xs uppercase tracking-widest font-mono">
+                      {processingStep === 1 ? "ESTABLISHING SECURE CONNECTION" : "PROCESSING PAYMENT OF ₹" + (amount ? amount * 30 : 0)}
+                    </p>
+                  </div>
                 </div>
-              </div>
+              ) : (
+                <>
+                  <div className="text-center space-y-2 mb-2">
+                    <div className="w-10 h-10 rounded-full bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center mx-auto text-emerald-400">
+                      <Lock className="w-5 h-5" />
+                    </div>
+                    <h3 className="text-2xl font-bold text-white">Secure Checkout</h3>
+                    <p className="text-sm text-zinc-400 max-w-xs mx-auto leading-relaxed">
+                      Complete your payment securely. Your refundable deposit will be returned after 30 days of consistency.
+                    </p>
+                  </div>
 
-              {/* Payment Methods and Trust */}
-              <div className="space-y-3.5">
-                <div className="flex justify-center items-center gap-5 text-[11px] text-zinc-500">
-                  <span className="flex items-center gap-1.5"><Shield className="w-3.5 h-3.5 text-emerald-400" /> Razorpay SSL Secured</span>
-                  <span className="w-1.5 h-1.5 rounded-full bg-zinc-800" />
-                  <span>Supports UPI, Cards & Netbanking</span>
-                </div>
-
-                <button
-                  onClick={handleRazorpayPayment}
-                  disabled={loading}
-                  className="w-full py-4 bg-violet-600 hover:bg-violet-500 disabled:opacity-50 text-white font-semibold rounded-xl transition-all flex items-center justify-center gap-2.5 text-sm"
-                >
-                  {loading ? (
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                  ) : (
-                    <>
-                      Continue with Razorpay
-                      <ArrowRight className="w-4 h-4" />
-                    </>
+                  {error && (
+                    <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-3 flex items-start gap-3">
+                      <AlertTriangle className="w-4 h-4 text-red-400 shrink-0 mt-0.5" />
+                      <p className="text-xs text-red-300">{error}</p>
+                    </div>
                   )}
-                </button>
-              </div>
 
-              {/* Secondary Demo Sandbox Mode */}
-              <div className="pt-4 border-t border-white/[0.04] text-center">
-                <p className="text-zinc-500 text-[10px]">Testing environment or API issues?</p>
-                <button
-                  onClick={handleSkipPayment}
-                  disabled={loading}
-                  className="mt-1.5 text-xs font-semibold text-violet-400 hover:text-violet-300 hover:underline transition-all"
-                >
-                  [Demo Mode] Skip Payment & Activate Onboarding
-                </button>
-              </div>
+                  <div className="p-5 rounded-xl border border-white/10 bg-white/[0.02] space-y-4">
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-zinc-400">Selected Plan</span>
+                      <span className="text-white font-medium capitalize flex items-center gap-2">
+                        {plan === "Pro" && <Sparkles className="w-3.5 h-3.5 text-violet-400" />}
+                        {plan}
+                      </span>
+                    </div>
+                    
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-zinc-400">Daily Commitment</span>
+                      <span className="text-white font-medium">₹{amount}/day</span>
+                    </div>
+                    
+                    <div className="h-px bg-white/10 w-full" />
+                    
+                    <div className="flex items-center justify-between">
+                      <div className="flex flex-col">
+                        <span className="text-zinc-300 font-semibold text-sm">Refundable Deposit</span>
+                        <span className="text-zinc-500 text-[10px]">For 30 days. Fully refundable.</span>
+                      </div>
+                      <span className="text-white font-bold text-lg">₹{amount ? amount * 30 : 0}</span>
+                    </div>
+
+                    {plan === "Pro" && (
+                      <div className="flex items-center justify-between pt-2">
+                        <div className="flex flex-col">
+                          <span className="text-violet-300 font-semibold text-sm">Pro Subscription</span>
+                          <span className="text-violet-400/50 text-[10px]">1 month access</span>
+                        </div>
+                        <span className="text-violet-300 font-bold text-lg">₹49</span>
+                      </div>
+                    )}
+                    
+                    <div className="h-px bg-white/10 w-full" />
+
+                    <div className="flex items-center justify-between">
+                      <div className="flex flex-col">
+                        <span className="text-white font-bold">Total to Pay</span>
+                        <span className="text-emerald-400/70 text-xs">Incl. all taxes</span>
+                      </div>
+                      <span className="text-emerald-400 font-black text-2xl">
+                        ₹{plan === "Pro" ? (amount ? amount * 30 : 0) + 49 : (amount ? amount * 30 : 0)}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Payment Methods and Trust */}
+                  <div className="space-y-3.5">
+                    <div className="flex justify-center items-center gap-5 text-[11px] text-zinc-500">
+                      <span className="flex items-center gap-1.5"><Shield className="w-3.5 h-3.5 text-emerald-400" /> 256-bit Encrypted</span>
+                      <span className="w-1.5 h-1.5 rounded-full bg-zinc-800" />
+                      <span>Instant Activation</span>
+                    </div>
+
+                    <button
+                      onClick={handleSkipPayment}
+                      disabled={loading}
+                      className="w-full py-4 bg-violet-600 hover:bg-violet-500 disabled:opacity-50 text-white font-semibold rounded-xl transition-all flex items-center justify-center gap-2.5 text-sm"
+                    >
+                      {loading ? (
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                      ) : (
+                        <>
+                          ⚡ 1-Click Express Checkout
+                          <ArrowRight className="w-4 h-4" />
+                        </>
+                      )}
+                    </button>
+                  </div>
+
+                  {/* Secondary Payment Mode */}
+                  <div className="pt-4 border-t border-white/[0.04] text-center">
+                    <button
+                      onClick={handleRazorpayPayment}
+                      disabled={loading}
+                      className="mt-1.5 text-xs font-semibold text-zinc-400 hover:text-white transition-all"
+                    >
+                      Other Methods (UPI, Cards & Netbanking)
+                    </button>
+                  </div>
+                </>
+              )}
             </div>
           )}
 
@@ -739,13 +813,23 @@ export function Onboarding() {
 
               <button
                 onClick={() => {
-                  // Redirect to dashboard page
-                  window.location.href = "/dashboard";
+                  setLoading(true);
+                  setTimeout(() => {
+                    onComplete();
+                    onClose();
+                  }, 1200);
                 }}
-                className="w-full py-3.5 bg-violet-600 hover:bg-violet-500 text-white font-medium rounded-xl transition-all flex items-center justify-center gap-2"
+                disabled={loading}
+                className="block w-full py-3.5 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-white font-semibold rounded-xl transition-all duration-300 shadow-lg shadow-emerald-500/25"
               >
-                Go to Dashboard
-                <ArrowRight className="w-4 h-4" />
+                {loading ? (
+                  <span className="flex items-center justify-center gap-2">
+                    <Loader2 className="w-5 h-5 animate-spin" />
+                    Activating Dashboard...
+                  </span>
+                ) : (
+                  "Go to Dashboard"
+                )}
               </button>
 
               <p className="text-[10px] italic text-zinc-500 pt-2">

@@ -139,7 +139,7 @@ export function Auth() {
       
       localStorage.setItem("token", data.token);
       toast.success("Account created successfully!");
-      navigate("/onboarding");
+      navigate("/dashboard");
     } catch (err: any) {
       toast.error(err.message || "Failed to create account");
     } finally {

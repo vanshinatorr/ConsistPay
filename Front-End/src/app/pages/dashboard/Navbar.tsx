@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Code2, Bell } from "lucide-react";
+import { Code2, Bell, CheckCircle2, Swords, Trophy, Flame, Sparkles, X } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { BattleHubModal } from "../../components/battle/BattleHubModal";
 
@@ -51,6 +51,21 @@ export function Navbar({ initials, plan = "free", avatar, isAvatarUrl }: NavbarP
       setNotifications(notifications.map(n => ({ ...n, read: true })));
     } catch (err) {
       console.error("Failed to mark as read:", err);
+    }
+  };
+
+  const handleDeleteNotification = async (id: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    // Optimistic UI update for maximum satisfaction feel
+    setNotifications(prev => prev.filter(n => (n._id || n.id) !== id));
+    
+    try {
+      await fetch(`${API_URL}/api/notifications/${id}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` }
+      });
+    } catch (err) {
+      console.error("Failed to delete notification:", err);
     }
   };
 
@@ -151,43 +166,100 @@ export function Navbar({ initials, plan = "free", avatar, isAvatarUrl }: NavbarP
 
                 {/* Dropdown Menu */}
                 {showNotifs && (
-                  <div className="absolute right-0 mt-3 w-80 sm:w-96 bg-[#121214] border border-white/10 rounded-2xl shadow-2xl overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 duration-200">
+                  <div className="absolute right-0 mt-3 w-[380px] bg-[#0c0c0e] border border-white/10 rounded-2xl shadow-2xl overflow-hidden z-50 animate-in fade-in zoom-in-95 duration-200">
                     
-                    <div className="p-4 border-b border-white/10 flex items-center justify-between bg-white/[0.02]">
-                      <h3 className="font-semibold text-white">Notifications</h3>
+                    <div className="px-5 py-4 border-b border-white/10 flex items-center justify-between bg-white/[0.02] backdrop-blur-md">
+                      <div className="flex items-center gap-2">
+                        <h3 className="font-semibold text-white text-sm">Notifications</h3>
+                        {unreadCount > 0 && (
+                          <span className="bg-violet-500/20 text-violet-400 text-[10px] font-bold px-2 py-0.5 rounded-full">
+                            {unreadCount} NEW
+                          </span>
+                        )}
+                      </div>
                       {unreadCount > 0 && (
                         <button 
                           onMouseDown={(e) => { e.preventDefault(); handleMarkAsRead(); }}
-                          className="text-xs font-medium text-violet-400 hover:text-violet-300 transition-colors"
+                          className="text-[11px] font-medium text-zinc-400 hover:text-white transition-colors"
                         >
                           Mark all as read
                         </button>
                       )}
                     </div>
                     
-                    <div className="max-h-[350px] overflow-y-auto">
+                    <div className="max-h-[400px] overflow-y-auto overflow-x-hidden custom-scrollbar">
                       {notifications.length === 0 ? (
-                        <div className="p-8 text-center text-zinc-500 text-sm">
-                          No notifications yet.
+                        <div className="p-10 flex flex-col items-center justify-center text-center">
+                          <div className="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center mb-3">
+                            <Bell className="w-5 h-5 text-zinc-500" />
+                          </div>
+                          <p className="text-zinc-300 font-medium text-sm">All caught up!</p>
+                          <p className="text-zinc-500 text-xs mt-1">No new notifications right now.</p>
                         </div>
                       ) : (
-                        notifications.map(n => (
-                          <div key={n._id || n.id} className={`p-4 border-b border-white/5 hover:bg-white/[0.04] transition-colors cursor-pointer flex gap-4 ${!n.read ? 'bg-violet-500/[0.02]' : ''}`}>
-                            <div className="mt-1 shrink-0">
-                              <div className={`w-2 h-2 rounded-full ${!n.read ? 'bg-violet-500 shadow-[0_0_8px_rgba(139,92,246,0.8)]' : 'bg-transparent'}`} />
+                        notifications.map(n => {
+                          // Determine icon and color based on title
+                          let Icon = Sparkles;
+                          let iconColor = "text-violet-400";
+                          let iconBg = "bg-violet-500/10";
+                          
+                          const titleLower = n.title.toLowerCase();
+                          if (titleLower.includes("submission") || titleLower.includes("recorded") || titleLower.includes("verified")) {
+                            Icon = CheckCircle2;
+                            iconColor = "text-emerald-400";
+                            iconBg = "bg-emerald-500/10";
+                          } else if (titleLower.includes("battle") || titleLower.includes("versus")) {
+                            Icon = Swords;
+                            iconColor = "text-rose-400";
+                            iconBg = "bg-rose-500/10";
+                          } else if (titleLower.includes("streak") || titleLower.includes("fire")) {
+                            Icon = Flame;
+                            iconColor = "text-orange-400";
+                            iconBg = "bg-orange-500/10";
+                          } else if (titleLower.includes("won") || titleLower.includes("leaderboard") || titleLower.includes("rank")) {
+                            Icon = Trophy;
+                            iconColor = "text-amber-400";
+                            iconBg = "bg-amber-500/10";
+                          }
+
+                          return (
+                            <div key={n._id || n.id} className={`group relative p-4 border-b border-white/[0.04] hover:bg-white/[0.04] transition-all cursor-pointer flex gap-4 ${!n.read ? 'bg-violet-500/[0.03]' : ''}`}>
+                              
+                              {/* Unread Indicator Bar */}
+                              {!n.read && (
+                                <div className="absolute left-0 top-0 bottom-0 w-[3px] bg-violet-500 rounded-r-full shadow-[0_0_10px_rgba(139,92,246,0.5)]" />
+                              )}
+
+                              {/* Dynamic Icon */}
+                              <div className={`mt-0.5 shrink-0 w-9 h-9 rounded-full ${iconBg} border border-white/5 flex items-center justify-center transition-transform group-hover:scale-105`}>
+                                <Icon className={`w-4 h-4 ${iconColor}`} />
+                              </div>
+                              
+                              <div className="flex-1 pr-4">
+                                <div className="flex items-start justify-between gap-2">
+                                  <p className={`text-[13px] font-semibold leading-tight ${!n.read ? 'text-white' : 'text-zinc-300 group-hover:text-white'}`}>
+                                    {n.title}
+                                  </p>
+                                  <div className="flex items-center gap-3">
+                                    <span className="text-[10px] font-medium text-zinc-500 shrink-0 whitespace-nowrap mt-0.5">
+                                      {timeAgo(n.createdAt)}
+                                    </span>
+                                    <button 
+                                      onClick={(e) => handleDeleteNotification(n._id || n.id, e)}
+                                      className="opacity-0 group-hover:opacity-100 transition-opacity w-5 h-5 flex items-center justify-center rounded-full hover:bg-white/10 text-zinc-500 hover:text-white"
+                                    >
+                                      <X className="w-3.5 h-3.5" />
+                                    </button>
+                                  </div>
+                                </div>
+                                <p className="text-[12px] text-zinc-400 leading-relaxed mt-1.5 line-clamp-2">
+                                  {n.desc}
+                                </p>
+                              </div>
                             </div>
-                            <div>
-                              <p className={`text-sm font-medium ${!n.read ? 'text-white' : 'text-zinc-300'}`}>{n.title}</p>
-                              <p className="text-xs text-zinc-400 mt-1">{n.desc}</p>
-                              <p className="text-xs font-medium text-zinc-500 mt-2">{timeAgo(n.createdAt)}</p>
-                            </div>
-                          </div>
-                        ))
+                          );
+                        })
                       )}
-                    </div>
-                    
-                    <div className="p-3 text-center border-t border-white/10 bg-white/[0.02]">
-                      <button className="text-xs font-medium text-zinc-400 hover:text-white transition-colors">View all activity</button>
                     </div>
                   </div>
                 )}

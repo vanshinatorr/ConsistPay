@@ -14,6 +14,8 @@ interface TodaysChallengeProps {
   todayLine: string;
   timeLeft: { h: number; m: number; s: number };
   aiLoading: boolean;
+  onboardingComplete?: boolean;
+  onSetupClick?: () => void;
 }
 
 export function TodaysChallenge({
@@ -29,6 +31,8 @@ export function TodaysChallenge({
   todayLine,
   timeLeft,
   aiLoading,
+  onboardingComplete = true,
+  onSetupClick,
 }: TodaysChallengeProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -82,10 +86,28 @@ export function TodaysChallenge({
           {/* PRE SUBMIT */}
           {!submitted && (
             <>
-              <div className="mb-6">
-                <h3 className="text-2xl font-semibold text-white mb-3 leading-tight">
-                  Solved a coding problem today?
-                </h3>
+              {!onboardingComplete ? (
+                <div className="flex flex-col items-center justify-center text-center py-10">
+                  <div className="w-16 h-16 bg-violet-500/10 rounded-full flex items-center justify-center mb-4">
+                    <Lock className="w-8 h-8 text-violet-400" />
+                  </div>
+                  <h3 className="text-xl font-bold text-white mb-2">Setup Required</h3>
+                  <p className="text-sm text-zinc-400 mb-6 max-w-sm">
+                    You need to set up your daily commitment plan before you can start submitting proofs.
+                  </p>
+                  <button
+                    onClick={onSetupClick}
+                    className="px-6 py-3 bg-violet-600 hover:bg-violet-500 text-white font-medium rounded-xl transition-all shadow-lg shadow-violet-500/25"
+                  >
+                    Setup Commitment Now
+                  </button>
+                </div>
+              ) : (
+                <>
+                  <div className="mb-6">
+                    <h3 className="text-2xl font-semibold text-white mb-3 leading-tight">
+                      Solved a coding problem today?
+                  </h3>
 
                 <p className="text-sm text-zinc-400 leading-relaxed max-w-lg">
                   Enter problem name and upload your accepted
@@ -194,102 +216,73 @@ export function TodaysChallenge({
                   </div>
                 )}
 
-                {/* Submit Button */}
-                <button
-                  type="submit"
-                  disabled={!canSubmit}
-                  className={`w-full h-12 rounded-xl font-semibold transition-all duration-300 flex items-center justify-center gap-2 ${
-                    canSubmit
-                      ? "bg-gradient-to-r from-violet-500 to-purple-600 hover:from-violet-400 hover:to-purple-500 text-white shadow-lg shadow-violet-500/20"
-                      : "bg-white/[0.05] border border-white/10 text-zinc-500 cursor-not-allowed"
-                  }`}
-                >
-                  {aiLoading ? (
-                    <>
-                      <div className="w-5 h-5 border-2 border-zinc-500 border-t-transparent rounded-full animate-spin" />
-                      Verifying AI...
-                    </>
-                  ) : (
-                    "Submit Solution"
-                  )}
-                </button>
-              </form>
+                  {/* Submit Button */}
+                  <button
+                    type="submit"
+                    disabled={!canSubmit}
+                    className={`w-full h-12 rounded-xl font-semibold transition-all duration-300 flex items-center justify-center gap-2 ${
+                      canSubmit
+                        ? "bg-gradient-to-r from-violet-500 to-purple-600 hover:from-violet-400 hover:to-purple-500 text-white shadow-lg shadow-violet-500/20"
+                        : "bg-white/[0.05] border border-white/10 text-zinc-500 cursor-not-allowed"
+                    }`}
+                  >
+                    {aiLoading ? (
+                      <>
+                        <div className="w-5 h-5 border-2 border-zinc-500 border-t-transparent rounded-full animate-spin" />
+                        Verifying AI...
+                      </>
+                    ) : (
+                      "Submit Solution"
+                    )}
+                  </button>
+                </form>
+                </>
+              )}
             </>
           )}
 
-          {/* POST SUBMIT */}
+          {/* POST SUBMIT (Success State) */}
           {submitted && (
-            <div className="text-center py-4">
-
-              <div className="w-16 h-16 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg shadow-emerald-500/30">
-                <CheckCircle className="w-8 h-8 text-white" />
+            <div className="flex flex-col items-center justify-center h-full text-center py-10 animate-in zoom-in duration-500">
+              <div className="relative mb-6">
+                <div className="absolute inset-0 bg-emerald-500/20 rounded-full blur-xl animate-pulse" />
+                <div className="w-20 h-20 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-2xl flex items-center justify-center relative shadow-xl shadow-emerald-500/30 transform hover:scale-105 transition-transform">
+                  <CheckCircle className="w-10 h-10 text-white" />
+                </div>
               </div>
 
               <h3 className="text-2xl font-bold text-white mb-2">
-                Proof Submitted!
+                Streak Secured!
               </h3>
-
-              <p className="text-sm text-zinc-400 mb-6">
-                Today's coding session is now protected.
+              
+              <p className="text-emerald-400 font-medium mb-6 flex items-center gap-2">
+                🔥 {currentStreak} Day Streak
               </p>
 
-              <div className="grid grid-cols-2 gap-3 mb-5">
-
-                <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-2xl p-4">
-                  <div className="text-3xl font-black text-emerald-400">
-                    {currentStreak}
-                  </div>
-
-                  <div className="text-xs text-zinc-400 mt-1">
-                    🔥 Day Streak
-                  </div>
-                </div>
-
-                <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-2xl p-4">
-                  <div className="text-3xl font-black text-yellow-400">
-                    ₹{dailyCommitment}
-                  </div>
-
-                  <div className="text-xs text-zinc-400 mt-1">
-                    🪙 Secured today
-                  </div>
-                </div>
-              </div>
-
-              <div className="bg-white/[0.04] border border-white/10 rounded-2xl px-4 py-3 mb-5">
-                <p className="text-sm text-zinc-300 leading-relaxed">
-                  {todayLine}
+              <div className="w-full bg-white/[0.03] border border-white/[0.05] rounded-xl p-4 mb-8">
+                <p className="text-sm text-zinc-400 italic">
+                  "{todayLine}"
                 </p>
               </div>
 
-              <div className="bg-white/[0.04] border border-white/10 rounded-2xl p-5">
-
-                <div className="flex items-center justify-center gap-1.5 text-xs text-zinc-500 mb-4">
-                  <Lock className="w-3.5 h-3.5" />
-                  Next submission unlocks in
+              <div className="space-y-2 w-full">
+                <p className="text-sm text-zinc-500">Next challenge unlocks in</p>
+                <div className="flex items-center justify-center gap-3 font-mono text-lg font-bold">
+                  <div className="bg-white/5 px-3 py-2 rounded-lg text-white">
+                    {String(timeLeft.h).padStart(2, "0")}
+                    <span className="text-xs text-zinc-500 block font-sans">HRS</span>
+                  </div>
+                  <span className="text-zinc-600 pb-4">:</span>
+                  <div className="bg-white/5 px-3 py-2 rounded-lg text-white">
+                    {String(timeLeft.m).padStart(2, "0")}
+                    <span className="text-xs text-zinc-500 block font-sans">MIN</span>
+                  </div>
+                  <span className="text-zinc-600 pb-4">:</span>
+                  <div className="bg-white/5 px-3 py-2 rounded-lg text-emerald-400">
+                    {String(timeLeft.s).padStart(2, "0")}
+                    <span className="text-xs text-zinc-500 block font-sans">SEC</span>
+                  </div>
                 </div>
-
-                <div className="flex items-center justify-center gap-3">
-                  {[
-                    { val: timeLeft.h, label: "hrs" },
-                    { val: timeLeft.m, label: "min" },
-                    { val: timeLeft.s, label: "sec" },
-                  ].map(({ val, label }) => (
-                    <div
-                      key={label}
-                      className="text-center"
-                    >
-                      <div className="w-14 h-14 bg-white/[0.04] border border-white/10 rounded-xl flex items-center justify-center text-2xl font-black text-white">
-                        {String(val).padStart(2, "0")}
-                      </div>
-
-                      <div className="text-xs text-zinc-500 mt-1">
-                        {label}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-
               </div>
             </div>
           )}
@@ -298,3 +291,8 @@ export function TodaysChallenge({
     </div>
   );
 }
+
+                        <div className="w-10 h-10 bg-violet-500/10 border border-violet-500/20 rounded-lg flex items-center justify-center shrink-0">
+                          <ImageIcon className="w-5 h-5 text-violet-400" />
+                        </div>
+

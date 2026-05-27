@@ -5,7 +5,7 @@ export function Payment() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    navigate("/onboarding", { replace: true });
+    navigate("/dashboard", { replace: true });
   }, [navigate]);
 
   return (

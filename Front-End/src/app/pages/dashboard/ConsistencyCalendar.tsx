@@ -102,6 +102,7 @@ interface ConsistencyCalendarProps {
       date?: Date;
     }[][];
   }[];
+  onboardingComplete?: boolean;
 }
 
 export function ConsistencyCalendar({
@@ -109,6 +110,7 @@ export function ConsistencyCalendar({
   setCalendarYear,
   dayLabels,
   yearMonths,
+  onboardingComplete = true,
 }: ConsistencyCalendarProps) {
   return (
     <div className="mb-6">
@@ -148,7 +150,7 @@ export function ConsistencyCalendar({
           </div>
 
           
-          <div className="overflow-x-auto pb-4">
+          <div className={`overflow-x-auto pb-4 transition-all duration-500 ${!onboardingComplete ? 'opacity-30 grayscale pointer-events-none' : ''}`}>
             <div className="flex gap-4 min-w-max">
               
               <div className="flex flex-col gap-[3px] mt-[20px] shrink-0">

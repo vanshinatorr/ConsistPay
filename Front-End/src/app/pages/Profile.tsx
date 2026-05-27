@@ -151,7 +151,7 @@ export function Profile() {
                       {avatar}
                     </div>
                   )}
-                  {userData.plan === "pro" && (
+                  {userData?.plan?.toLowerCase() === "pro" && (
                     <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-gradient-to-br from-violet-500 to-purple-600 rounded-lg flex items-center justify-center shadow-md">
                       <span className="text-xs">⭐</span>
                     </div>
@@ -162,7 +162,7 @@ export function Profile() {
                   <h1 className="text-2xl font-bold">{userData.name}</h1>
                   <p className="text-zinc-400 text-sm">@{username}</p>
                   <div className="flex items-center gap-2 mt-2">
-                    {userData.plan === "pro" ? (
+                    {userData?.plan?.toLowerCase() === "pro" ? (
                       <span className="text-xs bg-violet-500/20 border border-violet-500/30 text-violet-300 px-2 py-0.5 rounded-full font-semibold">
                         ⚡ Pro
                       </span>
@@ -306,10 +306,10 @@ export function Profile() {
               <div>
                 <h2 className="text-lg font-bold flex items-center gap-2">
                   <Zap className="w-5 h-5 text-violet-400" />
-                  {userData.plan === "pro" ? "Pro Plan" : "Free Plan"}
+                  {userData?.plan?.toLowerCase() === "pro" ? "Pro Plan" : "Free Plan"}
                 </h2>
                 <p className="text-zinc-400 text-sm mt-1">
-                  {userData.plan === "pro" ? "All features unlocked • ₹49/month" : "Basic tracking features"}
+                  {userData?.plan?.toLowerCase() === "pro" ? "All features unlocked • ₹49/month" : "Basic tracking features"}
                 </p>
               </div>
               <div className="flex flex-col items-end gap-2">

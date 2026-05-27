@@ -35,7 +35,7 @@ export function Signup() {
     localStorage.setItem("token", data.token);
 
     if (data.onboardingComplete === false) {
-      window.location.href = "/onboarding";
+      window.location.href = "/dashboard";
     } else {
       window.location.href = "/dashboard";
     }

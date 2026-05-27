@@ -146,6 +146,13 @@ const submitSolution = async (req, res) => {
 
     if (hasActivePlan) {
       user.streak = (user.streak || 0) + 1;
+      
+      // 15-day streak unlock for Pro plan
+      if (user.streak === 15 && user.plan === "pro") {
+        user.graceCoins = (user.graceCoins || 0) + 1;
+        console.log(`Unlocked +1 grace coin for 15-day streak. Total: ${user.graceCoins}`);
+      }
+
       user.balance += (user.dailyCommitment || 0);
       await user.save();
       console.log(`Updated streak to ${user.streak} and balance to ${user.balance}`);
