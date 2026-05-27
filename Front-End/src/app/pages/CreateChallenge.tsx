@@ -1,11 +1,11 @@
-import { Code2, ArrowLeft, Copy, Share2, CheckCircle, Users, Zap, Shield } from "lucide-react";
+import { Code2, ArrowLeft, Copy, Share2, CheckCircle, Target, Users, Coins, Zap, Shield, Sparkles, User, Sword } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useState } from "react";
 
-type Screen = "setup" | "confirm" | "generated";
+type Screen = "duration" | "stake" | "confirm" | "waiting";
 
 export function CreateChallenge() {
-  const [screen, setScreen] = useState<Screen>("setup");
+  const [screen, setScreen] = useState<Screen>("duration");
   const [selectedDuration, setSelectedDuration] = useState<7 | 15 | 30 | null>(null);
   const [stakeAmount, setStakeAmount] = useState("");
   const [copied, setCopied] = useState(false);
@@ -26,8 +26,6 @@ export function CreateChallenge() {
     { days: 30, label: "30 Days", desc: "Full month", color: "from-orange-500 to-pink-500" },
   ];
 
-  const isSetupValid = selectedDuration && stake >= 100 && stake <= 1000;
-
   const handleCopy = () => {
     navigator.clipboard.writeText(generatedInviteCode || "CP-X7K2M");
     setCopied(true);
@@ -35,7 +33,7 @@ export function CreateChallenge() {
   };
 
   const handleCreateChallenge = async () => {
-    if (!selectedDuration || !stakeAmount) return;
+    if (!selectedDuration || !stake) return;
     setError("");
     setLoading(true);
 
@@ -60,7 +58,7 @@ export function CreateChallenge() {
       }
 
       setGeneratedInviteCode(data.inviteCode);
-      setScreen("generated");
+      setScreen("waiting");
     } catch (err) {
       setError("Network error. Please try again.");
     } finally {
@@ -74,7 +72,6 @@ export function CreateChallenge() {
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-0 right-1/4 w-96 h-96 bg-violet-500/10 rounded-full blur-[120px]" />
         <div className="absolute bottom-1/4 left-1/4 w-96 h-96 bg-emerald-500/10 rounded-full blur-[120px]" />
-        <div className="absolute top-1/2 left-1/2 w-64 h-64 bg-pink-500/5 rounded-full blur-[100px]" />
       </div>
 
       {/* Navbar */}
@@ -83,7 +80,7 @@ export function CreateChallenge() {
           <div className="flex items-center justify-between">
             <Link to="/dashboard" className="flex items-center gap-2 text-zinc-400 hover:text-white transition-colors">
               <ArrowLeft className="w-5 h-5" />
-              <span className="text-sm">Back to Dashboard</span>
+              <span className="text-sm">Cancel Battle</span>
             </Link>
             <div className="flex items-center gap-3">
               <div className="w-9 h-9 bg-gradient-to-br from-violet-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg shadow-violet-500/30">
@@ -93,311 +90,276 @@ export function CreateChallenge() {
                 ConsistPay
               </span>
             </div>
-            <div className="w-24" />
+            <div className="w-24 flex justify-end">
+              <span className="text-xs bg-white/5 border border-white/10 px-2 py-1 rounded-md text-zinc-400">Step {screen === 'duration' ? 1 : screen === 'stake' ? 2 : screen === 'confirm' ? 3 : 4}/4</span>
+            </div>
           </div>
         </div>
       </nav>
 
       {/* Main */}
-      <main className="relative max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+      <main className="relative max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
 
-        {/* ───────────── SCREEN 1: SETUP ───────────── */}
-        {screen === "setup" && (
-          <div className="space-y-6">
-            {/* Header */}
-            <div className="text-center mb-8">
-              <div className="inline-flex items-center gap-2 bg-violet-500/10 border border-violet-500/20 rounded-full px-4 py-2 text-sm text-violet-300 mb-4">
-                <Users className="w-4 h-4" />
-                Friend Challenge
+        {/* ───────────── SCREEN 1: DURATION ───────────── */}
+        {screen === "duration" && (
+          <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-300">
+            
+            <div className="text-center mb-10">
+              <div className="inline-flex items-center gap-2 bg-violet-500/10 border border-violet-500/20 rounded-full px-4 py-1.5 text-sm text-violet-300 mb-4 font-semibold">
+                <Target className="w-4 h-4" />
+                Step 1: Rules of Engagement
               </div>
-              <h1 className="text-3xl sm:text-4xl font-bold mb-3">
-                Create a{" "}
-                <span className="bg-gradient-to-r from-violet-400 to-emerald-400 bg-clip-text text-transparent">
-                  Challenge
-                </span>
+              <h1 className="text-4xl font-extrabold mb-3">
+                How long is the battle?
               </h1>
-              <p className="text-zinc-400 text-sm">
-                Set the stakes, invite your friend, and let the best coder win.
+              <p className="text-zinc-400 text-sm max-w-sm mx-auto">
+                Choose the duration of your consistency contract. You both must submit proof every day.
               </p>
             </div>
 
-            {/* Step 1 — Duration */}
-            <div className="relative">
-              <div className="absolute inset-0 bg-gradient-to-br from-violet-500/10 to-purple-500/10 rounded-2xl blur-xl opacity-60" />
-              <div className="relative bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6">
-                <div className="flex items-center gap-3 mb-5">
-                  <div className="w-7 h-7 bg-violet-500/20 border border-violet-500/30 rounded-lg flex items-center justify-center text-sm font-bold text-violet-300">
-                    1
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              {durations.map(({ days, label, desc, color }) => (
+                <button
+                  key={days}
+                  onClick={() => setSelectedDuration(days as 7 | 15 | 30)}
+                  className={`relative group p-6 rounded-2xl border transition-all duration-300 text-center
+                    ${selectedDuration === days
+                      ? "border-violet-500/50 bg-violet-500/10 shadow-lg shadow-violet-500/10 scale-[1.02]"
+                      : "border-white/10 bg-white/5 hover:border-white/20 hover:bg-white/10"
+                    }`}
+                >
+                  <div className={`text-3xl font-black mb-1 bg-gradient-to-r ${color} bg-clip-text text-transparent`}>
+                    {label}
                   </div>
-                  <h2 className="text-lg font-semibold">Choose Duration</h2>
-                </div>
-
-                <div className="grid grid-cols-3 gap-3">
-                  {durations.map(({ days, label, desc, color }) => (
-                    <button
-                      key={days}
-                      onClick={() => setSelectedDuration(days as 7 | 15 | 30)}
-                      className={`relative group p-4 rounded-xl border transition-all duration-200 text-left
-                        ${selectedDuration === days
-                          ? "border-violet-500/50 bg-violet-500/10 shadow-lg shadow-violet-500/10"
-                          : "border-white/10 bg-white/5 hover:border-white/20 hover:bg-white/8"
-                        }`}
-                    >
-                      {selectedDuration === days && (
-                        <div className={`absolute top-2 right-2 w-2 h-2 rounded-full bg-gradient-to-r ${color}`} />
-                      )}
-                      <div className={`text-2xl font-bold mb-1 bg-gradient-to-r ${color} bg-clip-text text-transparent`}>
-                        {label}
-                      </div>
-                      <div className="text-xs text-zinc-500">{desc}</div>
-                    </button>
-                  ))}
-                </div>
-              </div>
+                  <div className="text-xs text-zinc-400 font-medium">{desc}</div>
+                </button>
+              ))}
             </div>
 
-            {/* Step 2 — Stake Amount */}
-            <div className="relative">
-              <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/10 to-teal-500/10 rounded-2xl blur-xl opacity-60" />
-              <div className="relative bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6">
-                <div className="flex items-center gap-3 mb-5">
-                  <div className="w-7 h-7 bg-emerald-500/20 border border-emerald-500/30 rounded-lg flex items-center justify-center text-sm font-bold text-emerald-300">
-                    2
-                  </div>
-                  <h2 className="text-lg font-semibold">Set Stake Amount</h2>
-                  <span className="ml-auto text-xs text-zinc-500">₹100 – ₹1000</span>
-                </div>
-
-                {/* Quick Select */}
-                <div className="flex gap-2 mb-4">
-                  {[100, 250, 500, 1000].map((amt) => (
-                    <button
-                      key={amt}
-                      onClick={() => setStakeAmount(String(amt))}
-                      className={`flex-1 py-2 rounded-lg text-sm font-medium border transition-all
-                        ${stakeAmount === String(amt)
-                          ? "bg-emerald-500/20 border-emerald-500/40 text-emerald-300"
-                          : "bg-white/5 border-white/10 text-zinc-400 hover:border-white/20"
-                        }`}
-                    >
-                      ₹{amt}
-                    </button>
-                  ))}
-                </div>
-
-                {/* Custom Input */}
-                <div className="relative">
-                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400 font-semibold">₹</span>
-                  <input
-                    type="number"
-                    min={100}
-                    max={1000}
-                    placeholder="Enter custom amount"
-                    value={stakeAmount}
-                    onChange={(e) => setStakeAmount(e.target.value)}
-                    className="w-full pl-8 pr-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder:text-zinc-600 focus:outline-none focus:border-emerald-500/50 focus:ring-1 focus:ring-emerald-500/20 transition-all"
-                  />
-                </div>
-
-                {stake > 0 && (stake < 100 || stake > 1000) && (
-                  <p className="text-xs text-red-400 mt-2">Amount must be between ₹100 and ₹1000</p>
-                )}
-              </div>
-            </div>
-
-            {/* Step 3 — Summary */}
-            {isSetupValid && (
-              <div className="relative">
-                <div className="absolute inset-0 bg-gradient-to-br from-orange-500/10 to-pink-500/10 rounded-2xl blur-xl opacity-60" />
-                <div className="relative bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6">
-                  <div className="flex items-center gap-3 mb-5">
-                    <div className="w-7 h-7 bg-orange-500/20 border border-orange-500/30 rounded-lg flex items-center justify-center text-sm font-bold text-orange-300">
-                      3
-                    </div>
-                    <h2 className="text-lg font-semibold">Challenge Summary</h2>
-                  </div>
-
-                  <div className="space-y-3">
-                    <div className="flex justify-between text-sm">
-                      <span className="text-zinc-400">Duration</span>
-                      <span className="font-semibold">{selectedDuration} days</span>
-                    </div>
-                    <div className="flex justify-between text-sm">
-                      <span className="text-zinc-400">Your stake</span>
-                      <span className="font-semibold">₹{stake}</span>
-                    </div>
-                    <div className="flex justify-between text-sm">
-                      <span className="text-zinc-400">Friend's stake</span>
-                      <span className="font-semibold">₹{stake}</span>
-                    </div>
-                    <div className="flex justify-between text-sm">
-                      <span className="text-zinc-400">Entry fee</span>
-                      <span className="font-semibold">₹{ENTRY_FEE}</span>
-                    </div>
-                    <div className="border-t border-white/10 pt-3 flex justify-between">
-                      <span className="text-zinc-400 text-sm">You pay now</span>
-                      <span className="font-bold text-lg text-emerald-400">₹{total}</span>
-                    </div>
-                    <div className="flex justify-between text-sm">
-                      <span className="text-zinc-400">🏆 Winner gets</span>
-                      <span className="font-bold text-yellow-400">₹{stake * 2}</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* CTA */}
             <button
-              disabled={!isSetupValid}
-              onClick={() => setScreen("confirm")}
-              className={`w-full py-4 rounded-xl font-bold text-base transition-all duration-300
-                ${isSetupValid
-                  ? "bg-gradient-to-r from-violet-500 to-purple-600 hover:from-violet-400 hover:to-purple-500 shadow-lg shadow-violet-500/30 hover:shadow-violet-500/50 hover:-translate-y-0.5"
+              disabled={!selectedDuration}
+              onClick={() => setScreen("stake")}
+              className={`w-full py-4 rounded-xl font-bold text-base transition-all duration-300 mt-8 flex items-center justify-center gap-2
+                ${selectedDuration
+                  ? "bg-violet-600 hover:bg-violet-500 shadow-lg shadow-violet-500/20 text-white"
                   : "bg-white/5 border border-white/10 text-zinc-600 cursor-not-allowed"
                 }`}
             >
-              {isSetupValid ? `Continue → Pay ₹${total}` : "Fill details to continue"}
+              Continue to Stakes <ArrowLeft className="w-4 h-4 rotate-180" />
             </button>
           </div>
         )}
 
-        {/* ───────────── SCREEN 2: CONFIRM ───────────── */}
-        {screen === "confirm" && (
-          <div className="space-y-6">
-            <div className="text-center mb-8">
-              <h1 className="text-3xl font-bold mb-2">Confirm & Pay</h1>
-              <p className="text-zinc-400 text-sm">Review your challenge before paying</p>
+        {/* ───────────── SCREEN 2: STAKE ───────────── */}
+        {screen === "stake" && (
+          <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-300">
+            
+            <div className="text-center mb-10">
+              <div className="inline-flex items-center gap-2 bg-emerald-500/10 border border-emerald-500/20 rounded-full px-4 py-1.5 text-sm text-emerald-300 mb-4 font-semibold">
+                <Coins className="w-4 h-4" />
+                Step 2: Skin in the Game
+              </div>
+              <h1 className="text-4xl font-extrabold mb-3">
+                Set the Stakes
+              </h1>
+              <p className="text-zinc-400 text-sm max-w-sm mx-auto">
+                Higher stakes equal higher commitment. The winner takes the entire combined pool.
+              </p>
             </div>
 
-            <div className="relative">
-              <div className="absolute inset-0 bg-gradient-to-br from-violet-500/10 to-pink-500/10 rounded-2xl blur-xl opacity-60" />
-              <div className="relative bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 space-y-4">
-                {[
-                  { label: "Duration", value: `${selectedDuration} days` },
-                  { label: "Your Stake", value: `₹${stake}` },
-                  { label: "Entry Fee", value: `₹${ENTRY_FEE}` },
-                  { label: "Winner Gets", value: `₹${stake * 2}`, highlight: true },
-                ].map(({ label, value, highlight }) => (
-                  <div key={label} className="flex justify-between items-center py-2 border-b border-white/5 last:border-0">
-                    <span className="text-zinc-400 text-sm">{label}</span>
-                    <span className={`font-bold ${highlight ? "text-yellow-400 text-xl" : ""}`}>{value}</span>
-                  </div>
+            <div className="bg-white/5 border border-white/10 rounded-3xl p-8 backdrop-blur-xl">
+              
+              {/* Quick Select */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
+                {[100, 200, 500, 1000].map((amt) => (
+                  <button
+                    key={amt}
+                    onClick={() => setStakeAmount(String(amt))}
+                    className={`py-3 rounded-xl text-lg font-bold border transition-all
+                      ${stakeAmount === String(amt)
+                        ? "bg-emerald-500/20 border-emerald-500/40 text-emerald-400 shadow-lg shadow-emerald-500/10 scale-105"
+                        : "bg-white/5 border-white/10 text-zinc-300 hover:bg-white/10"
+                      }`}
+                  >
+                    ₹{amt}
+                  </button>
                 ))}
               </div>
-            </div>
 
-            {/* Trust badges */}
-            <div className="grid grid-cols-3 gap-3">
-              {[
-                { icon: Shield, text: "100% Secure Payment", color: "text-emerald-400" },
-                { icon: Zap, text: "Instant Code Generated", color: "text-yellow-400" },
-                { icon: CheckCircle, text: "Grace Coins Applicable", color: "text-violet-400" },
-              ].map(({ icon: Icon, text, color }) => (
-                <div key={text} className="bg-white/5 border border-white/10 rounded-xl p-3 text-center">
-                  <Icon className={`w-5 h-5 ${color} mx-auto mb-1`} />
-                  <p className="text-xs text-zinc-400">{text}</p>
+              {/* Custom Input */}
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none">
+                  <span className="text-xl font-bold text-zinc-500">₹</span>
                 </div>
-              ))}
+                <input
+                  type="number"
+                  min={100}
+                  max={1000}
+                  placeholder="Custom amount"
+                  value={stakeAmount}
+                  onChange={(e) => setStakeAmount(e.target.value)}
+                  className="w-full pl-10 pr-6 py-4 bg-black/40 border border-white/10 rounded-2xl text-2xl font-bold text-white placeholder:text-zinc-700 focus:outline-none focus:border-emerald-500/50 focus:ring-1 focus:ring-emerald-500/20 transition-all text-center"
+                />
+              </div>
+
+              {stake > 0 && (stake < 100 || stake > 1000) && (
+                <p className="text-xs text-red-400 mt-3 text-center">Amount must be between ₹100 and ₹1000</p>
+              )}
             </div>
 
-            {error && (
-              <p className="text-sm text-red-400 text-center font-medium">{error}</p>
-            )}
-
-            <div className="flex gap-3">
+            <div className="flex gap-3 mt-8">
               <button
-                onClick={() => {
-                  setError("");
-                  setScreen("setup");
-                }}
-                className="flex-1 py-4 rounded-xl font-semibold bg-white/5 border border-white/10 hover:bg-white/10 transition-all"
+                onClick={() => setScreen("duration")}
+                className="px-6 py-4 rounded-xl font-semibold bg-white/5 border border-white/10 hover:bg-white/10 transition-all"
               >
-                ← Back
+                Back
               </button>
               <button
-                disabled={loading}
-                onClick={handleCreateChallenge}
-                className="flex-2 w-full py-4 rounded-xl font-bold bg-gradient-to-r from-violet-500 to-purple-600 hover:from-violet-400 hover:to-purple-500 shadow-lg shadow-violet-500/30 transition-all hover:-translate-y-0.5 disabled:opacity-50"
+                disabled={!stake || stake < 100 || stake > 1000}
+                onClick={() => setScreen("confirm")}
+                className={`flex-1 py-4 rounded-xl font-bold text-base transition-all duration-300 flex items-center justify-center gap-2
+                  ${stake && stake >= 100 && stake <= 1000
+                    ? "bg-emerald-600 hover:bg-emerald-500 shadow-lg shadow-emerald-500/20 text-white"
+                    : "bg-white/5 border border-white/10 text-zinc-600 cursor-not-allowed"
+                  }`}
               >
-                {loading ? "Processing..." : `Pay ₹${total} & Create`}
+                Review & Confirm <ArrowLeft className="w-4 h-4 rotate-180" />
               </button>
             </div>
           </div>
         )}
 
-        {/* ───────────── SCREEN 3: INVITE CODE ───────────── */}
-        {screen === "generated" && (
-          <div className="space-y-6">
-            <div className="text-center mb-8">
-
-<div className="w-16 h-16 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg shadow-emerald-500/30">
-  <CheckCircle className="w-8 h-8 text-white" />
-</div>
-              <h1 className="text-3xl font-bold mb-2">Challenge Created!</h1>
-              <p className="text-zinc-400 text-sm">Share the invite code with your friend to start</p>
+        {/* ───────────── SCREEN 3: CONFIRM ───────────── */}
+        {screen === "confirm" && (
+          <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-300">
+            <div className="text-center mb-10">
+              <h1 className="text-3xl font-bold mb-2">Final Review</h1>
+              <p className="text-zinc-400 text-sm">Lock in your commitment contract</p>
             </div>
 
-            {/* Invite Code */}
             <div className="relative">
-              <div className="absolute inset-0 bg-gradient-to-br from-violet-500/20 to-emerald-500/20 rounded-2xl blur-xl opacity-70" />
-              <div className="relative bg-white/5 backdrop-blur-xl border border-violet-500/30 rounded-2xl p-8 text-center">
-                <p className="text-zinc-400 text-sm mb-3">Your Invite Code</p>
-                <div className="text-5xl font-black tracking-widest text-white mb-6 font-mono select-all">
-                  {generatedInviteCode}
-                </div>
-
-                <div className="flex gap-3 justify-center">
-                  <button
-                    onClick={handleCopy}
-                    className={`flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all
-                      ${copied
-                        ? "bg-emerald-500/20 border border-emerald-500/40 text-emerald-300"
-                        : "bg-white/10 border border-white/20 hover:bg-white/15"
-                      }`}
-                  >
-                    {copied ? <CheckCircle className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
-                    {copied ? "Copied!" : "Copy Code"}
-                  </button>
-                  <button className="flex items-center gap-2 px-6 py-3 rounded-xl font-semibold bg-gradient-to-r from-violet-500 to-purple-600 hover:from-violet-400 hover:to-purple-500 transition-all shadow-lg shadow-violet-500/30">
-                    <Share2 className="w-4 h-4" />
-                    Share
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            {/* Challenge Info */}
-            <div className="relative">
-              <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-white/2 rounded-2xl blur-xl opacity-40" />
-              <div className="relative bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 space-y-3">
-                {[
-                  { label: "Duration", value: `${selectedDuration} days` },
-                  { label: "Stake per person", value: `₹${stake}` },
-                  { label: "Total prize pool", value: `₹${stake * 2}`, highlight: true },
-                  { label: "Status", value: "⏳ Waiting for friend..." },
-                ].map(({ label, value, highlight }) => (
-                  <div key={label} className="flex justify-between text-sm">
-                    <span className="text-zinc-400">{label}</span>
-                    <span className={`font-semibold ${highlight ? "text-yellow-400" : ""}`}>{value}</span>
+              <div className="absolute inset-0 bg-gradient-to-br from-violet-500/10 to-pink-500/10 rounded-3xl blur-xl opacity-60" />
+              <div className="relative bg-[#0A0A0C] border border-white/10 rounded-3xl p-8 shadow-2xl">
+                
+                {/* Visual VS Setup */}
+                <div className="flex items-center justify-center gap-6 mb-8">
+                  <div className="flex flex-col items-center gap-2">
+                    <div className="w-14 h-14 bg-gradient-to-br from-violet-500 to-purple-600 rounded-full flex items-center justify-center border-2 border-violet-400/30">
+                      <User className="w-6 h-6 text-white" />
+                    </div>
+                    <span className="text-xs font-bold text-violet-300">YOU (₹{stake})</span>
                   </div>
-                ))}
+                  <div className="text-sm font-black text-zinc-500 italic flex items-center justify-center w-10 h-10 rounded-full bg-white/5">VS</div>
+                  <div className="flex flex-col items-center gap-2">
+                    <div className="w-14 h-14 bg-zinc-800 border-2 border-dashed border-zinc-600 rounded-full flex items-center justify-center text-zinc-500">
+                      ?
+                    </div>
+                    <span className="text-xs font-bold text-zinc-400">FRIEND (₹{stake})</span>
+                  </div>
+                </div>
+
+                <div className="space-y-4">
+                  {[
+                    { label: "Duration", value: `${selectedDuration} days`, highlight: false },
+                    { label: "Your Stake", value: `₹${stake}`, highlight: false },
+                    { label: "Entry Fee", value: `₹${ENTRY_FEE}`, highlight: false },
+                    { label: "Total Prize Pool", value: `₹${stake * 2}`, highlight: true },
+                  ].map(({ label, value, highlight }) => (
+                    <div key={label} className="flex justify-between items-center py-3 border-b border-white/5 last:border-0">
+                      <span className="text-zinc-400 text-sm">{label}</span>
+                      <span className={`font-bold ${highlight ? "text-yellow-400 text-xl" : "text-white"}`}>{value}</span>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
 
-            {/* Info Note */}
-            <div className="flex items-start gap-3 bg-emerald-500/10 border border-emerald-500/20 rounded-xl p-4">
-              <CheckCircle className="w-5 h-5 text-emerald-400 mt-0.5 shrink-0" />
-              <p className="text-sm text-zinc-300">
-                Challenge will start automatically when your friend joins using this code. Both of you need to submit daily proof before 11:59 PM.
-              </p>
+            {error && (
+              <div className="p-4 bg-red-500/10 border border-red-500/20 text-red-400 text-sm font-medium rounded-xl text-center">
+                {error}
+              </div>
+            )}
+
+            <div className="flex gap-3 mt-8">
+              <button
+                onClick={() => setScreen("stake")}
+                className="px-6 py-4 rounded-xl font-semibold bg-white/5 border border-white/10 hover:bg-white/10 transition-all"
+              >
+                Back
+              </button>
+              <button
+                disabled={loading}
+                onClick={handleCreateChallenge}
+                className="flex-1 py-4 rounded-xl font-bold bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-500 hover:to-purple-500 shadow-lg shadow-violet-500/30 transition-all hover:-translate-y-0.5 disabled:opacity-50 flex justify-center items-center gap-2"
+              >
+                {loading ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                    Processing...
+                  </>
+                ) : (
+                  <>Pay ₹{total} & Create Battle</>
+                )}
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* ───────────── SCREEN 4: WAITING / INVITE ───────────── */}
+        {screen === "waiting" && (
+          <div className="animate-in fade-in zoom-in-95 duration-500 flex flex-col items-center justify-center min-h-[60vh]">
+            
+            {/* Animated Radar/Pulse */}
+            <div className="relative flex items-center justify-center mb-10 mt-10">
+              <div className="absolute w-32 h-32 bg-violet-500/20 rounded-full animate-ping" style={{ animationDuration: '3s' }}></div>
+              <div className="absolute w-48 h-48 border border-violet-500/10 rounded-full"></div>
+              <div className="absolute w-64 h-64 border border-violet-500/5 rounded-full"></div>
+              <div className="w-20 h-20 bg-gradient-to-br from-violet-500 to-purple-600 rounded-full flex items-center justify-center z-10 shadow-lg shadow-violet-500/40 relative">
+                <Sword className="w-8 h-8 text-white" />
+              </div>
+            </div>
+
+            <h1 className="text-3xl font-extrabold mb-3 text-center">
+              Waiting for Opponent...
+            </h1>
+            <p className="text-zinc-400 text-sm text-center mb-8 max-w-sm">
+              Your battle is ready. Send this invite code to your friend. The {selectedDuration}-day battle begins the moment they accept.
+            </p>
+
+            {/* Invite Code Card */}
+            <div className="w-full max-w-md bg-white/5 border border-violet-500/30 rounded-2xl p-6 text-center shadow-xl shadow-violet-500/10 relative overflow-hidden backdrop-blur-xl">
+              <div className="absolute inset-0 bg-gradient-to-br from-violet-500/5 to-transparent pointer-events-none" />
+              
+              <p className="text-xs text-violet-400 font-bold tracking-widest uppercase mb-3">Secret Invite Code</p>
+              
+              <div className="text-4xl sm:text-5xl font-black tracking-widest text-white mb-6 font-mono select-all bg-black/30 py-4 rounded-xl border border-white/5">
+                {generatedInviteCode}
+              </div>
+
+              <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                <button
+                  onClick={handleCopy}
+                  className={`flex-1 flex items-center justify-center gap-2 py-3.5 rounded-xl font-bold transition-all
+                    ${copied
+                      ? "bg-emerald-500/20 border border-emerald-500/40 text-emerald-400"
+                      : "bg-white/10 hover:bg-white/15 text-white"
+                    }`}
+                >
+                  {copied ? <CheckCircle className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+                  {copied ? "Copied!" : "Copy Code"}
+                </button>
+                <button className="flex-1 flex items-center justify-center gap-2 py-3.5 rounded-xl font-bold bg-violet-600 hover:bg-violet-500 text-white transition-all shadow-lg shadow-violet-600/30">
+                  <Share2 className="w-4 h-4" />
+                  Share Link
+                </button>
+              </div>
             </div>
 
             <Link
               to="/dashboard"
-              className="block w-full py-4 rounded-xl font-bold text-center bg-white/5 border border-white/10 hover:bg-white/10 transition-all"
+              className="mt-8 text-zinc-500 hover:text-white transition-colors text-sm font-medium"
             >
-              Back to Dashboard
+              Return to Dashboard
             </Link>
           </div>
         )}

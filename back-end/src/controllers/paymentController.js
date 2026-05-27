@@ -11,9 +11,12 @@ key_secret: process.env.RAZORPAY_KEY_SECRET,
 
 const createOrder = async (req, res) => {
 try {
-  const { plan, dailyCommitment, depositAmount, totalAmount } = req.body;
+  const { plan, dailyCommitment, depositAmount } = req.body;
+  const planLower = plan ? plan.toLowerCase() : "free";
+  const calculatedTotal = planLower === "pro" ? depositAmount + 49 : depositAmount;
+  
   const order = await razorpay.orders.create({
-    amount: totalAmount * 100,
+    amount: calculatedTotal * 100,
     currency: "INR",
     receipt: `rcp_${Date.now()}`,
     notes: {

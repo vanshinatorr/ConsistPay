@@ -46,82 +46,81 @@ export function Signup() {
 };
 
   return (
-    <div className="min-h-screen text-white relative overflow-hidden flex items-center justify-center px-4 py-12" style={{ backgroundColor: '#0D0D0F' }}>
-      <div className="absolute top-20 right-10 w-96 h-96 bg-violet-500/20 rounded-full blur-[120px] animate-pulse" />
-      <div className="absolute bottom-20 left-10 w-96 h-96 bg-emerald-500/20 rounded-full blur-[120px] animate-pulse" style={{ animationDelay: '1s' }} />
+    <div className="min-h-screen text-white relative overflow-hidden flex items-center justify-center px-4 py-12" style={{ backgroundColor: '#08080B' }}>
+      {/* Background Decorative Ambient Blobs */}
+      <div className="absolute top-20 right-10 w-96 h-96 bg-violet-500/5 rounded-full blur-[140px]" />
+      <div className="absolute bottom-20 left-10 w-96 h-96 bg-emerald-500/5 rounded-full blur-[140px]" />
       
-      <div className="relative z-10 w-full max-w-md animate-fadeInUp">
-        <Link to="/" className="flex items-center justify-center gap-3 mb-12">
-          <div className="w-12 h-12 bg-gradient-to-br from-violet-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg shadow-violet-500/30">
-            <Code2 className="w-7 h-7 text-white" />
+      <div className="relative z-10 w-full max-w-md">
+        <Link to="/" className="flex items-center justify-center gap-3 mb-10">
+          <div className="w-10 h-10 bg-gradient-to-br from-violet-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg shadow-violet-500/10">
+            <Code2 className="w-5 h-5 text-white" />
           </div>
-          <span className="text-2xl font-bold bg-gradient-to-r from-white to-zinc-400 bg-clip-text text-transparent">
+          <span className="text-xl font-bold bg-gradient-to-r from-white to-zinc-400 bg-clip-text text-transparent">
             ConsistPay
           </span>
         </Link>
 
         <div className="relative">
-          <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/20 to-violet-500/20 rounded-2xl blur-xl" />
-          
-          <div className="relative bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-8 shadow-2xl">
+          <div className="relative bg-white/[0.02] border border-white/[0.06] backdrop-blur-xl rounded-2xl p-8 shadow-2xl">
             <div className="text-center mb-8">
-              <h1 className="text-3xl font-bold mb-2">Start Your Streak 🚀</h1>
-              <p className="text-zinc-400 text-sm">Join developers building consistent habits</p>
+              <h1 className="text-2xl font-bold tracking-tight mb-2">Create your account</h1>
+              <p className="text-zinc-400 text-sm">Build coding consistency that actually lasts.</p>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-5">
               <div className="space-y-2">
-                <Label htmlFor="name" className="text-sm text-zinc-300">Name</Label>
+                <Label htmlFor="name" className="text-xs font-medium text-zinc-400 uppercase tracking-wider">Name</Label>
                 <Input
                   id="name"
                   type="text"
-                  placeholder="Your name"
+                  placeholder="Your full name"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="bg-white/5 border-white/10 text-white placeholder:text-zinc-500 focus:border-emerald-500/50 focus:ring-emerald-500/20"
+                  className="bg-white/[0.02] border-white/10 text-white placeholder:text-zinc-600 focus:border-violet-500/50 focus:ring-violet-500/20"
                   required
                 />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="email" className="text-sm text-zinc-300">Email</Label>
+                <Label htmlFor="email" className="text-xs font-medium text-zinc-400 uppercase tracking-wider">Email address</Label>
                 <Input
                   id="email"
                   type="email"
-                  placeholder="you@example.com"
+                  placeholder="name@company.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="bg-white/5 border-white/10 text-white placeholder:text-zinc-500 focus:border-emerald-500/50 focus:ring-emerald-500/20"
+                  className="bg-white/[0.02] border-white/10 text-white placeholder:text-zinc-600 focus:border-violet-500/50 focus:ring-violet-500/20"
                   required
                 />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="password" className="text-sm text-zinc-300">Password</Label>
+                <Label htmlFor="password" className="text-xs font-medium text-zinc-400 uppercase tracking-wider">Password</Label>
                 <Input
                   id="password"
                   type="password"
-                  placeholder="••••••••"
+                  placeholder="••••••••••••"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="bg-white/5 border-white/10 text-white placeholder:text-zinc-500 focus:border-emerald-500/50 focus:ring-emerald-500/20"
+                  className="bg-white/[0.02] border-white/10 text-white placeholder:text-zinc-600 focus:border-violet-500/50 focus:ring-violet-500/20"
                   required
                 />
               </div>
 
               <button
                 type="submit"
-                className="w-full py-3 bg-gradient-to-r from-violet-500 to-purple-600 hover:from-violet-400 hover:to-purple-500 text-white font-semibold rounded-lg transition-all duration-300 shadow-lg shadow-violet-500/30 hover:shadow-violet-500/50 mt-6"
+                className="w-full py-3.5 bg-violet-600 hover:bg-violet-500 text-white font-medium rounded-xl transition-all duration-200 mt-6 text-sm"
               >
-                Create Account
+                Sign Up
               </button>
             </form>
 
-            <p className="text-xs text-zinc-500 text-center mt-4">
-              By signing up, you agree to our{" "}
-              <a href="#" className="text-violet-400 hover:text-violet-300">Terms</a>
+            <p className="text-[10px] text-zinc-500 text-center mt-5 leading-normal">
+              By registering, you agree to our{" "}
+              <a href="#" className="text-violet-400 hover:underline">Terms of Service</a>
               {" "}and{" "}
-              <a href="#" className="text-violet-400 hover:text-violet-300">Privacy Policy</a>
+              <a href="#" className="text-violet-400 hover:underline">Privacy Policy</a>.
             </p>
 
             <div className="relative my-6">

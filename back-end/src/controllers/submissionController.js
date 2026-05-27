@@ -1,12 +1,13 @@
 const Submission = require("../models/Submission");
 const User = require("../models/User");
+const { createNotification } = require("./notificationController");
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
-const verifyScreenshot = async (base64Image) => {
+const verifyScreenshot = async (base64Image, userProvidedProblemName) => {
   // Model version ko confirm karo - using gemini-flash-latest to avoid 404
-  const model = genAI.getGenerativeModel({ model: "gemini-flash-latest" });
+  const model = genAI.getGenerativeModel({ model: "gemini-flash-latest", temperature: 0.9 });
 
   // Dynamic mimeType detection and base64 cleanup
   let mimeType = "image/png"; // default fallback
@@ -21,19 +22,26 @@ const verifyScreenshot = async (base64Image) => {
     }
   }
 
-  const prompt = `You are verifying a coding submission screenshot.
-Look for: LeetCode, GeeksforGeeks (GFG), or Code360.
-Verify that the screenshot shows a successful code submission:
-- LeetCode: look for "Accepted" (usually in green text), along with test case stats (e.g. "Runtime", "Memory" or list of test cases passed).
-- GeeksforGeeks (GFG): look for "Problem Solved Successfully" or stats showing all test cases passed.
-- Code360: look for "Accepted", "All Test Cases Passed", or similar successful indicators.
+  const prompt = `Analyze this coding submission screenshot.
+The user claims the problem name is: "${userProvidedProblemName || 'Unknown'}".
+
+Tasks:
+1. Detect platform (LeetCode/GFG/Code360/etc)
+2. Detect whether submission is accepted (i.e., successful solution showing Accepted or Problem Solved Successfully)
+3. Extract problem title from the screenshot (if missing, use the user's claim).
+4. Determine the problem's DSA topic (e.g. Arrays, Strings, Trees, DP, Graphs, etc.) and difficulty (Easy, Medium, Hard).
+5. Generate a 1-sentence recommended next step (e.g., "Try Medium Sliding Window problems tomorrow.").
+6. Generate a very deep, hard-hitting 1-sentence motivation line focused on how consistency in DSA leads to top placements and jobs. Make the user realize that solving this one problem puts them ahead of the 99% who never even start. Keep it dynamic, intense, and highly variable each time so it hits hard. Examples of vibe: "While others are sleeping on their dreams, this one submission just secured a brick in your future FAANG offer.", "Consistency isn't just about streaks; it's the quiet language of top-tier placements."
 
 Return ONLY a raw JSON response (no markdown, no backticks, just the JSON) with the following structure:
 {
-  "valid": true/false,
   "platform": "LeetCode" | "GFG" | "Code360" | "Unknown",
-  "problemName": "Name of the problem extracted from the screenshot or 'Unknown'",
-  "reason": "Brief explanation of why it is valid or invalid"
+  "accepted": true/false,
+  "problemName": "Extracted Problem Title",
+  "topic": "DSA Topic",
+  "difficulty": "Easy" | "Medium" | "Hard",
+  "recommendation": "Recommendation text",
+  "motivationLine": "Motivation text"
 }`;
 
   try {
@@ -77,6 +85,8 @@ Return ONLY a raw JSON response (no markdown, no backticks, just the JSON) with 
   }
 };
 
+// getEnrichedAiAnalysis has been merged into verifyScreenshot for optimization
+
 const submitSolution = async (req, res) => {
   try {
     const { problemName, screenshot } = req.body;
@@ -91,12 +101,12 @@ const submitSolution = async (req, res) => {
     const today = new Date().toISOString().split("T")[0];
 
     // AI Verification start
-    console.log("Starting AI verification...");
-    const verification = await verifyScreenshot(screenshot);
+    console.log("Starting unified AI verification and enrichment...");
+    const verification = await verifyScreenshot(screenshot, problemName);
     console.log("AI Verification result:", verification);
 
-    if (!verification.valid) {
-      return res.status(400).json({ message: `Verification failed: ${verification.reason}` });
+    if (!verification.accepted) {
+      return res.status(400).json({ message: "Verification failed: screenshot not accepted or not recognized as a success state." });
     }
 
     // Check if user has already completed a submission today
@@ -106,7 +116,9 @@ const submitSolution = async (req, res) => {
       status: "completed"
     });
     
-    const isFirstSubmissionToday = !existingSubmission;
+    if (existingSubmission) {
+      return res.status(400).json({ message: "You have already completed your daily commitment today!" });
+    }
 
     // Extract problem name from AI or fallback to user input
     const finalProblemName = verification.problemName && verification.problemName !== "Unknown"
@@ -114,28 +126,48 @@ const submitSolution = async (req, res) => {
       : problemName;
 
     // Database save
-    console.log("Saving to MongoDB...");
-    await Submission.create({
+    console.log("Saving submission with AI analysis to MongoDB...");
+    const submission = await Submission.create({
       userId,
       problemName: finalProblemName,
       platform: verification.platform,
       date: today,
       status: "completed",
+      topic: verification.topic || "General DSA",
+      difficulty: verification.difficulty || "Easy",
+      recommendation: verification.recommendation || "Keep practicing more problems to solidify your understanding.",
+      motivationLine: verification.motivationLine || "One step is always better than never starting.",
+      accepted: true
     });
 
-    // User update
+    // Check Plan Expiry for Payouts
     const user = await User.findById(userId);
-    if (isFirstSubmissionToday) {
+    const hasActivePlan = user.planExpiresAt && new Date(user.planExpiresAt) >= new Date();
+
+    if (hasActivePlan) {
       user.streak = (user.streak || 0) + 1;
       user.balance += (user.dailyCommitment || 0);
       await user.save();
       console.log(`Updated streak to ${user.streak} and balance to ${user.balance}`);
     } else {
-      console.log(`User already submitted today. Streak (${user.streak}) and Balance (${user.balance}) remain unchanged.`);
+      console.log(`User plan is expired. Recorded submission for battles, but no streak/balance payout given.`);
     }
 
+    // Send Notification
+    await createNotification(
+      userId,
+      "Submission Recorded 🚀",
+      hasActivePlan ? "Your daily submission was verified and payout secured." : "Submission verified for active battles.",
+      "streak"
+    );
+
     console.log("Submission successful!");
-    res.status(201).json({ message: "Verified!", streak: user.streak });
+    res.status(201).json({ 
+      message: hasActivePlan ? "Verified & Payout Secured!" : "Verified for Battles!", 
+      streak: user.streak, 
+      submission,
+      payoutGiven: hasActivePlan 
+    });
 
   } catch (error) {
     console.error("CRITICAL SUBMIT ERROR:", error); 
@@ -146,7 +178,20 @@ const submitSolution = async (req, res) => {
   }
 };
 
-// ... Baki functions (getMySubmissions, getCalendar) as it is rehne do
+const getTodaySubmission = async (req, res) => {
+  try {
+    const today = new Date().toISOString().split("T")[0];
+    const submission = await Submission.findOne({
+      userId: req.user._id,
+      date: today,
+      status: "completed"
+    });
+    res.status(200).json(submission);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 const getMySubmissions = async (req, res) => {
   try {
     const submissions = await Submission.find({ userId: req.user._id }).sort({ date: -1 });
@@ -169,4 +214,4 @@ const getCalendar = async (req, res) => {
   }
 };
 
-module.exports = { submitSolution, getMySubmissions, getCalendar };
+module.exports = { submitSolution, getTodaySubmission, getMySubmissions, getCalendar };

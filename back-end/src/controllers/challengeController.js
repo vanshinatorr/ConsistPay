@@ -52,21 +52,21 @@ const autoResolveChallenges = async (userId) => {
       if (creatorScore > opponentScore) {
         // Creator wins
         const creator = await User.findById(challenge.creatorId);
-        creator.balance += challenge.stake * 2;
+        creator.battleBalance += challenge.stake * 2;
         await creator.save();
         console.log(`Creator ${creator.email} won stakes: +₹${challenge.stake * 2}`);
       } else if (opponentScore > creatorScore) {
         // Opponent wins
         const opponent = await User.findById(challenge.opponentId);
-        opponent.balance += challenge.stake * 2;
+        opponent.battleBalance += challenge.stake * 2;
         await opponent.save();
         console.log(`Opponent ${opponent.email} won stakes: +₹${challenge.stake * 2}`);
       } else {
         // Tie - Refund stakes
         const creator = await User.findById(challenge.creatorId);
         const opponent = await User.findById(challenge.opponentId);
-        creator.balance += challenge.stake;
-        opponent.balance += challenge.stake;
+        creator.battleBalance += challenge.stake;
+        opponent.battleBalance += challenge.stake;
         await creator.save();
         await opponent.save();
         console.log("Challenge tied. Stakes refunded to both.");
@@ -107,6 +107,14 @@ const createChallenge = async (req, res) => {
     const entryFee = 19;
     const totalCost = stakeVal + entryFee;
 
+    if (user.battleBalance < totalCost) {
+      return res.status(400).json({ message: `Insufficient Battle Balance. You need ₹${totalCost}. Please add funds to your Battle Wallet.` });
+    }
+
+    // Deduct from battle wallet
+    user.battleBalance -= totalCost;
+    await user.save();
+
     const inviteCode = await generateInviteCode();
 
     const challenge = await Challenge.create({
@@ -123,7 +131,7 @@ const createChallenge = async (req, res) => {
     res.status(201).json({
       message: "Challenge created successfully!",
       inviteCode: challenge.inviteCode,
-      balance: user.balance
+      battleBalance: user.battleBalance
     });
   } catch (error) {
     console.error("Error creating challenge:", error);
@@ -175,6 +183,14 @@ const joinChallenge = async (req, res) => {
     const totalCost = challenge.stake + challenge.entryFee;
     const user = await User.findById(userId);
 
+    if (user.battleBalance < totalCost) {
+      return res.status(400).json({ message: `Insufficient Battle Balance. You need ₹${totalCost}. Please add funds to your Battle Wallet.` });
+    }
+
+    // Deduct from battle wallet
+    user.battleBalance -= totalCost;
+    await user.save();
+
     // Start Challenge Dates
     const startDate = new Date();
     const endDate = new Date(startDate.getTime() + challenge.duration * 24 * 60 * 60 * 1000);
@@ -189,7 +205,7 @@ const joinChallenge = async (req, res) => {
 
     res.status(200).json({
       message: "Challenge joined successfully!",
-      balance: user.balance,
+      battleBalance: user.battleBalance,
       opponent: {
         name: creator.name,
         streak: creator.streak
@@ -305,10 +321,82 @@ const getChallengeHistory = async (req, res) => {
   }
 };
 
+// GET CHALLENGE BY ID
+const getChallengeById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const userId = req.user._id;
+
+    // Resolve any expired ones first
+    await autoResolveChallenges(userId);
+
+    const ch = await Challenge.findById(id)
+      .populate("creatorId", "name email streak avatar")
+      .populate("opponentId", "name email streak avatar");
+
+    if (!ch) {
+      return res.status(404).json({ message: "Challenge not found." });
+    }
+
+    if (
+      ch.creatorId._id.toString() !== userId.toString() &&
+      (!ch.opponentId || ch.opponentId._id.toString() !== userId.toString())
+    ) {
+      return res.status(403).json({ message: "Not authorized to view this challenge." });
+    }
+
+    const isCreator = ch.creatorId._id.toString() === userId.toString();
+    const userRole = isCreator ? "creator" : "opponent";
+
+    const creatorScore = await countCompletedSubmissions(ch.creatorId._id, ch.startDate || new Date(), ch.endDate || new Date());
+    const opponentScore = ch.opponentId ? await countCompletedSubmissions(ch.opponentId._id, ch.startDate || new Date(), ch.endDate || new Date()) : 0;
+
+    let currentDay = 1;
+    if (ch.status === "active" || ch.status === "completed") {
+      const diffTime = (new Date()).getTime() - ch.startDate.getTime();
+      currentDay = Math.min(ch.duration, Math.max(1, Math.ceil(diffTime / (1000 * 60 * 60 * 24))));
+    }
+
+    const formatted = {
+      id: ch._id,
+      inviteCode: ch.inviteCode,
+      duration: ch.duration,
+      stake: ch.stake,
+      pool: ch.stake * 2,
+      currentDay,
+      startDate: ch.startDate,
+      endDate: ch.endDate,
+      status: ch.status,
+      userRole,
+      creator: {
+        id: ch.creatorId._id,
+        name: ch.creatorId.name,
+        email: ch.creatorId.email,
+        streak: ch.creatorId.streak,
+        avatar: ch.creatorId.avatar,
+        score: creatorScore
+      },
+      opponent: ch.opponentId ? {
+        id: ch.opponentId._id,
+        name: ch.opponentId.name,
+        email: ch.opponentId.email,
+        streak: ch.opponentId.streak,
+        avatar: ch.opponentId.avatar,
+        score: opponentScore
+      } : null
+    };
+
+    res.status(200).json(formatted);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 module.exports = {
   createChallenge,
   getInviteDetails,
   joinChallenge,
   getActiveChallenges,
-  getChallengeHistory
+  getChallengeHistory,
+  getChallengeById
 };

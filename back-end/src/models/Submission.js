@@ -25,6 +25,27 @@ const submissionSchema = new mongoose.Schema(
       enum: ["completed", "missed", "pending"],
       default: "completed",
     },
+    // AI Proof Analysis Cache Fields
+    topic: {
+      type: String,
+      default: "",
+    },
+    difficulty: {
+      type: String,
+      default: "",
+    },
+    recommendation: {
+      type: String,
+      default: "",
+    },
+    motivationLine: {
+      type: String,
+      default: "",
+    },
+    accepted: {
+      type: Boolean,
+      default: true,
+    },
   },
   { timestamps: true }
 );

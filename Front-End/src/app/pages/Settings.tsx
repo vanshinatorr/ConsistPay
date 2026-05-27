@@ -1,17 +1,27 @@
-import { Code2, ArrowLeft, User, Lock, CreditCard, Bell, Shield, ChevronRight, Check, LogOut } from "lucide-react";
-import { Link } from "react-router-dom";
-import { useState } from "react";
+import { Code2, ArrowLeft, User, Lock, CreditCard, Bell, Shield, ChevronRight, Check, LogOut, Loader2 } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
 
 type Section = "account" | "commitment" | "security" | "notifications" | "plan";
 
 export function Settings() {
+  const navigate = useNavigate();
   const [activeSection, setActiveSection] = useState<Section>("account");
   const [saved, setSaved] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [saveLoading, setSaveLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
+
+  const API = import.meta.env.VITE_API_URL;
+  const token = localStorage.getItem("token") || "";
 
   // Account state
-  const [name, setName] = useState("Yuvraj Singh");
-  const [username, setUsername] = useState("yuvraj_codes");
-  const [email, setEmail] = useState("yuvraj@example.com");
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [plan, setPlan] = useState("free");
+  const [avatar, setAvatar] = useState("");
+  const [showAvatarSelector, setShowAvatarSelector] = useState(false);
+  const avatarOptions = ["👨‍💻", "👩‍💻", "🚀", "⚡", "👾", "🎯", "👑", "🦄"];
 
   // Commitment state
   const [dailyCommitment, setDailyCommitment] = useState<number>(5);
@@ -31,9 +41,121 @@ export function Settings() {
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
-  const handleSave = () => {
-    setSaved(true);
-    setTimeout(() => setSaved(false), 2000);
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const res = await fetch(`${API}/api/users/me`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        if (res.ok) {
+          const data = await res.json();
+          setName(data.name || "");
+          setEmail(data.email || "");
+          setAvatar(data.avatar || "");
+          setDailyCommitment(data.dailyCommitment || 5);
+          setPlan(data.plan || "free");
+        }
+      } catch (err) {
+        console.error("Error fetching user data:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchUser();
+  }, [API, token]);
+
+  const handleSaveAccount = async () => {
+    setSaveLoading(true);
+    setErrorMsg("");
+    try {
+      const res = await fetch(`${API}/api/users/me`, {
+        method: "PUT",
+        headers: { 
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({ name, email, avatar })
+      });
+      if (res.ok) {
+        setSaved(true);
+        setTimeout(() => setSaved(false), 2000);
+      } else {
+        const errData = await res.json();
+        setErrorMsg(errData.message || "Failed to update profile");
+      }
+    } catch (err) {
+      setErrorMsg("Network error occurred.");
+    } finally {
+      setSaveLoading(false);
+    }
+  };
+
+  const handleSaveCommitment = async () => {
+    setSaveLoading(true);
+    setErrorMsg("");
+    try {
+      const res = await fetch(`${API}/api/users/me`, {
+        method: "PUT",
+        headers: { 
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({ dailyCommitment })
+      });
+      if (res.ok) {
+        setSaved(true);
+        setTimeout(() => setSaved(false), 2000);
+      } else {
+        const errData = await res.json();
+        setErrorMsg(errData.message || "Failed to update commitment");
+      }
+    } catch (err) {
+      setErrorMsg("Network error occurred.");
+    } finally {
+      setSaveLoading(false);
+    }
+  };
+
+  const handleSavePassword = async () => {
+    if (newPassword !== confirmPassword) {
+      setErrorMsg("New passwords do not match.");
+      return;
+    }
+    if (!currentPassword) {
+      setErrorMsg("Current password is required.");
+      return;
+    }
+    setSaveLoading(true);
+    setErrorMsg("");
+    try {
+      const res = await fetch(`${API}/api/users/me`, {
+        method: "PUT",
+        headers: { 
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({ currentPassword, newPassword })
+      });
+      if (res.ok) {
+        setSaved(true);
+        setCurrentPassword("");
+        setNewPassword("");
+        setConfirmPassword("");
+        setTimeout(() => setSaved(false), 2000);
+      } else {
+        const errData = await res.json();
+        setErrorMsg(errData.message || "Failed to change password");
+      }
+    } catch (err) {
+      setErrorMsg("Network error occurred.");
+    } finally {
+      setSaveLoading(false);
+    }
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    navigate("/login");
   };
 
   const sections = [
@@ -43,6 +165,17 @@ export function Settings() {
     { key: "security", label: "Security", icon: Lock },
     { key: "plan", label: "Plan & Billing", icon: Shield },
   ];
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-[#0D0D0F] flex items-center justify-center">
+        <Loader2 className="w-8 h-8 text-violet-500 animate-spin" />
+      </div>
+    );
+  }
+
+  const defaultAvatar = name ? name.substring(0, 2).toUpperCase() : "US";
+  const username = email ? email.split("@")[0] : "user";
 
   return (
     <div className="min-h-screen text-white" style={{ backgroundColor: "#0D0D0F" }}>
@@ -84,7 +217,10 @@ export function Settings() {
               {sections.map(({ key, label, icon: Icon }) => (
                 <button
                   key={key}
-                  onClick={() => setActiveSection(key as Section)}
+                  onClick={() => {
+                    setActiveSection(key as Section);
+                    setErrorMsg(""); // Clear errors on tab switch
+                  }}
                   className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all text-left
                     ${activeSection === key
                       ? "bg-violet-500/20 border border-violet-500/30 text-violet-300"
@@ -98,13 +234,13 @@ export function Settings() {
 
               {/* Logout */}
               <div className="pt-2 mt-2 border-t border-white/10">
-                <Link
-                  to="/login"
+                <button
+                  onClick={handleLogout}
                   className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-red-400 hover:bg-red-500/10 transition-all"
                 >
                   <LogOut className="w-4 h-4" />
                   Logout
-                </Link>
+                </button>
               </div>
             </div>
           </div>
@@ -120,23 +256,65 @@ export function Settings() {
                   <h2 className="text-lg font-bold mb-6">Account Details</h2>
 
                   {/* Avatar */}
-                  <div className="flex items-center gap-4 mb-6 p-4 bg-white/5 rounded-xl border border-white/10">
-                    <div className="w-16 h-16 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-2xl flex items-center justify-center text-xl font-bold">
-                      YU
+                  <div className="flex flex-col mb-6 p-4 bg-white/5 rounded-xl border border-white/10">
+                    <div className="flex items-center gap-4">
+                      <div className="w-16 h-16 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-2xl flex items-center justify-center text-3xl font-bold shadow-lg shadow-emerald-500/20">
+                        {avatar ? (
+                          avatar.startsWith("http") || avatar.startsWith("data:") ? (
+                            <img src={avatar} alt="Avatar" className="w-full h-full object-cover rounded-2xl" />
+                          ) : (
+                            <span className="text-3xl">{avatar}</span>
+                          )
+                        ) : (
+                          <span className="text-xl">{defaultAvatar}</span>
+                        )}
+                      </div>
+                      <div>
+                        <p className="font-semibold">{name}</p>
+                        <p className="text-xs text-zinc-400">@{username}</p>
+                      </div>
+                      <button 
+                        onClick={() => setShowAvatarSelector(!showAvatarSelector)}
+                        className="ml-auto text-xs text-violet-400 hover:text-violet-300 border border-violet-500/30 px-3 py-1.5 rounded-lg bg-violet-500/10 transition-all"
+                      >
+                        {showAvatarSelector ? "Cancel" : "Choose Profile"}
+                      </button>
                     </div>
-                    <div>
-                      <p className="font-semibold">{name}</p>
-                      <p className="text-xs text-zinc-400">@{username}</p>
-                    </div>
-                    <button className="ml-auto text-xs text-violet-400 hover:text-violet-300 border border-violet-500/30 px-3 py-1.5 rounded-lg bg-violet-500/10 transition-all">
-                      Change Avatar
-                    </button>
+
+                    {/* Avatar Selector Grid */}
+                    {showAvatarSelector && (
+                      <div className="mt-4 pt-4 border-t border-white/10">
+                        <p className="text-xs text-zinc-400 mb-3">Choose an avatar emoji</p>
+                        <div className="flex flex-wrap gap-2">
+                          <button
+                            onClick={() => { setAvatar(""); setShowAvatarSelector(false); }}
+                            className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all ${!avatar ? "bg-violet-500/20 border-violet-500/50 border" : "bg-white/5 border border-white/10 hover:bg-white/10"}`}
+                          >
+                            <span className="text-xs font-bold text-zinc-300">{defaultAvatar}</span>
+                          </button>
+                          {avatarOptions.map(emoji => (
+                            <button
+                              key={emoji}
+                              onClick={() => { setAvatar(emoji); setShowAvatarSelector(false); }}
+                              className={`w-10 h-10 rounded-xl text-xl flex items-center justify-center transition-all ${avatar === emoji ? "bg-violet-500/20 border-violet-500/50 border scale-110" : "bg-white/5 border border-white/10 hover:bg-white/10 hover:scale-105"}`}
+                            >
+                              {emoji}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                   </div>
+
+                  {errorMsg && (
+                    <div className="mb-4 p-3 bg-red-500/10 border border-red-500/20 text-red-400 text-sm rounded-lg">
+                      {errorMsg}
+                    </div>
+                  )}
 
                   <div className="space-y-4">
                     {[
                       { label: "Full Name", value: name, setter: setName, type: "text" },
-                      { label: "Username", value: username, setter: setUsername, type: "text" },
                       { label: "Email", value: email, setter: setEmail, type: "email" },
                     ].map(({ label, value, setter, type }) => (
                       <div key={label}>
@@ -152,14 +330,15 @@ export function Settings() {
                   </div>
 
                   <button
-                    onClick={handleSave}
-                    className={`mt-6 w-full py-3 rounded-xl font-semibold transition-all
+                    onClick={handleSaveAccount}
+                    disabled={saveLoading}
+                    className={`mt-6 w-full flex items-center justify-center gap-2 py-3 rounded-xl font-semibold transition-all
                       ${saved
                         ? "bg-emerald-500/20 border border-emerald-500/30 text-emerald-300"
-                        : "bg-gradient-to-r from-violet-500 to-purple-600 hover:from-violet-400 hover:to-purple-500 shadow-lg shadow-violet-500/30"
+                        : "bg-gradient-to-r from-violet-500 to-purple-600 hover:from-violet-400 hover:to-purple-500 shadow-lg shadow-violet-500/30 disabled:opacity-50"
                       }`}
                   >
-                    {saved ? "✅ Saved!" : "Save Changes"}
+                    {saveLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : saved ? "✅ Saved!" : "Save Changes"}
                   </button>
                 </div>
               </div>
@@ -171,7 +350,10 @@ export function Settings() {
                 <div className="absolute inset-0 bg-gradient-to-br from-yellow-500/10 to-orange-500/10 rounded-2xl blur-xl opacity-60" />
                 <div className="relative bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6">
                   <h2 className="text-lg font-bold mb-2">Daily Commitment</h2>
-                  <p className="text-zinc-400 text-sm mb-6">Choose how many coins you commit per day. Missing a day deducts this amount.</p>
+                  <p className="text-zinc-400 text-sm mb-6 flex items-center gap-2">
+                    <Lock className="w-4 h-4 text-yellow-500" />
+                    Your daily commitment is locked for this month and cannot be changed.
+                  </p>
 
                   <div className="grid grid-cols-2 gap-3 mb-6">
                     {[
@@ -179,31 +361,33 @@ export function Settings() {
                       { coins: 10, amount: "₹10/day", monthly: "₹300/month" },
                       { coins: 20, amount: "₹20/day", monthly: "₹600/month", pro: true },
                       { coins: 50, amount: "₹50/day", monthly: "₹1500/month", pro: true },
-                    ].map(({ coins, amount, monthly, pro }) => (
-                      <button
-                        key={coins}
-                        onClick={() => setDailyCommitment(coins)}
-                        className={`relative p-4 rounded-xl border text-left transition-all
-                          ${dailyCommitment === coins
-                            ? "bg-yellow-500/20 border-yellow-500/40 shadow-lg shadow-yellow-500/10"
-                            : "bg-white/5 border-white/10 hover:border-white/20"
-                          }`}
-                      >
-                        {pro && (
-                          <span className="absolute top-2 right-2 text-xs bg-violet-500/20 text-violet-300 px-1.5 py-0.5 rounded-full border border-violet-500/30">Pro</span>
-                        )}
-                        <div className="text-xl font-bold text-yellow-400 mb-1">{amount}</div>
-                        <div className="text-xs text-zinc-500">{monthly}</div>
-                        {dailyCommitment === coins && (
-                          <div className="absolute top-2 left-2 w-2 h-2 rounded-full bg-yellow-400" />
-                        )}
-                      </button>
-                    ))}
+                    ].map(({ coins, amount, monthly, pro }) => {
+                      const isActive = dailyCommitment === coins;
+                      return (
+                        <div
+                          key={coins}
+                          className={`relative p-4 rounded-xl border text-left transition-all
+                            ${isActive
+                              ? "bg-yellow-500/20 border-yellow-500/40 shadow-lg shadow-yellow-500/10"
+                              : "opacity-40 bg-white/5 border-white/10 grayscale"
+                            }`}
+                        >
+                          {pro && (
+                            <span className="absolute top-2 right-2 text-xs bg-violet-500/20 text-violet-300 px-1.5 py-0.5 rounded-full border border-violet-500/30">Pro</span>
+                          )}
+                          <div className={`text-xl font-bold mb-1 ${isActive ? "text-yellow-400" : "text-white"}`}>{amount}</div>
+                          <div className="text-xs text-zinc-400">{monthly}</div>
+                          {isActive && (
+                            <div className="absolute top-2 left-2 w-2 h-2 rounded-full bg-yellow-400 shadow-[0_0_8px_rgba(250,204,21,0.8)]" />
+                          )}
+                        </div>
+                      );
+                    })}
                   </div>
 
-                  <div className="bg-white/5 border border-white/10 rounded-xl p-4 mb-6">
+                  <div className="bg-white/5 border border-white/10 rounded-xl p-4">
                     <div className="flex justify-between text-sm mb-1">
-                      <span className="text-zinc-400">Current plan</span>
+                      <span className="text-zinc-400">Current active plan</span>
                       <span className="font-semibold text-yellow-400">{dailyCommitment} coins/day</span>
                     </div>
                     <div className="flex justify-between text-sm">
@@ -211,17 +395,6 @@ export function Settings() {
                       <span className="font-semibold">₹{dailyCommitment * 30}</span>
                     </div>
                   </div>
-
-                  <button
-                    onClick={handleSave}
-                    className={`w-full py-3 rounded-xl font-semibold transition-all
-                      ${saved
-                        ? "bg-emerald-500/20 border border-emerald-500/30 text-emerald-300"
-                        : "bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-400 hover:to-orange-400 shadow-lg shadow-yellow-500/30"
-                      }`}
-                  >
-                    {saved ? "✅ Saved!" : "Update Commitment"}
-                  </button>
                 </div>
               </div>
             )}
@@ -267,14 +440,23 @@ export function Settings() {
                   </div>
 
                   <button
-                    onClick={handleSave}
-                    className={`mt-6 w-full py-3 rounded-xl font-semibold transition-all
+                    onClick={() => {
+                      // Just mock saving since we didn't build a backend endpoint for this
+                      setSaveLoading(true);
+                      setTimeout(() => {
+                        setSaveLoading(false);
+                        setSaved(true);
+                        setTimeout(() => setSaved(false), 2000);
+                      }, 500);
+                    }}
+                    disabled={saveLoading}
+                    className={`mt-6 w-full flex items-center justify-center gap-2 py-3 rounded-xl font-semibold transition-all
                       ${saved
                         ? "bg-emerald-500/20 border border-emerald-500/30 text-emerald-300"
-                        : "bg-gradient-to-r from-violet-500 to-purple-600 hover:from-violet-400 hover:to-purple-500 shadow-lg shadow-violet-500/30"
+                        : "bg-gradient-to-r from-violet-500 to-purple-600 hover:from-violet-400 hover:to-purple-500 shadow-lg shadow-violet-500/30 disabled:opacity-50"
                       }`}
                   >
-                    {saved ? "✅ Saved!" : "Save Preferences"}
+                    {saveLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : saved ? "✅ Saved!" : "Save Preferences"}
                   </button>
                 </div>
               </div>
@@ -286,6 +468,12 @@ export function Settings() {
                 <div className="absolute inset-0 bg-gradient-to-br from-red-500/10 to-pink-500/10 rounded-2xl blur-xl opacity-60" />
                 <div className="relative bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6">
                   <h2 className="text-lg font-bold mb-6">Change Password</h2>
+
+                  {errorMsg && (
+                    <div className="mb-4 p-3 bg-red-500/10 border border-red-500/20 text-red-400 text-sm rounded-lg">
+                      {errorMsg}
+                    </div>
+                  )}
 
                   <div className="space-y-4">
                     {[
@@ -307,14 +495,15 @@ export function Settings() {
                   </div>
 
                   <button
-                    onClick={handleSave}
-                    className={`mt-6 w-full py-3 rounded-xl font-semibold transition-all
+                    onClick={handleSavePassword}
+                    disabled={saveLoading}
+                    className={`mt-6 w-full flex items-center justify-center gap-2 py-3 rounded-xl font-semibold transition-all
                       ${saved
                         ? "bg-emerald-500/20 border border-emerald-500/30 text-emerald-300"
-                        : "bg-gradient-to-r from-red-500 to-pink-600 hover:from-red-400 hover:to-pink-500 shadow-lg shadow-red-500/30"
+                        : "bg-gradient-to-r from-red-500 to-pink-600 hover:from-red-400 hover:to-pink-500 shadow-lg shadow-red-500/30 disabled:opacity-50"
                       }`}
                   >
-                    {saved ? "✅ Password Updated!" : "Update Password"}
+                    {saveLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : saved ? "✅ Password Updated!" : "Update Password"}
                   </button>
 
                   {/* Danger Zone */}
@@ -340,16 +529,30 @@ export function Settings() {
                       <h2 className="text-lg font-bold">Current Plan</h2>
                       <span className="text-xs bg-emerald-500/20 border border-emerald-500/30 text-emerald-300 px-2 py-1 rounded-full">✅ Active</span>
                     </div>
-                    <div className="flex items-center justify-between p-4 bg-violet-500/10 border border-violet-500/20 rounded-xl">
-                      <div>
-                        <div className="font-bold text-violet-300 text-lg">⚡ Pro Plan</div>
-                        <div className="text-zinc-400 text-sm">All features unlocked</div>
+                    
+                    {plan === "pro" ? (
+                      <div className="flex items-center justify-between p-4 bg-violet-500/10 border border-violet-500/20 rounded-xl">
+                        <div>
+                          <div className="font-bold text-violet-300 text-lg">⚡ Pro Plan</div>
+                          <div className="text-zinc-400 text-sm">All features unlocked</div>
+                        </div>
+                        <div className="text-right">
+                          <div className="text-2xl font-black">₹49</div>
+                          <div className="text-xs text-zinc-400">/month</div>
+                        </div>
                       </div>
-                      <div className="text-right">
-                        <div className="text-2xl font-black">₹49</div>
-                        <div className="text-xs text-zinc-400">/month</div>
+                    ) : (
+                      <div className="flex items-center justify-between p-4 bg-white/5 border border-white/10 rounded-xl">
+                        <div>
+                          <div className="font-bold text-zinc-300 text-lg">Free Plan</div>
+                          <div className="text-zinc-400 text-sm">Basic tracking</div>
+                        </div>
+                        <div className="text-right">
+                          <div className="text-2xl font-black">₹0</div>
+                          <div className="text-xs text-zinc-400">/month</div>
+                        </div>
                       </div>
-                    </div>
+                    )}
 
                     <div className="mt-4 space-y-2">
                       {[
@@ -360,8 +563,8 @@ export function Settings() {
                         "Full global leaderboard",
                         "10% referral commission",
                       ].map((feature) => (
-                        <div key={feature} className="flex items-center gap-2 text-sm text-zinc-300">
-                          <Check className="w-4 h-4 text-emerald-400 shrink-0" />
+                        <div key={feature} className={`flex items-center gap-2 text-sm ${plan === "pro" ? "text-zinc-300" : "text-zinc-500"}`}>
+                          <Check className={`w-4 h-4 shrink-0 ${plan === "pro" ? "text-emerald-400" : "text-zinc-600"}`} />
                           {feature}
                         </div>
                       ))}
@@ -374,30 +577,39 @@ export function Settings() {
                   <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-white/2 rounded-2xl blur-xl opacity-40" />
                   <div className="relative bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6">
                     <h2 className="text-lg font-bold mb-4">Billing</h2>
-                    <div className="space-y-3">
-                      {[
-                        { label: "Next billing date", value: "April 22, 2026" },
-                        { label: "Payment method", value: "UPI / Razorpay" },
-                        { label: "Amount", value: "₹49/month" },
-                      ].map(({ label, value }) => (
-                        <div key={label} className="flex justify-between text-sm">
-                          <span className="text-zinc-400">{label}</span>
-                          <span className="font-semibold">{value}</span>
-                        </div>
-                      ))}
-                    </div>
+                    
+                    {plan === "pro" ? (
+                      <div className="space-y-3">
+                        {[
+                          { label: "Next billing date", value: "Next Month" },
+                          { label: "Payment method", value: "UPI / Razorpay" },
+                          { label: "Amount", value: "₹49/month" },
+                        ].map(({ label, value }) => (
+                          <div key={label} className="flex justify-between text-sm">
+                            <span className="text-zinc-400">{label}</span>
+                            <span className="font-semibold">{value}</span>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="text-sm text-zinc-400">
+                        You are currently on the free plan. No active billing.
+                      </div>
+                    )}
 
                     <div className="flex gap-3 mt-5">
                       <Link
                         to="/pricing"
                         className="flex-1 py-3 rounded-xl font-semibold text-center bg-white/5 border border-white/10 hover:bg-white/10 transition-all text-sm flex items-center justify-center gap-1"
                       >
-                        Change Plan
+                        {plan === "pro" ? "Manage Plan" : "Upgrade to Pro"}
                         <ChevronRight className="w-4 h-4" />
                       </Link>
-                      <button className="flex-1 py-3 rounded-xl font-semibold bg-red-500/10 border border-red-500/20 text-red-400 hover:bg-red-500/20 transition-all text-sm">
-                        Cancel Plan
-                      </button>
+                      {plan === "pro" && (
+                        <button className="flex-1 py-3 rounded-xl font-semibold bg-red-500/10 border border-red-500/20 text-red-400 hover:bg-red-500/20 transition-all text-sm">
+                          Cancel Plan
+                        </button>
+                      )}
                     </div>
                   </div>
                 </div>

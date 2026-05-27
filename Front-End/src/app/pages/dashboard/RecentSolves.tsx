@@ -33,17 +33,24 @@ export function RecentSolves({ recentSolves }: RecentSolvesProps) {
         <div className="relative bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 h-full">
           <h2 className="text-xl font-bold mb-5">Recent Solves</h2>
           <div className="space-y-3">
-            {recentSolves.map((solve, idx) => (
-              <div key={idx} className="flex items-center gap-3 p-3 bg-white/5 rounded-lg border border-white/10 hover:border-white/20 transition-colors">
-                <span className={`shrink-0 px-2.5 py-1 text-xs font-bold rounded border ${getPlatformStyle(solve.platform)}`}>{solve.platform}</span>
-                <span className="font-semibold text-sm">{solve.name}</span>
-                <span className={`text-xs font-medium ${getDifficultyColor(solve.difficulty)}`}>{solve.difficulty}</span>
-                <span className="text-zinc-600">•</span>
-                <span className="text-xs text-zinc-500">{solve.topic}</span>
-                <span className="text-zinc-600">•</span>
-                <span className="text-xs text-zinc-500 ml-auto shrink-0">{solve.time}</span>
+            {recentSolves.length > 0 ? (
+              recentSolves.map((solve, idx) => (
+                <div key={idx} className="flex items-center gap-3 p-3 bg-white/5 rounded-lg border border-white/10 hover:border-white/20 transition-colors">
+                  <span className={`shrink-0 px-2.5 py-1 text-xs font-bold rounded border ${getPlatformStyle(solve.platform)}`}>{solve.platform}</span>
+                  <span className="font-semibold text-sm truncate max-w-[150px] sm:max-w-none">{solve.name}</span>
+                  <span className={`text-xs font-medium ${getDifficultyColor(solve.difficulty)}`}>{solve.difficulty}</span>
+                  <span className="text-zinc-600 hidden sm:inline">•</span>
+                  <span className="text-xs text-zinc-500 hidden sm:inline truncate">{solve.topic}</span>
+                  <span className="text-zinc-600">•</span>
+                  <span className="text-xs text-zinc-500 ml-auto shrink-0">{solve.time}</span>
+                </div>
+              ))
+            ) : (
+              <div className="flex flex-col items-center justify-center py-8 text-zinc-500 border border-dashed border-white/10 rounded-xl">
+                <span className="text-sm">No recent solves yet.</span>
+                <span className="text-xs mt-1">Submit your first problem to start your streak!</span>
               </div>
-            ))}
+            )}
           </div>
         </div>
       </div>

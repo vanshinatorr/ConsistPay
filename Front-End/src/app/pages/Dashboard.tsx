@@ -38,6 +38,7 @@ interface UserData {
   dailyCommitment: number;
   totalSolved: number;
   totalMissed: number;
+  battleBalance: number;
 }
 
 interface CalendarDay {
@@ -60,7 +61,8 @@ export function Dashboard() {
   const [calendarData, setCalendarData] = useState<CalendarDay[]>([]);
   const [loading, setLoading] = useState(true);
   const [submitError, setSubmitError] = useState("");
-  const [aiInsights, setAiInsights] = useState<{ icon: any; text: string; color: string }[]>([]);
+  const [todaySubmission, setTodaySubmission] = useState<any>(null);
+  const [recentSolves, setRecentSolves] = useState<any[]>([]);
   const [aiLoading, setAiLoading] = useState(false);
 
   const API = import.meta.env.VITE_API_URL;
@@ -106,48 +108,68 @@ export function Dashboard() {
     }
   };
 
-  const fetchAiInsights = async () => {
+  const fetchTodaySubmission = async () => {
     try {
-      setAiLoading(true);
-      if (!userData) {
-        setAiInsights([{ icon: AlertTriangle, text: "Complete a challenge to get AI insights", color: "text-zinc-400" }]);
-        return;
-      }
-      const res = await fetch(`${API}/api/ai/insights`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-        body: JSON.stringify({
-          streak: userData.streak,
-          coins: userData.balance,
-          totalSolved: userData.totalSolved,
-          totalMissed: userData.totalMissed,
-        }),
+      const res = await fetch(`${API}/api/submissions/today`, {
+        headers: { Authorization: `Bearer ${token}` },
       });
-      if (!res.ok) throw new Error("AI insights failed");
-      const data = await res.json();
-      setAiInsights([
-        {
-          icon: data.riskLevel === "High" ? AlertTriangle : Target,
-          text: data.riskMessage || "Stay consistent",
-          color: data.riskLevel === "High" ? "text-red-400" : "text-yellow-400",
-        },
-        { icon: Target, text: `Recommended Focus: ${data.recommendedFocus}`, color: "text-violet-400" },
-        { icon: BarChart3, text: data.consistencyMessage, color: "text-emerald-400" },
-        { icon: Flame, text: `Strongest Topic: ${data.strongestTopic}`, color: "text-orange-400" },
-        { icon: TrendingDown, text: `Weakest Topic: ${data.weakestTopic}`, color: "text-red-400" },
-      ]);
+      if (res.ok) {
+        const data = await res.json();
+        setTodaySubmission(data);
+        if (data) {
+          setSubmitted(true);
+        } else {
+          setSubmitted(false);
+        }
+      }
     } catch (err) {
-      console.error("AI fetch error:", err);
-      setAiInsights([{ icon: AlertTriangle, text: "AI insights temporarily unavailable", color: "text-zinc-400" }]);
-    } finally {
-      setAiLoading(false);
+      console.error("Error fetching today's submission:", err);
+    }
+  };
+
+  const fetchRecentSolves = async () => {
+    try {
+      const res = await fetch(`${API}/api/submissions/my`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (res.ok) {
+        const data = await res.json();
+        const formatted = data.slice(0, 5).map((sub: any) => {
+          const date = new Date(sub.createdAt || sub.date);
+          const now = new Date();
+          const diffMs = now.getTime() - date.getTime();
+          const diffHrs = Math.floor(diffMs / (1000 * 60 * 60));
+          const diffDays = Math.floor(diffHrs / 24);
+          
+          let timeStr = "";
+          if (diffHrs < 1) timeStr = "Just now";
+          else if (diffHrs < 24) timeStr = `${diffHrs}h ago`;
+          else if (diffDays === 1) timeStr = "Yesterday";
+          else timeStr = `${diffDays}d ago`;
+
+          let plat = sub.platform;
+          if (plat === "LeetCode") plat = "LC";
+          else if (plat === "Code360") plat = "C360";
+
+          return {
+            platform: plat || "Unknown",
+            name: sub.problemName || "Unknown Problem",
+            difficulty: sub.difficulty || "Medium",
+            topic: sub.topic || "General",
+            time: timeStr
+          };
+        });
+        setRecentSolves(formatted);
+      }
+    } catch (err) {
+      console.error("Error fetching recent solves:", err);
     }
   };
 
   useEffect(() => {
     const init = async () => {
       setLoading(true);
-      await Promise.all([fetchUserData(), fetchCalendar()]);
+      await Promise.all([fetchUserData(), fetchCalendar(), fetchTodaySubmission(), fetchRecentSolves()]);
       setLoading(false);
     };
     init();
@@ -156,10 +178,6 @@ export function Dashboard() {
   useEffect(() => {
     if (!loading) fetchCalendar();
   }, [calendarYear]);
-
-  useEffect(() => {
-    if (userData && !loading) fetchAiInsights();
-  }, [userData]);
 
   useEffect(() => {
     if (!submitted) return;
@@ -182,6 +200,7 @@ export function Dashboard() {
     e.preventDefault();
     if (!problemName || !screenshot) return;
     setSubmitError("");
+    setAiLoading(true);
 
     try {
       // Screenshot → base64
@@ -209,8 +228,12 @@ export function Dashboard() {
       setScreenshot(null);
       await fetchUserData();
       await fetchCalendar();
+      await fetchTodaySubmission();
+      await fetchRecentSolves();
     } catch (err) {
       setSubmitError("Network error. Try again.");
+    } finally {
+      setAiLoading(false);
     }
   };
 
@@ -226,6 +249,8 @@ export function Dashboard() {
   const initials = userData?.name
     ? userData.name.split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2)
     : "??";
+  const avatar = userData?.avatar || initials;
+  const isAvatarUrl = avatar.startsWith("http");
 
   const todayLine = motivationalLines[new Date().getDate() % motivationalLines.length];
   const shortMonths = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
@@ -252,9 +277,16 @@ export function Dashboard() {
       for (let i = 0; i < firstDay; i++) currentWeek.push({ status: "empty" });
       for (let d = 1; d <= daysInMonth; d++) {
         const cellDate = new Date(calendarYear, m, d);
-        const dateStr = cellDate.toISOString().split("T")[0];
-        let status: "completed" | "missed" | "pending" = "pending";
-        if (cellDate < today) status = calendarMap.get(dateStr) ?? "missed";
+        const y = cellDate.getFullYear();
+        const mo = String(cellDate.getMonth() + 1).padStart(2, "0");
+        const da = String(cellDate.getDate()).padStart(2, "0");
+        const dateStr = `${y}-${mo}-${da}`;
+        let status: "completed" | "missed" | "pending" | "empty" = "pending";
+        if (cellDate < today) {
+          status = calendarMap.get(dateStr) ?? "missed";
+        } else if (cellDate.getTime() === today.getTime()) {
+          status = submitted ? "completed" : "pending";
+        }
         currentWeek.push({ status, date: cellDate });
         if (currentWeek.length === 7) { weeks.push(currentWeek); currentWeek = []; }
       }
@@ -268,14 +300,6 @@ export function Dashboard() {
   };
 
   const yearMonths = buildMonthsGrid();
-
-  const recentSolves = [
-    { platform: "LC", name: "Two Sum", difficulty: "Easy", topic: "Arrays", time: "2h ago" },
-    { platform: "GFG", name: "Binary Search", difficulty: "Easy", topic: "Searching", time: "Yesterday" },
-    { platform: "LC", name: "LRU Cache", difficulty: "Hard", topic: "Design", time: "3d ago" },
-    { platform: "LC", name: "Valid Parentheses", difficulty: "Easy", topic: "Stacks", time: "4d ago" },
-    { platform: "GFG", name: "Merge Sort", difficulty: "Medium", topic: "Sorting", time: "5d ago" },
-  ];
 
   const faqs = [
     { q: "What is ConsistPay?", a: "A platform designed to build unshakable coding habits by putting small stakes on the line." },
@@ -303,7 +327,7 @@ export function Dashboard() {
         <div className="absolute bottom-1/4 left-1/4 w-96 h-96 bg-emerald-500/10 rounded-full blur-[120px]" />
       </div>
 
-      <Navbar initials={initials} plan={userData?.plan} />
+      <Navbar initials={initials} plan={userData?.plan} avatar={avatar} isAvatarUrl={isAvatarUrl} />
 
       <main className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <StatsRow
@@ -327,6 +351,7 @@ export function Dashboard() {
             dailyCommitment={dailyCommitment}
             todayLine={todayLine}
             timeLeft={timeLeft}
+            aiLoading={aiLoading}
           />
           <WalletCard
             plan={userData?.plan}
@@ -335,6 +360,7 @@ export function Dashboard() {
             missedDays={missedDays}
             dailyCommitment={dailyCommitment}
             graceCoins={graceCoins}
+            battleBalance={userData?.battleBalance ?? 0}
           />
         </div>
 
@@ -348,9 +374,9 @@ export function Dashboard() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-6">
           <RecentSolves recentSolves={recentSolves} />
           <AiInsights
-            consistencyScore={consistencyScore}
+            isUnlocked={!!todaySubmission}
             aiLoading={aiLoading}
-            aiInsights={aiInsights}
+            aiData={todaySubmission || undefined}
           />
         </div>
 

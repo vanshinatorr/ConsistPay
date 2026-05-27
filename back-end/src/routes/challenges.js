@@ -5,7 +5,8 @@ const {
   getInviteDetails,
   joinChallenge,
   getActiveChallenges,
-  getChallengeHistory
+  getChallengeHistory,
+  getChallengeById
 } = require("../controllers/challengeController");
 const { protect } = require("../middleware/authMiddleware");
 
@@ -14,5 +15,6 @@ router.get("/invite/:code", protect, getInviteDetails);
 router.post("/join/:code", protect, joinChallenge);
 router.get("/active", protect, getActiveChallenges);
 router.get("/history", protect, getChallengeHistory);
+router.get("/:id", protect, getChallengeById);
 
 module.exports = router;

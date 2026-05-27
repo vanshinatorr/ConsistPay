@@ -6,14 +6,21 @@ dotenv.config();
 const app = express();
 
 // Middleware
-// app.use(cors({
-//   origin: ["http://localhost:5173", "http://localhost:5174", "http://localhost:5175"],
-//   credentials: true
-// }));
-
+const allowedOrigins = [
+  "http://localhost:5173", 
+  "http://localhost:5174", 
+  "http://localhost:5175",
+  "https://daily-coding-habit-tracker.vercel.app"
+];
 
 app.use(cors({
-  origin: true,
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true
 }));
 
@@ -49,5 +56,8 @@ app.use("/api/ai", aiRoutes);
 
 const paymentRoutes = require("./routes/payment");
 app.use("/api/payment", paymentRoutes);
+
+const notificationRoutes = require("./routes/notifications");
+app.use("/api/notifications", notificationRoutes);
 
 module.exports = app;

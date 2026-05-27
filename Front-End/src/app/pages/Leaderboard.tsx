@@ -1,21 +1,20 @@
 import { Code2, ArrowLeft, TrendingUp, Award, Flame, Target } from "lucide-react";
 import { Link } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 type Tab = "streak" | "consistency" | "completed";
 
-const allUsers = [
-  { rank: 1, name: "Sarah Chen", avatar: "SC", streak: 156, consistency: 98, completed: 312, isCurrentUser: false },
-  { rank: 2, name: "Alex Kumar", avatar: "AK", streak: 134, consistency: 96, completed: 289, isCurrentUser: false },
-  { rank: 3, name: "Jordan Smith", avatar: "JS", streak: 98, consistency: 94, completed: 241, isCurrentUser: false },
-  { rank: 4, name: "Priya Patel", avatar: "PP", streak: 91, consistency: 92, completed: 198, isCurrentUser: false },
-  { rank: 5, name: "Dev Sharma", avatar: "DS", streak: 87, consistency: 90, completed: 187, isCurrentUser: false },
-  { rank: 6, name: "Rahul Gupta", avatar: "RG", streak: 76, consistency: 88, completed: 165, isCurrentUser: false },
-  { rank: 7, name: "Ananya Rao", avatar: "AR", streak: 68, consistency: 85, completed: 154, isCurrentUser: false },
-  { rank: 8, name: "You", avatar: "YU", streak: 47, consistency: 82, completed: 98, isCurrentUser: true },
-  { rank: 9, name: "Kabir Singh", avatar: "KS", streak: 43, consistency: 79, completed: 91, isCurrentUser: false },
-  { rank: 10, name: "Neha Joshi", avatar: "NJ", streak: 38, consistency: 75, completed: 84, isCurrentUser: false },
-];
+interface UserData {
+  _id: string;
+  name: string;
+  email: string;
+  streak: number;
+  plan: string;
+  avatar?: string;
+  completed: number;
+  missed: number;
+  consistency: number;
+}
 
 const avatarColors = [
   "from-violet-400 to-purple-600",
@@ -28,16 +27,71 @@ const avatarColors = [
   "from-red-400 to-red-600",
 ];
 
+const AvatarRenderer = ({ avatar, className, colorClass }: { avatar: string, className: string, colorClass: string }) => {
+  const isUrl = avatar.startsWith("http");
+  if (isUrl) {
+    return <img src={avatar} alt="Avatar" className={`${className} object-cover bg-white/5 border border-white/10`} />;
+  }
+  return <div className={`${className} bg-gradient-to-br ${colorClass} text-white`}>{avatar}</div>;
+};
+
 export function Leaderboard() {
   const [activeTab, setActiveTab] = useState<Tab>("streak");
+  const [users, setUsers] = useState<UserData[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [currentUserId, setCurrentUserId] = useState<string>("");
 
-  const sorted = [...allUsers].sort((a, b) => {
+  const API = import.meta.env.VITE_API_URL;
+  const token = localStorage.getItem("token") || "";
+
+  useEffect(() => {
+    const fetchLeaderboard = async () => {
+      try {
+        // Get current user to highlight them
+        const meRes = await fetch(`${API}/api/users/me`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        if (meRes.ok) {
+          const meData = await meRes.json();
+          setCurrentUserId(meData._id);
+        }
+
+        const res = await fetch(`${API}/api/users/leaderboard`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        if (res.ok) {
+          const data = await res.json();
+          setUsers(data);
+        }
+      } catch (err) {
+        console.error("Leaderboard fetch error", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchLeaderboard();
+  }, [API, token]);
+
+  const sorted = [...users].sort((a, b) => {
     if (activeTab === "streak") return b.streak - a.streak;
     if (activeTab === "consistency") return b.consistency - a.consistency;
     return b.completed - a.completed;
-  }).map((u, i) => ({ ...u, rank: i + 1 }));
+  }).map((u, i) => ({ 
+    ...u, 
+    rank: i + 1, 
+    isCurrentUser: u._id === currentUserId,
+    avatar: u.avatar || (u.name ? u.name.substring(0, 2).toUpperCase() : "US")
+  }));
 
-  const currentUser = sorted.find(u => u.isCurrentUser)!;
+  const currentUser = sorted.find(u => u.isCurrentUser) || sorted[0]; // fallback if not found
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-[#0D0D0F] flex items-center justify-center text-zinc-400">
+        Loading Leaderboard...
+      </div>
+    );
+  }
 
   const tabs: { key: Tab; label: string; icon: typeof Flame }[] = [
     { key: "streak", label: "Streak", icon: Flame },
@@ -45,10 +99,10 @@ export function Leaderboard() {
     { key: "completed", label: "Completed", icon: Target },
   ];
 
-  const getValue = (user: typeof allUsers[0]) => {
-    if (activeTab === "streak") return `${user.streak} days`;
-    if (activeTab === "consistency") return `${user.consistency}/100`;
-    return `${user.completed} days`;
+  const getValue = (user: any) => {
+    if (activeTab === "streak") return `${user.streak || 0} days`;
+    if (activeTab === "consistency") return `${user.consistency || 0}/100`;
+    return `${user.completed || 0} days`;
   };
 
   return (
@@ -107,9 +161,11 @@ export function Leaderboard() {
                 <div className="w-10 h-10 bg-white/10 rounded-lg flex items-center justify-center font-bold text-violet-300">
                   #{currentUser.rank}
                 </div>
-                <div className="w-12 h-12 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-full flex items-center justify-center font-bold">
-                  YU
-                </div>
+                <AvatarRenderer 
+                  avatar={currentUser.avatar} 
+                  className="w-12 h-12 rounded-full flex items-center justify-center font-bold" 
+                  colorClass="from-emerald-400 to-emerald-600"
+                />
                 <div>
                   <div className="font-bold text-violet-300">You</div>
                   <div className="text-xs text-zinc-400">🔥 {currentUser.streak} day streak</div>
@@ -130,9 +186,11 @@ export function Leaderboard() {
             <div className="absolute inset-0 bg-zinc-400/10 rounded-2xl blur-lg opacity-60" />
             <div className="relative bg-white/5 border border-zinc-400/20 rounded-2xl p-4 text-center">
               <div className="text-2xl mb-1">🥈</div>
-              <div className="w-10 h-10 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center font-bold text-sm mx-auto mb-2">
-                {sorted[1]?.avatar}
-              </div>
+              <AvatarRenderer 
+                avatar={sorted[1]?.avatar || "US"} 
+                className="w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm mx-auto mb-2" 
+                colorClass="from-blue-400 to-blue-600"
+              />
               <div className="font-semibold text-sm truncate">{sorted[1]?.name}</div>
               <div className="text-xs text-zinc-400 mt-1">{getValue(sorted[1])}</div>
             </div>
@@ -143,9 +201,11 @@ export function Leaderboard() {
             <div className="absolute inset-0 bg-yellow-500/20 rounded-2xl blur-lg opacity-60" />
             <div className="relative bg-yellow-500/10 border border-yellow-500/30 rounded-2xl p-4 text-center">
               <div className="text-3xl mb-1">🥇</div>
-              <div className="w-12 h-12 bg-gradient-to-br from-violet-400 to-purple-600 rounded-full flex items-center justify-center font-bold mx-auto mb-2">
-                {sorted[0]?.avatar}
-              </div>
+              <AvatarRenderer 
+                avatar={sorted[0]?.avatar || "US"} 
+                className="w-12 h-12 rounded-full flex items-center justify-center font-bold mx-auto mb-2" 
+                colorClass="from-violet-400 to-purple-600"
+              />
               <div className="font-bold truncate">{sorted[0]?.name}</div>
               <div className="text-xs text-yellow-400 mt-1 font-semibold">{getValue(sorted[0])}</div>
             </div>
@@ -156,9 +216,11 @@ export function Leaderboard() {
             <div className="absolute inset-0 bg-orange-500/10 rounded-2xl blur-lg opacity-60" />
             <div className="relative bg-white/5 border border-orange-500/20 rounded-2xl p-4 text-center">
               <div className="text-2xl mb-1">🥉</div>
-              <div className="w-10 h-10 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-full flex items-center justify-center font-bold text-sm mx-auto mb-2">
-                {sorted[2]?.avatar}
-              </div>
+              <AvatarRenderer 
+                avatar={sorted[2]?.avatar || "US"} 
+                className="w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm mx-auto mb-2" 
+                colorClass="from-emerald-400 to-emerald-600"
+              />
               <div className="font-semibold text-sm truncate">{sorted[2]?.name}</div>
               <div className="text-xs text-zinc-400 mt-1">{getValue(sorted[2])}</div>
             </div>
@@ -208,11 +270,11 @@ export function Leaderboard() {
                   </div>
 
                   {/* Avatar */}
-                  <div className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold text-sm bg-gradient-to-br
-                    ${user.isCurrentUser ? "from-emerald-400 to-emerald-600" : avatarColors[index % avatarColors.length]}
-                  `}>
-                    {user.avatar}
-                  </div>
+                  <AvatarRenderer 
+                    avatar={user.avatar} 
+                    className="w-10 h-10 rounded-full flex items-center justify-center font-semibold text-sm shrink-0" 
+                    colorClass={user.isCurrentUser ? "from-emerald-400 to-emerald-600" : avatarColors[index % avatarColors.length]}
+                  />
 
                   {/* Name */}
                   <div>

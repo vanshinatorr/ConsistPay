@@ -13,6 +13,7 @@ interface TodaysChallengeProps {
   dailyCommitment: number;
   todayLine: string;
   timeLeft: { h: number; m: number; s: number };
+  aiLoading: boolean;
 }
 
 export function TodaysChallenge({
@@ -27,6 +28,7 @@ export function TodaysChallenge({
   dailyCommitment,
   todayLine,
   timeLeft,
+  aiLoading,
 }: TodaysChallengeProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -38,7 +40,7 @@ export function TodaysChallenge({
     if (file) setScreenshot(file);
   };
 
-  const canSubmit = problemName.trim() && screenshot;
+  const canSubmit = problemName.trim() && screenshot && !aiLoading;
 
   return (
     <div className="lg:col-span-2">
@@ -196,13 +198,20 @@ export function TodaysChallenge({
                 <button
                   type="submit"
                   disabled={!canSubmit}
-                  className={`w-full h-12 rounded-xl font-semibold transition-all duration-300 ${
+                  className={`w-full h-12 rounded-xl font-semibold transition-all duration-300 flex items-center justify-center gap-2 ${
                     canSubmit
                       ? "bg-gradient-to-r from-violet-500 to-purple-600 hover:from-violet-400 hover:to-purple-500 text-white shadow-lg shadow-violet-500/20"
                       : "bg-white/[0.05] border border-white/10 text-zinc-500 cursor-not-allowed"
                   }`}
                 >
-                  Submit Solution
+                  {aiLoading ? (
+                    <>
+                      <div className="w-5 h-5 border-2 border-zinc-500 border-t-transparent rounded-full animate-spin" />
+                      Verifying AI...
+                    </>
+                  ) : (
+                    "Submit Solution"
+                  )}
                 </button>
               </form>
             </>

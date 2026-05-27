@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Code2, Bell } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { BattleHubModal } from "../../components/battle/BattleHubModal";
@@ -6,11 +6,63 @@ import { BattleHubModal } from "../../components/battle/BattleHubModal";
 interface NavbarProps {
   initials: string;
   plan?: string;
+  avatar?: string;
+  isAvatarUrl?: boolean;
 }
 
-export function Navbar({ initials, plan = "free" }: NavbarProps) {
+export function Navbar({ initials, plan = "free", avatar, isAvatarUrl }: NavbarProps) {
   const location = useLocation();
   const [isBattleModalOpen, setIsBattleModalOpen] = useState(false);
+  const [showNotifs, setShowNotifs] = useState(false);
+  const [notifications, setNotifications] = useState<any[]>([]);
+
+  const API_URL = import.meta.env.VITE_API_URL;
+  const token = localStorage.getItem("token") || "";
+
+  // Fetch notifications
+  const fetchNotifications = async () => {
+    try {
+      const res = await fetch(`${API_URL}/api/notifications`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setNotifications(data);
+      }
+    } catch (err) {
+      console.error("Failed to fetch notifications:", err);
+    }
+  };
+
+  useEffect(() => {
+    fetchNotifications();
+    // Refresh notifications every minute
+    const interval = setInterval(fetchNotifications, 60000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const handleMarkAsRead = async () => {
+    try {
+      await fetch(`${API_URL}/api/notifications/read`, {
+        method: "PUT",
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      // Update local state to show all as read instantly
+      setNotifications(notifications.map(n => ({ ...n, read: true })));
+    } catch (err) {
+      console.error("Failed to mark as read:", err);
+    }
+  };
+
+  const unreadCount = notifications.filter(n => !n.read).length;
+
+  const timeAgo = (dateString: string) => {
+    const diff = new Date().getTime() - new Date(dateString).getTime();
+    const h = Math.floor(diff / 3600000);
+    if (h < 1) return "Just now";
+    if (h < 24) return `${h}h ago`;
+    return `${Math.floor(h / 24)}d ago`;
+  };
 
   const navLinks = [
     { label: "Dashboard", path: "/dashboard" },
@@ -75,17 +127,81 @@ export function Navbar({ initials, plan = "free" }: NavbarProps) {
               })}
             </div>
 
-            <div className="flex items-center gap-3 shrink-0">
-              <div className="relative p-2 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 transition-colors cursor-default">
-                <Bell className="w-5 h-5" />
-                <span className="absolute top-1 right-1 w-2 h-2 bg-violet-500 rounded-full animate-pulse" />
+            <div className="flex items-center gap-4 shrink-0">
+              
+              {/* Notification Bell */}
+              <div className="relative">
+                <button 
+                  onClick={() => {
+                    setShowNotifs(!showNotifs);
+                    if (!showNotifs) fetchNotifications(); // fetch when opened
+                  }}
+                  onBlur={() => setTimeout(() => setShowNotifs(false), 200)}
+                  className={`relative p-2.5 rounded-xl border transition-all duration-200 cursor-pointer ${
+                    showNotifs 
+                      ? "bg-violet-500/20 border-violet-500/40 text-violet-300 shadow-[0_0_15px_rgba(139,92,246,0.15)]" 
+                      : "bg-white/5 border-white/10 text-zinc-300 hover:bg-white/10"
+                  }`}
+                >
+                  <Bell className="w-5 h-5" />
+                  {unreadCount > 0 && (
+                    <span className="absolute top-2 right-2 w-2 h-2 bg-emerald-400 rounded-full ring-2 ring-[#0D0D0F]" />
+                  )}
+                </button>
+
+                {/* Dropdown Menu */}
+                {showNotifs && (
+                  <div className="absolute right-0 mt-3 w-80 sm:w-96 bg-[#121214] border border-white/10 rounded-2xl shadow-2xl overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 duration-200">
+                    
+                    <div className="p-4 border-b border-white/10 flex items-center justify-between bg-white/[0.02]">
+                      <h3 className="font-semibold text-white">Notifications</h3>
+                      {unreadCount > 0 && (
+                        <button 
+                          onMouseDown={(e) => { e.preventDefault(); handleMarkAsRead(); }}
+                          className="text-xs font-medium text-violet-400 hover:text-violet-300 transition-colors"
+                        >
+                          Mark all as read
+                        </button>
+                      )}
+                    </div>
+                    
+                    <div className="max-h-[350px] overflow-y-auto">
+                      {notifications.length === 0 ? (
+                        <div className="p-8 text-center text-zinc-500 text-sm">
+                          No notifications yet.
+                        </div>
+                      ) : (
+                        notifications.map(n => (
+                          <div key={n._id || n.id} className={`p-4 border-b border-white/5 hover:bg-white/[0.04] transition-colors cursor-pointer flex gap-4 ${!n.read ? 'bg-violet-500/[0.02]' : ''}`}>
+                            <div className="mt-1 shrink-0">
+                              <div className={`w-2 h-2 rounded-full ${!n.read ? 'bg-violet-500 shadow-[0_0_8px_rgba(139,92,246,0.8)]' : 'bg-transparent'}`} />
+                            </div>
+                            <div>
+                              <p className={`text-sm font-medium ${!n.read ? 'text-white' : 'text-zinc-300'}`}>{n.title}</p>
+                              <p className="text-xs text-zinc-400 mt-1">{n.desc}</p>
+                              <p className="text-xs font-medium text-zinc-500 mt-2">{timeAgo(n.createdAt)}</p>
+                            </div>
+                          </div>
+                        ))
+                      )}
+                    </div>
+                    
+                    <div className="p-3 text-center border-t border-white/10 bg-white/[0.02]">
+                      <button className="text-xs font-medium text-zinc-400 hover:text-white transition-colors">View all activity</button>
+                    </div>
+                  </div>
+                )}
               </div>
 
               <Link
                 to="/profile"
-                className="w-10 h-10 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-full flex items-center justify-center font-semibold text-sm"
+                className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold text-sm ${isAvatarUrl ? 'bg-white/5 border border-white/10' : 'bg-gradient-to-br from-emerald-400 to-emerald-600'}`}
               >
-                {initials}
+                {isAvatarUrl ? (
+                  <img src={avatar} alt="Avatar" className="w-full h-full object-cover rounded-full" />
+                ) : (
+                  initials
+                )}
               </Link>
             </div>
           </div>

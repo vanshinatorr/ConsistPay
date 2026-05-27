@@ -127,7 +127,7 @@ export function Footer() {
                 rel="noreferrer"
                 className="flex items-center justify-between text-sm text-zinc-400 hover:text-white transition-colors"
               >
-                <span>Vansh</span>
+                <span>Vansh <span className="text-zinc-500 text-xs ml-1">(Founder)</span></span>
 
                 <span>+91 85299 75095</span>
               </a>
@@ -138,7 +138,7 @@ export function Footer() {
                 rel="noreferrer"
                 className="flex items-center justify-between text-sm text-zinc-400 hover:text-white transition-colors"
               >
-                <span>Prateek</span>
+                <span>Prateek <span className="text-zinc-500 text-xs ml-1">(Co-Founder)</span></span>
 
                 <span>+91 81034 75773</span>
               </a>
