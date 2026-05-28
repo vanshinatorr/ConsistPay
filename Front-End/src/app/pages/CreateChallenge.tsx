@@ -1,33 +1,69 @@
-import { Code2, ArrowLeft, Copy, Share2, CheckCircle, Target, Users, Coins, Zap, Shield, Sparkles, User, Sword } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Code2, ArrowLeft, Copy, Share2, CheckCircle, Target, Users, Coins, Zap, Shield, Sparkles, User, Sword, Wallet, Clock, Swords, Trophy } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import TopupModal from "../components/battle/TopupModal";
 
-type Screen = "duration" | "stake" | "confirm" | "waiting";
+type Screen = "hub" | "duration" | "stake" | "confirm" | "waiting" | "cancelled";
 
 export function CreateChallenge() {
-  const [screen, setScreen] = useState<Screen>("duration");
+  const navigate = useNavigate();
+  const [screen, setScreen] = useState<Screen>("hub");
   const [selectedDuration, setSelectedDuration] = useState<7 | 15 | 30 | null>(null);
   const [stakeAmount, setStakeAmount] = useState("");
   const [copied, setCopied] = useState(false);
   const [generatedInviteCode, setGeneratedInviteCode] = useState("");
+  const [challengeId, setChallengeId] = useState<string | null>(null);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [battleBalance, setBattleBalance] = useState<number | null>(null);
+  const [userAvatar, setUserAvatar] = useState<string | null>(null);
+  const [userName, setUserName] = useState<string>("");
   const [showTopupModal, setShowTopupModal] = useState(false);
+  const [timeLeft, setTimeLeft] = useState(300);
 
   const ENTRY_FEE = 19;
   const API_URL = import.meta.env.VITE_API_URL;
   const token = localStorage.getItem("token") || "";
 
   useEffect(() => {
-    fetch(`${API_URL}/api/user`, {
+    // Fetch profile info
+    fetch(`${API_URL}/api/users/me`, {
       headers: { Authorization: `Bearer ${token}` }
     })
       .then(res => res.json())
       .then(data => {
-        if (data.user) {
-          setBattleBalance(data.user.battleBalance || 0);
+        if (data._id) {
+          setBattleBalance(data.battleBalance || 0);
+          setUserAvatar(data.avatar || null);
+          setUserName(data.name || "");
+        }
+      })
+      .catch(console.error);
+
+    // Fetch any active pending challenge invitation
+    fetch(`${API_URL}/api/challenges/pending`, {
+      headers: { Authorization: `Bearer ${token}` }
+    })
+      .then(res => {
+        if (!res.ok) return null;
+        return res.json();
+      })
+      .then(data => {
+        if (data && data.inviteCode && data.status === "pending") {
+          setGeneratedInviteCode(data.inviteCode);
+          setSelectedDuration(data.duration);
+          setStakeAmount(String(data.stake));
+          setChallengeId(data._id);
+          
+          // Calculate remaining seconds
+          const createdTime = new Date(data.createdAt).getTime();
+          const elapsed = Math.floor((Date.now() - createdTime) / 1000);
+          const remaining = Math.max(0, 300 - elapsed);
+          
+          if (remaining > 0) {
+            setTimeLeft(remaining);
+            setScreen("waiting");
+          }
         }
       })
       .catch(console.error);
@@ -51,6 +87,12 @@ export function CreateChallenge() {
   const handleCreateChallenge = async () => {
     if (!selectedDuration || !stake) return;
     setError("");
+
+    if (battleBalance !== null && battleBalance < total) {
+      setError(`Insufficient balance. You need ₹${total - battleBalance} more to lock this commitment.`);
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -74,6 +116,8 @@ export function CreateChallenge() {
       }
 
       setGeneratedInviteCode(data.inviteCode);
+      setChallengeId(data.challengeId);
+      setTimeLeft(300); // Reset timer just in case
       setScreen("waiting");
     } catch (err) {
       setError("Network error. Please try again.");
@@ -82,22 +126,101 @@ export function CreateChallenge() {
     }
   };
 
+  const handleCancelBattle = async () => {
+    try {
+      setLoading(true);
+      const res = await fetch(`${API_URL}/api/challenges/cancel-pending`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setBattleBalance(data.battleBalance || 0);
+        setScreen("cancelled");
+      } else {
+        setError(data.message || "Failed to cancel battle.");
+      }
+    } catch (err) {
+      setError("Network error cancelling battle.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    if (screen === "waiting" && timeLeft > 0) {
+      timer = setInterval(() => {
+        setTimeLeft((prev) => prev - 1);
+      }, 1000);
+    }
+    return () => clearInterval(timer);
+  }, [screen, timeLeft]);
+
+  // Poll challenge status while waiting
+  useEffect(() => {
+    let pollInterval: NodeJS.Timeout;
+    if (screen === "waiting" && challengeId) {
+      pollInterval = setInterval(async () => {
+        try {
+          const res = await fetch(`${API_URL}/api/challenges/${challengeId}`, {
+            headers: { Authorization: `Bearer ${token}` }
+          });
+          if (res.ok) {
+            const data = await res.json();
+            if (data.status === "active") {
+              // Redirect to battle details screen with success overlay!
+              navigate(`/battle/${challengeId}?success=true`);
+            }
+          }
+        } catch (err) {
+          console.error("Error polling challenge status:", err);
+        }
+      }, 3000); // Poll every 3 seconds
+    }
+    return () => clearInterval(pollInterval);
+  }, [screen, challengeId, navigate, API_URL, token]);
+
+  const formatTime = (seconds: number) => {
+    const m = Math.floor(seconds / 60);
+    const s = seconds % 60;
+    return `${m.toString().padStart(2, "0")}:${s.toString().padStart(2, "0")}`;
+  };
+
+  const initials = userName
+    ? userName.split(" ").map((n) => n[0]).join("").toUpperCase().substring(0, 2)
+    : "YOU";
+  
+  const isAvatarUrl = userAvatar?.startsWith("http");
+
   return (
-    <div className="min-h-screen text-white" style={{ backgroundColor: "#0D0D0F" }}>
-      {/* Background */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-0 right-1/4 w-96 h-96 bg-violet-500/10 rounded-full blur-[120px]" />
-        <div className="absolute bottom-1/4 left-1/4 w-96 h-96 bg-emerald-500/10 rounded-full blur-[120px]" />
+    <div className="min-h-screen bg-[#0A0A0C] text-white selection:bg-violet-500/30 overflow-x-hidden font-sans">
+      {/* Dynamic Background */}
+      <div className="fixed inset-0 pointer-events-none">
+        <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] rounded-full bg-violet-600/10 blur-[120px]" />
+        <div className="absolute bottom-[-20%] right-[-10%] w-[50%] h-[50%] rounded-full bg-fuchsia-600/10 blur-[120px]" />
+        <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 mix-blend-overlay" />
       </div>
 
       {/* Navbar */}
       <nav className="sticky top-0 z-50 border-b border-white/10 bg-[#0D0D0F]/80 backdrop-blur-xl">
-        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+        <div className={`mx-auto px-4 sm:px-6 lg:px-8 py-4 transition-all duration-500 ${screen === 'hub' ? 'max-w-6xl' : 'max-w-3xl'}`}>
           <div className="flex items-center justify-between">
-            <Link to="/dashboard" className="flex items-center gap-2 text-zinc-400 hover:text-white transition-colors">
+            <button 
+              onClick={() => {
+                if (screen === "duration") {
+                  setScreen("hub");
+                } else {
+                  navigate("/dashboard");
+                }
+              }}
+              className="flex items-center gap-2 text-zinc-400 hover:text-white transition-colors"
+            >
               <ArrowLeft className="w-5 h-5" />
-              <span className="text-sm">Cancel Battle</span>
-            </Link>
+              <span className="text-sm">Back {screen === 'duration' ? 'to Hub' : 'to Dashboard'}</span>
+            </button>
             <div className="flex items-center gap-3">
               <div className="w-9 h-9 bg-gradient-to-br from-violet-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg shadow-violet-500/30">
                 <Code2 className="w-5 h-5 text-white" />
@@ -107,28 +230,164 @@ export function CreateChallenge() {
               </span>
             </div>
             <div className="w-24 flex justify-end">
-              <span className="text-xs bg-white/5 border border-white/10 px-2 py-1 rounded-md text-zinc-400">Step {screen === 'duration' ? 1 : screen === 'stake' ? 2 : screen === 'confirm' ? 3 : 4}/4</span>
+              {screen !== 'hub' && screen !== 'waiting' && screen !== 'cancelled' && (
+                <span className="text-xs bg-white/5 border border-white/10 px-2 py-1 rounded-md text-zinc-400">Step {screen === 'duration' ? 1 : screen === 'stake' ? 2 : screen === 'confirm' ? 3 : 4}/4</span>
+              )}
             </div>
           </div>
         </div>
       </nav>
 
       {/* Main */}
-      <main className="relative max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-20">
+      <main className={`relative mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12 transition-all duration-500 ${screen === 'hub' ? 'max-w-6xl' : 'max-w-3xl'}`}>
         <div className="bg-[#0A0A0C]/90 backdrop-blur-3xl border border-white/10 rounded-[2rem] overflow-hidden shadow-2xl relative">
           
           {/* Progress Bar Header */}
-          <div className="bg-white/[0.02] border-b border-white/5 px-8 py-6">
-             <div className="flex items-center justify-between mb-4">
-               <h2 className="text-xl font-bold text-white">Create Battle</h2>
-               <span className="text-sm text-zinc-500 font-medium">Step {screen === 'duration' ? 1 : screen === 'stake' ? 2 : screen === 'confirm' ? 3 : 4} of 4</span>
-             </div>
-             <div className="w-full bg-white/5 h-2 rounded-full overflow-hidden">
-               <div className="h-full bg-gradient-to-r from-violet-500 to-fuchsia-500 rounded-full transition-all duration-500" style={{ width: `${((screen === 'duration' ? 1 : screen === 'stake' ? 2 : screen === 'confirm' ? 3 : 4) / 4) * 100}%` }} />
-             </div>
-          </div>
+          {screen !== 'hub' && screen !== 'waiting' && screen !== 'cancelled' && (
+            <div className="bg-white/[0.02] border-b border-white/5 px-8 py-6">
+               <div className="flex items-center justify-between mb-4">
+                 <h2 className="text-xl font-bold text-white">Create Challenge</h2>
+                 <span className="text-sm text-zinc-500 font-medium">Step {screen === 'duration' ? 1 : screen === 'stake' ? 2 : screen === 'confirm' ? 3 : 4} of 4</span>
+               </div>
+               <div className="w-full bg-white/5 h-2 rounded-full overflow-hidden">
+                 <div className="h-full bg-gradient-to-r from-violet-500 to-fuchsia-500 rounded-full transition-all duration-500" style={{ width: `${((screen === 'duration' ? 1 : screen === 'stake' ? 2 : screen === 'confirm' ? 3 : 4) / 4) * 100}%` }} />
+               </div>
+            </div>
+          )}
 
           <div className="p-8 sm:p-12 min-h-[500px] flex flex-col justify-center">
+
+            {/* ───────────── SCREEN 0: BATTLE HUB / ENTRY ───────────── */}
+            {screen === "hub" && (
+              <div className="animate-in fade-in slide-in-from-right-4 duration-500 flex flex-col lg:flex-row gap-10">
+                {/* Left Side: Info */}
+                <div className="flex-1 space-y-6">
+                  <div>
+                    <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight mb-4 text-white">
+                      Compete. Stay Consistent.<br/>
+                      <span className="bg-gradient-to-r from-violet-400 to-emerald-400 bg-clip-text text-transparent">
+                        Win Together.
+                      </span>
+                    </h1>
+                    <p className="text-zinc-400 text-sm sm:text-base leading-relaxed">
+                      Challenge friends in coding consistency duels. Stay accountable together, protect streaks, and compete for rewards.
+                    </p>
+                  </div>
+
+                  {/* Bullet points */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    {[
+                      { icon: CheckCircle, text: "AI verified submissions", color: "text-emerald-400", bg: "bg-emerald-500/10", border: "border-emerald-500/20" },
+                      { icon: Target, text: "Shared daily deadlines", color: "text-blue-400", bg: "bg-blue-500/10", border: "border-blue-500/20" },
+                      { icon: Trophy, text: "Winner takes all", color: "text-yellow-400", bg: "bg-yellow-500/10", border: "border-yellow-500/20" },
+                      { icon: Zap, text: "Real-time tracking", color: "text-violet-400", bg: "bg-violet-500/10", border: "border-violet-500/20" }
+                    ].map((f, idx) => (
+                      <div key={idx} className="flex items-center gap-3">
+                        <div className={`w-8 h-8 rounded-lg ${f.bg} ${f.border} border flex items-center justify-center shrink-0`}>
+                          <f.icon className={`w-4 h-4 ${f.color}`} />
+                        </div>
+                        <span className="text-sm font-medium text-zinc-300">{f.text}</span>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Example Scenario Grid Preview */}
+                  <div className="relative rounded-2xl border border-white/10 bg-white/[0.01] p-5 overflow-hidden shadow-[inset_0_0_20px_rgba(255,255,255,0.01)] hidden sm:block">
+                    <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-violet-500 via-purple-500 to-emerald-500 opacity-60" />
+                    <div className="flex justify-between items-end mb-6">
+                      <div>
+                        <div className="text-[10px] font-bold text-violet-400 uppercase tracking-widest mb-1 flex items-center gap-1.5">
+                          <span className="w-1.5 h-1.5 rounded-full bg-violet-400 animate-pulse"></span> Live Challenge Duel
+                        </div>
+                        <div className="text-sm font-semibold text-white">30 Day Challenge War</div>
+                      </div>
+                      <div className="text-right">
+                        <div className="text-[10px] text-zinc-500 uppercase tracking-widest mb-0.5">Total Pool</div>
+                        <div className="text-base font-black text-emerald-400">₹1,000</div>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center justify-between gap-5">
+                      <div className="flex-1 bg-black/40 border border-white/5 rounded-xl p-3 flex flex-col items-center">
+                        <span className="text-xs font-bold text-white mb-1">Vansh (You)</span>
+                        <span className="text-[11px] text-violet-300">14 Days Completed</span>
+                      </div>
+                      <span className="text-xs font-black text-zinc-600 italic">VS</span>
+                      <div className="flex-1 bg-black/40 border border-white/5 rounded-xl p-3 flex flex-col items-center">
+                        <span className="text-xs font-bold text-white mb-1">Suhu</span>
+                        <span className="text-[11px] text-emerald-300">12 Days Completed</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Right Side: Action Cards */}
+                <div className="w-full lg:w-[42%] flex flex-col gap-6 justify-center">
+                  
+                  {/* Create Challenge Card */}
+                  <div 
+                    onClick={() => setScreen("duration")}
+                    className="group bg-white/5 border border-white/10 hover:border-violet-500/30 hover:bg-white/[0.07] rounded-3xl p-6 transition-all duration-300 cursor-pointer relative overflow-hidden"
+                  >
+                    <div className="absolute inset-0 bg-gradient-to-br from-violet-500/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity" />
+                    <div className="relative z-10">
+                      <div className="flex items-center justify-between mb-4">
+                        <div className="w-10 h-10 bg-violet-500/10 border border-violet-500/20 rounded-xl flex items-center justify-center">
+                          <Swords className="w-5 h-5 text-violet-400" />
+                        </div>
+                        <div className="w-7 h-7 rounded-full bg-white/5 border border-white/10 flex items-center justify-center group-hover:bg-violet-500 group-hover:border-violet-400 transition-all">
+                          <ArrowLeft className="w-3.5 h-3.5 text-zinc-400 group-hover:text-white transition-colors rotate-180" />
+                        </div>
+                      </div>
+                      <h3 className="text-lg font-bold text-white mb-1">Create Challenge</h3>
+                      <p className="text-xs text-zinc-400">
+                        Set stakes and duration. Generate a secret code to invite a friend instantly.
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Join Challenge Card */}
+                  <div className="group bg-white/5 border border-white/10 hover:border-emerald-500/30 hover:bg-white/[0.07] rounded-3xl p-6 transition-all duration-300 relative overflow-hidden">
+                    <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 to-teal-500/5 opacity-0 group-hover:opacity-100 transition-opacity" />
+                    <div className="relative z-10">
+                      <div className="w-10 h-10 bg-emerald-500/10 border border-emerald-500/20 rounded-xl flex items-center justify-center mb-4">
+                        <Users className="w-5 h-5 text-emerald-400" />
+                      </div>
+                      <h3 className="text-lg font-bold text-white mb-1">Join Challenge</h3>
+                      <p className="text-xs text-zinc-400 mb-4">
+                        Have an invite code? Enter it below to preview details and join the battle.
+                      </p>
+
+                      <form 
+                        onSubmit={(e) => {
+                          e.preventDefault();
+                          const codeInput = (e.currentTarget.elements.namedItem("joinCode") as HTMLInputElement).value;
+                          if (codeInput.trim()) {
+                            navigate(`/join-challenge/${codeInput.trim().toUpperCase()}`);
+                          }
+                        }} 
+                        className="flex gap-2"
+                      >
+                        <input
+                          type="text"
+                          name="joinCode"
+                          required
+                          placeholder="e.g. CP-X7K2M"
+                          className="flex-1 px-4 py-2.5 bg-black/40 border border-white/10 rounded-xl text-xs text-white placeholder-zinc-600 focus:outline-none focus:border-emerald-500/50 transition-colors uppercase font-mono tracking-wider"
+                        />
+                        <button
+                          type="submit"
+                          className="px-4 py-2.5 rounded-xl font-bold bg-emerald-600 hover:bg-emerald-500 text-white transition-all text-xs animate-pulse hover:animate-none"
+                        >
+                          Join
+                        </button>
+                      </form>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+            )}
 
             {/* ───────────── SCREEN 1: DURATION ───────────── */}
             {screen === "duration" && (
@@ -138,7 +397,7 @@ export function CreateChallenge() {
                     <Target className="w-4 h-4" /> Rules of Engagement
                   </div>
                   <h1 className="text-3xl sm:text-4xl font-extrabold mb-3 text-white">
-                    How long is the battle?
+                    How long is the challenge?
                   </h1>
                   <p className="text-zinc-400 text-base max-w-md mx-auto sm:mx-0">
                     Select your consistency contract. Both players must submit daily proof or risk losing their stake.
@@ -274,115 +533,158 @@ export function CreateChallenge() {
             {/* ───────────── SCREEN 3: CONFIRM ───────────── */}
             {screen === "confirm" && (
               <div className="animate-in fade-in slide-in-from-right-4 duration-500">
-                <div className="text-center mb-10">
-                  <h1 className="text-3xl sm:text-4xl font-extrabold mb-3">Final Review</h1>
-                  <p className="text-zinc-400 text-base">Lock in your commitment contract</p>
+                <div className="text-center mb-8">
+                  <div className="inline-flex items-center gap-2 text-violet-400 font-bold tracking-wide uppercase text-xs mb-3">
+                    <CheckCircle className="w-4 h-4" /> Final Step
+                  </div>
+                  <h1 className="text-3xl sm:text-4xl font-extrabold mb-2 text-white">Review & Lock</h1>
+                  <p className="text-zinc-400 text-sm">Confirm your commitment to start the challenge.</p>
                 </div>
 
-                <div className="bg-white/[0.02] border border-white/10 rounded-3xl overflow-hidden mb-8 shadow-2xl">
+                <div className="bg-[#121214] border border-white/5 rounded-3xl overflow-hidden mb-6 shadow-2xl max-w-md mx-auto">
                   {/* VS Head */}
-                  <div className="p-8 bg-gradient-to-b from-violet-500/10 to-transparent border-b border-white/5">
-                    <div className="flex items-center justify-center gap-4 sm:gap-12">
-                      <div className="flex flex-col items-center gap-3">
-                        <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-violet-500 to-fuchsia-600 rounded-2xl flex items-center justify-center shadow-lg shadow-violet-500/20 rotate-3 transition-transform hover:rotate-6">
-                          <User className="w-8 h-8 text-white" />
+                  <div className="p-6 bg-gradient-to-b from-violet-500/5 to-transparent flex items-center justify-center gap-6 sm:gap-16">
+                     <div className="flex flex-col items-center gap-3">
+                        <div className="w-16 h-16 bg-[#0D0D10] border border-violet-500/30 rounded-2xl flex items-center justify-center shadow-lg shadow-violet-500/20 rotate-3 overflow-hidden">
+                          {isAvatarUrl ? (
+                            <img src={userAvatar!} alt="You" className="w-full h-full object-cover scale-110" />
+                          ) : (
+                            <span className="text-xl font-bold text-violet-400">{initials}</span>
+                          )}
                         </div>
                         <div className="text-center">
-                          <span className="block text-sm font-bold text-violet-300">YOU</span>
-                          <span className="block text-xs font-medium text-zinc-400">₹{stake} Stake</span>
+                          <span className="block text-xs font-bold text-violet-300 tracking-wider">YOU</span>
+                          <span className="block text-[10px] font-medium text-zinc-500 uppercase">₹{stake} Stake</span>
                         </div>
-                      </div>
+                     </div>
                       
-                      <div className="relative">
-                        <div className="absolute inset-0 bg-white/20 blur-xl rounded-full" />
-                        <div className="text-lg font-black text-white italic flex items-center justify-center w-12 h-12 rounded-full bg-white/10 border border-white/20 backdrop-blur-md relative z-10">
-                          VS
-                        </div>
-                      </div>
+                     <div className="relative flex items-center justify-center shrink-0">
+                       <div className="absolute inset-0 bg-violet-500/20 blur-xl rounded-full" />
+                       <div className="text-sm font-black text-white italic flex items-center justify-center w-10 h-10 rounded-full bg-white/5 border border-white/10 relative z-10">
+                         VS
+                       </div>
+                     </div>
 
-                      <div className="flex flex-col items-center gap-3">
-                        <div className="w-16 h-16 sm:w-20 sm:h-20 bg-zinc-900 border-2 border-dashed border-zinc-700 rounded-2xl flex items-center justify-center -rotate-3 transition-transform hover:-rotate-6">
-                          <span className="text-3xl font-black text-zinc-700">?</span>
+                     <div className="flex flex-col items-center gap-3">
+                        <div className="w-16 h-16 bg-zinc-900 border-2 border-dashed border-zinc-700 rounded-2xl flex items-center justify-center -rotate-3">
+                          <span className="text-2xl font-black text-zinc-700">?</span>
                         </div>
                         <div className="text-center">
-                          <span className="block text-sm font-bold text-zinc-400">FRIEND</span>
-                          <span className="block text-xs font-medium text-zinc-600">₹{stake} Stake</span>
+                          <span className="block text-xs font-bold text-zinc-400 tracking-wider">FRIEND</span>
+                          <span className="block text-[10px] font-medium text-zinc-600 uppercase">₹{stake} Stake</span>
                         </div>
-                      </div>
-                    </div>
+                     </div>
                   </div>
 
-                  {/* Details */}
-                  <div className="p-6 sm:p-8 space-y-5">
-                    <div className="flex justify-between items-center">
-                      <span className="text-zinc-400">Duration</span>
-                      <span className="font-bold text-white bg-white/10 px-3 py-1.5 rounded-lg text-sm">{selectedDuration} Days</span>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span className="text-zinc-400">Your Stake</span>
-                      <span className="font-bold text-white">₹{stake}</span>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span className="text-zinc-400">Platform Entry Fee</span>
-                      <span className="font-bold text-white">₹{ENTRY_FEE}</span>
-                    </div>
-                    <div className="pt-5 mt-2 border-t border-white/10 flex justify-between items-center">
-                      <div>
-                        <span className="block text-zinc-200 font-bold text-lg">Total Prize Pool</span>
-                        <span className="block text-xs text-emerald-400 uppercase tracking-widest mt-1">Winner Takes All</span>
+                  {/* Details - Receipt style */}
+                  <div className="px-6 py-5 bg-black/20">
+                    <div className="space-y-4 mb-5">
+                      <div className="flex justify-between items-center text-sm">
+                        <span className="text-zinc-500">Duration</span>
+                        <span className="font-semibold text-zinc-300">{selectedDuration} Days</span>
                       </div>
-                      <span className="font-black text-3xl sm:text-4xl text-emerald-400 bg-emerald-500/10 px-5 py-2 rounded-xl border border-emerald-500/20 shadow-[0_0_20px_rgba(16,185,129,0.15)]">
+                      <div className="flex justify-between items-center text-sm">
+                        <span className="text-zinc-500">Your Stake</span>
+                        <span className="font-semibold text-zinc-300">₹{stake}</span>
+                      </div>
+                      <div className="flex justify-between items-center text-sm">
+                        <span className="text-zinc-500">Platform Entry Fee</span>
+                        <span className="font-semibold text-zinc-300">₹{ENTRY_FEE}</span>
+                      </div>
+                    </div>
+                    
+                    <div className="p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex justify-between items-center">
+                      <div>
+                        <span className="block text-emerald-100 font-bold text-base">Total Prize Pool</span>
+                        <span className="block text-[10px] text-emerald-400/80 uppercase tracking-widest mt-0.5">Winner Takes All</span>
+                      </div>
+                      <span className="font-black text-3xl text-emerald-400">
                         ₹{stake * 2}
                       </span>
                     </div>
                   </div>
                 </div>
 
-                {/* Wallet State */}
+                {/* Wallet Balance Info - Always shown */}
                 {battleBalance !== null && (
-                  <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center p-5 mb-8 bg-[#0D0D0F] rounded-2xl border border-white/5 gap-4">
-                    <div className="flex items-center gap-4">
-                       <div className="w-12 h-12 rounded-full bg-white/5 border border-white/10 flex items-center justify-center">
-                         <Coins className="w-6 h-6 text-zinc-400" />
-                       </div>
-                       <div>
-                         <span className="block text-sm text-zinc-500 font-medium">Available Wallet Balance</span>
-                         <span className={`block font-bold text-lg ${battleBalance >= total ? 'text-emerald-400' : 'text-rose-400'}`}>
-                           ₹{battleBalance}
-                         </span>
-                       </div>
+                  <div className="max-w-md mx-auto mb-6 bg-white/[0.02] border border-white/10 rounded-2xl p-5 space-y-3">
+                    <div className="flex justify-between items-center text-sm">
+                      <div className="flex items-center gap-2 text-zinc-400">
+                        <Wallet className="w-4.5 h-4.5" />
+                        <span>Available Wallet Balance</span>
+                      </div>
+                      <span className="font-bold text-zinc-200">₹{battleBalance}</span>
                     </div>
-                    {battleBalance < total && (
-                       <span className="text-sm font-bold text-rose-400 bg-rose-500/10 px-4 py-2 rounded-xl border border-rose-500/20 text-center">
-                         Need ₹{total - battleBalance} more
-                       </span>
+                    
+                    <div className="flex justify-between items-center text-sm pt-2.5 border-t border-white/5">
+                      <span className="text-zinc-500">Required Funds</span>
+                      <span className="font-semibold text-zinc-300">₹{total}</span>
+                    </div>
+
+                    {battleBalance < total ? (
+                      <div className="flex justify-between items-center text-sm text-amber-400 font-medium bg-amber-500/10 px-3.5 py-2 rounded-xl border border-amber-500/20">
+                        <span>Shortfall (Amount to add)</span>
+                        <span className="font-bold">₹{total - battleBalance}</span>
+                      </div>
+                    ) : (
+                      <div className="flex justify-between items-center text-sm text-emerald-400 font-medium bg-emerald-500/10 px-3.5 py-2 rounded-xl border border-emerald-500/20">
+                        <span>Status</span>
+                        <span className="font-bold">Sufficient Balance</span>
+                      </div>
                     )}
                   </div>
                 )}
 
+                {/* Error Banner */}
                 {error && (
-                  <div className="p-4 mb-8 bg-red-500/10 border border-red-500/20 text-red-400 text-sm font-medium rounded-xl text-center flex items-center justify-center gap-2">
-                    <Shield className="w-4 h-4"/> {error}
+                  <div className="max-w-md mx-auto mb-6 p-4 bg-rose-500/10 border border-rose-500/20 rounded-xl flex flex-col gap-3 text-rose-400 text-xs font-medium">
+                    <div className="flex items-start gap-3">
+                      <Shield className="w-4 h-4 shrink-0 mt-0.5" /> 
+                      <span className="leading-relaxed">{error}</span>
+                    </div>
+                    {error.includes("pending") && (
+                      <div className="flex gap-2 mt-1">
+                        <button
+                          onClick={() => {
+                            window.location.reload();
+                          }}
+                          className="px-3 py-1.5 bg-white/5 hover:bg-white/10 text-white rounded-lg font-bold border border-white/10 transition-all text-[11px]"
+                        >
+                          View Invite Code
+                        </button>
+                        <button
+                          onClick={handleCancelBattle}
+                          className="px-3 py-1.5 bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 rounded-lg font-bold border border-rose-500/30 transition-all text-[11px]"
+                        >
+                          Cancel Existing & Refund
+                        </button>
+                      </div>
+                    )}
                   </div>
                 )}
 
-                <div className="flex flex-col-reverse sm:flex-row items-center justify-between gap-4">
+                <div className="max-w-md mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
                   <button
                     onClick={() => setScreen("stake")}
-                    className="w-full sm:w-auto px-6 py-4 rounded-xl font-medium text-zinc-400 hover:text-white transition-colors flex items-center justify-center gap-2"
+                    className="w-full sm:w-auto px-6 py-4 rounded-xl font-medium text-zinc-500 hover:text-white transition-colors flex items-center justify-center gap-2"
                   >
                     <ArrowLeft className="w-4 h-4" /> Back
                   </button>
 
-                  {battleBalance !== null && battleBalance < total ? (
-                    <button
-                      onClick={() => setShowTopupModal(true)}
-                      className="w-full sm:w-auto px-8 py-4 rounded-xl font-bold bg-white text-black hover:bg-zinc-200 transition-all flex items-center justify-center gap-2 hover:scale-[1.02] shadow-xl"
-                    >
-                      <Coins className="w-5 h-5" />
-                      Top-up Wallet
-                    </button>
-                  ) : (
+                  <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+                    {battleBalance !== null && battleBalance < total && (
+                      <button
+                        onClick={() => {
+                          setError("");
+                          setShowTopupModal(true);
+                        }}
+                        className="w-full sm:w-auto px-6 py-4 rounded-xl font-bold bg-white text-black hover:bg-zinc-200 transition-all flex items-center justify-center gap-2 hover:scale-[1.02] shadow-xl"
+                      >
+                        <Coins className="w-5 h-5" />
+                        Add ₹{total - battleBalance}
+                      </button>
+                    )}
+
                     <button
                       disabled={loading}
                       onClick={handleCreateChallenge}
@@ -396,67 +698,157 @@ export function CreateChallenge() {
                       ) : (
                         <>
                           <Sword className="w-5 h-5" />
-                          Pay ₹{total} & Create
+                          Lock ₹{total} & Create
                         </>
                       )}
                     </button>
-                  )}
+                  </div>
                 </div>
               </div>
             )}
 
             {/* ───────────── SCREEN 4: WAITING / INVITE ───────────── */}
             {screen === "waiting" && (
-              <div className="animate-in fade-in zoom-in-95 duration-500 flex flex-col items-center justify-center py-10">
+              <div className="animate-in fade-in zoom-in-95 duration-500 flex flex-col items-center justify-center py-6">
                 
-                <div className="relative flex items-center justify-center mb-12">
-                  <div className="absolute w-32 h-32 bg-violet-500/20 rounded-full animate-ping" style={{ animationDuration: '3s' }}></div>
-                  <div className="absolute w-48 h-48 border border-violet-500/20 rounded-full animate-pulse"></div>
-                  <div className="w-24 h-24 bg-gradient-to-br from-violet-500 to-fuchsia-600 rounded-3xl rotate-45 flex items-center justify-center z-10 shadow-[0_0_40px_rgba(139,92,246,0.4)] relative border border-white/20">
-                    <Sword className="w-10 h-10 text-white -rotate-45" />
+                <h1 className="text-3xl font-extrabold mb-2 text-center text-white tracking-tight">
+                  Lobby: Awaiting Opponent
+                </h1>
+                <p className="text-zinc-400 text-sm text-center mb-8 max-w-sm">
+                  The {selectedDuration}-day consistency challenge begins the moment your opponent enters the code and joins.
+                </p>
+
+                {/* Matchup Duel Box */}
+                <div className="w-full max-w-md bg-[#121214] border border-white/5 rounded-3xl overflow-hidden mb-6 shadow-2xl">
+                  {/* VS Header with Avatars */}
+                  <div className="p-6 bg-gradient-to-b from-violet-500/[0.03] to-transparent flex items-center justify-center gap-12">
+                     <div className="flex flex-col items-center">
+                        <div className="w-16 h-16 bg-[#0D0D10] border border-violet-500/30 rounded-2xl flex items-center justify-center shadow-lg shadow-violet-500/20 rotate-3 overflow-hidden">
+                          {isAvatarUrl ? (
+                            <img src={userAvatar!} alt="You" className="w-full h-full object-cover scale-110" />
+                          ) : (
+                            <span className="text-xl font-bold text-violet-400">{initials}</span>
+                          )}
+                        </div>
+                        <div className="text-center mt-2.5">
+                          <span className="block text-xs font-bold text-violet-300 tracking-wider">YOU</span>
+                          <span className="inline-block text-[9px] bg-violet-500/20 border border-violet-500/30 text-violet-300 px-2 py-0.5 rounded-full font-bold uppercase tracking-wider mt-1">₹{stake} STAKE</span>
+                        </div>
+                     </div>
+                      
+                     <div className="relative flex items-center justify-center shrink-0">
+                       <div className="absolute inset-0 bg-violet-500/20 blur-lg rounded-full" />
+                       <div className="text-[11px] font-black text-white italic flex items-center justify-center w-9 h-9 rounded-full bg-white/5 border border-white/10 relative z-10 animate-pulse">
+                         VS
+                       </div>
+                     </div>
+
+                     <div className="flex flex-col items-center">
+                        <div className="w-16 h-16 bg-zinc-950 border-2 border-dashed border-zinc-700/60 rounded-2xl flex items-center justify-center -rotate-3 relative overflow-hidden group animate-pulse">
+                          {/* Pulsing scanner scanner beam inside opponent slot */}
+                          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-violet-500/5 to-transparent animate-pulse" />
+                          <span className="text-2xl font-black text-zinc-700 relative z-10 animate-bounce">?</span>
+                        </div>
+                        <div className="text-center mt-2.5">
+                          <span className="block text-xs font-bold text-zinc-400 tracking-wider">OPPONENT</span>
+                          <span className="inline-block text-[9px] bg-zinc-800 border border-zinc-700/30 text-zinc-500 px-2 py-0.5 rounded-full font-bold uppercase tracking-wider mt-1">WAITING...</span>
+                        </div>
+                     </div>
+                  </div>
+
+                  {/* Summary Footer */}
+                  <div className="px-6 py-4 bg-black/35 border-t border-white/5 flex items-center justify-between text-xs text-zinc-400">
+                    <span className="flex items-center gap-1.5"><Trophy className="w-3.5 h-3.5 text-yellow-500" /> Pool: ₹{stake * 2}</span>
+                    <span className="flex items-center gap-1.5"><Clock className="w-3.5 h-3.5 text-violet-400" /> Duration: {selectedDuration} Days</span>
                   </div>
                 </div>
 
-                <h1 className="text-3xl sm:text-4xl font-extrabold mb-4 text-center">
-                  Battle Ready!
-                </h1>
-                <p className="text-zinc-400 text-base text-center mb-10 max-w-md">
-                  Send this secret invite code to your opponent. The {selectedDuration}-day battle begins the moment they accept.
-                </p>
-
-                <div className="w-full max-w-md bg-[#0D0D0F] border border-white/10 rounded-[2rem] p-8 text-center relative overflow-hidden group shadow-2xl">
+                {/* Secret Invite Code Card */}
+                <div className="w-full max-w-md bg-[#0D0D0F] border border-white/10 rounded-3xl p-6 text-center relative overflow-hidden group shadow-2xl">
                   <div className="absolute inset-0 bg-gradient-to-br from-violet-500/5 to-fuchsia-500/5 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                   
-                  <p className="text-xs text-zinc-500 font-bold tracking-[0.2em] uppercase mb-5">Secret Invite Code</p>
+                  <p className="text-[10px] text-zinc-500 font-bold tracking-[0.25em] uppercase mb-4">Secret Invite Code</p>
                   
-                  <div className="text-4xl sm:text-5xl font-black tracking-[0.15em] text-white mb-8 font-mono select-all">
+                  <div className="text-3xl sm:text-4xl font-black tracking-[0.15em] text-white mb-6 font-mono select-all">
                     {generatedInviteCode}
                   </div>
 
-                  <div className="flex flex-col sm:flex-row gap-4 justify-center relative z-10">
+                  <div className="flex gap-3 justify-center relative z-10">
                     <button
                       onClick={handleCopy}
-                      className={`flex-1 flex items-center justify-center gap-2 py-4 rounded-xl font-bold transition-all duration-300
+                      className={`flex-1 flex items-center justify-center gap-1.5 py-3 rounded-xl font-bold text-sm transition-all duration-300
                         ${copied
                           ? "bg-emerald-500/20 border border-emerald-500/20 text-emerald-400"
                           : "bg-white/5 border border-white/10 hover:bg-white/10 text-white"
                         }`}
                     >
-                      {copied ? <CheckCircle className="w-5 h-5" /> : <Copy className="w-5 h-5" />}
+                      {copied ? <CheckCircle className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
                       {copied ? "Copied!" : "Copy Code"}
                     </button>
-                    <button className="flex-1 flex items-center justify-center gap-2 py-4 rounded-xl font-bold bg-white text-black hover:bg-zinc-200 transition-all duration-300 hover:scale-[1.02] shadow-xl">
-                      <Share2 className="w-5 h-5" />
+                    <button className="flex-1 flex items-center justify-center gap-1.5 py-3 rounded-xl font-bold text-sm bg-white text-black hover:bg-zinc-200 transition-all duration-300 hover:scale-[1.02] shadow-xl">
+                      <Share2 className="w-4 h-4" />
                       Share Link
                     </button>
                   </div>
                 </div>
 
+                {/* Timer Badge */}
+                <div className="mt-6 mb-2">
+                  {timeLeft > 0 ? (
+                    <div className="flex items-center gap-1.5 text-rose-400 bg-rose-500/10 px-4 py-2 rounded-xl font-bold border border-rose-500/20 text-xs animate-pulse">
+                      <Clock className="w-4 h-4" /> 
+                      <span>Code expires in <span className="font-mono font-black tracking-wider">{formatTime(timeLeft)}</span></span>
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-1.5 text-zinc-400 bg-white/5 px-4 py-2 rounded-xl font-bold border border-white/10 text-xs">
+                      <Shield className="w-4 h-4" /> 
+                      <span>Code Expired. Refunded to wallet.</span>
+                    </div>
+                  )}
+                </div>
+
+                <button
+                  onClick={handleCancelBattle}
+                  className="mt-8 text-zinc-500 hover:text-rose-400 transition-colors text-xs font-bold flex items-center gap-1.5"
+                >
+                  <ArrowLeft className="w-3.5 h-3.5"/> Cancel Challenge & Refund
+                </button>
+              </div>
+            )}
+
+            {/* ───────────── SCREEN 5: CANCELLED / REFUNDED ───────────── */}
+            {screen === "cancelled" && (
+              <div className="animate-in fade-in zoom-in-95 duration-500 flex flex-col items-center justify-center py-10">
+                <div className="relative flex items-center justify-center mb-8 animate-bounce" style={{ animationDuration: '3s' }}>
+                  <div className="absolute w-24 h-24 bg-emerald-500/10 rounded-full animate-ping" style={{ animationDuration: '2.5s' }}></div>
+                  <div className="w-20 h-20 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-3xl flex items-center justify-center z-10 shadow-xl shadow-emerald-500/20 border border-white/10">
+                    <Shield className="w-9 h-9 text-white" />
+                  </div>
+                </div>
+
+                <h1 className="text-3xl font-extrabold mb-2 text-center text-white">
+                  Stakes Safely Returned
+                </h1>
+                
+                <p className="text-zinc-400 text-sm text-center mb-8 max-w-sm">
+                  The pending challenge invitation has been expired. All funds have been returned to your wallet.
+                </p>
+
+                <div className="w-full max-w-md bg-[#0D0D0F]/90 border border-white/5 rounded-2xl p-6 text-center mb-8">
+                  <div className="text-xs text-zinc-500 uppercase tracking-widest mb-1.5 font-semibold">Amount Refunded</div>
+                  <div className="text-3xl font-black text-emerald-400 mb-4">₹{total}</div>
+                  
+                  <div className="flex justify-between items-center text-xs pt-4 border-t border-white/5 text-zinc-400">
+                    <span>New Wallet Balance</span>
+                    <span className="font-bold text-white">₹{battleBalance}</span>
+                  </div>
+                </div>
+
                 <Link
                   to="/dashboard"
-                  className="mt-12 text-zinc-500 hover:text-white transition-colors text-sm font-medium flex items-center gap-2"
+                  className="w-full max-w-md py-4 rounded-xl font-bold bg-white text-black hover:bg-zinc-200 transition-all text-center hover:scale-[1.02] shadow-xl text-sm"
                 >
-                  <ArrowLeft className="w-4 h-4"/> Return to Dashboard
+                  Return to Dashboard
                 </Link>
               </div>
             )}
@@ -468,6 +860,7 @@ export function CreateChallenge() {
             onClose={() => setShowTopupModal(false)}
             onSuccess={(newBalance) => {
               setBattleBalance(newBalance);
+              setError(""); // Clear error so the "Lock & Create" button comes back if sufficient
               setShowTopupModal(false);
             }}
           />

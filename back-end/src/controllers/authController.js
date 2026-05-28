@@ -166,21 +166,35 @@ const verifyOtp = async (req, res) => {
  */
 const googleAuth = async (req, res) => {
   try {
-    const { credential } = req.body;
-    if (!credential) return res.status(400).json({ message: "Google token missing" });
+    const { credential, access_token } = req.body;
+    if (!credential && !access_token) return res.status(400).json({ message: "Google token missing" });
 
-    let ticket;
-    try {
-      ticket = await client.verifyIdToken({
-        idToken: credential,
-        audience: process.env.GOOGLE_CLIENT_ID,
+    let payload;
+    
+    if (access_token) {
+      // Flow for custom useGoogleLogin button (returns access_token)
+      const response = await fetch("https://www.googleapis.com/oauth2/v3/userinfo", {
+        headers: { Authorization: `Bearer ${access_token}` }
       });
-    } catch (e) {
-      console.error("Google Auth Error:", e);
-      return res.status(401).json({ message: "Google authentication failed. Invalid token." });
+      if (!response.ok) {
+        return res.status(401).json({ message: "Google authentication failed. Invalid access token." });
+      }
+      payload = await response.json();
+    } else {
+      // Flow for standard GoogleLogin component (returns credential id_token)
+      let ticket;
+      try {
+        ticket = await client.verifyIdToken({
+          idToken: credential,
+          audience: process.env.GOOGLE_CLIENT_ID,
+        });
+      } catch (e) {
+        console.error("Google Auth Error:", e);
+        return res.status(401).json({ message: "Google authentication failed. Invalid token." });
+      }
+      payload = ticket.getPayload();
     }
 
-    const payload = ticket.getPayload();
     if (!payload || !payload.email) return res.status(400).json({ message: "Invalid Google token payload" });
 
     const { email, name, sub: googleId, picture } = payload;

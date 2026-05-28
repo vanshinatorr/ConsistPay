@@ -122,8 +122,7 @@ export function LeaderboardPreview() {
                   {/* Consistency Score */}
                   <div className="col-span-3 flex items-center justify-center gap-2">
                     <TrendingUp className="w-4 h-4 text-emerald-500" />
-                    <span className="text-2xl font-bold">{user.score}</span>
-                    <span className="text-sm text-zinc-500">/100</span>
+                    <span className="text-2xl font-bold">{user.score}%</span>
                   </div>
 
                   {/* Streak */}

@@ -98,7 +98,7 @@ const submitSolution = async (req, res) => {
       return res.status(400).json({ message: "Problem name and screenshot are required." });
     }
 
-    const today = new Date().toISOString().split("T")[0];
+    const today = new Date().toLocaleDateString("en-CA", { timeZone: "Asia/Kolkata" });
 
     // AI Verification start
     console.log("Starting unified AI verification and enrichment...");
@@ -144,21 +144,69 @@ const submitSolution = async (req, res) => {
     const user = await User.findById(userId);
     const hasActivePlan = user.planExpiresAt && new Date(user.planExpiresAt) >= new Date();
 
-    if (hasActivePlan) {
-      user.streak = (user.streak || 0) + 1;
-      
-      // 15-day streak unlock for Pro plan
-      if (user.streak === 15 && user.plan === "pro") {
-        user.graceCoins = (user.graceCoins || 0) + 1;
-        console.log(`Unlocked +1 grace coin for 15-day streak. Total: ${user.graceCoins}`);
-      }
+    const yesterday = new Date(Date.now() - 24 * 60 * 60 * 1000).toLocaleDateString("en-CA", { timeZone: "Asia/Kolkata" });
+    const yesterdaySubmission = await Submission.findOne({
+      userId,
+      date: yesterday,
+      status: "completed"
+    });
 
-      user.balance += (user.dailyCommitment || 0);
-      await user.save();
-      console.log(`Updated streak to ${user.streak} and balance to ${user.balance}`);
+    let streakNotificationTitle = "";
+    let streakNotificationMessage = "";
+
+    if (yesterdaySubmission) {
+      // Streak continues!
+      user.streak = (user.streak || 0) + 1;
     } else {
-      console.log(`User plan is expired. Recorded submission for battles, but no streak/balance payout given.`);
+      // Missed yesterday!
+      if (user.streak > 0) {
+        if (user.graceCoins > 0) {
+          // Protected by Grace Coin
+          user.graceCoins -= 1;
+          user.streak = (user.streak || 0) + 1;
+          streakNotificationTitle = "Streak Saved! 🛡️";
+          streakNotificationMessage = "You missed yesterday, but your streak was protected by consuming 1 Grace Coin.";
+        } else {
+          // Streak broken
+          user.streak = 1;
+          streakNotificationTitle = "Streak Broken 💔";
+          streakNotificationMessage = "You missed yesterday's submission. Your consistency streak has reset to 1.";
+        }
+      } else {
+        // No active streak, just starting
+        user.streak = 1;
+      }
     }
+
+    // Update max streak
+    if (user.streak > (user.maxStreak || 0)) {
+      user.maxStreak = user.streak;
+    }
+
+    // 15-day streak increments: every 15 days (15, 30, 45, 60, etc.), award +1 Grace Coin (Pro users only)
+    if (user.streak % 15 === 0 && user.plan === "pro") {
+      user.graceCoins = (user.graceCoins || 0) + 1;
+      console.log(`Unlocked +1 grace coin for hitting ${user.streak}-day streak. Total: ${user.graceCoins}`);
+      await createNotification(
+        userId,
+        "Grace Coin Unlocked! 🪙",
+        `Congratulations on hitting a ${user.streak}-day streak! You've earned 1 Grace Coin.`,
+        "streak"
+      );
+    }
+
+    if (streakNotificationTitle) {
+      await createNotification(userId, streakNotificationTitle, streakNotificationMessage, "streak");
+    }
+
+    // Balance payout is only for active plan holders
+    if (hasActivePlan) {
+      user.balance += (user.dailyCommitment || 0);
+      console.log(`Paid balance reward of ₹${user.dailyCommitment} for active plan.`);
+    }
+
+    await user.save();
+    console.log(`Updated user: streak=${user.streak}, maxStreak=${user.maxStreak}, balance=${user.balance}, graceCoins=${user.graceCoins}`);
 
     // Send Notification
     await createNotification(
@@ -187,7 +235,7 @@ const submitSolution = async (req, res) => {
 
 const getTodaySubmission = async (req, res) => {
   try {
-    const today = new Date().toISOString().split("T")[0];
+    const today = new Date().toLocaleDateString("en-CA", { timeZone: "Asia/Kolkata" });
     const submission = await Submission.findOne({
       userId: req.user._id,
       date: today,

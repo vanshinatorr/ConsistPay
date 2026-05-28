@@ -118,36 +118,56 @@ export function BattleHubModal({ isOpen, onClose, plan = "free" }: BattleHubModa
               ))}
             </div>
 
+            {/* Example Scenario Label */}
+            <div className="flex items-center gap-2 text-[10px] font-bold tracking-widest text-zinc-500 uppercase mt-8 mb-3 ml-1">
+              <div className="w-1.5 h-1.5 rounded-full bg-violet-500"></div>
+              Example Scenario
+            </div>
+
             {/* Visual Engagement / Mockup */}
-            <div className="relative rounded-2xl border border-white/5 bg-white/[0.02] p-6 overflow-hidden">
-              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-violet-500 via-purple-500 to-emerald-500 opacity-50" />
+            <div className="relative rounded-2xl border border-white/10 bg-white/[0.02] p-7 overflow-hidden shadow-[inset_0_0_20px_rgba(255,255,255,0.02)]">
+              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-violet-500 via-purple-500 to-emerald-500 opacity-60" />
               
-              <div className="flex justify-between items-end mb-6">
+              <div className="flex justify-between items-end mb-8">
                 <div>
-                  <div className="text-[10px] font-bold text-violet-400 uppercase tracking-widest mb-1">Live Battle</div>
-                  <div className="text-sm font-semibold text-white">30 Day Consistency War</div>
+                  <div className="text-[11px] font-bold text-violet-400 uppercase tracking-widest mb-1.5 flex items-center gap-2">
+                    <span className="w-1.5 h-1.5 rounded-full bg-violet-400 animate-pulse"></span> Live Battle
+                  </div>
+                  <div className="text-base font-semibold text-white tracking-wide">30 Day Consistency War</div>
                 </div>
                 <div className="text-right">
-                  <div className="text-[10px] text-zinc-500 uppercase tracking-widest mb-1">Pool</div>
-                  <div className="text-sm font-bold text-emerald-400">₹398</div>
+                  <div className="text-[11px] text-zinc-500 uppercase tracking-widest mb-1">Total Pool</div>
+                  <div className="text-lg font-black text-emerald-400 drop-shadow-[0_0_8px_rgba(52,211,153,0.3)]">₹1,000</div>
                 </div>
               </div>
 
-              <div className="flex items-center justify-between gap-4">
-                {/* User */}
-                <div className="flex-1 bg-black/40 border border-white/5 rounded-xl p-3 flex flex-col items-center">
-                  <div className="w-10 h-10 bg-gradient-to-br from-violet-500 to-purple-600 rounded-full flex items-center justify-center text-sm font-bold mb-2 shadow-lg shadow-violet-500/20">ME</div>
-                  <span className="text-xs font-semibold">14 Days</span>
-                  <div className="w-full h-1.5 bg-zinc-800 rounded-full mt-2 overflow-hidden"><div className="h-full bg-violet-500 w-[90%]"></div></div>
+              <div className="flex items-center justify-between gap-5 relative z-10">
+                {/* User (Boy) */}
+                <div className="flex-1 bg-black/60 border border-white/10 rounded-2xl p-4 flex flex-col items-center relative overflow-hidden group">
+                  <div className="absolute inset-0 bg-violet-500/5 opacity-0 group-hover:opacity-100 transition-opacity" />
+                  <div className="w-14 h-14 bg-violet-500/20 border-2 border-violet-500/30 rounded-full flex items-center justify-center mb-3 shadow-[0_0_15px_rgba(139,92,246,0.3)] overflow-hidden">
+                    <img src="https://api.dicebear.com/7.x/micah/svg?seed=Felix&backgroundColor=transparent" alt="Vansh" className="w-full h-full object-cover scale-110" />
+                  </div>
+                  <span className="text-sm font-bold text-white mb-1">Vansh</span>
+                  <span className="text-xs font-semibold text-violet-300">14 Days</span>
+                  <div className="w-full h-2 bg-zinc-900 rounded-full mt-3 overflow-hidden border border-white/5">
+                    <div className="h-full bg-gradient-to-r from-violet-600 to-violet-400 w-[90%] shadow-[0_0_10px_rgba(139,92,246,0.5)]"></div>
+                  </div>
                 </div>
                 
-                <div className="text-xs font-black text-zinc-500 italic">VS</div>
+                <div className="text-sm font-black text-zinc-600 italic px-2">VS</div>
 
-                {/* Opponent */}
-                <div className="flex-1 bg-black/40 border border-white/5 rounded-xl p-3 flex flex-col items-center">
-                  <div className="w-10 h-10 bg-gradient-to-br from-zinc-700 to-zinc-800 rounded-full flex items-center justify-center text-sm font-bold mb-2 shadow-lg shadow-black/50">AK</div>
-                  <span className="text-xs font-semibold">12 Days</span>
-                  <div className="w-full h-1.5 bg-zinc-800 rounded-full mt-2 overflow-hidden"><div className="h-full bg-emerald-500 w-[70%]"></div></div>
+                {/* Opponent (Girl) */}
+                <div className="flex-1 bg-black/60 border border-white/10 rounded-2xl p-4 flex flex-col items-center relative overflow-hidden group">
+                  <div className="absolute inset-0 bg-emerald-500/5 opacity-0 group-hover:opacity-100 transition-opacity" />
+                  <div className="w-14 h-14 bg-emerald-500/20 border-2 border-emerald-500/30 rounded-full flex items-center justify-center mb-3 shadow-[0_0_15px_rgba(16,185,129,0.3)] overflow-hidden">
+                    <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Suhu&top=curvy&accessories=prescription02&accessoriesProbability=100&mouth=smile&backgroundColor=transparent" alt="Suhu" className="w-full h-full object-cover scale-110" />
+                  </div>
+                  <span className="text-sm font-bold text-white mb-1">Suhu</span>
+                  <span className="text-xs font-semibold text-emerald-300">12 Days</span>
+                  <div className="w-full h-2 bg-zinc-900 rounded-full mt-3 overflow-hidden border border-white/5">
+                    <div className="h-full bg-gradient-to-r from-emerald-600 to-emerald-400 w-[70%] shadow-[0_0_10px_rgba(16,185,129,0.5)]"></div>
+                  </div>
                 </div>
               </div>
             </div>

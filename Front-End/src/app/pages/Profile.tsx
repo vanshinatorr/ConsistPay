@@ -84,7 +84,7 @@ export function Profile() {
   };
 
   const currentStreak = userData.streak || 0;
-  const longestStreak = userData.streak || 0; // Fallback since longest isn't stored separately
+  const longestStreak = userData.maxStreak || 0;
   const completedDays = userData.totalSolved || 0;
   const missedDays = userData.totalMissed || 0;
   const totalDays = completedDays + missedDays;

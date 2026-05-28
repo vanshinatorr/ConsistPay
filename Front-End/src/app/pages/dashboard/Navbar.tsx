@@ -112,13 +112,20 @@ export function Navbar({ initials, plan = "free", avatar, isAvatarUrl }: NavbarP
 
                 if (isBattles) {
                   return (
-                    <button
+                    <Link
                       key={path}
-                      onClick={() => setIsBattleModalOpen(true)}
-                      className="relative px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 text-zinc-400 hover:text-white hover:bg-white/5 cursor-pointer"
+                      to={path}
+                      className={`relative px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                        isActive
+                          ? "text-violet-300"
+                          : "text-zinc-400 hover:text-white hover:bg-white/5"
+                      }`}
                     >
                       {label}
-                    </button>
+                      {isActive && (
+                        <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-3/4 h-[2px] bg-gradient-to-r from-violet-400 to-purple-500 rounded-full shadow-[0_0_12px_rgba(139,92,246,0.8)]" />
+                      )}
+                    </Link>
                   );
                 }
 

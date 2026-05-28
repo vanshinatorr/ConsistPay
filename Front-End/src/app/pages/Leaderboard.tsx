@@ -102,8 +102,8 @@ export function Leaderboard() {
   const getValue = (user: any) => {
     if (!user) return "0";
     if (activeTab === "streak") return `${user.streak || 0} days`;
-    if (activeTab === "consistency") return `${user.consistency || 0}/100`;
-    return `${user.completed || 0} days`;
+    if (activeTab === "consistency") return `${user.consistency || 0}%`;
+    return `${user.completed || 0} solved`;
   };
 
   return (

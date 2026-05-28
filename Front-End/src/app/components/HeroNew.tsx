@@ -1,6 +1,9 @@
 import { ArrowRight, Check, Upload, Calendar, Wallet, Users, ArrowDownToLine, PlayCircle, Shield, XCircle, CheckCircle2, Circle } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 export function HeroNew() {
+  const navigate = useNavigate();
+
   return (
     <section className="relative px-6 py-24 md:py-32 overflow-hidden">
       <style>{`
@@ -11,6 +14,13 @@ export function HeroNew() {
         }
         .animate-scan {
           animation: scanline 2.5s ease-in-out infinite;
+        }
+        @keyframes struggle {
+          0%, 100% { transform: translateX(4px); }
+          50% { transform: translateX(8px); }
+        }
+        .group:hover .animate-struggle {
+          animation: struggle 1s ease-in-out infinite;
         }
       `}</style>
       <div className="max-w-7xl mx-auto relative z-10">
@@ -25,29 +35,33 @@ export function HeroNew() {
 
             {/* Headline */}
             <h1 className="text-5xl md:text-6xl lg:text-[4rem] xl:text-[4.5rem] font-bold mb-6 leading-[1.1] tracking-tight text-white">
-              Code Every Day.<br />
-              <span className="whitespace-nowrap">Stay Accountable.</span><br />
+              Code Every Day<br />
+              <span className="whitespace-nowrap">Stay Consistent</span><br />
               <span className="bg-gradient-to-r from-emerald-400 via-emerald-500 to-teal-500 bg-clip-text text-transparent">
-                Get Paid.
+                Get Paid
               </span>
             </h1>
 
             {/* Subtext */}
-            <p className="text-lg text-slate-400 mb-10 leading-relaxed max-w-lg font-medium text-balance">
-              Put your money where your mouth is. Submit proof daily. When you succeed, you don't just get a refund—you take a cut from the pool of those who failed.
+            <p className="text-lg text-slate-400 mb-10 leading-relaxed max-w-lg font-medium">
+              Put your money where your mouth is.<br />
+              Submit proof daily.<br />
+              Succeed and earn money from those who fail.
             </p>
 
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row gap-4 mb-10">
-              <button className="group relative px-8 py-4 bg-white text-black font-bold rounded-2xl transition-all duration-300 shadow-[0_0_20px_rgba(255,255,255,0.2)] hover:shadow-[0_0_30px_rgba(255,255,255,0.4)] hover:scale-105 flex items-center justify-center gap-2">
+              <button 
+                onClick={() => navigate("/auth")}
+                className="group px-8 py-4 bg-white hover:bg-slate-100 text-black font-bold rounded-2xl transition-all duration-200 flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(255,255,255,0.1)] hover:shadow-[0_0_25px_rgba(255,255,255,0.2)]"
+              >
                 Start Free
-                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                <div className="absolute inset-0 rounded-2xl ring-2 ring-white/50 scale-100 group-hover:scale-105 opacity-0 group-hover:opacity-100 transition-all duration-300" />
+                <ArrowRight className="w-5 h-5 transition-transform duration-200 animate-struggle" />
               </button>
               
-              <button className="px-8 py-4 bg-white/5 hover:bg-white/10 text-white font-semibold rounded-2xl border border-white/10 transition-all duration-300 flex items-center justify-center gap-2 hover:border-white/20">
+              <button className="group px-8 py-4 bg-white/5 hover:bg-white/10 text-white font-semibold rounded-2xl border border-white/10 hover:border-white/20 transition-all duration-200 flex items-center justify-center gap-2">
                 Watch Demo
-                <PlayCircle className="w-5 h-5 text-slate-300" />
+                <PlayCircle className="w-5 h-5 text-slate-400 group-hover:text-white transition-colors" />
               </button>
             </div>
 

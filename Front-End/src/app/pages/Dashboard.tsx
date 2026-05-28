@@ -5,6 +5,7 @@ import { StatsRow } from "./dashboard/StatsRow";
 import { TodaysChallenge } from "./dashboard/TodaysChallenge";
 import { WalletCard } from "./dashboard/WalletCard";
 import { ConsistencyCalendar } from "./dashboard/ConsistencyCalendar";
+import { DashboardBattleWidget } from "./dashboard/DashboardBattleWidget";
 import { RecentSolves } from "./dashboard/RecentSolves";
 import { AiInsights } from "./dashboard/AiInsights";
 import { JoinModal } from "./dashboard/JoinModal";
@@ -190,6 +191,17 @@ export function Dashboard() {
       const midnight = new Date();
       midnight.setHours(24, 0, 0, 0);
       const diff = midnight.getTime() - now.getTime();
+      
+      if (diff <= 0) {
+        clearInterval(interval);
+        setSubmitted(false);
+        fetchTodaySubmission();
+        fetchUserData();
+        fetchCalendar();
+        fetchRecentSolves();
+        return;
+      }
+
       setTimeLeft({
         h: Math.floor(diff / (1000 * 60 * 60)),
         m: Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60)),
@@ -411,6 +423,8 @@ export function Dashboard() {
             onRefreshRequest={fetchUserData}
           />
         </div>
+
+        <DashboardBattleWidget onRefreshRequest={fetchUserData} />
 
         <ConsistencyCalendar yearMonths={yearMonths} setCalendarYear={setCalendarYear} calendarYear={calendarYear} onboardingComplete={userData?.onboardingComplete ?? true} dayLabels={dayLabels} />
 

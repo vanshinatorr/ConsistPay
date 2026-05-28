@@ -10,6 +10,7 @@ const userSchema = new mongoose.Schema(
     googleId: { type: String, unique: true, sparse: true },
     authProviders: [{ type: String, enum: ["email", "phone", "google"] }],
     streak: { type: Number, default: 0 },
+    maxStreak: { type: Number, default: 0 },
     plan: { type: String, enum: ["free", "pro"], default: "free" },
     dailyCommitment: { type: Number, enum: [5, 10, 20, 50], default: 5 },
     balance: { type: Number, default: 0 },

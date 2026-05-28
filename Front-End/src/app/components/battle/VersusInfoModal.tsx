@@ -1,5 +1,5 @@
 import React from "react";
-import { X, Swords, Target, Users, Zap, TrendingUp, IndianRupee, ShieldAlert, CheckCircle2 } from "lucide-react";
+import { X, Swords, Target, Users, Zap, TrendingUp, IndianRupee, ShieldAlert, CheckCircle2, Trophy } from "lucide-react";
 
 interface VersusInfoModalProps {
   onClose: () => void;
@@ -38,13 +38,21 @@ export default function VersusInfoModal({ onClose }: VersusInfoModalProps) {
         <div className="p-6 overflow-y-auto custom-scrollbar space-y-8">
           
           {/* Hero Section */}
-          <div className="text-center space-y-3">
+          <div className="text-center space-y-5">
             <h3 className="text-2xl font-black text-white">
               Put Your Money Where Your <span className="text-transparent bg-clip-text bg-gradient-to-r from-violet-400 to-purple-400">Consistency Is.</span>
             </h3>
-            <p className="text-zinc-400 text-sm max-w-md mx-auto leading-relaxed">
-              Versus mode is the ultimate accountability hack. Challenge your friends to a consistency duel, lock in stakes, and let the fear of losing money keep you both on track.
-            </p>
+            <div className="flex flex-wrap items-center justify-center gap-3 max-w-md mx-auto">
+              <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/[0.03] border border-white/5 text-sm text-zinc-300">
+                <Swords className="w-4 h-4 text-violet-400" /> Challenge friends
+              </div>
+              <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/[0.03] border border-white/5 text-sm text-zinc-300">
+                <IndianRupee className="w-4 h-4 text-emerald-400" /> Lock in stakes
+              </div>
+              <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/[0.03] border border-white/5 text-sm text-zinc-300">
+                <Trophy className="w-4 h-4 text-yellow-400" /> Earn money
+              </div>
+            </div>
           </div>
 
           {/* How it Works */}
@@ -53,89 +61,91 @@ export default function VersusInfoModal({ onClose }: VersusInfoModalProps) {
               <Target className="w-4 h-4 text-violet-400" /> How It Works
             </h4>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="p-4 rounded-xl bg-white/[0.02] border border-white/5 space-y-2 relative overflow-hidden group">
-                <div className="absolute inset-0 bg-gradient-to-br from-violet-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                <div className="w-8 h-8 rounded-full bg-violet-500/10 flex items-center justify-center text-violet-400 font-bold mb-3">1</div>
-                <h5 className="text-white font-semibold text-sm">Set the Stakes</h5>
-                <p className="text-xs text-zinc-500 leading-relaxed">Decide a custom amount (e.g., ₹500) and invite a friend.</p>
+              <div className="p-5 rounded-xl bg-white/[0.03] border border-white/10 space-y-3 relative overflow-hidden group">
+                <div className="absolute inset-0 bg-gradient-to-br from-violet-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                <div className="w-10 h-10 rounded-full bg-violet-500/20 flex items-center justify-center text-violet-400 font-bold mb-2">1</div>
+                <h5 className="text-white font-bold text-sm">Set the Stakes</h5>
+                <p className="text-sm text-zinc-400 leading-relaxed">Decide a custom amount (e.g., ₹500) and invite a friend.</p>
               </div>
-              <div className="p-4 rounded-xl bg-white/[0.02] border border-white/5 space-y-2 relative overflow-hidden group">
-                <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                <div className="w-8 h-8 rounded-full bg-emerald-500/10 flex items-center justify-center text-emerald-400 font-bold mb-3">2</div>
-                <h5 className="text-white font-semibold text-sm">Lock in Funds</h5>
-                <p className="text-xs text-zinc-500 leading-relaxed">Both players deposit the stake into the secure battle pool.</p>
+              <div className="p-5 rounded-xl bg-white/[0.03] border border-white/10 space-y-3 relative overflow-hidden group">
+                <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                <div className="w-10 h-10 rounded-full bg-emerald-500/20 flex items-center justify-center text-emerald-400 font-bold mb-2">2</div>
+                <h5 className="text-white font-bold text-sm">Lock in Funds</h5>
+                <p className="text-sm text-zinc-400 leading-relaxed">Both players deposit the stake into the secure pool.</p>
               </div>
-              <div className="p-4 rounded-xl bg-white/[0.02] border border-white/5 space-y-2 relative overflow-hidden group">
-                <div className="absolute inset-0 bg-gradient-to-br from-rose-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                <div className="w-8 h-8 rounded-full bg-rose-500/10 flex items-center justify-center text-rose-400 font-bold mb-3">3</div>
-                <h5 className="text-white font-semibold text-sm">Highest Streak Wins</h5>
-                <p className="text-xs text-zinc-500 leading-relaxed">At the end of the challenge, the person with the higher streak wins the pool.</p>
+              <div className="p-5 rounded-xl bg-white/[0.03] border border-white/10 space-y-3 relative overflow-hidden group">
+                <div className="absolute inset-0 bg-gradient-to-br from-rose-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                <div className="w-10 h-10 rounded-full bg-rose-500/20 flex items-center justify-center text-rose-400 font-bold mb-2">3</div>
+                <h5 className="text-white font-bold text-sm">Highest Streak Wins</h5>
+                <p className="text-sm text-zinc-400 leading-relaxed">The person with the higher streak at the end wins.</p>
               </div>
             </div>
           </div>
 
           {/* Example Scenario */}
-          <div className="p-5 rounded-2xl bg-gradient-to-br from-violet-900/20 to-purple-900/10 border border-violet-500/20 relative overflow-hidden">
-            <div className="absolute top-0 right-0 p-4 opacity-10">
-              <Swords className="w-24 h-24 text-violet-400" />
+          <div className="p-6 rounded-2xl bg-white/[0.02] border border-white/10 relative overflow-hidden mt-6 shadow-inner">
+            <div className="absolute top-0 right-0 p-4 opacity-[0.03]">
+              <Swords className="w-32 h-32 text-white" />
             </div>
-            <h4 className="text-sm font-bold text-violet-300 uppercase tracking-wider mb-4">Example Scenario</h4>
+            <h4 className="text-xs font-bold text-zinc-400 uppercase tracking-widest mb-6 flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-violet-500 shadow-[0_0_10px_rgba(139,92,246,0.8)]"></span> Example Scenario
+            </h4>
             
-            <div className="flex items-center justify-between max-w-sm mx-auto mb-6">
+            <div className="flex items-center justify-between max-w-md mx-auto mb-8 relative z-10">
               <div className="text-center">
-                <div className="w-12 h-12 rounded-full bg-zinc-800 flex items-center justify-center mx-auto mb-2 border-2 border-emerald-500/30">
-                  <span className="text-emerald-400 font-bold">You</span>
+                <div className="w-14 h-14 rounded-full bg-[#131316] flex items-center justify-center mx-auto mb-3 border border-emerald-500/50 shadow-[0_0_15px_rgba(16,185,129,0.15)]">
+                  <span className="text-emerald-400 font-bold text-sm">You</span>
                 </div>
-                <span className="text-xs text-zinc-400 font-mono">₹500 locked</span>
+                <span className="text-sm text-zinc-400 font-medium tracking-wide">₹500 locked</span>
               </div>
               
               <div className="flex flex-col items-center justify-center px-4">
                 <span className="text-[10px] font-bold text-violet-400 uppercase tracking-widest mb-1">Total Pool</span>
-                <span className="text-2xl font-black text-white">₹1,000</span>
+                <span className="text-3xl font-black text-white tracking-tight">₹1,000</span>
               </div>
 
               <div className="text-center">
-                <div className="w-12 h-12 rounded-full bg-zinc-800 flex items-center justify-center mx-auto mb-2 border-2 border-rose-500/30">
-                  <span className="text-rose-400 font-bold">Rohan</span>
+                <div className="w-14 h-14 rounded-full bg-[#131316] flex items-center justify-center mx-auto mb-3 border border-rose-500/50 shadow-[0_0_15px_rgba(244,63,94,0.15)]">
+                  <span className="text-rose-400 font-bold text-sm">Vansh</span>
                 </div>
-                <span className="text-xs text-zinc-400 font-mono">₹500 locked</span>
+                <span className="text-sm text-zinc-400 font-medium tracking-wide">₹500 locked</span>
               </div>
             </div>
 
-            <div className="space-y-2 text-sm">
-              <div className="flex items-start gap-2 bg-black/20 p-3 rounded-lg">
-                <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
-                <p className="text-zinc-300"><span className="font-semibold text-white">If it's a tie:</span> You both maintained equal streaks. The pool is split and you get your ₹500 back.</p>
+            <div className="space-y-3 relative z-10">
+              <div className="flex items-start gap-3 bg-white/[0.03] border border-white/5 p-4 rounded-xl">
+                <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
+                <p className="text-sm text-zinc-300 leading-relaxed"><span className="font-semibold text-white">If it's a tie:</span> You both maintained equal streaks. The pool is split and you get your ₹500 back.</p>
               </div>
-              <div className="flex items-start gap-2 bg-black/20 p-3 rounded-lg">
-                <Zap className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
-                <p className="text-zinc-300"><span className="font-semibold text-white">If you have a higher streak:</span> You beat Rohan's consistency and win the entire ₹1,000 pool!</p>
+              <div className="flex items-start gap-3 bg-violet-500/10 border border-violet-500/20 p-4 rounded-xl shadow-[inset_0_0_20px_rgba(139,92,246,0.05)]">
+                <Zap className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
+                <p className="text-sm text-zinc-200 leading-relaxed"><span className="font-semibold text-white">If you have a higher streak:</span> You beat Vansh's consistency and win the entire ₹1,000 pool!</p>
               </div>
             </div>
           </div>
 
           {/* Benefits */}
-          <div className="space-y-4">
+          <div className="space-y-4 pt-4">
             <h4 className="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
               <TrendingUp className="w-4 h-4 text-emerald-400" /> Why It Works
             </h4>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              <div className="flex items-start gap-3 p-4 rounded-xl bg-white/[0.01] border border-white/5">
-                <div className="p-2 bg-rose-500/10 rounded-lg shrink-0">
-                  <ShieldAlert className="w-4 h-4 text-rose-400" />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="flex items-start gap-4 p-5 rounded-xl bg-white/[0.03] border border-white/10">
+                <div className="p-2.5 bg-rose-500/10 rounded-lg shrink-0 border border-rose-500/20">
+                  <ShieldAlert className="w-5 h-5 text-rose-400" />
                 </div>
                 <div>
-                  <h6 className="text-sm font-bold text-white mb-1">Loss Aversion</h6>
-                  <p className="text-[11px] text-zinc-500 leading-relaxed">Humans hate losing money 2x more than they enjoy winning it. This psychological trigger forces consistency.</p>
+                  <h6 className="text-sm font-bold text-white mb-1.5">Loss Aversion</h6>
+                  <p className="text-sm text-zinc-400 leading-relaxed">Humans hate losing money 2x more than they enjoy winning it. This forces consistency.</p>
                 </div>
               </div>
-              <div className="flex items-start gap-3 p-4 rounded-xl bg-white/[0.01] border border-white/5">
-                <div className="p-2 bg-blue-500/10 rounded-lg shrink-0">
-                  <Users className="w-4 h-4 text-blue-400" />
+              <div className="flex items-start gap-4 p-5 rounded-xl bg-white/[0.03] border border-white/10">
+                <div className="p-2.5 bg-blue-500/10 rounded-lg shrink-0 border border-blue-500/20">
+                  <Users className="w-5 h-5 text-blue-400" />
                 </div>
                 <div>
-                  <h6 className="text-sm font-bold text-white mb-1">Social Pressure</h6>
-                  <p className="text-[11px] text-zinc-500 leading-relaxed">Letting yourself down is easy. Letting your friend win your money? Impossible.</p>
+                  <h6 className="text-sm font-bold text-white mb-1.5">Social Pressure</h6>
+                  <p className="text-sm text-zinc-400 leading-relaxed">Letting yourself down is easy. Letting your friend win your money? Impossible.</p>
                 </div>
               </div>
             </div>

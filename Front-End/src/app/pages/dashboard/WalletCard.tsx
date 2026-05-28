@@ -88,7 +88,8 @@
 
 
 import React, { useState } from "react";
-import { Wallet, Swords, Lock, Info } from "lucide-react";
+import { Link } from "react-router-dom";
+import { Wallet, Swords, Lock, Info, Plus, Coins } from "lucide-react";
 import TopupModal from "../../components/battle/TopupModal";
 import VersusInfoModal from "../../components/battle/VersusInfoModal";
 
@@ -311,34 +312,47 @@ export function WalletCard({
               </div>
             ) : (
               <>
-                <div className="bg-violet-500/10 border border-violet-500/20 rounded-xl p-5 mb-4 text-center relative">
+                <div className="bg-gradient-to-b from-violet-500/10 to-transparent border border-violet-500/20 rounded-2xl p-6 text-center relative overflow-hidden group shadow-xl flex-1 flex flex-col justify-center">
+                  {/* Glowing background aura */}
+                  <div className="absolute -top-12 -left-12 w-24 h-24 bg-violet-500/10 rounded-full blur-xl pointer-events-none group-hover:bg-violet-500/20 transition-colors duration-500" />
+                  
                   <button 
                     onClick={() => setShowInfoModal(true)}
-                    className="absolute top-3 right-3 p-1.5 rounded-lg bg-violet-500/20 hover:bg-violet-500/30 text-violet-300 transition-colors flex items-center gap-1 text-[10px] uppercase font-bold tracking-wider"
+                    className="absolute top-4 right-4 p-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-zinc-400 hover:text-white transition-all flex items-center gap-1 text-[10px] uppercase font-bold tracking-wider border border-white/5"
                     title="What is Versus Mode?"
                   >
                     <Info className="w-3.5 h-3.5" /> Info
                   </button>
-                  <div className="w-12 h-12 bg-violet-500/20 rounded-full flex items-center justify-center mx-auto mb-3 shadow-[0_0_15px_rgba(139,92,246,0.3)]">
-                    <Swords className="w-6 h-6 text-violet-400" />
+
+                  <div className="w-12 h-12 bg-gradient-to-br from-violet-500 to-purple-600 rounded-xl flex items-center justify-center mx-auto mb-4 shadow-lg shadow-violet-500/30">
+                    <Swords className="w-6 h-6 text-white" />
                   </div>
-                  <div className="text-xs text-zinc-400 mb-1 uppercase tracking-wider font-semibold">Available for Stakes</div>
-                  <div className="text-4xl font-black text-white mb-2">₹{battleBalance}</div>
-                  <p className="text-xs text-violet-300/70">
-                    Use this balance to challenge friends in Head-to-Head consistency battles.
+                  
+                  <div className="text-[10px] text-violet-400 font-bold uppercase tracking-widest mb-1">Available for Stakes</div>
+                  <div className="text-4xl font-black text-white tracking-tight mb-2">₹{battleBalance}</div>
+                  
+                  <p className="text-xs text-zinc-400 max-w-[200px] mx-auto leading-relaxed">
+                    Challenge friends, lock stakes, and prove your consistency.
                   </p>
                 </div>
                 
-                <div className="mt-auto pt-4 space-y-3">
+                <div className="mt-4 space-y-3">
+                  <Link 
+                    to="/create-challenge"
+                    className="w-full py-3.5 rounded-xl font-bold bg-white text-black hover:bg-zinc-200 transition-all flex items-center justify-center gap-2 hover:scale-[1.02] shadow-xl text-sm"
+                  >
+                    <Plus className="w-4 h-4" /> Create Challenge
+                  </Link>
+
                   <button 
                     onClick={() => setShowTopupModal(true)}
-                    className="w-full py-3.5 rounded-xl font-bold bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-500 hover:to-purple-500 text-white transition-all shadow-lg shadow-violet-500/25 flex items-center justify-center gap-2"
+                    className="w-full py-3 rounded-xl font-semibold bg-white/5 hover:bg-white/10 text-zinc-300 hover:text-white border border-white/10 transition-all flex items-center justify-center gap-2"
                   >
-                    Add Funds
+                    <Coins className="w-4 h-4 text-violet-400" /> Add Funds
                   </button>
                   
-                  <div className="text-[10px] text-zinc-500 text-center leading-relaxed px-2">
-                    Real money integration (Razorpay/Stripe) is required to legally deposit funds for stakes.
+                  <div className="text-[9px] text-zinc-500 text-center leading-relaxed px-4 pt-1">
+                    Deposited funds are locked securely and paid out automatically.
                   </div>
                 </div>
               </>

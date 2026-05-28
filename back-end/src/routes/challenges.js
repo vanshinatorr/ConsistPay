@@ -6,11 +6,15 @@ const {
   joinChallenge,
   getActiveChallenges,
   getChallengeHistory,
-  getChallengeById
+  getChallengeById,
+  cancelPendingChallenge,
+  getPendingChallenge
 } = require("../controllers/challengeController");
 const { protect } = require("../middleware/authMiddleware");
 
 router.post("/create", protect, createChallenge);
+router.post("/cancel-pending", protect, cancelPendingChallenge);
+router.get("/pending", protect, getPendingChallenge);
 router.get("/invite/:code", protect, getInviteDetails);
 router.post("/join/:code", protect, joinChallenge);
 router.get("/active", protect, getActiveChallenges);

@@ -7,16 +7,6 @@ export function NotFound() {
   const [seconds, setSeconds] = useState(10);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setSeconds((s) => {
-        if (s <= 1) { navigate("/"); return 0; }
-        return s - 1;
-      });
-    }, 1000);
-    return () => clearInterval(timer);
-  }, []);
-
   return (
     <div className="min-h-screen text-white relative overflow-hidden flex items-center justify-center px-4" style={{ backgroundColor: '#0D0D0F' }}>
       {/* Background Orbs */}
@@ -42,12 +32,8 @@ export function NotFound() {
         <div className="text-4xl mb-4">😵</div>
 
         <h1 className="text-2xl font-bold mb-3">Streak Broken!</h1>
-        <p className="text-zinc-400 mb-2">
+        <p className="text-zinc-400 mb-8">
           Looks like this page doesn't exist. Don't let your coding streak break too!
-        </p>
-
-        <p className="text-zinc-500 text-sm mb-8">
-          Redirecting to home in {seconds}s...
         </p>
 
         <div className="flex flex-col sm:flex-row gap-3 justify-center">

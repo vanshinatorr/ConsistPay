@@ -15,6 +15,7 @@ const getMe = async (req, res) => {
       balance: user.balance,
       battleBalance: user.battleBalance,
       streak: user.streak,
+      maxStreak: user.maxStreak || 0,
       graceCoins: user.graceCoins,
       dailyCommitment: user.dailyCommitment,
       onboardingComplete: user.onboardingComplete,

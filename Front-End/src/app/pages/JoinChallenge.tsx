@@ -194,7 +194,7 @@ export function JoinChallenge() {
               </span>
             </div>
             <div className="w-24 flex justify-end">
-              <span className="text-xs bg-white/5 border border-white/10 px-2 py-1 rounded-md text-zinc-400">Join Battle</span>
+              <span className="text-xs bg-white/5 border border-white/10 px-2 py-1 rounded-md text-zinc-400">Join Challenge</span>
             </div>
           </div>
         </div>
@@ -210,7 +210,7 @@ export function JoinChallenge() {
             <div className="text-center mb-10">
               <div className="inline-flex items-center gap-2 bg-emerald-500/10 border border-emerald-500/20 rounded-full px-4 py-1.5 text-sm text-emerald-300 mb-4 font-semibold">
                 <Target className="w-4 h-4" />
-                Battle Request
+                Challenge Request
               </div>
               <h1 className="text-3xl sm:text-4xl font-extrabold mb-3">
                 You've been challenged!
@@ -270,7 +270,11 @@ export function JoinChallenge() {
                 </li>
                 <li className="flex items-start gap-3">
                   <CheckCircle className="w-5 h-5 text-emerald-400 shrink-0" />
-                  <span>The battle begins the moment you accept this contract</span>
+                  <span>Solving multiple problems in a day still counts as <strong className="text-emerald-300">1 point</strong> (this only increases your overall leaderboard score, not your head-to-head points)</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <CheckCircle className="w-5 h-5 text-emerald-400 shrink-0" />
+                  <span>The challenge begins the moment you accept this contract</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <CheckCircle className="w-5 h-5 text-emerald-400 shrink-0" />
@@ -322,18 +326,26 @@ export function JoinChallenge() {
             </div>
 
             <h1 className="text-4xl font-extrabold mb-3 text-center tracking-tight">
-              Battle Accepted!
+              Challenge Accepted!
             </h1>
             <p className="text-zinc-400 text-sm text-center mb-8 max-w-sm">
-              You are now locked in a {challengeData.duration}-day consistency war with {challengeData.createdBy}. The battle has officially begun.
+              You are now locked in a {challengeData.duration}-day consistency war with {challengeData.createdBy}. The challenge has officially begun.
             </p>
 
-            <Link
-              to="/dashboard"
-              className="mt-4 px-8 py-4 rounded-xl font-bold bg-white/10 hover:bg-white/15 border border-white/10 transition-all shadow-lg text-white"
-            >
-              Return to Dashboard
-            </Link>
+            <div className="flex flex-col sm:flex-row gap-4 w-full max-w-md">
+              <button
+                onClick={() => navigate(`/battle/${joinedData?.challengeId}?success=true`)}
+                className="flex-1 py-4 rounded-xl font-bold bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white transition-all hover:scale-[1.02] shadow-xl text-center"
+              >
+                Enter Challenge Arena ⚔️
+              </button>
+              <button
+                onClick={() => navigate("/dashboard")}
+                className="flex-1 py-4 rounded-xl font-bold bg-white/5 hover:bg-white/10 border border-white/10 text-white transition-all text-center"
+              >
+                Go to Dashboard
+              </button>
+            </div>
           </div>
         )}
       </main>

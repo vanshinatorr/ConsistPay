@@ -1,3 +1,4 @@
+const mongoose = require("mongoose");
 const Challenge = require("../models/Challenge");
 const User = require("../models/User");
 const Submission = require("../models/Submission");
@@ -18,15 +19,31 @@ const generateInviteCode = async () => {
   return code;
 };
 
-// Count completed submissions in a date range
+// Count completed submissions in a date range (Unique Days)
 const countCompletedSubmissions = async (userId, startDate, endDate) => {
-  const startStr = startDate.toISOString().split("T")[0];
-  const endStr = endDate.toISOString().split("T")[0];
-  return await Submission.countDocuments({
-    userId,
-    status: "completed",
-    date: { $gte: startStr, $lte: endStr }
-  });
+  if (!startDate || !endDate) return 0;
+  const startStr = new Date(startDate).toLocaleDateString("en-CA", { timeZone: "Asia/Kolkata" });
+  const endStr = new Date(endDate).toLocaleDateString("en-CA", { timeZone: "Asia/Kolkata" });
+  
+  const result = await Submission.aggregate([
+    {
+      $match: {
+        userId: new mongoose.Types.ObjectId(userId),
+        status: "completed",
+        date: { $gte: startStr, $lte: endStr }
+      }
+    },
+    {
+      $group: {
+        _id: "$date"
+      }
+    },
+    {
+      $count: "uniqueDays"
+    }
+  ]);
+  
+  return result.length > 0 ? result[0].uniqueDays : 0;
 };
 
 // Resolve expired challenges and payout/refund
@@ -94,6 +111,12 @@ const createChallenge = async (req, res) => {
       return res.status(403).json({ message: "Only Pro users can create custom challenges." });
     }
 
+    // Check if creator already has a pending challenge
+    const existingPending = await Challenge.findOne({ creatorId: userId, status: "pending" });
+    if (existingPending) {
+      return res.status(400).json({ message: "You already have a pending battle invitation. Please cancel the existing invitation or wait for it to expire (5 mins) before creating a new one." });
+    }
+
     if (!duration || !stake) {
       console.log("Create challenge rejected: duration or stake missing");
       return res.status(400).json({ message: "Duration and stake amount are required." });
@@ -108,7 +131,8 @@ const createChallenge = async (req, res) => {
     const totalCost = stakeVal + entryFee;
 
     if (user.battleBalance < totalCost) {
-      return res.status(400).json({ message: `Insufficient Battle Balance. You need ₹${totalCost}. Please add funds to your Battle Wallet.` });
+      const deficit = totalCost - user.battleBalance;
+      return res.status(400).json({ message: `Insufficient balance. You need ₹${deficit} more to lock this commitment.` });
     }
 
     // Deduct from battle wallet
@@ -131,7 +155,8 @@ const createChallenge = async (req, res) => {
     res.status(201).json({
       message: "Challenge created successfully!",
       inviteCode: challenge.inviteCode,
-      battleBalance: user.battleBalance
+      battleBalance: user.battleBalance,
+      challengeId: challenge._id
     });
   } catch (error) {
     console.error("Error creating challenge:", error);
@@ -184,7 +209,7 @@ const joinChallenge = async (req, res) => {
     const user = await User.findById(userId);
 
     if (user.battleBalance < totalCost) {
-      return res.status(400).json({ message: `Insufficient Battle Balance. You need ₹${totalCost}. Please add funds to your Battle Wallet.` });
+      return res.status(400).json({ message: `Insufficient balance. Required: ₹${totalCost}, Available: ₹${user.battleBalance}.` });
     }
 
     // Deduct from battle wallet
@@ -206,6 +231,7 @@ const joinChallenge = async (req, res) => {
     res.status(200).json({
       message: "Challenge joined successfully!",
       battleBalance: user.battleBalance,
+      challengeId: challenge._id,
       opponent: {
         name: creator.name,
         streak: creator.streak
@@ -241,9 +267,11 @@ const getActiveChallenges = async (req, res) => {
       const creatorScore = await countCompletedSubmissions(ch.creatorId._id, ch.startDate, ch.endDate);
       const opponentScore = await countCompletedSubmissions(ch.opponentId._id, ch.startDate, ch.endDate);
 
-      // Days elapsed (at least 1)
-      const diffTime = now.getTime() - ch.startDate.getTime();
-      const currentDay = Math.min(ch.duration, Math.max(1, Math.ceil(diffTime / (1000 * 60 * 60 * 24))));
+      // Days elapsed (at least 1) based on calendar days in Asia/Kolkata timezone
+      const d1 = new Date(ch.startDate.toLocaleDateString("en-US", { timeZone: "Asia/Kolkata" }));
+      const d2 = new Date(now.toLocaleDateString("en-US", { timeZone: "Asia/Kolkata" }));
+      const diffDays = Math.round((d2.getTime() - d1.getTime()) / (1000 * 60 * 60 * 24));
+      const currentDay = Math.min(ch.duration, Math.max(1, diffDays + 1));
 
       formatted.push({
         id: ch._id,
@@ -352,9 +380,99 @@ const getChallengeById = async (req, res) => {
     const opponentScore = ch.opponentId ? await countCompletedSubmissions(ch.opponentId._id, ch.startDate || new Date(), ch.endDate || new Date()) : 0;
 
     let currentDay = 1;
-    if (ch.status === "active" || ch.status === "completed") {
-      const diffTime = (new Date()).getTime() - ch.startDate.getTime();
-      currentDay = Math.min(ch.duration, Math.max(1, Math.ceil(diffTime / (1000 * 60 * 60 * 24))));
+    if ((ch.status === "active" || ch.status === "completed") && ch.startDate) {
+      const d1 = new Date(ch.startDate.toLocaleDateString("en-US", { timeZone: "Asia/Kolkata" }));
+      const d2 = new Date(new Date().toLocaleDateString("en-US", { timeZone: "Asia/Kolkata" }));
+      const diffDays = Math.round((d2.getTime() - d1.getTime()) / (1000 * 60 * 60 * 24));
+      currentDay = Math.min(ch.duration, Math.max(1, diffDays + 1));
+    }
+
+    const grid = [];
+    const feed = [];
+
+    if ((ch.status === "active" || ch.status === "completed") && ch.startDate && ch.endDate) {
+      const start = new Date(ch.startDate);
+      const startStr = start.toLocaleDateString("en-CA", { timeZone: "Asia/Kolkata" });
+      const endStr = new Date(ch.endDate).toLocaleDateString("en-CA", { timeZone: "Asia/Kolkata" });
+
+      const creatorSubs = await Submission.find({
+        userId: ch.creatorId._id,
+        status: "completed",
+        date: { $gte: startStr, $lte: endStr }
+      });
+
+      const opponentSubs = ch.opponentId ? await Submission.find({
+        userId: ch.opponentId._id,
+        status: "completed",
+        date: { $gte: startStr, $lte: endStr }
+      }) : [];
+
+      const creatorDatesMap = new Map(creatorSubs.map(s => [s.date, s]));
+      const opponentDatesMap = new Map(opponentSubs.map(s => [s.date, s]));
+
+      const todayStr = new Date().toLocaleDateString("en-CA", { timeZone: "Asia/Kolkata" });
+
+      for (let i = 0; i < ch.duration; i++) {
+        const dayDate = new Date(start.getTime() + i * 24 * 60 * 60 * 1000);
+        const dayStr = dayDate.toLocaleDateString("en-CA", { timeZone: "Asia/Kolkata" });
+
+        let creatorStatus = "future";
+        let opponentStatus = "future";
+
+        const creatorSub = creatorDatesMap.get(dayStr);
+        const opponentSub = opponentDatesMap.get(dayStr);
+
+        if (creatorSub) {
+          creatorStatus = "completed";
+        } else if (dayStr === todayStr) {
+          creatorStatus = "pending";
+        } else if (dayStr < todayStr) {
+          creatorStatus = "missed";
+        }
+
+        if (ch.opponentId) {
+          if (opponentSub) {
+            opponentStatus = "completed";
+          } else if (dayStr === todayStr) {
+            opponentStatus = "pending";
+          } else if (dayStr < todayStr) {
+            opponentStatus = "missed";
+          }
+        }
+
+        grid.push({
+          dayNumber: i + 1,
+          date: dayStr,
+          creatorStatus,
+          opponentStatus,
+          creatorProblem: creatorSub ? creatorSub.problemName : null,
+          opponentProblem: opponentSub ? opponentSub.problemName : null
+        });
+      }
+
+      // Fetch feed submissions
+      const subs = await Submission.find({
+        userId: { $in: [ch.creatorId._id, ch.opponentId ? ch.opponentId._id : null].filter(Boolean) },
+        status: "completed",
+        date: { $gte: startStr, $lte: endStr }
+      }).sort({ createdAt: -1 });
+
+      for (const sub of subs) {
+        const isSubCreator = sub.userId.toString() === ch.creatorId._id.toString();
+        const solverName = isSubCreator ? ch.creatorId.name : (ch.opponentId ? ch.opponentId.name : "Opponent");
+        const diffTime = new Date(sub.createdAt).getTime() - start.getTime();
+        const dayNumber = Math.max(1, Math.min(ch.duration, Math.floor(diffTime / (1000 * 60 * 60 * 24)) + 1));
+
+        feed.push({
+          id: sub._id,
+          solverName,
+          isCreator: isSubCreator,
+          problemName: sub.problemName,
+          platform: sub.platform,
+          dayNumber,
+          createdAt: sub.createdAt
+        });
+      }
     }
 
     const formatted = {
@@ -368,6 +486,8 @@ const getChallengeById = async (req, res) => {
       endDate: ch.endDate,
       status: ch.status,
       userRole,
+      grid,
+      feed,
       creator: {
         id: ch.creatorId._id,
         name: ch.creatorId.name,
@@ -392,11 +512,79 @@ const getChallengeById = async (req, res) => {
   }
 };
 
+// CANCEL PENDING CHALLENGE (Instant Refund)
+const cancelPendingChallenge = async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const pendingChallenge = await Challenge.findOne({ creatorId: userId, status: "pending" });
+    
+    if (!pendingChallenge) {
+      return res.status(400).json({ message: "No pending battle invitation found to cancel." });
+    }
+    
+    pendingChallenge.status = "expired";
+    await pendingChallenge.save();
+    
+    const user = await User.findById(userId);
+    if (user) {
+      user.battleBalance += (pendingChallenge.stake + pendingChallenge.entryFee);
+      await user.save();
+    }
+    
+    res.status(200).json({
+      message: "Battle cancelled and stakes refunded successfully.",
+      battleBalance: user.battleBalance
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// GET USER'S PENDING CHALLENGE
+const getPendingChallenge = async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const pending = await Challenge.findOne({ creatorId: userId, status: "pending" });
+    res.status(200).json(pending);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// EXPIRE PENDING CHALLENGES (Cron Job logic)
+const expirePendingChallenges = async () => {
+  try {
+    const fiveMinsAgo = new Date(Date.now() - 5 * 60 * 1000);
+    const expired = await Challenge.find({ status: "pending", createdAt: { $lt: fiveMinsAgo } });
+    
+    for (const ch of expired) {
+      ch.status = "expired";
+      await ch.save();
+      
+      // Refund the creator
+      const user = await User.findById(ch.creatorId);
+      if (user) {
+        user.battleBalance += (ch.stake + ch.entryFee);
+        await user.save();
+      }
+    }
+    
+    if (expired.length > 0) {
+      console.log(`[Cron] Expired ${expired.length} pending battle(s) and refunded creators.`);
+    }
+  } catch (error) {
+    console.error("Error in expirePendingChallenges:", error);
+  }
+};
+
 module.exports = {
   createChallenge,
   getInviteDetails,
   joinChallenge,
   getActiveChallenges,
   getChallengeHistory,
-  getChallengeById
+  getChallengeById,
+  cancelPendingChallenge,
+  getPendingChallenge,
+  expirePendingChallenges
 };
