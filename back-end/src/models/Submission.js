@@ -46,6 +46,10 @@ const submissionSchema = new mongoose.Schema(
       type: Boolean,
       default: true,
     },
+    isFallback: {
+      type: Boolean,
+      default: false,
+    },
   },
   { timestamps: true }
 );

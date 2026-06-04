@@ -7,6 +7,7 @@ type Tab = "streak" | "consistency" | "completed";
 interface UserData {
   _id: string;
   name: string;
+  username?: string;
   email: string;
   streak: number;
   plan: string;
@@ -76,12 +77,15 @@ export function Leaderboard() {
     if (activeTab === "streak") return b.streak - a.streak;
     if (activeTab === "consistency") return b.consistency - a.consistency;
     return b.completed - a.completed;
-  }).map((u, i) => ({ 
-    ...u, 
-    rank: i + 1, 
-    isCurrentUser: u._id === currentUserId,
-    avatar: u.avatar || (u.name ? u.name.substring(0, 2).toUpperCase() : "US")
-  }));
+  }).map((u, i) => {
+    const displayName = u.username || u.name || "US";
+    return { 
+      ...u, 
+      rank: i + 1, 
+      isCurrentUser: u._id === currentUserId,
+      avatar: u.avatar || displayName.substring(0, 2).toUpperCase()
+    };
+  });
 
   const currentUser = sorted.find(u => u.isCurrentUser) || sorted[0]; // fallback if not found
 
@@ -192,7 +196,7 @@ export function Leaderboard() {
                 className="w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm mx-auto mb-2" 
                 colorClass="from-blue-400 to-blue-600"
               />
-              <div className="font-semibold text-sm truncate">{sorted[1]?.name}</div>
+              <div className="font-semibold text-sm truncate">{sorted[1]?.username || sorted[1]?.name}</div>
               <div className="text-xs text-zinc-400 mt-1">{getValue(sorted[1])}</div>
             </div>
           </div>
@@ -207,7 +211,7 @@ export function Leaderboard() {
                 className="w-12 h-12 rounded-full flex items-center justify-center font-bold mx-auto mb-2" 
                 colorClass="from-violet-400 to-purple-600"
               />
-              <div className="font-bold truncate">{sorted[0]?.name}</div>
+              <div className="font-bold truncate">{sorted[0]?.username || sorted[0]?.name}</div>
               <div className="text-xs text-yellow-400 mt-1 font-semibold">{getValue(sorted[0])}</div>
             </div>
           </div>
@@ -222,7 +226,7 @@ export function Leaderboard() {
                 className="w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm mx-auto mb-2" 
                 colorClass="from-emerald-400 to-emerald-600"
               />
-              <div className="font-semibold text-sm truncate">{sorted[2]?.name}</div>
+              <div className="font-semibold text-sm truncate">{sorted[2]?.username || sorted[2]?.name}</div>
               <div className="text-xs text-zinc-400 mt-1">{getValue(sorted[2])}</div>
             </div>
           </div>
@@ -280,7 +284,7 @@ export function Leaderboard() {
                   {/* Name */}
                   <div>
                     <div className={`font-semibold ${user.isCurrentUser ? "text-violet-300" : ""}`}>
-                      {user.name}
+                      {user.username || user.name}
                       {user.isCurrentUser && <span className="ml-2 text-xs bg-violet-500/20 text-violet-300 px-2 py-0.5 rounded-full">You</span>}
                     </div>
                     <div className="text-xs text-zinc-500">🔥 {user.streak} day streak</div>

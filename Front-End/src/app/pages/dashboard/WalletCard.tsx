@@ -89,7 +89,7 @@
 
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { Wallet, Swords, Lock, Info, Plus, Coins } from "lucide-react";
+import { Wallet, Swords, Lock, Info, Plus, Coins, Sparkles } from "lucide-react";
 import TopupModal from "../../components/battle/TopupModal";
 import VersusInfoModal from "../../components/battle/VersusInfoModal";
 
@@ -140,7 +140,7 @@ export function WalletCard({
         }`} 
       />
 
-      <div className="relative bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 flex flex-col h-full flex-1">
+      <div className="relative bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 flex flex-col justify-between h-full flex-1 min-h-[522px] shadow-lg">
         
         {/* Header with Tabs */}
         <div className="flex items-center justify-between mb-6 relative z-10">
@@ -189,7 +189,7 @@ export function WalletCard({
                 Total Deposited
               </div>
               <span className="text-xl font-bold font-mono">
-                ₹{onboardingComplete ? monthlyBudget.toFixed(2) : "0.00"}
+                ₹{onboardingComplete ? Math.round(monthlyBudget) : "0"}
               </span>
               <div className="text-xs text-zinc-500 mt-0.5">
                 ₹{dailyCommitment}/day commitment • 30-day challenge active
@@ -276,39 +276,59 @@ export function WalletCard({
         {activeTab === "battle" && (
           <div className="flex flex-col flex-1 h-full animate-in fade-in zoom-in-95 duration-200">
             {plan?.toLowerCase() !== "pro" ? (
-              <div className="flex flex-col items-center justify-center text-center h-full px-4">
+              <div className="flex flex-col items-center justify-between text-center h-full px-2 py-4 flex-1 select-none animate-in fade-in zoom-in-95 duration-300">
                 
-                <div className="w-14 h-14 bg-white/5 border border-white/10 rounded-2xl flex items-center justify-center mb-5 relative">
-                  <Swords className="w-6 h-6 text-zinc-400" />
-                  <div className="absolute -bottom-1.5 -right-1.5 w-6 h-6 bg-[#0D0D0F] rounded-full flex items-center justify-center">
-                    <div className="w-4 h-4 bg-zinc-800 border border-zinc-700 rounded-full flex items-center justify-center">
-                      <Lock className="w-2 h-2 text-zinc-300" />
-                    </div>
+                {/* Icon Container with Pulsing Glow */}
+                <div className="relative mb-4 mt-2">
+                  <div className="absolute inset-0 bg-indigo-500/10 rounded-2xl blur-xl animate-pulse" />
+                  <div className="relative w-16 h-16 bg-[#121214] border border-white/10 rounded-2xl flex items-center justify-center shadow-md shadow-indigo-500/5">
+                    <Swords className="w-7 h-7 text-indigo-400" />
+                  </div>
+                  <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-indigo-600 border border-indigo-400/20 rounded-full flex items-center justify-center shadow-md">
+                    <Lock className="w-2.5 h-2.5 text-white" />
                   </div>
                 </div>
 
-                <div className="flex items-start justify-between mb-2">
-                  <h3 className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-violet-400 to-purple-400">
+                {/* Title & Description */}
+                <div className="space-y-1.5 mb-4">
+                  <h3 className="text-xl font-extrabold tracking-tight bg-gradient-to-r from-indigo-200 via-zinc-200 to-indigo-300 bg-clip-text text-transparent">
                     Versus Mode
                   </h3>
+                  <p className="text-xs text-zinc-400 leading-relaxed max-w-[220px] mx-auto">
+                    Challenge friends, set daily coding stakes, and prove your consistency in head-to-head duels.
+                  </p>
+                </div>
+
+                {/* Bullet benefits */}
+                <div className="w-full max-w-[240px] bg-white/[0.02] border border-white/5 rounded-xl p-3 mb-5 space-y-2 text-left">
+                  <div className="flex items-center gap-2 text-[10px] text-zinc-300">
+                    <span className="text-indigo-400">✦</span> Head-to-Head custom duels
+                  </div>
+                  <div className="flex items-center gap-2 text-[10px] text-zinc-300">
+                    <span className="text-indigo-400">✦</span> Winner-takes-all stakes pool
+                  </div>
+                  <div className="flex items-center gap-2 text-[10px] text-zinc-300">
+                    <span className="text-indigo-400">✦</span> Shared accountability & tracking
+                  </div>
+                </div>
+
+                {/* CTA Action Block */}
+                <div className="w-full space-y-3.5 mt-auto">
+                  <a 
+                    href="/pricing"
+                    className="w-full py-3.5 rounded-xl font-bold bg-gradient-to-r from-indigo-500 to-violet-600 hover:from-indigo-400 hover:to-violet-500 text-white transition-all shadow-[0_0_15px_rgba(99,102,241,0.2)] hover:shadow-[0_0_20px_rgba(99,102,241,0.3)] flex items-center justify-center gap-2 hover:scale-[1.02] text-xs"
+                  >
+                    <Sparkles className="w-4 h-4" /> Upgrade to Pro
+                  </a>
+                  
                   <button 
                     onClick={() => setShowInfoModal(true)}
-                    className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-violet-500/10 hover:bg-violet-500/20 text-violet-300 hover:text-violet-200 text-[10px] font-bold uppercase tracking-wider transition-colors border border-violet-500/20"
+                    className="text-[10px] font-bold text-zinc-500 hover:text-zinc-300 transition-colors flex items-center justify-center gap-1 mx-auto cursor-pointer"
                   >
-                    <Info className="w-3 h-3" /> What is this?
+                    <Info className="w-3.5 h-3.5 text-zinc-600" /> Learn more about Versus Mode
                   </button>
                 </div>
-                
-                <p className="text-sm text-zinc-400 mb-8 max-w-[220px] leading-relaxed">
-                  Challenge friends, set stakes, and prove your consistency in Versus mode.
-                </p>
 
-                <a 
-                  href="/pricing"
-                  className="w-full py-3 rounded-xl text-sm font-semibold text-white bg-white/10 hover:bg-white/15 border border-white/10 transition-all flex items-center justify-center gap-2"
-                >
-                  Upgrade to Pro
-                </a>
               </div>
             ) : (
               <>

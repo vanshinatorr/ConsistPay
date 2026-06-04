@@ -12,9 +12,14 @@ export default function App() {
       try {
         const token = localStorage.getItem("token");
         const path = window.location.pathname;
+        const isPublicPage = path === "/" || path === "/login" || path === "/signup" || path === "/auth" || path === "/faq" || path === "/pricing";
 
-        if (!token || path === "/login" || path === "/signup" || path === "/") {
-          setLoading(false);
+        if (!token) {
+          if (!isPublicPage) {
+            window.location.href = "/login";
+          } else {
+            setLoading(false);
+          }
           return;
         }
 
@@ -26,13 +31,26 @@ export default function App() {
 
         if (res.ok) {
           const data = await res.json();
-          // Onboarding checks have been moved to components directly.
-          if (data.onboardingComplete === true && path === "/onboarding") {
-            window.location.href = "/dashboard";
+          const isLandingOrAuthPage = path === "/" || path === "/login" || path === "/signup" || path === "/auth";
+          
+          if (isLandingOrAuthPage) {
+            if (data.onboardingComplete === false) {
+              window.location.href = "/onboarding";
+            } else {
+              window.location.href = "/dashboard";
+            }
+          } else {
+            if (data.onboardingComplete === true && path === "/onboarding") {
+              window.location.href = "/dashboard";
+            } else if (data.onboardingComplete === false && path !== "/onboarding" && path !== "/payment") {
+              window.location.href = "/onboarding";
+            }
           }
         } else {
           localStorage.removeItem("token");
-          window.location.href = "/login";
+          if (!isPublicPage) {
+            window.location.href = "/login";
+          }
         }
       } catch (err) {
         console.error("Auth check failed:", err);

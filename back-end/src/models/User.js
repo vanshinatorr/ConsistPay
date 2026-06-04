@@ -19,6 +19,7 @@ const userSchema = new mongoose.Schema(
     onboardingComplete: { type: Boolean, default: false },
     planExpiresAt: { type: Date, default: null },
     avatar: { type: String, default: "" },
+    lastGraceCoinEarnedMonth: { type: String, default: "" },
   },
   { timestamps: true }
 );

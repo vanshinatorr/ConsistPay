@@ -225,7 +225,7 @@ export function Auth() {
              <img src="https://api.dicebear.com/7.x/micah/svg?seed=Oliver&backgroundColor=b6e3f4" alt="User" className="w-10 h-10 rounded-full border-2 border-[#0A0A0C]" />
              
              <div className="w-10 h-10 rounded-full border-2 border-[#0A0A0C] bg-zinc-800 flex items-center justify-center text-xs font-bold text-white z-10 shadow-inner">
-               10+
+               30+
              </div>
           </div>
           <div>

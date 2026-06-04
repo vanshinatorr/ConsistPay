@@ -40,9 +40,11 @@ interface UserData {
   graceCoins: number;
   dailyCommitment: number;
   totalSolved: number;
+  totalProblemsSolved: number;
   totalMissed: number;
   battleBalance: number;
   onboardingComplete: boolean;
+  createdAt?: string;
 }
 
 interface CalendarDay {
@@ -60,7 +62,7 @@ export function Dashboard() {
   const [submitted, setSubmitted] = useState(false);
   const [timeLeft, setTimeLeft] = useState({ h: 0, m: 0, s: 0 });
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null);
-  const [calendarYear, setCalendarYear] = useState(new Date().getFullYear());
+  const [endMonthDate, setEndMonthDate] = useState(new Date());
   const [userData, setUserData] = useState<UserData | null>(null);
   const [calendarData, setCalendarData] = useState<CalendarDay[]>([]);
   const [loading, setLoading] = useState(true);
@@ -90,24 +92,29 @@ export function Dashboard() {
     }
   };
 
-  const fetchCalendar = async () => {
+  const getVisibleYears = (endDate: Date) => {
+    const years = new Set<number>();
+    for (let i = 0; i < 5; i++) {
+      const d = new Date(endDate.getFullYear(), endDate.getMonth() - i, 1);
+      years.add(d.getFullYear());
+    }
+    return Array.from(years);
+  };
+
+  const fetchCalendarForYears = async (years: number[]) => {
     try {
-      const month = String(new Date().getMonth() + 1);
-      const year = String(calendarYear);
-      const res = await fetch(
-        `${API}/api/submissions/calendar?month=${month}&year=${year}`,
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      if (!res.ok) {
-        console.error("Calendar fetch failed:", res.status);
-        return;
-      }
-      const data = await res.json();
-      if (Array.isArray(data)) {
-        setCalendarData(data);
-      } else {
-        console.error("Calendar data is not an array:", data);
-      }
+      const promises = years.map(async (yr) => {
+        const res = await fetch(
+          `${API}/api/submissions/calendar?year=${yr}`,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        if (!res.ok) return [];
+        const data = await res.json();
+        return Array.isArray(data) ? data : [];
+      });
+      const results = await Promise.all(promises);
+      const combined = results.flat();
+      setCalendarData(combined);
     } catch (err) {
       console.error("Calendar fetch error:", err);
     }
@@ -121,7 +128,7 @@ export function Dashboard() {
       if (res.ok) {
         const data = await res.json();
         setTodaySubmission(data);
-        if (data) {
+        if (data && data.count > 0) {
           setSubmitted(true);
         } else {
           setSubmitted(false);
@@ -171,18 +178,29 @@ export function Dashboard() {
     }
   };
 
+  const visibleYears = getVisibleYears(endMonthDate);
+  const visibleYearsStr = visibleYears.join(",");
+
   useEffect(() => {
     const init = async () => {
       setLoading(true);
-      await Promise.all([fetchUserData(), fetchCalendar(), fetchTodaySubmission(), fetchRecentSolves()]);
+      const initialYears = getVisibleYears(new Date());
+      await Promise.all([
+        fetchUserData(),
+        fetchCalendarForYears(initialYears),
+        fetchTodaySubmission(),
+        fetchRecentSolves(),
+      ]);
       setLoading(false);
     };
     init();
   }, []);
 
   useEffect(() => {
-    if (!loading) fetchCalendar();
-  }, [calendarYear]);
+    if (!loading) {
+      fetchCalendarForYears(visibleYears);
+    }
+  }, [visibleYearsStr]);
 
   useEffect(() => {
     if (!submitted) return;
@@ -272,45 +290,95 @@ export function Dashboard() {
   const shortMonths = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
   const dayLabels = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
 
-  const calendarMap = new Map<string, "completed" | "missed">();
+  const calendarMap = new Map<string, { status: "completed" | "missed", count: number }>();
   if (Array.isArray(calendarData)) {
     calendarData.forEach((item) => {
       if (item && item.date) {
-        calendarMap.set(item.date.split("T")[0], item.status);
+        const dateKey = item.date.split("T")[0];
+        const existing = calendarMap.get(dateKey);
+        
+        if (item.status === "completed") {
+          const newCount = (existing?.count || 0) + 1;
+          calendarMap.set(dateKey, { status: "completed", count: newCount });
+        } else if (item.status === "missed" && (!existing || existing.status === "missed")) {
+          calendarMap.set(dateKey, { status: "missed", count: 0 });
+        }
       }
     });
   }
 
+  const handlePrevMonth = () => {
+    setEndMonthDate(prev => new Date(prev.getFullYear(), prev.getMonth() - 1, 1));
+  };
+
+  const handleNextMonth = () => {
+    setEndMonthDate(prev => new Date(prev.getFullYear(), prev.getMonth() + 1, 1));
+  };
+
+  const todayDate = new Date();
+  const isNextDisabled = endMonthDate.getFullYear() > todayDate.getFullYear() ||
+    (endMonthDate.getFullYear() === todayDate.getFullYear() && endMonthDate.getMonth() >= todayDate.getMonth());
+
   const buildMonthsGrid = () => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
+
+    const registrationDate = userData?.createdAt ? new Date(userData.createdAt) : null;
+    if (registrationDate) {
+      registrationDate.setHours(0, 0, 0, 0);
+    }
+
     const months = [];
-    for (let m = 0; m < 12; m++) {
-      const daysInMonth = new Date(calendarYear, m + 1, 0).getDate();
-      const firstDay = new Date(calendarYear, m, 1).getDay();
-      const weeks: ({ status: "completed" | "missed" | "pending" | "empty"; date?: Date })[][] = [];
-      let currentWeek: ({ status: "completed" | "missed" | "pending" | "empty"; date?: Date })[] = [];
-      for (let i = 0; i < firstDay; i++) currentWeek.push({ status: "empty" });
+    for (let i = 4; i >= 0; i--) {
+      const targetDate = new Date(endMonthDate.getFullYear(), endMonthDate.getMonth() - i, 1);
+      const m = targetDate.getMonth();
+      const y = targetDate.getFullYear();
+
+      const daysInMonth = new Date(y, m + 1, 0).getDate();
+      const firstDay = new Date(y, m, 1).getDay();
+      const weeks: ({ status: "completed" | "missed" | "pending" | "empty" | "future" | "inactive"; date?: Date; count?: number })[][] = [];
+      let currentWeek: ({ status: "completed" | "missed" | "pending" | "empty" | "future" | "inactive"; date?: Date; count?: number })[] = [];
+      for (let j = 0; j < firstDay; j++) currentWeek.push({ status: "empty" });
       for (let d = 1; d <= daysInMonth; d++) {
-        const cellDate = new Date(calendarYear, m, d);
-        const y = cellDate.getFullYear();
-        const mo = String(cellDate.getMonth() + 1).padStart(2, "0");
-        const da = String(cellDate.getDate()).padStart(2, "0");
-        const dateStr = `${y}-${mo}-${da}`;
-        let status: "completed" | "missed" | "pending" | "empty" = "pending";
-        if (cellDate < today) {
-          status = calendarMap.get(dateStr) ?? "missed";
+        const cellDate = new Date(y, m, d);
+        const cellYear = cellDate.getFullYear();
+        const cellMo = String(cellDate.getMonth() + 1).padStart(2, "0");
+        const cellDa = String(cellDate.getDate()).padStart(2, "0");
+        const dateStr = `${cellYear}-${cellMo}-${cellDa}`;
+        let status: "completed" | "missed" | "pending" | "empty" | "future" | "inactive" = "pending";
+        let count = 0;
+
+        if (registrationDate && cellDate < registrationDate) {
+          status = "inactive";
+        } else if (cellDate > today) {
+          status = "future";
+        } else if (cellDate < today) {
+          const mapData = calendarMap.get(dateStr);
+          if (mapData) {
+            status = mapData.status;
+            count = mapData.count;
+          } else {
+            status = "missed";
+            count = 0;
+          }
         } else if (cellDate.getTime() === today.getTime()) {
-          status = submitted ? "completed" : "pending";
+          const todayCount = todaySubmission?.count || 0;
+          if (todayCount > 0) {
+            status = "completed";
+            count = todayCount;
+          } else {
+            status = "pending";
+            count = 0;
+          }
         }
-        currentWeek.push({ status, date: cellDate });
+        currentWeek.push({ status, date: cellDate, count });
         if (currentWeek.length === 7) { weeks.push(currentWeek); currentWeek = []; }
       }
       if (currentWeek.length > 0) {
         while (currentWeek.length < 7) currentWeek.push({ status: "empty" });
         weeks.push(currentWeek);
       }
-      months.push({ monthIndex: m, name: shortMonths[m], weeks });
+      months.push({ monthIndex: m, name: `${shortMonths[m]} ${y}`, weeks });
     }
     return months;
   };
@@ -348,12 +416,12 @@ export function Dashboard() {
       <main className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         
         {userData && !userData.onboardingComplete && (
-          <div className="mb-8 bg-gradient-to-r from-violet-500/10 to-purple-500/10 border border-violet-500/20 rounded-2xl p-6 relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-64 h-64 bg-violet-500/20 rounded-full blur-[80px]" />
+          <div className="mb-8 bg-[#121214] border border-white/5 rounded-2xl p-6 relative overflow-hidden shadow-xl hover:border-emerald-500/20 transition-all">
+            <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/5 rounded-full blur-[80px]" />
             <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
               <div>
                 <h3 className="text-xl font-bold text-white mb-2 flex items-center gap-2">
-                  <Target className="w-6 h-6 text-violet-400" />
+                  <Target className="w-6 h-6 text-emerald-400" />
                   Initialize Your Journey
                 </h3>
                 <p className="text-zinc-400 text-sm">Complete these steps to unlock the full potential of your consistency tracker.</p>
@@ -376,7 +444,7 @@ export function Dashboard() {
               </div>
               <button
                 onClick={() => setShowSetupModal(true)}
-                className="mt-4 md:mt-0 px-6 py-3 bg-violet-600 hover:bg-violet-500 text-white font-medium rounded-xl transition-all w-full md:w-auto shadow-lg shadow-violet-500/25"
+                className="mt-4 md:mt-0 px-6 py-3 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-medium rounded-xl transition-all w-full md:w-auto shadow-lg shadow-emerald-500/20 cursor-pointer"
               >
                 Setup Commitment
               </button>
@@ -384,15 +452,28 @@ export function Dashboard() {
           </div>
         )}
 
-        <StatsRow
-          currentStreak={currentStreak}
-          completedDays={completedDays}
-          missedDays={missedDays}
-          consistencyScore={consistencyScore}
-          onboardingComplete={userData?.onboardingComplete ?? true}
-        />
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6 items-stretch">
+          <div className="lg:col-span-2">
+            <StatsRow
+              currentStreak={currentStreak}
+              completedDays={userData?.totalProblemsSolved ?? 0}
+              consistencyScore={consistencyScore}
+              onboardingComplete={userData?.onboardingComplete ?? true}
+            />
+          </div>
+          <div className="lg:col-span-1">
+            <ConsistencyCalendar
+              yearMonths={yearMonths}
+              onboardingComplete={userData?.onboardingComplete ?? true}
+              dayLabels={dayLabels}
+              onPrevMonth={handlePrevMonth}
+              onNextMonth={handleNextMonth}
+              isNextDisabled={isNextDisabled}
+            />
+          </div>
+        </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6 items-stretch">
           {/* ✅ UPDATED props */}
           <TodaysChallenge
             submitted={submitted}
@@ -409,6 +490,7 @@ export function Dashboard() {
             aiLoading={aiLoading}
             onboardingComplete={userData?.onboardingComplete ?? true}
             onSetupClick={() => setShowSetupModal(true)}
+            todaySubmissionsCount={todaySubmission?.count || 0}
           />
           <WalletCard
             plan={userData?.plan}
@@ -426,14 +508,12 @@ export function Dashboard() {
 
         <DashboardBattleWidget onRefreshRequest={fetchUserData} />
 
-        <ConsistencyCalendar yearMonths={yearMonths} setCalendarYear={setCalendarYear} calendarYear={calendarYear} onboardingComplete={userData?.onboardingComplete ?? true} dayLabels={dayLabels} />
-
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-6">
           <RecentSolves recentSolves={recentSolves} />
           <AiInsights
-            isUnlocked={!!todaySubmission}
+            isUnlocked={!!(todaySubmission && todaySubmission.count > 0)}
             aiLoading={aiLoading}
-            aiData={todaySubmission || undefined}
+            aiData={todaySubmission?.submission || undefined}
           />
         </div>
 

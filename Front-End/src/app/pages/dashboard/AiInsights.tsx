@@ -70,6 +70,7 @@ interface AiInsightsProps {
     difficulty: string;
     recommendation: string;
     motivationLine: string;
+    isFallback?: boolean;
   };
 }
 
@@ -157,66 +158,72 @@ export function AiInsights({
             </div>
           ) : (
             /* UNLOCKED STATE */
-            <div className="space-y-5">
+            <div className="space-y-4">
 
               {/* Verification */}
-              <div className="flex items-start gap-3 p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/20">
-                <CheckCircle2 className="w-5 h-5 text-emerald-400 mt-0.5 shrink-0" />
+              {aiData?.isFallback ? (
+                <div className="flex items-start gap-3 p-3.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-400 mt-0.5 shrink-0" />
+                  <div>
+                    <p className="text-xs font-bold text-emerald-300">
+                      Solution verified successfully
+                    </p>
+                    <p className="text-[11px] text-zinc-400 mt-0.5 leading-relaxed">
+                      Your daily consistency streak is protected and payout is secured.
+                    </p>
+                  </div>
+                </div>
+              ) : (
+                <div className="flex items-start gap-3 p-3.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-400 mt-0.5 shrink-0" />
+                  <div>
+                    <p className="text-xs font-bold text-emerald-300">
+                      Accepted {aiData?.platform} submission detected
+                    </p>
+                    <p className="text-[11px] text-zinc-400 mt-0.5 leading-relaxed">
+                      AI successfully verified today's coding proof.
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {/* Badges & Problem Details (Unified) */}
+              <div className="p-4 rounded-xl bg-white/[0.02] border border-white/5 space-y-3">
+                <div className="flex flex-wrap gap-2 items-center">
+                  {aiData?.platform && aiData.platform !== "Unknown" && (
+                    <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-violet-500/10 border border-violet-500/20 text-violet-300">
+                      {aiData.platform}
+                    </span>
+                  )}
+                  {aiData?.difficulty && (
+                    <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-emerald-500/10 border border-emerald-500/20 text-emerald-300">
+                      {aiData.difficulty}
+                    </span>
+                  )}
+                  {aiData?.topic && (
+                    <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-cyan-500/10 border border-cyan-500/20 text-cyan-300">
+                      {aiData.topic}
+                    </span>
+                  )}
+                </div>
 
                 <div>
-                  <p className="text-sm font-semibold text-emerald-300">
-                    Accepted {aiData?.platform} submission detected
+                  <span className="text-[9px] uppercase tracking-widest text-zinc-500 font-bold">Problem</span>
+                  <h3 className="text-white font-semibold text-base mt-0.5">
+                    {aiData?.problemName}
+                  </h3>
+                </div>
+              </div>
+
+              {/* Recommendation / Next Step */}
+              {aiData?.recommendation && (
+                <div className="p-4 rounded-xl bg-violet-500/5 border border-violet-500/10">
+                  <span className="text-[9px] uppercase tracking-widest text-violet-300 font-bold">Next Step Recommendation</span>
+                  <p className="text-sm font-medium text-zinc-100 mt-1.5 leading-relaxed">
+                    {aiData?.recommendation}
                   </p>
-
-                  <p className="text-xs text-zinc-500 mt-1">
-                    AI successfully verified today's coding proof
-                  </p>
                 </div>
-              </div>
-
-              {/* Badges */}
-              <div className="flex flex-wrap gap-2">
-                <div className="px-3 py-1 rounded-full bg-violet-500/10 border border-violet-500/20 text-xs font-medium text-violet-300">
-                  {aiData?.platform?.toUpperCase()}
-                </div>
-
-                <div className="px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-xs font-medium text-cyan-300">
-                  {aiData?.topic?.toUpperCase()}
-                </div>
-
-                <div className="px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-xs font-medium text-emerald-300">
-                  {aiData?.difficulty?.toUpperCase()}
-                </div>
-              </div>
-
-              {/* Problem Name */}
-              <div className="p-4 rounded-2xl bg-white/[0.03] border border-white/10">
-                <p className="text-xs uppercase tracking-wide text-zinc-500 mb-2">
-                  Problem
-                </p>
-
-                <h3 className="text-white font-semibold text-lg">
-                  {aiData?.problemName}
-                </h3>
-              </div>
-
-              {/* Recommendation */}
-              <div className="p-4 rounded-2xl bg-violet-500/10 border border-violet-500/20">
-                <p className="text-xs uppercase tracking-wide text-violet-300 mb-2">
-                  Next Step
-                </p>
-
-                <p className="text-sm text-zinc-200 leading-relaxed">
-                  {aiData?.recommendation}
-                </p>
-              </div>
-
-              {/* Motivation */}
-              <div className="pt-2 border-t border-white/5">
-                <p className="text-xs italic text-zinc-500">
-                  "{aiData?.motivationLine}"
-                </p>
-              </div>
+              )}
             </div>
           )}
         </div>

@@ -4,12 +4,24 @@ const bcrypt = require("bcryptjs");
 
 const getMe = async (req, res) => {
   try {
-    const user = await User.findById(req.user._id).select("-password");
-    const totalSolved = await Submission.countDocuments({ userId: req.user._id, status: "completed" });
+    let user = await User.findById(req.user._id).select("-password");
+    if (user) {
+      const { syncUserStreak } = require("../utils/streakHelper");
+      user = await syncUserStreak(user);
+    }
+    
+    // Find unique days with at least one completed submission
+    const uniqueDaysResult = await Submission.distinct("date", { userId: req.user._id, status: "completed" });
+    const totalSolved = uniqueDaysResult.length;
+    
+    // Total count of completed solutions (up to 3 per day)
+    const totalProblemsSolved = await Submission.countDocuments({ userId: req.user._id, status: "completed" });
     const totalMissed = await Submission.countDocuments({ userId: req.user._id, status: "missed" });
+    
     res.status(200).json({
       _id: user._id,
       name: user.name,
+      username: user.username,
       email: user.email,
       plan: user.plan,
       balance: user.balance,
@@ -21,7 +33,9 @@ const getMe = async (req, res) => {
       onboardingComplete: user.onboardingComplete,
       planExpiresAt: user.planExpiresAt,
       avatar: user.avatar,
-      totalSolved,
+      createdAt: user.createdAt,
+      totalSolved, // Unique days solved
+      totalProblemsSolved, // Raw count of completed submissions
       totalMissed
     });
   } catch (error) {
@@ -52,6 +66,7 @@ const updateMe = async (req, res) => {
     res.status(200).json({
       _id: user._id,
       name: user.name,
+      username: user.username,
       email: user.email,
       dailyCommitment: user.dailyCommitment,
       avatar: user.avatar
@@ -63,6 +78,10 @@ const updateMe = async (req, res) => {
 
 const getLeaderboard = async (req, res) => {
   try {
+    const { syncUserStreak } = require("../utils/streakHelper");
+    const activeUsers = await User.find({ onboardingComplete: true });
+    await Promise.all(activeUsers.map(u => syncUserStreak(u)));
+
     const users = await User.aggregate([
       {
         $lookup: {
@@ -75,6 +94,7 @@ const getLeaderboard = async (req, res) => {
       {
         $project: {
           name: 1,
+          username: 1,
           email: 1,
           streak: 1,
           plan: 1,
@@ -85,6 +105,23 @@ const getLeaderboard = async (req, res) => {
                 input: "$submissions",
                 as: "sub",
                 cond: { $eq: ["$$sub.status", "completed"] }
+              }
+            }
+          },
+          uniqueCompletedDays: {
+            $size: {
+              $setUnion: {
+                $map: {
+                  input: {
+                    $filter: {
+                      input: "$submissions",
+                      as: "sub",
+                      cond: { $eq: ["$$sub.status", "completed"] }
+                    }
+                  },
+                  as: "sub",
+                  in: "$$sub.date"
+                }
               }
             }
           },
@@ -103,8 +140,8 @@ const getLeaderboard = async (req, res) => {
         $addFields: {
           consistency: {
             $cond: [
-              { $gt: [{ $add: ["$completed", "$missed"] }, 0] },
-              { $round: [{ $multiply: [{ $divide: ["$completed", { $add: ["$completed", "$missed"] }] }, 100] }, 0] },
+              { $gt: [{ $add: ["$uniqueCompletedDays", "$missed"] }, 0] },
+              { $round: [{ $multiply: [{ $divide: ["$uniqueCompletedDays", { $add: ["$uniqueCompletedDays", "$missed"] }] }, 100] }, 0] },
               0
             ]
           }

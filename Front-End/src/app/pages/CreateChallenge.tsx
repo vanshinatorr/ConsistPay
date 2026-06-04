@@ -20,6 +20,7 @@ export function CreateChallenge() {
   const [userName, setUserName] = useState<string>("");
   const [showTopupModal, setShowTopupModal] = useState(false);
   const [timeLeft, setTimeLeft] = useState(300);
+  const [userPlan, setUserPlan] = useState<string>("free");
 
   const ENTRY_FEE = 19;
   const API_URL = import.meta.env.VITE_API_URL;
@@ -36,6 +37,7 @@ export function CreateChallenge() {
           setBattleBalance(data.battleBalance || 0);
           setUserAvatar(data.avatar || null);
           setUserName(data.name || "");
+          setUserPlan(data.plan || "free");
         }
       })
       .catch(console.error);
@@ -605,105 +607,143 @@ export function CreateChallenge() {
                   </div>
                 </div>
 
-                {/* Wallet Balance Info - Always shown */}
-                {battleBalance !== null && (
-                  <div className="max-w-md mx-auto mb-6 bg-white/[0.02] border border-white/10 rounded-2xl p-5 space-y-3">
-                    <div className="flex justify-between items-center text-sm">
-                      <div className="flex items-center gap-2 text-zinc-400">
-                        <Wallet className="w-4.5 h-4.5" />
-                        <span>Available Wallet Balance</span>
-                      </div>
-                      <span className="font-bold text-zinc-200">₹{battleBalance}</span>
-                    </div>
+                {userPlan.toLowerCase() !== "pro" ? (
+                  /* Premium Feature Lock Card */
+                  <div className="max-w-md mx-auto mb-6 relative overflow-hidden bg-gradient-to-b from-[#1C162E]/70 to-[#0A0712]/70 border border-violet-500/20 rounded-3xl p-6 sm:p-8 text-center shadow-2xl animate-in fade-in zoom-in-95">
+                    <div className="absolute inset-0 bg-gradient-to-br from-violet-500/10 to-transparent pointer-events-none opacity-30" />
                     
-                    <div className="flex justify-between items-center text-sm pt-2.5 border-t border-white/5">
-                      <span className="text-zinc-500">Required Funds</span>
-                      <span className="font-semibold text-zinc-300">₹{total}</span>
-                    </div>
-
-                    {battleBalance < total ? (
-                      <div className="flex justify-between items-center text-sm text-amber-400 font-medium bg-amber-500/10 px-3.5 py-2 rounded-xl border border-amber-500/20">
-                        <span>Shortfall (Amount to add)</span>
-                        <span className="font-bold">₹{total - battleBalance}</span>
+                    <div className="relative z-10 flex flex-col items-center">
+                      <div className="w-14 h-14 bg-violet-500/10 border border-violet-500/20 rounded-2xl flex items-center justify-center mb-5">
+                        <Swords className="w-7 h-7 text-violet-400" />
                       </div>
-                    ) : (
-                      <div className="flex justify-between items-center text-sm text-emerald-400 font-medium bg-emerald-500/10 px-3.5 py-2 rounded-xl border border-emerald-500/20">
-                        <span>Status</span>
-                        <span className="font-bold">Sufficient Balance</span>
-                      </div>
-                    )}
-                  </div>
-                )}
+                      
+                      <h3 className="text-xl font-bold text-white mb-3 flex items-center gap-2">
+                        🔒 Premium Duel Locked
+                      </h3>
+                      
+                      <p className="text-zinc-400 text-sm leading-relaxed mb-8 max-w-sm">
+                        Consistency Battles are exclusive to <span className="text-violet-400 font-semibold">ConsistPay Pro</span> members. Upgrade now to challenge friends, protect streaks, and win stakes.
+                      </p>
 
-                {/* Error Banner */}
-                {error && (
-                  <div className="max-w-md mx-auto mb-6 p-4 bg-rose-500/10 border border-rose-500/20 rounded-xl flex flex-col gap-3 text-rose-400 text-xs font-medium">
-                    <div className="flex items-start gap-3">
-                      <Shield className="w-4 h-4 shrink-0 mt-0.5" /> 
-                      <span className="leading-relaxed">{error}</span>
-                    </div>
-                    {error.includes("pending") && (
-                      <div className="flex gap-2 mt-1">
+                      <div className="w-full flex flex-col sm:flex-row gap-4">
                         <button
-                          onClick={() => {
-                            window.location.reload();
-                          }}
-                          className="px-3 py-1.5 bg-white/5 hover:bg-white/10 text-white rounded-lg font-bold border border-white/10 transition-all text-[11px]"
+                          onClick={() => setScreen("stake")}
+                          className="flex-1 px-5 py-4 rounded-xl border border-white/10 text-zinc-400 hover:text-white hover:bg-white/5 transition-all text-sm font-bold flex items-center justify-center gap-2"
                         >
-                          View Invite Code
+                          <ArrowLeft className="w-4 h-4" /> Change Stakes
                         </button>
                         <button
-                          onClick={handleCancelBattle}
-                          className="px-3 py-1.5 bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 rounded-lg font-bold border border-rose-500/30 transition-all text-[11px]"
+                          onClick={() => navigate("/pricing")}
+                          className="flex-1 px-6 py-4 rounded-xl font-black bg-gradient-to-r from-violet-600 to-fuchsia-600 hover:from-violet-500 hover:to-fuchsia-500 text-white transition-all shadow-[0_0_25px_rgba(139,92,246,0.4)] hover:scale-[1.02] text-sm flex items-center justify-center gap-2"
                         >
-                          Cancel Existing & Refund
+                          <Sparkles className="w-4 h-4" /> Upgrade to Pro
                         </button>
                       </div>
-                    )}
+                    </div>
                   </div>
-                )}
+                ) : (
+                  <>
+                    {/* Wallet Balance Info - Always shown */}
+                    {battleBalance !== null && (
+                      <div className="max-w-md mx-auto mb-6 bg-white/[0.02] border border-white/10 rounded-2xl p-5 space-y-3">
+                        <div className="flex justify-between items-center text-sm">
+                          <div className="flex items-center gap-2 text-zinc-400">
+                            <Wallet className="w-4.5 h-4.5" />
+                            <span>Available Wallet Balance</span>
+                          </div>
+                          <span className="font-bold text-zinc-200">₹{battleBalance}</span>
+                        </div>
+                        
+                        <div className="flex justify-between items-center text-sm pt-2.5 border-t border-white/5">
+                          <span className="text-zinc-500">Required Funds</span>
+                          <span className="font-semibold text-zinc-300">₹{total}</span>
+                        </div>
 
-                <div className="max-w-md mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
-                  <button
-                    onClick={() => setScreen("stake")}
-                    className="w-full sm:w-auto px-6 py-4 rounded-xl font-medium text-zinc-500 hover:text-white transition-colors flex items-center justify-center gap-2"
-                  >
-                    <ArrowLeft className="w-4 h-4" /> Back
-                  </button>
+                        {battleBalance < total ? (
+                          <div className="flex justify-between items-center text-sm text-amber-400 font-medium bg-amber-500/10 px-3.5 py-2 rounded-xl border border-amber-500/20">
+                            <span>Shortfall (Amount to add)</span>
+                            <span className="font-bold">₹{total - battleBalance}</span>
+                          </div>
+                        ) : (
+                          <div className="flex justify-between items-center text-sm text-emerald-400 font-medium bg-emerald-500/10 px-3.5 py-2 rounded-xl border border-emerald-500/20">
+                            <span>Status</span>
+                            <span className="font-bold">Sufficient Balance</span>
+                          </div>
+                        )}
+                      </div>
+                    )}
 
-                  <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
-                    {battleBalance !== null && battleBalance < total && (
+                    {/* Error Banner */}
+                    {error && (
+                      <div className="max-w-md mx-auto mb-6 p-4 bg-rose-500/10 border border-rose-500/20 rounded-xl flex flex-col gap-3 text-rose-400 text-xs font-medium">
+                        <div className="flex items-start gap-3">
+                          <Shield className="w-4 h-4 shrink-0 mt-0.5" /> 
+                          <span className="leading-relaxed">{error}</span>
+                        </div>
+                        {error.includes("pending") && (
+                          <div className="flex gap-2 mt-1">
+                            <button
+                              onClick={() => {
+                                window.location.reload();
+                              }}
+                              className="px-3 py-1.5 bg-white/5 hover:bg-white/10 text-white rounded-lg font-bold border border-white/10 transition-all text-[11px]"
+                            >
+                              View Invite Code
+                            </button>
+                            <button
+                              onClick={handleCancelBattle}
+                              className="px-3 py-1.5 bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 rounded-lg font-bold border border-rose-500/30 transition-all text-[11px]"
+                            >
+                              Cancel Existing & Refund
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    )}
+
+                    <div className="max-w-md mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
                       <button
-                        onClick={() => {
-                          setError("");
-                          setShowTopupModal(true);
-                        }}
-                        className="w-full sm:w-auto px-6 py-4 rounded-xl font-bold bg-white text-black hover:bg-zinc-200 transition-all flex items-center justify-center gap-2 hover:scale-[1.02] shadow-xl"
+                        onClick={() => setScreen("stake")}
+                        className="w-full sm:w-auto px-6 py-4 rounded-xl font-medium text-zinc-500 hover:text-white transition-colors flex items-center justify-center gap-2"
                       >
-                        <Coins className="w-5 h-5" />
-                        Add ₹{total - battleBalance}
+                        <ArrowLeft className="w-4 h-4" /> Back
                       </button>
-                    )}
 
-                    <button
-                      disabled={loading}
-                      onClick={handleCreateChallenge}
-                      className="w-full sm:w-auto px-8 py-4 rounded-xl font-bold bg-violet-600 hover:bg-violet-500 text-white transition-all shadow-[0_0_20px_rgba(139,92,246,0.3)] hover:shadow-[0_0_30px_rgba(139,92,246,0.5)] flex items-center justify-center gap-2 hover:scale-[1.02] disabled:opacity-50 disabled:hover:scale-100"
-                    >
-                      {loading ? (
-                        <>
-                          <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                          Processing...
-                        </>
-                      ) : (
-                        <>
-                          <Sword className="w-5 h-5" />
-                          Lock ₹{total} & Create
-                        </>
-                      )}
-                    </button>
-                  </div>
-                </div>
+                      <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+                        {battleBalance !== null && battleBalance < total && (
+                          <button
+                            onClick={() => {
+                              setError("");
+                              setShowTopupModal(true);
+                            }}
+                            className="w-full sm:w-auto px-6 py-4 rounded-xl font-bold bg-white text-black hover:bg-zinc-200 transition-all flex items-center justify-center gap-2 hover:scale-[1.02] shadow-xl"
+                          >
+                            <Coins className="w-5 h-5" />
+                            Add ₹{total - battleBalance}
+                          </button>
+                        )}
+
+                        <button
+                          disabled={loading}
+                          onClick={handleCreateChallenge}
+                          className="w-full sm:w-auto px-8 py-4 rounded-xl font-bold bg-violet-600 hover:bg-violet-500 text-white transition-all shadow-[0_0_20px_rgba(139,92,246,0.3)] hover:shadow-[0_0_30px_rgba(139,92,246,0.5)] flex items-center justify-center gap-2 hover:scale-[1.02] disabled:opacity-50 disabled:hover:scale-100"
+                        >
+                          {loading ? (
+                            <>
+                              <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                              Processing...
+                            </>
+                          ) : (
+                            <>
+                              <Sword className="w-5 h-5" />
+                              Lock ₹{total} & Create
+                            </>
+                          )}
+                        </button>
+                      </div>
+                    </div>
+                  </>
+                )}
               </div>
             )}
 
