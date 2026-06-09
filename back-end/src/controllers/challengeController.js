@@ -20,10 +20,18 @@ const generateInviteCode = async () => {
 };
 
 // Count completed submissions in a date range (Unique Days)
-const countCompletedSubmissions = async (userId, startDate, endDate) => {
+const countCompletedSubmissions = async (userId, startDate, endDate, duration) => {
   if (!startDate || !endDate) return 0;
   const startStr = new Date(startDate).toLocaleDateString("en-CA", { timeZone: "Asia/Kolkata" });
-  const endStr = new Date(endDate).toLocaleDateString("en-CA", { timeZone: "Asia/Kolkata" });
+  
+  let endStr;
+  if (duration) {
+    const startObj = new Date(startDate);
+    const endObj = new Date(startObj.getTime() + (duration - 1) * 24 * 60 * 60 * 1000);
+    endStr = endObj.toLocaleDateString("en-CA", { timeZone: "Asia/Kolkata" });
+  } else {
+    endStr = new Date(endDate).toLocaleDateString("en-CA", { timeZone: "Asia/Kolkata" });
+  }
   
   const result = await Submission.aggregate([
     {
@@ -58,11 +66,20 @@ const autoResolveChallenges = async (userId) => {
 
   for (const challenge of expiredChallenges) {
     try {
-      const creatorScore = await countCompletedSubmissions(challenge.creatorId, challenge.startDate, challenge.endDate);
-      const opponentScore = await countCompletedSubmissions(challenge.opponentId, challenge.startDate, challenge.endDate);
+      // Atomically lock the challenge as completed before distributing payouts
+      const lockedChallenge = await Challenge.findOneAndUpdate(
+        { _id: challenge._id, status: "active" },
+        { $set: { status: "completed" } },
+        { new: true }
+      );
 
-      challenge.status = "completed";
-      await challenge.save();
+      if (!lockedChallenge) {
+        console.log(`[Resolution] Challenge ${challenge._id} already resolved by another request.`);
+        continue;
+      }
+
+      const creatorScore = await countCompletedSubmissions(challenge.creatorId, challenge.startDate, challenge.endDate, challenge.duration);
+      const opponentScore = await countCompletedSubmissions(challenge.opponentId, challenge.startDate, challenge.endDate, challenge.duration);
 
       console.log(`Resolving challenge ${challenge._id}. Scores: Creator=${creatorScore}, Opponent=${opponentScore}`);
 
@@ -264,8 +281,8 @@ const getActiveChallenges = async (req, res) => {
       const isCreator = ch.creatorId._id.toString() === userId.toString();
       const userRole = isCreator ? "creator" : "opponent";
 
-      const creatorScore = await countCompletedSubmissions(ch.creatorId._id, ch.startDate, ch.endDate);
-      const opponentScore = await countCompletedSubmissions(ch.opponentId._id, ch.startDate, ch.endDate);
+      const creatorScore = await countCompletedSubmissions(ch.creatorId._id, ch.startDate, ch.endDate, ch.duration);
+      const opponentScore = await countCompletedSubmissions(ch.opponentId._id, ch.startDate, ch.endDate, ch.duration);
 
       // Days elapsed (at least 1) based on calendar days in Asia/Kolkata timezone
       const d1 = new Date(ch.startDate.toLocaleDateString("en-US", { timeZone: "Asia/Kolkata" }));
@@ -321,8 +338,8 @@ const getChallengeHistory = async (req, res) => {
     const formatted = [];
 
     for (const ch of history) {
-      const creatorScore = await countCompletedSubmissions(ch.creatorId._id, ch.startDate, ch.endDate);
-      const opponentScore = await countCompletedSubmissions(ch.opponentId._id, ch.startDate, ch.endDate);
+      const creatorScore = await countCompletedSubmissions(ch.creatorId._id, ch.startDate, ch.endDate, ch.duration);
+      const opponentScore = await countCompletedSubmissions(ch.opponentId._id, ch.startDate, ch.endDate, ch.duration);
 
       const isCreator = ch.creatorId._id.toString() === userId.toString();
       
@@ -376,8 +393,8 @@ const getChallengeById = async (req, res) => {
     const isCreator = ch.creatorId._id.toString() === userId.toString();
     const userRole = isCreator ? "creator" : "opponent";
 
-    const creatorScore = await countCompletedSubmissions(ch.creatorId._id, ch.startDate || new Date(), ch.endDate || new Date());
-    const opponentScore = ch.opponentId ? await countCompletedSubmissions(ch.opponentId._id, ch.startDate || new Date(), ch.endDate || new Date()) : 0;
+    const creatorScore = await countCompletedSubmissions(ch.creatorId._id, ch.startDate || new Date(), ch.endDate || new Date(), ch.duration);
+    const opponentScore = ch.opponentId ? await countCompletedSubmissions(ch.opponentId._id, ch.startDate || new Date(), ch.endDate || new Date(), ch.duration) : 0;
 
     let currentDay = 1;
     if ((ch.status === "active" || ch.status === "completed") && ch.startDate) {

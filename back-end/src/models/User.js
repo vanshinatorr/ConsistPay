@@ -17,6 +17,7 @@ const userSchema = new mongoose.Schema(
     battleBalance: { type: Number, default: 0 },
     graceCoins: { type: Number, default: 1 },
     onboardingComplete: { type: Boolean, default: false },
+    onboardingCompletedAt: { type: Date, default: null },
     planExpiresAt: { type: Date, default: null },
     avatar: { type: String, default: "" },
     lastGraceCoinEarnedMonth: { type: String, default: "" },

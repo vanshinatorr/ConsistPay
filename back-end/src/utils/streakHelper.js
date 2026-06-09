@@ -41,7 +41,9 @@ const syncUserStreak = async (userOrId) => {
     
     if (!lastSubmission) {
       // If no submissions exist, check from onboarding completion / registration
-      if (user.onboardingComplete && user.createdAt) {
+      if (user.onboardingComplete && user.onboardingCompletedAt) {
+        startDateStr = new Date(user.onboardingCompletedAt).toLocaleDateString("en-CA", { timeZone: "Asia/Kolkata" });
+      } else if (user.onboardingComplete && user.createdAt) {
         startDateStr = new Date(user.createdAt).toLocaleDateString("en-CA", { timeZone: "Asia/Kolkata" });
       } else {
         // Not onboarding complete, don't calculate missed days yet

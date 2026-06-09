@@ -79,8 +79,11 @@ const updateMe = async (req, res) => {
 const getLeaderboard = async (req, res) => {
   try {
     const { syncUserStreak } = require("../utils/streakHelper");
-    const activeUsers = await User.find({ onboardingComplete: true });
-    await Promise.all(activeUsers.map(u => syncUserStreak(u)));
+    
+    // Sync streak ONLY for the requesting user to avoid database overhead
+    if (req.user && req.user._id) {
+      await syncUserStreak(req.user._id);
+    }
 
     const users = await User.aggregate([
       {

@@ -58,6 +58,7 @@ try {
   user.dailyCommitment = dailyCommitment;
   user.balance = depositAmount;
   user.onboardingComplete = true;
+  user.onboardingCompletedAt = user.onboardingCompletedAt || new Date();
   user.graceCoins = isRenewal ? ((user.graceCoins || 0) + 1) : 1;
   if (planLower === "pro") {
     user.planExpiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
@@ -77,6 +78,9 @@ try {
 
 const skipPayment = async (req, res) => {
 try {
+  if (process.env.NODE_ENV === "production") {
+    return res.status(403).json({ message: "Demo/Skip payments are disabled in production mode." });
+  }
   const { plan, dailyCommitment, depositAmount } = req.body;
   const user = await User.findById(req.user._id);
   
@@ -86,6 +90,7 @@ try {
   user.dailyCommitment = dailyCommitment;
   user.balance = depositAmount;
   user.onboardingComplete = true;
+  user.onboardingCompletedAt = user.onboardingCompletedAt || new Date();
   user.graceCoins = isRenewal ? ((user.graceCoins || 0) + 1) : 1;
   
   if (planLower === "pro") {
@@ -250,6 +255,9 @@ const verifyTopup = async (req, res) => {
 
 const skipTopup = async (req, res) => {
   try {
+    if (process.env.NODE_ENV === "production") {
+      return res.status(403).json({ message: "Demo/Skip top-ups are disabled in production mode." });
+    }
     const { amount } = req.body;
     if (!amount || amount < 10) {
       return res.status(400).json({ message: "Minimum top-up amount is ₹10." });
@@ -275,6 +283,9 @@ const skipTopup = async (req, res) => {
 
 const upgradePlan = async (req, res) => {
   try {
+    if (process.env.NODE_ENV === "production") {
+      return res.status(403).json({ message: "Instant plan upgrades are disabled in production mode." });
+    }
     const user = await User.findById(req.user._id);
     user.plan = "pro";
     user.graceCoins = (user.graceCoins || 0) + 1;

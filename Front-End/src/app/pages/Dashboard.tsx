@@ -215,7 +215,7 @@ export function Dashboard() {
         setSubmitted(false);
         fetchTodaySubmission();
         fetchUserData();
-        fetchCalendar();
+        fetchCalendarForYears(visibleYears);
         fetchRecentSolves();
         return;
       }
@@ -261,7 +261,7 @@ export function Dashboard() {
       setProblemName("");
       setScreenshot(null);
       await fetchUserData();
-      await fetchCalendar();
+      await fetchCalendarForYears(visibleYears);
       await fetchTodaySubmission();
       await fetchRecentSolves();
     } catch (err) {

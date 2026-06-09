@@ -44,9 +44,25 @@ Respond ONLY in raw JSON format (no markdown code blocks, no backticks, no extra
     const result = await model.generateContent(prompt);
     const text = result.response.text();
     
-    // Clean response of any markdown formatting
-    const clean = text.replace(/```json|```/g, "").trim();
-    const insights = JSON.parse(clean);
+    // Clean response of any markdown formatting and parse safely
+    let insights;
+    try {
+      const clean = text.replace(/```json|```/g, "").trim();
+      insights = JSON.parse(clean);
+    } catch (parseError) {
+      console.warn("Direct insights JSON parse failed, trying regex match:", text);
+      const jsonMatch = text.match(/\{[\s\S]*\}/);
+      if (jsonMatch) {
+        try {
+          insights = JSON.parse(jsonMatch[0]);
+        } catch (regexParseError) {
+          console.error("Failed to parse matched insights JSON:", jsonMatch[0]);
+          throw new Error("Invalid response format from insights AI.");
+        }
+      } else {
+        throw new Error("Could not extract JSON from insights AI response.");
+      }
+    }
 
     res.status(200).json(insights);
   } catch (error) {
