@@ -454,16 +454,70 @@ export function Dashboard() {
           </div>
         )}
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6 items-stretch">
-          <div className="lg:col-span-2">
-            <StatsRow
-              currentStreak={currentStreak}
-              completedDays={userData?.totalProblemsSolved ?? 0}
-              consistencyScore={consistencyScore}
-              onboardingComplete={userData?.onboardingComplete ?? true}
-            />
+        <div className="flex flex-col gap-6 mb-6">
+          {/* Row 1: Stats & Desktop Calendar */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch">
+            <div className="lg:col-span-2">
+              <StatsRow
+                currentStreak={currentStreak}
+                completedDays={userData?.totalProblemsSolved ?? 0}
+                consistencyScore={consistencyScore}
+                onboardingComplete={userData?.onboardingComplete ?? true}
+              />
+            </div>
+            {/* Desktop Only Calendar */}
+            <div className="hidden lg:block lg:col-span-1">
+              <ConsistencyCalendar
+                yearMonths={yearMonths}
+                onboardingComplete={userData?.onboardingComplete ?? true}
+                dayLabels={dayLabels}
+                onPrevMonth={handlePrevMonth}
+                onNextMonth={handleNextMonth}
+                isNextDisabled={isNextDisabled}
+              />
+            </div>
           </div>
-          <div className="lg:col-span-1">
+
+          {/* Row 2: Today's Proof Challenge & Wallet */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch">
+            <div className="lg:col-span-2">
+              {/* ✅ UPDATED props */}
+              <TodaysChallenge
+                submitted={submitted}
+                handleSubmit={handleSubmit}
+                problemName={problemName}
+                setProblemName={setProblemName}
+                screenshot={screenshot}
+                setScreenshot={setScreenshot}
+                submitError={submitError}
+                currentStreak={currentStreak}
+                dailyCommitment={dailyCommitment}
+                todayLine={todayLine}
+                timeLeft={timeLeft}
+                aiLoading={aiLoading}
+                onboardingComplete={userData?.onboardingComplete ?? true}
+                onSetupClick={() => setShowSetupModal(true)}
+                todaySubmissionsCount={todaySubmission?.count || 0}
+              />
+            </div>
+            <div className="lg:col-span-1">
+              <WalletCard
+                plan={userData?.plan}
+                monthlyBudget={monthlyBudget}
+                completedDays={completedDays}
+                missedDays={missedDays}
+                dailyCommitment={dailyCommitment}
+                graceCoins={graceCoins}
+                battleBalance={userData?.battleBalance ?? 0}
+                balance={userData?.balance ?? 0}
+                onboardingComplete={userData?.onboardingComplete ?? true}
+                onRefreshRequest={fetchUserData}
+              />
+            </div>
+          </div>
+
+          {/* Row 3: Mobile Only Calendar */}
+          <div className="block lg:hidden">
             <ConsistencyCalendar
               yearMonths={yearMonths}
               onboardingComplete={userData?.onboardingComplete ?? true}
@@ -473,39 +527,6 @@ export function Dashboard() {
               isNextDisabled={isNextDisabled}
             />
           </div>
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6 items-stretch">
-          {/* ✅ UPDATED props */}
-          <TodaysChallenge
-            submitted={submitted}
-            handleSubmit={handleSubmit}
-            problemName={problemName}
-            setProblemName={setProblemName}
-            screenshot={screenshot}
-            setScreenshot={setScreenshot}
-            submitError={submitError}
-            currentStreak={currentStreak}
-            dailyCommitment={dailyCommitment}
-            todayLine={todayLine}
-            timeLeft={timeLeft}
-            aiLoading={aiLoading}
-            onboardingComplete={userData?.onboardingComplete ?? true}
-            onSetupClick={() => setShowSetupModal(true)}
-            todaySubmissionsCount={todaySubmission?.count || 0}
-          />
-          <WalletCard
-            plan={userData?.plan}
-            monthlyBudget={monthlyBudget}
-            completedDays={completedDays}
-            missedDays={missedDays}
-            dailyCommitment={dailyCommitment}
-            graceCoins={graceCoins}
-            battleBalance={userData?.battleBalance ?? 0}
-            balance={userData?.balance ?? 0}
-            onboardingComplete={userData?.onboardingComplete ?? true}
-            onRefreshRequest={fetchUserData}
-          />
         </div>
 
         <DashboardBattleWidget onRefreshRequest={fetchUserData} />

@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect } from "react";
-import { CheckCircle, Lock, Upload, X, ImageIcon, ArrowLeft, Check } from "lucide-react";
+import { CheckCircle, Lock, Upload, X, ImageIcon, ArrowLeft, Check, Sparkles } from "lucide-react";
 
 interface TodaysChallengeProps {
   submitted: boolean;
@@ -38,11 +38,22 @@ export function TodaysChallenge({
 }: TodaysChallengeProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [forceShowUploader, setForceShowUploader] = useState(false);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
   useEffect(() => {
     // Reset forceShowUploader when todaySubmissionsCount updates or user submits successfully
     setForceShowUploader(false);
   }, [todaySubmissionsCount]);
+
+  useEffect(() => {
+    if (!screenshot) {
+      setPreviewUrl(null);
+      return;
+    }
+    const url = URL.createObjectURL(screenshot);
+    setPreviewUrl(url);
+    return () => URL.revokeObjectURL(url);
+  }, [screenshot]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -65,6 +76,22 @@ export function TodaysChallenge({
         />
 
         <div className="relative bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 overflow-hidden min-h-[522px] flex flex-col justify-between h-full flex-1">
+          {/* AI Verification Loading Overlay */}
+          {aiLoading && (
+            <div className="absolute inset-0 bg-[#0D0D0F]/85 backdrop-blur-md z-30 flex flex-col items-center justify-center text-center p-6 animate-in fade-in duration-300">
+              <div className="relative mb-6">
+                <div className="w-16 h-16 border-4 border-violet-500/20 border-t-violet-500 rounded-full animate-spin"></div>
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <Sparkles className="w-6 h-6 text-violet-400 animate-pulse" />
+                </div>
+              </div>
+              <h4 className="text-lg font-bold text-white mb-2">Analyzing Proof...</h4>
+              <p className="text-zinc-400 text-xs max-w-xs leading-relaxed">
+                Gemini AI is scanning your screenshot to verify LeetCode/GFG problem status and update your consistency streak.
+              </p>
+            </div>
+          )}
+
           <div className="flex flex-col flex-1 h-full">
             {/* Header */}
             <div className="flex items-center justify-between mb-6">
@@ -161,7 +188,7 @@ export function TodaysChallenge({
                             <button
                               type="button"
                               onClick={() => fileInputRef.current?.click()}
-                              className="w-full h-28 border border-dashed border-white/20 rounded-xl flex flex-col items-center justify-center gap-2 hover:border-emerald-500/40 hover:bg-white/[0.03] transition-all duration-200 group"
+                              className="w-full h-28 border border-dashed border-white/20 rounded-xl flex flex-col items-center justify-center gap-2 hover:border-emerald-500/40 hover:bg-white/[0.03] transition-all duration-200 group cursor-pointer"
                             >
                               <Upload className="w-5 h-5 text-zinc-500 group-hover:text-emerald-400 transition-colors" />
                               <span className="text-sm text-zinc-500 group-hover:text-zinc-400 transition-colors">
@@ -173,11 +200,15 @@ export function TodaysChallenge({
                             </button>
                           ) : (
                             <div className="flex items-center gap-3 p-3 bg-white/[0.04] border border-white/10 rounded-xl">
-                              <div className="w-10 h-10 bg-emerald-500/10 border border-emerald-500/20 rounded-lg flex items-center justify-center shrink-0">
-                                <ImageIcon className="w-5 h-5 text-emerald-400" />
+                              <div className="w-12 h-12 bg-[#13161f] border border-white/10 rounded-lg flex items-center justify-center shrink-0 overflow-hidden">
+                                {previewUrl ? (
+                                  <img src={previewUrl} alt="Upload preview" className="w-full h-full object-cover animate-in fade-in" />
+                                ) : (
+                                  <ImageIcon className="w-5 h-5 text-emerald-400" />
+                                )}
                               </div>
                               <div className="flex-1 min-w-0">
-                                <p className="text-sm text-white truncate">
+                                <p className="text-sm text-white truncate font-medium">
                                   {screenshot.name}
                                 </p>
                                 <p className="text-xs text-zinc-500">
@@ -192,9 +223,9 @@ export function TodaysChallenge({
                                     fileInputRef.current.value = "";
                                   }
                                 }}
-                                className="p-1.5 hover:bg-white/10 rounded-lg transition-colors"
+                                className="p-2 hover:bg-white/10 active:scale-95 rounded-lg transition-colors cursor-pointer text-zinc-400 hover:text-white"
                               >
-                                <X className="w-4 h-4 text-zinc-400" />
+                                <X className="w-4 h-4" />
                               </button>
                             </div>
                           )}

@@ -149,8 +149,8 @@ export function ConsistencyCalendar({
             </div>
           </div>
 
-          <div className={`overflow-x-auto pt-6 pb-2 transition-all duration-500 flex-1 flex items-center justify-center ${!onboardingComplete ? 'opacity-30 grayscale pointer-events-none' : ''}`}>
-            <div className="flex gap-2.5 min-w-max px-6">
+          <div className={`overflow-x-auto pt-6 pb-2 transition-all duration-500 flex-1 flex items-center justify-start lg:justify-center ${!onboardingComplete ? 'opacity-30 grayscale pointer-events-none' : ''}`}>
+            <div className="flex gap-2.5 min-w-max px-4 lg:px-6">
               
               {yearMonths.map((month) => (
                 <div key={month.name} className="flex flex-col gap-2 items-center">

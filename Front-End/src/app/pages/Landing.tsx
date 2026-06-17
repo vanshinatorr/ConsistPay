@@ -66,29 +66,58 @@ export function Landing() {
             </button>
           </div>
 
-          {/* Mobile Menu */}
+          {/* Mobile Menu Backdrop and Drawer */}
           {mobileMenuOpen && (
-            <div className="md:hidden absolute top-full left-0 right-0 bg-[#0A0C10]/95 backdrop-blur-xl border-b border-white/5 py-6 px-6">
-              <div className="flex flex-col gap-4">
-                <a href="#features" className="text-sm text-zinc-400 hover:text-white transition-colors py-2">
-                  Features
-                </a>
-                <a href="#how-it-works" className="text-sm text-zinc-400 hover:text-white transition-colors py-2">
-                  How It Works
-                </a>
-           <Link to="/pricing" className="text-sm text-zinc-400 hover:text-white transition-colors py-2">
-                  Pricing
-               </Link>
-                <div className="pt-4 border-t border-white/10 flex flex-col gap-3">
-                  <Link to="/login" className="px-5 py-2.5 text-sm text-zinc-300 hover:text-white transition-colors text-left">
-                    Sign In
+            <>
+              <div 
+                className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40"
+                onClick={() => setMobileMenuOpen(false)}
+              />
+              <div className="md:hidden absolute top-full left-4 right-4 mt-2 bg-[#0C0E14]/95 border border-white/10 rounded-2xl p-6 shadow-[0_20px_50px_rgba(0,0,0,0.5)] backdrop-blur-xl z-50 transition-all duration-300 animate-in fade-in slide-in-from-top-5">
+                <div className="flex flex-col gap-4">
+                  <a 
+                    href="#features" 
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="text-sm font-semibold text-zinc-300 hover:text-white transition-colors py-2 flex items-center justify-between border-b border-white/[0.04]"
+                  >
+                    <span>Features</span>
+                    <span className="text-[10px] bg-white/5 px-2 py-0.5 rounded-full text-zinc-500">Explore</span>
+                  </a>
+                  <a 
+                    href="#how-it-works" 
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="text-sm font-semibold text-zinc-300 hover:text-white transition-colors py-2 flex items-center justify-between border-b border-white/[0.04]"
+                  >
+                    <span>How It Works</span>
+                    <span className="text-[10px] bg-white/5 px-2 py-0.5 rounded-full text-zinc-500">Guide</span>
+                  </a>
+                  <Link 
+                    to="/pricing" 
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="text-sm font-semibold text-zinc-300 hover:text-white transition-colors py-2 flex items-center justify-between border-b border-white/[0.04]"
+                  >
+                    <span>Pricing</span>
+                    <span className="text-[10px] bg-violet-500/20 text-violet-400 px-2 py-0.5 rounded-full font-bold">Pro</span>
                   </Link>
-                  <Link to="/signup" className="px-5 py-2.5 bg-gradient-to-r from-violet-500 to-purple-600 text-white font-semibold rounded-lg text-sm">
-                    Start Free
-                  </Link>
+                  <div className="pt-4 flex flex-col gap-3">
+                    <Link 
+                      to="/login" 
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="w-full py-3 text-center text-sm font-semibold text-zinc-350 hover:text-white rounded-xl border border-white/5 bg-white/[0.01] active:scale-95 transition-all"
+                    >
+                      Sign In
+                    </Link>
+                    <Link 
+                      to="/signup" 
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="w-full py-3 text-center text-sm font-bold bg-gradient-to-r from-violet-500 to-purple-600 text-white rounded-xl active:scale-95 transition-all shadow-[0_0_15px_rgba(124,58,237,0.3)]"
+                    >
+                      Start Free
+                    </Link>
+                  </div>
                 </div>
               </div>
-            </div>
+            </>
           )}
         </div>
       </nav>

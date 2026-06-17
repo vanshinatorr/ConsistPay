@@ -401,7 +401,7 @@ export function Onboarding() {
                 {/* Free Card */}
                 <button
                   onClick={() => setPlan("Free")}
-                  className={`p-6 rounded-2xl border text-left transition-all duration-300 flex flex-col justify-between min-h-[340px] relative overflow-hidden group ${
+                  className={`p-4 sm:p-6 rounded-2xl border text-left transition-all duration-300 flex flex-col justify-between min-h-[290px] sm:min-h-[340px] relative overflow-hidden group ${
                     plan === "Free"
                       ? "border-zinc-700 bg-[#121217] shadow-[0_0_20px_rgba(255,255,255,0.01)] ring-1 ring-zinc-500/20"
                       : "border-zinc-800 bg-[#0A0A0E] hover:border-zinc-700 hover:bg-[#0D0D12]"
@@ -456,7 +456,7 @@ export function Onboarding() {
                 {/* Pro Card */}
                 <button
                   onClick={() => setPlan("Pro")}
-                  className={`p-6 rounded-2xl border text-left transition-all duration-300 relative flex flex-col justify-between min-h-[340px] overflow-hidden group ${
+                  className={`p-4 sm:p-6 rounded-2xl border text-left transition-all duration-300 relative flex flex-col justify-between min-h-[290px] sm:min-h-[340px] overflow-hidden group ${
                     plan === "Pro"
                       ? "border-violet-500 bg-violet-955/5 shadow-[0_0_30px_rgba(124,58,237,0.1)] ring-1 ring-violet-500/20"
                       : "border-zinc-800 bg-[#0A0A0E] hover:border-violet-500/20 hover:bg-[#0E0E14]"
