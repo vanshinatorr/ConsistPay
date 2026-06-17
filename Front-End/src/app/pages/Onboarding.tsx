@@ -23,7 +23,7 @@ import {
 
 export function Onboarding() {
   const [step, setStep] = useState(1);
-  const [plan, setPlan] = useState<"Free" | "Pro" | null>(null);
+  const [plan, setPlan] = useState<"Free" | "Pro" | null>("Pro");
   const [amount, setAmount] = useState<number | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -389,21 +389,118 @@ export function Onboarding() {
               </div>
             </div>
           )}
-             {/* ──────────────── STEP 3: CHOOSE PLAN ──────────────── */}
+
+          {/* ──────────────── STEP 3: CHOOSE PLAN ──────────────── */}
           {step === 3 && (
-            <div className="space-y-5 animate-in fade-in duration-500 text-left">
+            <div className="space-y-4 animate-in fade-in duration-500 text-left">
               <div className="space-y-1">
                 <h2 className="text-xl md:text-2xl font-extrabold text-white tracking-tight">Choose Your Accountability Tier</h2>
-                <p className="text-zinc-405 text-xs">Select how you want to build consistency. Pro tier is highly recommended for serious preparation.</p>
+                <p className="text-zinc-400 text-xs">Select how you want to build consistency. Pro tier is highly recommended for serious preparation.</p>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-5 pt-1">
+              {/* Mobile Plan Selector (Segmented Tabs) */}
+              <div className="flex md:hidden bg-zinc-900/60 p-1 rounded-xl border border-zinc-800/80 mb-4 select-none">
+                <button
+                  type="button"
+                  onClick={() => setPlan("Free")}
+                  className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all cursor-pointer ${
+                    plan === "Free" ? "bg-zinc-800 text-white shadow" : "text-zinc-500"
+                  }`}
+                >
+                  Free Plan
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setPlan("Pro")}
+                  className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all flex items-center justify-center gap-1 cursor-pointer ${
+                    plan === "Pro" ? "bg-violet-600 text-white shadow" : "text-zinc-500"
+                  }`}
+                >
+                  <Sparkles className="w-3.5 h-3.5" />
+                  Pro Plan (Recommended)
+                </button>
+              </div>
+
+              {/* Mobile Single Card Render */}
+              <div className="block md:hidden">
+                {plan === "Free" ? (
+                  <div className="p-5 rounded-2xl border border-zinc-800 bg-[#0A0A0E] text-left space-y-4 shadow-xl">
+                    <div>
+                      <h3 className="font-extrabold text-white text-lg tracking-tight">Basic Accountability</h3>
+                      <p className="text-xs text-zinc-400 mt-1 leading-relaxed">
+                        Habit logging and basic streak tracking for routine builders.
+                      </p>
+                    </div>
+                    <ul className="space-y-2 pt-1 text-xs text-zinc-300">
+                      <li className="flex items-center gap-2.5">
+                        <Check className="w-4 h-4 text-zinc-400 shrink-0" />
+                        <span>1 Daily verification submission</span>
+                      </li>
+                      <li className="flex items-center gap-2.5">
+                        <Check className="w-4 h-4 text-zinc-400 shrink-0" />
+                        <span>Basic consistency calendar</span>
+                      </li>
+                      <li className="flex items-center gap-2.5">
+                        <Check className="w-4 h-4 text-zinc-400 shrink-0" />
+                        <span>1 grace coin to protect streak</span>
+                      </li>
+                    </ul>
+                    <div className="border-t border-zinc-800/60 pt-3 flex justify-between items-center">
+                      <span className="text-sm font-extrabold text-zinc-350">Free Forever</span>
+                      <span className="text-xs text-emerald-400 font-bold uppercase tracking-wider">Active</span>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="p-5 rounded-2xl border border-violet-500/40 bg-violet-950/5 text-left space-y-4 relative overflow-hidden shadow-[0_0_25px_rgba(124,58,237,0.1)]">
+                    <div className="absolute top-0 right-0 bg-violet-600 text-white text-[8px] font-black px-3 py-1 uppercase tracking-wider rounded-bl-lg">
+                      RECOMMENDED
+                    </div>
+                    <div>
+                      <h3 className="font-extrabold text-white text-lg tracking-tight">Premium Prep Mode</h3>
+                      <p className="text-xs text-zinc-300 mt-1 leading-relaxed">
+                        Complete feature set designed for placement preparation.
+                      </p>
+                    </div>
+                    <ul className="space-y-2 pt-1 text-xs text-zinc-300">
+                      <li className="flex items-center gap-2.5 font-semibold text-emerald-400">
+                        <TrendingUp className="w-4 h-4 text-emerald-400 shrink-0" />
+                        <span>+10% Cash Streak Payout Bonus</span>
+                      </li>
+                      <li className="flex items-center gap-2.5 text-violet-355">
+                        <Users className="w-4 h-4 text-violet-400 shrink-0" />
+                        <span>Join PvP battles & Challenges</span>
+                      </li>
+                      <li className="flex items-center gap-2.5">
+                        <Zap className="w-4 h-4 text-violet-400 shrink-0" />
+                        <span>Double Grace Coins (milestones)</span>
+                      </li>
+                      <li className="flex items-center gap-2.5">
+                        <Sparkles className="w-4 h-4 text-violet-400 shrink-0" />
+                        <span>Gemini AI Performance Advisor</span>
+                      </li>
+                    </ul>
+                    <div className="border-t border-violet-900/20 pt-3 space-y-2">
+                      <div className="flex justify-between items-center w-full">
+                        <span className="text-sm font-extrabold text-violet-450">₹49 setup + deposit</span>
+                        <span className="text-[10px] text-violet-400 font-bold uppercase tracking-wider">Active</span>
+                      </div>
+                      <div className="text-[10px] text-violet-300/80 leading-normal italic font-medium flex items-center gap-1.5 bg-violet-500/5 border border-violet-500/10 rounded-lg p-1.5">
+                        <span>🍔 Less than a burger price to unlock Pro!</span>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Desktop Dual Cards Compare Layout (md:grid) */}
+              <div className="hidden md:grid md:grid-cols-2 gap-5 pt-1">
                 {/* Free Card */}
                 <button
                   onClick={() => setPlan("Free")}
+                  type="button"
                   className={`p-4 sm:p-6 rounded-2xl border text-left transition-all duration-300 flex flex-col justify-between min-h-[290px] sm:min-h-[340px] relative overflow-hidden group ${
                     plan === "Free"
-                      ? "border-zinc-700 bg-[#121217] shadow-[0_0_20px_rgba(255,255,255,0.01)] ring-1 ring-zinc-500/20"
+                      ? "border-zinc-700 bg-[#121217] shadow-sm ring-1 ring-zinc-500/20"
                       : "border-zinc-800 bg-[#0A0A0E] hover:border-zinc-700 hover:bg-[#0D0D12]"
                   }`}
                 >
@@ -422,27 +519,19 @@ export function Onboarding() {
                     </div>
                     <ul className="space-y-2 pt-1 text-xs text-zinc-300">
                       <li className="flex items-center gap-2.5">
-                        <div className="w-4 h-4 rounded-full bg-zinc-850 flex items-center justify-center shrink-0">
-                          <Check className="w-3 h-3 text-zinc-400" />
-                        </div>
+                        <Check className="w-4 h-4 text-zinc-400 shrink-0" />
                         <span>1 Daily verification submission</span>
                       </li>
                       <li className="flex items-center gap-2.5">
-                        <div className="w-4 h-4 rounded-full bg-zinc-850 flex items-center justify-center shrink-0">
-                          <Check className="w-3 h-3 text-zinc-400" />
-                        </div>
+                        <Check className="w-4 h-4 text-zinc-400 shrink-0" />
                         <span>Basic consistency calendar</span>
                       </li>
                       <li className="flex items-center gap-2.5">
-                        <div className="w-4 h-4 rounded-full bg-zinc-850 flex items-center justify-center shrink-0">
-                          <Check className="w-3 h-3 text-zinc-400" />
-                        </div>
+                        <Check className="w-4 h-4 text-zinc-400 shrink-0" />
                         <span>1 grace coin to protect streak</span>
                       </li>
                       <li className="flex items-center gap-2.5 text-zinc-500">
-                        <div className="w-4 h-4 rounded-full bg-zinc-850/50 flex items-center justify-center shrink-0">
-                          <Info className="w-3 h-3 text-zinc-550" />
-                        </div>
+                        <Info className="w-4 h-4 text-zinc-550 shrink-0" />
                         <span className="text-[10px]">Requires refundable deposit stake</span>
                       </li>
                     </ul>
@@ -456,9 +545,10 @@ export function Onboarding() {
                 {/* Pro Card */}
                 <button
                   onClick={() => setPlan("Pro")}
+                  type="button"
                   className={`p-4 sm:p-6 rounded-2xl border text-left transition-all duration-300 relative flex flex-col justify-between min-h-[290px] sm:min-h-[340px] overflow-hidden group ${
                     plan === "Pro"
-                      ? "border-violet-500 bg-violet-955/5 shadow-[0_0_30px_rgba(124,58,237,0.1)] ring-1 ring-violet-500/20"
+                      ? "border-violet-500 bg-violet-955/5 shadow-md ring-1 ring-violet-500/20"
                       : "border-zinc-800 bg-[#0A0A0E] hover:border-violet-500/20 hover:bg-[#0E0E14]"
                   }`}
                 >
@@ -480,33 +570,23 @@ export function Onboarding() {
                     </div>
                     <ul className="space-y-2 pt-1 text-xs text-zinc-300">
                       <li className="flex items-center gap-2.5 font-semibold text-emerald-400">
-                        <div className="w-4 h-4 rounded-full bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center shrink-0">
-                          <TrendingUp className="w-3 h-3 text-emerald-400" />
-                        </div>
+                        <Check className="w-4 h-4 text-emerald-400 shrink-0" />
                         <span>+10% Cash Streak Payout Bonus</span>
                       </li>
                       <li className="flex items-center gap-2.5 text-violet-350">
-                        <div className="w-4 h-4 rounded-full bg-violet-500/10 border border-violet-500/20 flex items-center justify-center shrink-0">
-                          <Users className="w-3 h-3 text-violet-400" />
-                        </div>
+                        <Users className="w-4 h-4 text-violet-400 shrink-0" />
                         <span>Join PvP battles & Challenges</span>
                       </li>
-                      <li className="flex items-center gap-2.5 text-zinc-350">
-                        <div className="w-4 h-4 rounded-full bg-violet-500/10 border border-violet-500/20 flex items-center justify-center shrink-0">
-                          <Zap className="w-3 h-3 text-violet-400" />
-                        </div>
+                      <li className="flex items-center gap-2.5 text-zinc-355">
+                        <Zap className="w-4 h-4 text-violet-400 shrink-0" />
                         <span>Double Grace Coins (milestones)</span>
                       </li>
                       <li className="flex items-center gap-2.5 text-zinc-300">
-                        <div className="w-4 h-4 rounded-full bg-violet-500/10 border border-violet-500/20 flex items-center justify-center shrink-0">
-                          <Sparkles className="w-3 h-3 text-violet-400" />
-                        </div>
+                        <Sparkles className="w-4 h-4 text-violet-400 shrink-0" />
                         <span>Gemini AI Performance Advisor</span>
                       </li>
                       <li className="flex items-center gap-2.5 text-zinc-550">
-                        <div className="w-4 h-4 rounded-full bg-zinc-850 flex items-center justify-center shrink-0">
-                          <Info className="w-3 h-3 text-zinc-550" />
-                        </div>
+                        <Info className="w-4 h-4 text-zinc-550 shrink-0" />
                         <span className="text-[10px]">Requires refundable deposit stake</span>
                       </li>
                     </ul>
@@ -551,61 +631,47 @@ export function Onboarding() {
                 <p className="text-zinc-400 text-xs">Choose the stake that will keep you accountable every single day.</p>
               </div>
 
-              <div className="grid grid-cols-1 gap-3">
+              <div className="grid grid-cols-3 gap-3">
                 <button
                   onClick={() => setAmount(5)}
-                  className={`p-4 rounded-xl border text-left transition-all flex items-center gap-4 ${
+                  type="button"
+                  className={`p-3 rounded-2xl border text-center transition-all flex flex-col items-center justify-center gap-1.5 cursor-pointer ${
                     amount === 5
-                      ? "border-zinc-700 bg-zinc-900/40"
-                      : "border-zinc-800 bg-[#0C0C10] hover:border-zinc-700"
+                      ? "border-emerald-500 bg-emerald-500/10 text-emerald-400 font-bold shadow-lg"
+                      : "border-zinc-800 bg-[#0C0C10] text-zinc-400 hover:border-zinc-700"
                   }`}
                 >
-                  <div className="w-10 h-10 rounded-lg bg-zinc-800 border border-zinc-700 flex items-center justify-center font-bold text-zinc-300 text-lg shrink-0">
-                    ₹5
-                  </div>
-                  <div>
-                    <h4 className="text-sm font-semibold text-white">Casual Consistency</h4>
-                    <p className="text-xs text-zinc-400 mt-0.5">₹150 refundable deposit pool. Great for building routine.</p>
-                  </div>
-                  <span className="ml-auto text-xs text-zinc-500">/ day</span>
+                  <span className="text-[10px] sm:text-xs font-semibold">Casual</span>
+                  <span className="text-base sm:text-xl font-black text-white">₹5</span>
+                  <span className="text-[9px] text-zinc-500">₹150 total</span>
                 </button>
 
                 <button
                   onClick={() => setAmount(20)}
-                  className={`p-4 rounded-xl border text-left transition-all flex items-center gap-4 ${
+                  type="button"
+                  className={`p-3 rounded-2xl border text-center transition-all flex flex-col items-center justify-center gap-1.5 cursor-pointer ${
                     amount === 20
-                      ? "border-violet-500 bg-violet-955/10"
-                      : "border-zinc-800 bg-[#0C0C10] hover:border-violet-500/20"
+                      ? "border-violet-500 bg-violet-500/10 text-violet-400 font-bold shadow-lg"
+                      : "border-zinc-800 bg-[#0C0C10] text-zinc-400 hover:border-zinc-700"
                   }`}
                 >
-                  <div className="w-10 h-10 rounded-lg bg-violet-500/10 border border-violet-500/20 flex items-center justify-center font-bold text-violet-400 text-lg shrink-0">
-                    ₹20
-                  </div>
-                  <div>
-                    <h4 className="text-sm font-semibold text-white flex items-center gap-1.5">
-                      Serious Placement Prep
-                    </h4>
-                    <p className="text-xs text-zinc-300 mt-0.5">₹600 refundable deposit pool. Keep your focus locked.</p>
-                  </div>
-                  <span className="ml-auto text-xs text-zinc-500">/ day</span>
+                  <span className="text-[10px] sm:text-xs font-semibold">Prep</span>
+                  <span className="text-base sm:text-xl font-black text-white">₹20</span>
+                  <span className="text-[9px] text-zinc-500">₹600 total</span>
                 </button>
 
                 <button
                   onClick={() => setAmount(50)}
-                  className={`p-4 rounded-xl border text-left transition-all flex items-center gap-4 ${
+                  type="button"
+                  className={`p-3 rounded-2xl border text-center transition-all flex flex-col items-center justify-center gap-1.5 cursor-pointer ${
                     amount === 50
-                      ? "border-emerald-500 bg-emerald-955/10"
-                      : "border-zinc-800 bg-[#0C0C10] hover:border-emerald-500/20"
+                      ? "border-amber-500 bg-amber-500/10 text-amber-400 font-bold shadow-lg"
+                      : "border-zinc-800 bg-[#0C0C10] text-zinc-400 hover:border-zinc-700"
                   }`}
                 >
-                  <div className="w-10 h-10 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center font-bold text-emerald-400 text-lg shrink-0">
-                    ₹50
-                  </div>
-                  <div>
-                    <h4 className="text-sm font-semibold text-white">High Accountability Mode</h4>
-                    <p className="text-xs text-zinc-300 mt-0.5">₹1,500 refundable deposit pool. Maximum dedication.</p>
-                  </div>
-                  <span className="ml-auto text-xs text-zinc-500">/ day</span>
+                  <span className="text-[10px] sm:text-xs font-semibold">High</span>
+                  <span className="text-base sm:text-xl font-black text-white">₹50</span>
+                  <span className="text-[9px] text-zinc-500">₹1,500 total</span>
                 </button>
               </div>
 

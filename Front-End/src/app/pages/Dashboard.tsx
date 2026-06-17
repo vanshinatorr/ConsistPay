@@ -73,6 +73,7 @@ export function Dashboard() {
   const [recentSolves, setRecentSolves] = useState<any[]>([]);
   const [aiLoading, setAiLoading] = useState(false);
   const [showSetupModal, setShowSetupModal] = useState(false);
+  const [activeMobileTab, setActiveMobileTab] = useState<"today" | "analytics" | "activity">("today");
 
   const API = import.meta.env.VITE_API_URL;
   const token = localStorage.getItem("token") || "";
