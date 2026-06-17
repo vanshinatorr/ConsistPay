@@ -190,7 +190,7 @@ export function ActiveBattle() {
     switch (statusValue) {
       case "completed":
         return problemName ? (
-          <span className="text-xs text-zinc-300 font-medium truncate max-w-[120px] sm:max-w-[180px] block" title={problemName}>
+          <span className="text-xs text-zinc-300 font-medium truncate max-w-[70px] sm:max-w-[180px] block" title={problemName}>
             Solved: "{problemName}"
           </span>
         ) : (
@@ -460,7 +460,7 @@ export function ActiveBattle() {
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-emerald-500/5 rounded-full blur-[120px] pointer-events-none" />
 
           {/* Modal Container */}
-          <div className="relative w-full max-w-lg bg-[#0E0E12]/95 border border-white/10 rounded-[2.5rem] p-8 text-center shadow-[0_0_50px_rgba(16,185,129,0.15),inset_0_0_20px_rgba(255,255,255,0.02)] overflow-hidden animate-in zoom-in-95 duration-500">
+          <div className="relative w-full max-w-lg max-h-[90vh] overflow-y-auto bg-[#0E0E12]/95 border border-white/10 rounded-[2rem] sm:rounded-[2.5rem] p-6 sm:p-8 text-center shadow-[0_0_50px_rgba(16,185,129,0.15),inset_0_0_20px_rgba(255,255,255,0.02)] animate-in zoom-in-95 duration-500">
             {/* Decorative Corner Glows */}
             <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-emerald-500/10 blur-[60px]" />
             <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-violet-500/10 blur-[60px]" />

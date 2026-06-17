@@ -80,7 +80,7 @@ export function HowItWorks() {
         </div>
 
         {/* BENTO BOX GRID */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 relative z-10">
+        <div className="hidden md:grid grid-cols-1 md:grid-cols-3 gap-6 relative z-10">
           
           {/* Box 1: Sign Up (Small) */}
           <div className="col-span-1 bg-[#13151f]/80 backdrop-blur-xl border border-white/5 rounded-[2rem] p-8 flex flex-col justify-between group hover:bg-[#1a1d27] transition-all hover:-translate-y-1">
@@ -182,6 +182,50 @@ export function HowItWorks() {
           </div>
 
         </div>
+
+        {/* MOBILE ONLY TIMELINE */}
+        <div className="block md:hidden space-y-4 relative z-10">
+          {[
+            {
+              step: "01",
+              title: "Set Your Commitment",
+              desc: "Choose a refundable daily stake (₹5 - ₹50) to hold yourself accountable.",
+              icon: Wallet,
+              color: "text-violet-400 border-violet-500/20 bg-violet-500/10"
+            },
+            {
+              step: "02",
+              title: "Code & Submit Proof",
+              desc: "Solve coding questions on LeetCode/GFG and upload a screenshot before midnight.",
+              icon: Link2,
+              color: "text-blue-400 border-blue-500/20 bg-blue-500/10"
+            },
+            {
+              step: "03",
+              title: "Get Refunded + Earn",
+              desc: "Succeed to get your deposit back, plus bonus cash from those who break their streaks.",
+              icon: BadgeIndianRupee,
+              color: "text-emerald-400 border-emerald-500/20 bg-emerald-500/10"
+            }
+          ].map((item, idx) => {
+            const Icon = item.icon;
+            return (
+              <div key={idx} className="flex gap-4 p-5 bg-[#13151f]/80 backdrop-blur-xl border border-white/5 rounded-2xl">
+                <div className={`w-12 h-12 rounded-xl flex items-center justify-center border shrink-0 ${item.color}`}>
+                  <Icon className="w-6 h-6" />
+                </div>
+                <div>
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="text-xs font-bold text-violet-500/60 font-mono">{item.step}</span>
+                    <h4 className="text-base font-bold text-white tracking-tight">{item.title}</h4>
+                  </div>
+                  <p className="text-xs text-slate-400 leading-relaxed font-medium">{item.desc}</p>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
       </div>
     </section>
   );

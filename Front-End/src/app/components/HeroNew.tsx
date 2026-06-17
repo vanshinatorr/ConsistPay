@@ -26,7 +26,7 @@ export function HeroNew() {
       <div className="max-w-7xl mx-auto relative z-10">
         <div className="grid grid-cols-1 xl:grid-cols-[1fr_1.1fr] gap-16 items-center">
           {/* Left: Text Content */}
-          <div className="relative z-20">
+          <div className="relative z-20 flex flex-col items-center text-center xl:items-start xl:text-left">
             {/* Top Badge */}
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#13151f] border border-white/5 mb-8 shadow-sm">
               <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
@@ -71,7 +71,7 @@ export function HeroNew() {
             </div>
 
             {/* Trust indicators */}
-            <div className="flex flex-col sm:flex-row sm:flex-wrap gap-x-6 gap-y-3 text-sm text-slate-400 font-medium">
+            <div className="flex flex-col sm:flex-row sm:flex-wrap gap-x-6 gap-y-3 text-sm text-slate-400 font-medium justify-center xl:justify-start">
               <div className="flex items-center gap-2">
                 <div className="w-5 h-5 rounded-full bg-emerald-500/20 flex items-center justify-center">
                   <Check className="w-3 h-3 text-emerald-400" strokeWidth={3} />
@@ -88,7 +88,7 @@ export function HeroNew() {
           </div>
 
           {/* Right: Realistic UI Flow Mockup */}
-          <div className="relative w-full mx-auto xl:mx-0 font-sans">
+          <div className="hidden xl:block relative w-full mx-auto xl:mx-0 font-sans">
             {/* Dashboard Container */}
             <div className="relative bg-[#0d1017] rounded-[2rem] p-4 sm:p-8 border border-slate-800 shadow-2xl">
               

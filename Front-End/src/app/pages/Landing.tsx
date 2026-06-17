@@ -125,14 +125,20 @@ export function Landing() {
       {/* Main Content */}
       <main className="pt-20">
         <HeroNew />
-        <SocialProof />
-        <WhyConsistPay />
+        <div className="hidden md:block">
+          <SocialProof />
+        </div>
+        <div className="hidden md:block">
+          <WhyConsistPay />
+        </div>
         <HowItWorks />
-        <MoreFeatures />
+        <div className="hidden md:block">
+          <MoreFeatures />
+        </div>
       </main>
 
       {/* Pre-Footer CTA */}
-      <section className="py-24 relative overflow-hidden border-t border-white/5">
+      <section className="py-24 relative overflow-hidden border-t border-white/5 hidden md:block">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-violet-900/20 via-[#06080D] to-[#06080D] opacity-100" />
         <div className="max-w-4xl mx-auto px-6 relative z-10 text-center">
           <h2 className="text-4xl md:text-5xl font-black mb-6 text-transparent bg-clip-text bg-gradient-to-r from-white via-white to-slate-400 tracking-tight">
