@@ -313,6 +313,10 @@ const submitSolution = async (req, res) => {
       return res.status(400).json({ message: "Problem name and screenshot are required." });
     }
 
+    if (typeof problemName !== "string" || typeof screenshot !== "string") {
+      return res.status(400).json({ message: "Problem name and screenshot must be strings." });
+    }
+
     const today = new Date().toLocaleDateString("en-CA", { timeZone: "Asia/Kolkata" });
 
     // AI Verification start

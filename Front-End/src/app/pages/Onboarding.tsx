@@ -960,7 +960,7 @@ export function Onboarding() {
               <button
                 onClick={() => {
                   // Redirect to dashboard page
-                  window.location.href = "/dashboard";
+                  navigate("/dashboard");
                 }}
                 className="w-full py-3.5 bg-violet-600 hover:bg-violet-500 text-white font-medium rounded-xl transition-all flex items-center justify-center gap-2"
               >

@@ -7,8 +7,11 @@ const getInsights = async (req, res) => {
     const userId = req.user._id;
     const { streak, coins, totalSolved, totalMissed } = req.body;
 
-    // Fetch user's submission history to analyze solved topics
-    const submissions = await Submission.find({ userId }).select("problemName platform date");
+    // Fetch user's submission history to analyze solved topics (limited to last 30 to prevent token bloat)
+    const submissions = await Submission.find({ userId })
+      .select("problemName platform date")
+      .sort({ date: -1 })
+      .limit(30);
     const problemsList = submissions.map(s => `${s.problemName} (${s.platform})`).join(", ");
 
     const prompt = `You are an AI placement readiness and coding consistency coach for ConsistPay.

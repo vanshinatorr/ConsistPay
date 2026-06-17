@@ -39,6 +39,10 @@ const markAsRead = async (req, res) => {
 
 const deleteNotification = async (req, res) => {
   try {
+    const mongoose = require("mongoose");
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return res.status(400).json({ message: "Invalid notification ID format" });
+    }
     await Notification.findOneAndDelete({ _id: req.params.id, userId: req.user._id });
     res.status(200).json({ message: "Notification deleted" });
   } catch (error) {

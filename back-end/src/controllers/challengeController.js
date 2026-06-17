@@ -225,6 +225,11 @@ const joinChallenge = async (req, res) => {
     const totalCost = challenge.stake + challenge.entryFee;
     const user = await User.findById(userId);
 
+    // Enforce Pro Plan Gating for joining challenges
+    if (user.plan !== "pro") {
+      return res.status(403).json({ message: "Only Pro users can join custom challenges." });
+    }
+
     if (user.battleBalance < totalCost) {
       return res.status(400).json({ message: `Insufficient balance. Required: ₹${totalCost}, Available: ₹${user.battleBalance}.` });
     }

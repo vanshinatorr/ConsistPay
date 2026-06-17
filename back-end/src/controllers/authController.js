@@ -238,7 +238,9 @@ const googleAuth = async (req, res) => {
 const checkUsername = async (req, res) => {
   try {
     const { username } = req.query;
-    if (!username) return res.status(400).json({ message: "Username required" });
+    if (!username || typeof username !== "string") {
+      return res.status(400).json({ message: "Username required and must be a string" });
+    }
     
     // basic format check: only letters, numbers, underscores
     const regex = /^[a-zA-Z0-9_]{3,15}$/;

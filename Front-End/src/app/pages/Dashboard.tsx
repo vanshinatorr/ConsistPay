@@ -1,5 +1,6 @@
 import { AlertTriangle, BarChart3, Flame, TrendingDown, Target } from "lucide-react";
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Navbar } from "./dashboard/Navbar";
 import { StatsRow } from "./dashboard/StatsRow";
 import { TodaysChallenge } from "./dashboard/TodaysChallenge";
@@ -53,6 +54,7 @@ interface CalendarDay {
 }
 
 export function Dashboard() {
+  const navigate = useNavigate();
   // ✅ UPDATED: problemName + screenshot instead of solutionLink
   const [problemName, setProblemName] = useState("");
   const [screenshot, setScreenshot] = useState<File | null>(null);
@@ -82,7 +84,7 @@ export function Dashboard() {
       });
       if (res.status === 401) {
         localStorage.removeItem("token");
-        window.location.href = "/login";
+        navigate("/login");
         return;
       }
       const data = await res.json();

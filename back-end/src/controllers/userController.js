@@ -86,6 +86,12 @@ const getLeaderboard = async (req, res) => {
     }
 
     const users = await User.aggregate([
+      // 1. Filter out only completed onboarding users
+      { $match: { onboardingComplete: true } },
+      // 2. Sort and limit early to prevent joining the entire collections in-memory
+      { $sort: { streak: -1 } },
+      { $limit: 50 },
+      // 3. Perform lookup only for the 50 matched users
       {
         $lookup: {
           from: "submissions",
@@ -150,8 +156,8 @@ const getLeaderboard = async (req, res) => {
           }
         }
       },
-      { $sort: { streak: -1 } },
-      { $limit: 50 }
+      // 4. Re-sort final list to maintain streak order
+      { $sort: { streak: -1 } }
     ]);
     res.status(200).json(users);
   } catch (error) {

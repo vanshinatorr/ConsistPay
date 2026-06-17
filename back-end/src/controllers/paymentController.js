@@ -39,9 +39,6 @@ try {
     razorpay_order_id,
     razorpay_payment_id,
     razorpay_signature,
-    plan,
-    dailyCommitment,
-    depositAmount,
   } = req.body;
   const body = razorpay_order_id + "|" + razorpay_payment_id;
   const expectedSignature = crypto
@@ -51,12 +48,24 @@ try {
   if (expectedSignature !== razorpay_signature) {
     return res.status(400).json({ message: "Invalid payment signature" });
   }
+
+  // Fetch the order from Razorpay to verify details stored in notes on creation
+  const order = await razorpay.orders.fetch(razorpay_order_id);
+  if (!order || !order.notes) {
+    return res.status(400).json({ message: "Razorpay order details not found" });
+  }
+
+  const { plan, dailyCommitment, depositAmount } = order.notes;
+  if (!plan || dailyCommitment === undefined || depositAmount === undefined) {
+    return res.status(400).json({ message: "Invalid order metadata in Razorpay notes" });
+  }
+
   const user = await User.findById(req.user._id);
-  const planLower = plan ? plan.toLowerCase() : "free";
+  const planLower = plan.toLowerCase();
   const isRenewal = user.onboardingComplete;
   user.plan = planLower;
-  user.dailyCommitment = dailyCommitment;
-  user.balance = depositAmount;
+  user.dailyCommitment = Number(dailyCommitment);
+  user.balance = Number(depositAmount);
   user.onboardingComplete = true;
   user.onboardingCompletedAt = user.onboardingCompletedAt || new Date();
   user.graceCoins = isRenewal ? ((user.graceCoins || 0) + 1) : 1;
@@ -226,7 +235,6 @@ const verifyTopup = async (req, res) => {
       razorpay_order_id,
       razorpay_payment_id,
       razorpay_signature,
-      amount, // passed from frontend to know how much to add (in rupees)
     } = req.body;
 
     const body = razorpay_order_id + "|" + razorpay_payment_id;
@@ -239,8 +247,20 @@ const verifyTopup = async (req, res) => {
       return res.status(400).json({ message: "Invalid payment signature" });
     }
 
+    // Fetch the order from Razorpay to verify and credit the actual amount
+    const order = await razorpay.orders.fetch(razorpay_order_id);
+    if (!order) {
+      return res.status(400).json({ message: "Razorpay order not found" });
+    }
+
+    // Convert order.amount from paise to rupees
+    const actualAmount = order.amount / 100;
+    if (isNaN(actualAmount) || actualAmount <= 0) {
+      return res.status(400).json({ message: "Invalid order amount recorded in Razorpay" });
+    }
+
     const user = await User.findById(req.user._id);
-    user.battleBalance = (user.battleBalance || 0) + Number(amount);
+    user.battleBalance = (user.battleBalance || 0) + actualAmount;
     await user.save();
 
     res.status(200).json({
