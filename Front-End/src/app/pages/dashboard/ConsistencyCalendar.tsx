@@ -125,7 +125,7 @@ export function ConsistencyCalendar({
         {/* Glow backdrop */}
         <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 to-teal-500/5 rounded-2xl blur-lg opacity-0 group-hover/card:opacity-100 transition-opacity pointer-events-none" />
 
-        <div className="relative bg-[#121214] border border-white/5 rounded-2xl p-4 flex flex-col justify-between h-full shadow-lg transition-all">
+        <div className="relative bg-[#0F0F13] border border-white/[0.04] rounded-2xl p-4 flex flex-col justify-between h-full shadow-lg transition-all">
           
           <div className="flex items-center justify-between mb-2">
             <span className="text-[10px] font-bold text-zinc-400 font-mono tracking-wider select-none">
@@ -202,7 +202,7 @@ export function ConsistencyCalendar({
                                   className="absolute z-50 hidden group-hover:flex items-center pointer-events-none bottom-[15px] left-1/2 -translate-x-1/2 whitespace-nowrap border border-zinc-800/80 rounded-[3px] px-1.5 py-0.5 shadow-xl text-center text-[8px] font-bold text-zinc-200"
                                   style={{ backgroundColor: "#09090b", zIndex: 100 }}
                                 >
-                                  ✅ {cell.count} solved
+                                  {cell.count} solved
                                 </div>
                               )}
                             </div>

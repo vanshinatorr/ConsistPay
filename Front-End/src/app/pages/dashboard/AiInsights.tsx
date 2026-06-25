@@ -86,7 +86,7 @@ export function AiInsights({
         <div className="absolute inset-0 bg-gradient-to-br from-violet-500/20 to-fuchsia-500/20 rounded-2xl blur-2xl opacity-40" />
 
         {/* Main Card */}
-        <div className="relative bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 overflow-hidden">
+        <div className="relative bg-[#0F0F13] border border-white/[0.04] rounded-2xl p-6 overflow-hidden">
 
           {/* Header */}
           <div className="flex items-center gap-2 mb-5">
@@ -120,7 +120,7 @@ export function AiInsights({
             </div>
           ) : !isUnlocked ? (
             /* LOCKED STATE */
-            <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-white/[0.03] p-5">
+            <div className="relative overflow-hidden rounded-2xl border border-white/[0.04] bg-white/[0.01] p-5">
 
               {/* Blur Preview Background */}
               <div className="absolute inset-0 opacity-20 blur-md pointer-events-none">
@@ -188,7 +188,7 @@ export function AiInsights({
               )}
 
               {/* Badges & Problem Details (Unified) */}
-              <div className="p-4 rounded-xl bg-white/[0.02] border border-white/5 space-y-3">
+              <div className="p-4 rounded-xl bg-white/[0.01] border border-white/[0.04] space-y-3">
                 <div className="flex flex-wrap gap-2 items-center">
                   {aiData?.platform && aiData.platform !== "Unknown" && (
                     <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-violet-500/10 border border-violet-500/20 text-violet-300">

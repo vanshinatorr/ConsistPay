@@ -75,7 +75,7 @@ export function TodaysChallenge({
           }`}
         />
 
-        <div className="relative bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 overflow-hidden min-h-[522px] flex flex-col justify-between h-full flex-1">
+        <div className="relative bg-[#0F0F13] border border-white/[0.04] rounded-2xl p-6 overflow-hidden min-h-[522px] flex flex-col justify-between h-full flex-1">
           {/* AI Verification Loading Overlay */}
           {aiLoading && (
             <div className="absolute inset-0 bg-[#0D0D0F]/85 backdrop-blur-md z-30 flex flex-col items-center justify-center text-center p-6 animate-in fade-in duration-300">
@@ -174,7 +174,7 @@ export function TodaysChallenge({
                             placeholder="e.g. Two Sum, Binary Search..."
                             value={problemName}
                             onChange={(e) => setProblemName(e.target.value)}
-                            className="w-full h-12 px-4 bg-white/[0.04] border border-white/10 text-white placeholder:text-zinc-500 focus:border-emerald-500/40 focus:outline-none rounded-xl text-sm"
+                            className="w-full h-12 px-4 bg-white/[0.01] border border-white/[0.04] text-white placeholder:text-zinc-500 focus:border-emerald-500/40 focus:outline-none rounded-xl text-sm"
                           />
                         </div>
 
@@ -188,10 +188,10 @@ export function TodaysChallenge({
                             <button
                               type="button"
                               onClick={() => fileInputRef.current?.click()}
-                              className="w-full h-28 border border-dashed border-white/20 rounded-xl flex flex-col items-center justify-center gap-2 hover:border-emerald-500/40 hover:bg-white/[0.03] transition-all duration-200 group cursor-pointer"
+                              className="w-full h-28 border border-dashed border-white/[0.08] rounded-xl flex flex-col items-center justify-center gap-2 hover:border-emerald-500/40 hover:bg-white/[0.02] transition-all duration-200 group cursor-pointer"
                             >
-                              <Upload className="w-5 h-5 text-zinc-500 group-hover:text-emerald-400 transition-colors" />
-                              <span className="text-sm text-zinc-500 group-hover:text-zinc-400 transition-colors">
+                              <Upload className="w-5 h-5 text-zinc-550 group-hover:text-emerald-400 transition-colors" />
+                              <span className="text-sm text-zinc-500 group-hover:text-zinc-400 transition-colors font-medium">
                                 Click to upload screenshot
                               </span>
                               <span className="text-xs text-zinc-600">
@@ -199,8 +199,8 @@ export function TodaysChallenge({
                               </span>
                             </button>
                           ) : (
-                            <div className="flex items-center gap-3 p-3 bg-white/[0.04] border border-white/10 rounded-xl">
-                              <div className="w-12 h-12 bg-[#13161f] border border-white/10 rounded-lg flex items-center justify-center shrink-0 overflow-hidden">
+                            <div className="flex items-center gap-3 p-3 bg-white/[0.01] border border-white/[0.04] rounded-xl">
+                              <div className="w-12 h-12 bg-black/40 border border-white/[0.04] rounded-lg flex items-center justify-center shrink-0 overflow-hidden">
                                 {previewUrl ? (
                                   <img src={previewUrl} alt="Upload preview" className="w-full h-full object-cover animate-in fade-in" />
                                 ) : (
@@ -257,7 +257,7 @@ export function TodaysChallenge({
                         className={`w-full h-12 rounded-xl font-semibold transition-all duration-300 flex items-center justify-center gap-2 mt-6 ${
                           canSubmit
                             ? "bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white shadow-lg shadow-emerald-500/20"
-                            : "bg-white/[0.05] border border-white/10 text-zinc-500 cursor-not-allowed"
+                            : "bg-white/[0.02] border border-white/[0.04] text-zinc-500 cursor-not-allowed"
                         }`}
                       >
                         {aiLoading ? (
@@ -309,7 +309,7 @@ export function TodaysChallenge({
                 </div>
 
                 {/* Motivation Line with top and bottom borders and light grey bg */}
-                <div className="w-full bg-white/[0.02] border-y border-white/5 py-4">
+                <div className="w-full bg-white/[0.01] border-y border-white/[0.04] py-4">
                   <p className="text-[13px] text-zinc-300 italic max-w-sm mx-auto leading-relaxed px-4">
                     "{todayLine}"
                   </p>
@@ -319,19 +319,19 @@ export function TodaysChallenge({
                 <div className="space-y-3 w-full pb-2">
                   <p className="text-xs text-zinc-500 font-medium">Next challenge unlocks in</p>
                   <div className="flex items-center justify-center gap-3 font-mono">
-                    <div className="bg-[#181d1c] border border-white/5 w-14 h-16 rounded-[12px] flex flex-col items-center justify-center text-white">
+                    <div className="bg-[#0F0F13] border border-white/[0.04] w-14 h-16 rounded-[12px] flex flex-col items-center justify-center text-white">
                       <span className="text-xl font-bold leading-tight">{String(timeLeft.h).padStart(2, "0")}</span>
-                      <span className="text-[9px] text-zinc-500 block font-sans font-bold mt-1 leading-none tracking-wider">HRS</span>
+                      <span className="text-[9px] text-zinc-500 block font-sans font-semibold mt-1 leading-none tracking-wider">HRS</span>
                     </div>
-                    <span className="text-zinc-600 text-lg pb-1.5 font-bold">:</span>
-                    <div className="bg-[#181d1c] border border-white/5 w-14 h-16 rounded-[12px] flex flex-col items-center justify-center text-white">
+                    <span className="text-zinc-650 text-lg pb-1.5 font-bold">:</span>
+                    <div className="bg-[#0F0F13] border border-white/[0.04] w-14 h-16 rounded-[12px] flex flex-col items-center justify-center text-white">
                       <span className="text-xl font-bold leading-tight">{String(timeLeft.m).padStart(2, "0")}</span>
-                      <span className="text-[9px] text-zinc-500 block font-sans font-bold mt-1 leading-none tracking-wider">MIN</span>
+                      <span className="text-[9px] text-zinc-500 block font-sans font-semibold mt-1 leading-none tracking-wider">MIN</span>
                     </div>
-                    <span className="text-zinc-600 text-lg pb-1.5 font-bold">:</span>
-                    <div className="bg-[#181d1c] border border-white/5 w-14 h-16 rounded-[12px] flex flex-col items-center justify-center text-emerald-400">
+                    <span className="text-zinc-650 text-lg pb-1.5 font-bold">:</span>
+                    <div className="bg-[#0F0F13] border border-white/[0.04] w-14 h-16 rounded-[12px] flex flex-col items-center justify-center text-emerald-400">
                       <span className="text-xl font-bold leading-tight">{String(timeLeft.s).padStart(2, "0")}</span>
-                      <span className="text-[9px] text-zinc-500 block font-sans font-bold mt-1 leading-none tracking-wider">SEC</span>
+                      <span className="text-[9px] text-zinc-500 block font-sans font-semibold mt-1 leading-none tracking-wider">SEC</span>
                     </div>
                   </div>
                 </div>
