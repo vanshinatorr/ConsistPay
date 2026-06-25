@@ -66,17 +66,10 @@ export function HowItWorks() {
       <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-emerald-600/10 blur-[150px] rounded-full pointer-events-none" />
 
       <div className="max-w-6xl mx-auto relative z-10">
-        <div className="text-center mb-10 md:mb-12 relative">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#13151f] border border-white/5 mb-4 shadow-xl">
-            <div className="w-2 h-2 bg-violet-500 rounded-full animate-pulse" />
-            <span className="text-xs sm:text-sm text-slate-400 font-bold tracking-wide uppercase">The Engine</span>
-          </div>
-          <h2 className="text-4xl sm:text-5xl font-black mb-4 text-transparent bg-clip-text bg-gradient-to-r from-white via-slate-200 to-slate-500 tracking-tight">
+        <div className="text-center mb-6 md:mb-8 relative">
+          <h2 className="text-4xl sm:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white via-slate-200 to-slate-500 tracking-tight">
             How ConsistPay Works
           </h2>
-          <p className="text-lg sm:text-xl text-slate-400 max-w-2xl mx-auto font-medium">
-            Not just another habit tracker. An entire ecosystem designed to make failure more painful than discipline.
-          </p>
         </div>
 
         {/* BENTO BOX GRID */}
