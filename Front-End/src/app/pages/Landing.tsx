@@ -12,7 +12,7 @@ export function Landing() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
-    <div className="min-h-screen text-slate-100 bg-[#06080D] relative overflow-hidden">
+    <div className="text-slate-100 bg-[#06080D] relative overflow-x-hidden md:h-screen md:overflow-y-auto md:snap-y md:snap-mandatory scroll-smooth">
       {/* Ambient background glows */}
       <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-violet-600/20 rounded-full blur-[150px] pointer-events-none -translate-y-1/2" />
       <div className="absolute top-1/3 right-0 w-[400px] h-[400px] bg-fuchsia-600/10 rounded-full blur-[120px] pointer-events-none translate-x-1/2" />
@@ -41,9 +41,9 @@ export function Landing() {
               <a href="#how-it-works" className="text-sm text-zinc-400 hover:text-white transition-colors">
                 How It Works
               </a>
-       <Link to="/pricing" className="text-sm text-zinc-400 hover:text-white transition-colors">
-           Pricing
-          </Link>
+              <Link to="/pricing" className="text-sm text-zinc-400 hover:text-white transition-colors">
+                Pricing
+              </Link>
             </div>
 
             {/* CTA Buttons */}
@@ -123,38 +123,54 @@ export function Landing() {
       </nav>
 
       {/* Main Content */}
-      <main className="pt-20">
-        <HeroNew />
-        <div className="hidden md:block">
-          <SocialProof />
+      <main className="w-full">
+        {/* Section 1: Hero & Social Proof */}
+        <div className="md:snap-start md:min-h-screen flex flex-col justify-between pt-24 pb-8 relative overflow-hidden">
+          <div className="flex-1 flex items-center justify-center">
+            <HeroNew />
+          </div>
+          <div className="hidden md:block shrink-0 z-10">
+            <SocialProof />
+          </div>
         </div>
-        <div className="hidden md:block">
+
+        {/* Section 2: Why ConsistPay */}
+        <div className="hidden md:flex md:snap-start md:min-h-screen flex-col justify-center relative overflow-hidden border-t border-white/5 bg-[#06080D]">
           <WhyConsistPay />
         </div>
-        <HowItWorks />
-        <div className="hidden md:block">
+
+        {/* Section 3: How It Works */}
+        <div className="md:snap-start md:min-h-screen flex flex-col justify-center relative overflow-hidden border-t border-white/5 bg-[#0A0C10]">
+          <HowItWorks />
+        </div>
+
+        {/* Section 4: More Features */}
+        <div className="hidden md:flex md:snap-start md:min-h-screen flex-col justify-center relative overflow-hidden border-t border-white/5 bg-[#06080D]">
           <MoreFeatures />
         </div>
-      </main>
 
-      {/* Pre-Footer CTA */}
-      <section className="py-24 relative overflow-hidden border-t border-white/5 hidden md:block">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-violet-900/10 via-[#06080D] to-[#06080D] opacity-100" />
-        <div className="max-w-4xl mx-auto px-6 relative z-10 text-center">
-          <h2 className="text-4xl md:text-5xl font-bold tracking-tight mb-6 text-transparent bg-clip-text bg-gradient-to-r from-white via-zinc-100 to-zinc-400">
-            Ready to build unstoppable habits?
-          </h2>
-          <p className="text-lg text-zinc-400 mb-10 max-w-2xl mx-auto leading-relaxed">
-            Join the developers who have committed to consistency and transformed their skills. Stop breaking promises to yourself.
-          </p>
-          <Link to="/signup" className="group relative inline-flex items-center gap-2 px-8 py-3.5 bg-white text-black hover:bg-zinc-100 font-semibold rounded-xl transition-all duration-300 shadow-lg shadow-white/5 hover:scale-[1.02]">
-            Start Your Journey Free
-            <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
-          </Link>
+        {/* Section 5: Pre-Footer CTA & Footer */}
+        <div className="md:snap-start md:min-h-screen flex flex-col justify-between relative overflow-hidden border-t border-white/5 bg-[#06080D]">
+          <div className="flex-1 flex items-center justify-center">
+            <section className="py-20 relative overflow-hidden w-full hidden md:block">
+              <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-violet-900/10 via-[#06080D] to-[#06080D] opacity-100" />
+              <div className="max-w-4xl mx-auto px-6 relative z-10 text-center">
+                <h2 className="text-4xl md:text-5xl font-bold tracking-tight mb-6 text-transparent bg-clip-text bg-gradient-to-r from-white via-zinc-100 to-zinc-400">
+                  Ready to build unstoppable habits?
+                </h2>
+                <p className="text-lg text-zinc-400 mb-10 max-w-2xl mx-auto leading-relaxed">
+                  Join the developers who have committed to consistency and transformed their skills. Stop breaking promises to yourself.
+                </p>
+                <Link to="/signup" className="group relative inline-flex items-center gap-2 px-8 py-3.5 bg-white text-black hover:bg-zinc-100 font-semibold rounded-xl transition-all duration-300 shadow-lg shadow-white/5 hover:scale-[1.02]">
+                  Start Your Journey Free
+                  <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+                </Link>
+              </div>
+            </section>
+          </div>
+          <Footer />
         </div>
-      </section>
-
-      <Footer />
+      </main>
     </div>
   );
 }
