@@ -20,99 +20,8 @@ export default function TopupModal({ onClose, onSuccess }: TopupModalProps) {
   const predefinedAmounts = [50, 100, 500, 1000];
 
   const handleRazorpayTopup = async () => {
-    setError(null);
-    const numAmount = parseInt(amount, 10);
-    
-    if (isNaN(numAmount) || numAmount < 50) {
-      setError("Minimum top-up amount is ₹50.");
-      return;
-    }
-
-    setIsProcessing(true);
-
-    try {
-      // Step 1: Load Razorpay Script
-      const res = await loadScript("https://checkout.razorpay.com/v1/checkout.js");
-      if (!res) {
-        setError("Razorpay SDK failed to load. Check your connection.");
-        setIsProcessing(false);
-        return;
-      }
-
-      // Step 2: Create Order in backend
-      const orderRes = await fetch(`${API}/api/payment/topup/create-order`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ amount: numAmount }),
-      });
-
-      const orderData = await orderRes.json();
-      if (!orderRes.ok) throw new Error(orderData.message || "Failed to create order");
-
-      // Step 3: Configure Razorpay Options
-      const options = {
-        key: import.meta.env.VITE_RAZORPAY_KEY_ID, 
-        amount: orderData.amount,
-        currency: "INR",
-        name: "ConsistPay",
-        description: "Versus Wallet Top-up",
-        order_id: orderData.order_id,
-        handler: async function (response: any) {
-          try {
-            // Step 4: Verify Payment
-            const verifyRes = await fetch(`${API}/api/payment/topup/verify`, {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`,
-              },
-              body: JSON.stringify({
-                razorpay_order_id: response.razorpay_order_id,
-                razorpay_payment_id: response.razorpay_payment_id,
-                razorpay_signature: response.razorpay_signature,
-                amount: numAmount
-              }),
-            });
-
-            const verifyData = await verifyRes.json();
-            if (!verifyRes.ok) {
-              throw new Error(verifyData.message || "Payment verification failed.");
-            }
-
-            // Success
-            setSuccess(true);
-            setTimeout(() => {
-              onSuccess(verifyData.battleBalance);
-              onClose();
-            }, 2000);
-          } catch (err: any) {
-            setError(err.message || "Something went wrong verifying payment.");
-            setIsProcessing(false);
-          }
-        },
-        prefill: {
-          name: "ConsistPay User", // Ideally from userContext
-          email: "user@example.com",
-        },
-        theme: {
-          color: "#8b5cf6", // Violet-500
-        },
-      };
-
-      const rzp = new (window as any).Razorpay(options);
-      rzp.on("payment.failed", function (response: any) {
-        setError("Payment failed: " + response.error.description);
-        setIsProcessing(false);
-      });
-
-      rzp.open();
-    } catch (err: any) {
-      setError(err.message || "Could not connect to Razorpay.");
-      setIsProcessing(false);
-    }
+    console.log("Razorpay dummy mode: Redirecting to simulated top-up...");
+    await handleSkipTopup();
   };
 
   const handleSkipTopup = async () => {
@@ -225,8 +134,8 @@ export default function TopupModal({ onClose, onSuccess }: TopupModalProps) {
                       onClick={() => setAmount(preset.toString())}
                       className={`py-2 px-3 rounded-xl text-sm font-semibold transition-all duration-200 ${
                         amount === preset.toString()
-                          ? "bg-violet-500 text-white shadow-lg shadow-violet-500/25 border-transparent"
-                          : "bg-white/5 text-zinc-400 border border-white/10 hover:bg-white/10 hover:text-zinc-200"
+                          ? "bg-violet-600 text-white border-transparent"
+                          : "bg-white/[0.02] text-zinc-450 border border-white/[0.04] hover:bg-white/[0.04] hover:text-zinc-250"
                       }`}
                     >
                       ₹{preset}
@@ -237,7 +146,7 @@ export default function TopupModal({ onClose, onSuccess }: TopupModalProps) {
 
               {/* Custom Amount */}
               <div>
-                <label className="block text-sm font-medium text-zinc-300 mb-2">Or enter custom amount</label>
+                <label className="block text-sm font-medium text-zinc-350 mb-2">Or enter custom amount</label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                     <span className="text-zinc-500 text-lg font-medium">₹</span>
@@ -246,7 +155,7 @@ export default function TopupModal({ onClose, onSuccess }: TopupModalProps) {
                     type="number"
                     value={amount}
                     onChange={(e) => setAmount(e.target.value)}
-                    className="w-full bg-[#141417] border border-white/10 text-white rounded-xl pl-8 pr-4 py-3 focus:outline-none focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 transition-colors font-mono text-lg"
+                    className="w-full bg-[#101012] border border-white/[0.04] text-white rounded-xl pl-8 pr-4 py-3 focus:outline-none focus:ring-1 focus:ring-violet-500/50 focus:border-violet-500 transition-colors font-mono text-lg"
                     placeholder="Enter amount"
                     min="50"
                   />
@@ -264,10 +173,10 @@ export default function TopupModal({ onClose, onSuccess }: TopupModalProps) {
               {/* Trust Badges */}
               <div className="flex items-center justify-center gap-4 text-zinc-500">
                 <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-wider font-semibold">
-                  <ShieldCheck className="w-3 h-3" /> 256-bit Encrypted
+                  <ShieldCheck className="w-3 h-3 text-emerald-500" /> 256-bit Encrypted
                 </div>
                 <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-wider font-semibold">
-                  <Zap className="w-3 h-3" /> Instant Top-up
+                  <Zap className="w-3 h-3 text-violet-400" /> Instant Top-up
                 </div>
               </div>
             </div>
@@ -280,15 +189,22 @@ export default function TopupModal({ onClose, onSuccess }: TopupModalProps) {
             <button
               onClick={handleSkipTopup}
               disabled={isProcessing || !amount || parseInt(amount) < 10}
-              className="w-full bg-violet-600 hover:bg-violet-500 text-white rounded-xl py-3.5 font-bold transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+              className="w-full bg-violet-600 hover:bg-violet-500 text-white rounded-xl py-3.5 font-semibold transition-all disabled:opacity-50 flex items-center justify-center gap-2"
             >
-              {isProcessing ? <Loader2 className="w-5 h-5 animate-spin" /> : `⚡ 1-Click Express Pay (₹${amount || "0"})`}
+              {isProcessing ? (
+                <Loader2 className="w-5 h-5 animate-spin" />
+              ) : (
+                <>
+                  <Zap className="w-4 h-4 shrink-0 text-white" />
+                  <span>1-Click Express Pay (₹{amount || "0"})</span>
+                </>
+              )}
             </button>
             
             <button
               onClick={handleRazorpayTopup}
               disabled={isProcessing || !amount || parseInt(amount) < 50}
-              className="w-full bg-white/5 hover:bg-white/10 text-zinc-400 hover:text-zinc-300 border border-white/10 rounded-xl py-3 text-xs font-semibold transition-colors disabled:opacity-50"
+              className="w-full bg-white/[0.01] hover:bg-white/[0.03] text-zinc-400 hover:text-zinc-300 border border-white/[0.04] rounded-xl py-3 text-xs font-semibold transition-colors disabled:opacity-50"
             >
               Other Methods (UPI / Card)
             </button>

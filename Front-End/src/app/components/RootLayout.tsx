@@ -8,8 +8,21 @@ const API_URL = import.meta.env.VITE_API_URL;
 export function RootLayout() {
   const location = useLocation();
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(true);
-  const [isAuth, setIsAuth] = useState(false);
+
+  const path = location.pathname;
+  const isPublicPage = path === "/" || path === "/login" || path === "/signup" || path === "/auth" || path === "/faq" || path === "/pricing";
+
+  const [loading, setLoading] = useState(() => {
+    const token = localStorage.getItem("token");
+    const cachedUser = localStorage.getItem("consistpay_user_data");
+    if (isPublicPage) return false;
+    if (token && cachedUser) return false;
+    return true;
+  });
+
+  const [isAuth, setIsAuth] = useState(() => {
+    return !!localStorage.getItem("token");
+  });
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -21,6 +34,25 @@ export function RootLayout() {
         const token = localStorage.getItem("token");
         const path = location.pathname;
         const isPublicPage = path === "/" || path === "/login" || path === "/signup" || path === "/auth" || path === "/faq" || path === "/pricing";
+
+        // Try instant redirect using cache
+        const cachedUserStr = localStorage.getItem("consistpay_user_data");
+        if (token && cachedUserStr && (path === "/" || path === "/login" || path === "/signup" || path === "/auth")) {
+          try {
+            const cachedUser = JSON.parse(cachedUserStr);
+            if (cachedUser.onboardingComplete === false) {
+              navigate("/onboarding");
+              setLoading(false);
+              return;
+            } else {
+              navigate("/dashboard");
+              setLoading(false);
+              return;
+            }
+          } catch (e) {
+            // Ignore parse errors
+          }
+        }
 
         if (!token) {
           setIsAuth(false);
@@ -41,8 +73,11 @@ export function RootLayout() {
         if (res.ok) {
           setIsAuth(true);
           const data = await res.json();
+          // Keep cache fresh
+          localStorage.setItem("consistpay_user_data", JSON.stringify(data));
+
           const isLandingOrAuthPage = path === "/" || path === "/login" || path === "/signup" || path === "/auth";
-          
+
           if (isLandingOrAuthPage) {
             if (data.onboardingComplete === false) {
               navigate("/onboarding");
@@ -59,6 +94,7 @@ export function RootLayout() {
         } else {
           setIsAuth(false);
           localStorage.removeItem("token");
+          localStorage.removeItem("consistpay_user_data");
           if (!isPublicPage) {
             navigate("/login");
           }
@@ -73,7 +109,7 @@ export function RootLayout() {
     checkAuth();
   }, [location.pathname, navigate]);
 
-  if (loading) {
+  if (loading && !isPublicPage) {
     return (
       <div className="h-screen w-screen bg-[#0a0a0a] flex justify-center items-center">
         <div className="w-8 h-8 border-4 border-violet-500 border-t-transparent rounded-full animate-spin"></div>
@@ -81,8 +117,6 @@ export function RootLayout() {
     );
   }
 
-  const path = location.pathname;
-  const isPublicPage = path === "/" || path === "/login" || path === "/signup" || path === "/auth" || path === "/faq" || path === "/pricing";
   const showBottomNav = isAuth && !isPublicPage && path !== "/onboarding" && path !== "/payment";
 
   const tabs = [

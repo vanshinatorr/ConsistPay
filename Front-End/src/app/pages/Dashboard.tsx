@@ -85,11 +85,13 @@ export function Dashboard() {
       });
       if (res.status === 401) {
         localStorage.removeItem("token");
+        localStorage.removeItem("consistpay_user_data");
         navigate("/login");
         return;
       }
       const data = await res.json();
       setUserData(data);
+      localStorage.setItem("consistpay_user_data", JSON.stringify(data));
     } catch (err) {
       console.error("User fetch error:", err);
     }
@@ -118,6 +120,7 @@ export function Dashboard() {
       const results = await Promise.all(promises);
       const combined = results.flat();
       setCalendarData(combined);
+      localStorage.setItem("consistpay_calendar_data", JSON.stringify(combined));
     } catch (err) {
       console.error("Calendar fetch error:", err);
     }
@@ -131,6 +134,7 @@ export function Dashboard() {
       if (res.ok) {
         const data = await res.json();
         setTodaySubmission(data);
+        localStorage.setItem("consistpay_today_submission", JSON.stringify(data));
         if (data && data.count > 0) {
           setSubmitted(true);
         } else {
@@ -155,7 +159,7 @@ export function Dashboard() {
           const diffMs = now.getTime() - date.getTime();
           const diffHrs = Math.floor(diffMs / (1000 * 60 * 60));
           const diffDays = Math.floor(diffHrs / 24);
-          
+
           let timeStr = "";
           if (diffHrs < 1) timeStr = "Just now";
           else if (diffHrs < 24) timeStr = `${diffHrs}h ago`;
@@ -175,6 +179,7 @@ export function Dashboard() {
           };
         });
         setRecentSolves(formatted);
+        localStorage.setItem("consistpay_recent_solves", JSON.stringify(formatted));
       }
     } catch (err) {
       console.error("Error fetching recent solves:", err);
@@ -185,16 +190,41 @@ export function Dashboard() {
   const visibleYearsStr = visibleYears.join(",");
 
   useEffect(() => {
+    // 1. Try to load cached data for instant render
+    const cachedUser = localStorage.getItem("consistpay_user_data");
+    const cachedCalendar = localStorage.getItem("consistpay_calendar_data");
+    const cachedTodaySub = localStorage.getItem("consistpay_today_submission");
+    const cachedRecent = localStorage.getItem("consistpay_recent_solves");
+
+    if (cachedUser) setUserData(JSON.parse(cachedUser));
+    if (cachedCalendar) setCalendarData(JSON.parse(cachedCalendar));
+    if (cachedTodaySub) {
+      const parsedToday = JSON.parse(cachedTodaySub);
+      setTodaySubmission(parsedToday);
+      if (parsedToday && parsedToday.count > 0) {
+        setSubmitted(true);
+      }
+    }
+    if (cachedRecent) setRecentSolves(JSON.parse(cachedRecent));
+
+    // If we have cached data, bypass full screen spinner immediately
+    const initialLoading = !cachedUser;
+    setLoading(initialLoading);
+
     const init = async () => {
-      setLoading(true);
       const initialYears = getVisibleYears(new Date());
-      await Promise.all([
-        fetchUserData(),
-        fetchCalendarForYears(initialYears),
-        fetchTodaySubmission(),
-        fetchRecentSolves(),
-      ]);
-      setLoading(false);
+      try {
+        await Promise.all([
+          fetchUserData(),
+          fetchCalendarForYears(initialYears),
+          fetchTodaySubmission(),
+          fetchRecentSolves(),
+        ]);
+      } catch (err) {
+        console.error("Dashboard initial fetch failed:", err);
+      } finally {
+        setLoading(false);
+      }
     };
     init();
   }, []);
@@ -212,7 +242,7 @@ export function Dashboard() {
       const midnight = new Date();
       midnight.setHours(24, 0, 0, 0);
       const diff = midnight.getTime() - now.getTime();
-      
+
       if (diff <= 0) {
         clearInterval(interval);
         setSubmitted(false);
@@ -290,8 +320,8 @@ export function Dashboard() {
   const isAvatarUrl = avatar.startsWith("http");
 
   const todayLine = motivationalLines[new Date().getDate() % motivationalLines.length];
-  const shortMonths = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
-  const dayLabels = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+  const shortMonths = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  const dayLabels = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
   const calendarMap = new Map<string, { status: "completed" | "missed", count: number }>();
   if (Array.isArray(calendarData)) {
@@ -299,7 +329,7 @@ export function Dashboard() {
       if (item && item.date) {
         const dateKey = item.date.split("T")[0];
         const existing = calendarMap.get(dateKey);
-        
+
         if (item.status === "completed") {
           const newCount = (existing?.count || 0) + 1;
           calendarMap.set(dateKey, { status: "completed", count: newCount });
@@ -417,7 +447,7 @@ export function Dashboard() {
       <Navbar initials={initials} plan={userData?.plan} avatar={avatar} isAvatarUrl={isAvatarUrl} />
 
       <main className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        
+
         {userData && !userData.onboardingComplete && (
           <div className="mb-8 bg-[#121214] border border-white/5 rounded-2xl p-6 relative overflow-hidden shadow-xl hover:border-emerald-500/20 transition-all">
             <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/5 rounded-full blur-[80px]" />
@@ -543,13 +573,13 @@ export function Dashboard() {
 
         {/* Modals */}
         <JoinModal isOpen={showJoinModal} onClose={() => setShowJoinModal(false)} joinCode={joinCode} setJoinCode={setJoinCode} />
-        <CommitmentModal 
-          isOpen={showSetupModal} 
-          onClose={() => setShowSetupModal(false)} 
+        <CommitmentModal
+          isOpen={showSetupModal}
+          onClose={() => setShowSetupModal(false)}
           onComplete={() => {
             setShowSetupModal(false);
             fetchUserData();
-          }} 
+          }}
         />
 
         <Footer

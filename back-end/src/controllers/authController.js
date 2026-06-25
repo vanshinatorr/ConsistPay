@@ -45,6 +45,7 @@ const sendOtp = async (req, res) => {
     const isEmail = identifier.includes('@');
     const otp = generateOTP();
     const hashedOtp = await bcrypt.hash(otp, 10);
+    console.log("=== DEBUG OTP ===", otp);
 
     // Delete existing OTPs for this identifier to prevent spam
     await Otp.deleteMany({ identifier });

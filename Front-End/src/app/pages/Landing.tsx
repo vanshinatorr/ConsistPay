@@ -139,17 +139,17 @@ export function Landing() {
 
       {/* Pre-Footer CTA */}
       <section className="py-24 relative overflow-hidden border-t border-white/5 hidden md:block">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-violet-900/20 via-[#06080D] to-[#06080D] opacity-100" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-violet-900/10 via-[#06080D] to-[#06080D] opacity-100" />
         <div className="max-w-4xl mx-auto px-6 relative z-10 text-center">
-          <h2 className="text-4xl md:text-5xl font-black mb-6 text-transparent bg-clip-text bg-gradient-to-r from-white via-white to-slate-400 tracking-tight">
+          <h2 className="text-4xl md:text-5xl font-bold tracking-tight mb-6 text-transparent bg-clip-text bg-gradient-to-r from-white via-zinc-100 to-zinc-400">
             Ready to build unstoppable habits?
           </h2>
-          <p className="text-lg text-slate-400 mb-10 max-w-2xl mx-auto leading-relaxed">
+          <p className="text-lg text-zinc-400 mb-10 max-w-2xl mx-auto leading-relaxed">
             Join the developers who have committed to consistency and transformed their skills. Stop breaking promises to yourself.
           </p>
-          <Link to="/signup" className="group relative inline-flex items-center gap-2 px-8 py-4 bg-white text-black hover:bg-slate-100 font-bold rounded-xl transition-all duration-300 shadow-[0_0_20px_rgba(255,255,255,0.3)] hover:shadow-[0_0_30px_rgba(255,255,255,0.5)] hover:scale-105">
+          <Link to="/signup" className="group relative inline-flex items-center gap-2 px-8 py-3.5 bg-white text-black hover:bg-zinc-100 font-semibold rounded-xl transition-all duration-300 shadow-lg shadow-white/5 hover:scale-[1.02]">
             Start Your Journey Free
-            <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+            <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
           </Link>
         </div>
       </section>

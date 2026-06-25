@@ -43,101 +43,8 @@ export function Onboarding() {
 
   // Trigger Actual Razorpay Checkout
   const handleRazorpayPayment = async () => {
-    try {
-      setLoading(true);
-      setError("");
-
-      const depositAmount = amount ? amount * 30 : 0;
-      const totalAmount = plan === "Pro" ? depositAmount + 49 : depositAmount;
-
-      // Step 1: Create Order in backend
-      const orderRes = await fetch(`${API}/api/payment/create-order`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          plan,
-          dailyCommitment: amount,
-          depositAmount,
-          totalAmount,
-        }),
-      });
-
-      if (!orderRes.ok) {
-        const errorData = await orderRes.json();
-        throw new Error(errorData.message || "Failed to initiate transaction order.");
-      }
-
-      const orderData = await orderRes.json();
-
-      // Step 2: Configure Razorpay Options
-      const options = {
-        key: import.meta.env.VITE_RAZORPAY_KEY,
-        amount: orderData.amount, // Paise
-        currency: "INR",
-        name: "ConsistPay",
-        description: `${plan} Plan - Daily Commitment: ₹${amount}`,
-        order_id: orderData.order_id,
-        handler: async function (response: any) {
-          try {
-            setLoading(true);
-            // Step 3: Verify Payment in backend
-            const verifyRes = await fetch(`${API}/api/payment/verify`, {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`,
-              },
-              body: JSON.stringify({
-                razorpay_order_id: response.razorpay_order_id,
-                razorpay_payment_id: response.razorpay_payment_id,
-                razorpay_signature: response.razorpay_signature,
-                plan,
-                dailyCommitment: amount,
-                depositAmount,
-              }),
-            });
-
-            const verifyData = await verifyRes.json();
-            if (verifyRes.ok && verifyData.onboardingComplete) {
-              setStep(7); // Jump to success screen
-            } else {
-              throw new Error(verifyData.message || "Payment verification failed.");
-            }
-          } catch (err: any) {
-            setError(err.message || "Something went wrong verifying payment.");
-          } finally {
-            setLoading(false);
-          }
-        },
-        prefill: {
-          name: "Placement Candidate",
-          email: "candidate@consistpay.com",
-        },
-        theme: {
-          color: "#7C3AED",
-        },
-        modal: {
-          ondismiss: function () {
-            setLoading(false);
-          },
-        },
-      };
-
-      // Step 3: Open Razorpay modal
-      const rzp = new (window as any).Razorpay(options);
-      rzp.on("payment.failed", function (response: any) {
-        setError("Payment failed: " + response.error.description);
-        setLoading(false);
-      });
-      rzp.open();
-    } catch (err: any) {
-      console.error("Razorpay integration error:", err);
-      setError(err.message || "Could not connect to Razorpay. Try skip payment below for demo.");
-      setLoading(false);
-    }
+    console.log("Razorpay dummy mode: Redirecting to simulated checkout...");
+    await handleSkipPayment();
   };
 
   // Skip payment for Testing & Demo purposes
@@ -249,7 +156,7 @@ export function Onboarding() {
           {step === 1 && (
             <div className="space-y-6 animate-in fade-in duration-500">
               <div className="text-center space-y-3">
-                <h1 className="text-3xl font-extrabold tracking-tight text-white leading-tight">
+                <h1 className="text-3xl font-bold tracking-tight text-white leading-tight">
                   Build coding consistency that actually lasts.
                 </h1>
                 <p className="text-zinc-400 text-sm md:text-base leading-relaxed max-w-lg mx-auto">
@@ -394,7 +301,7 @@ export function Onboarding() {
           {step === 3 && (
             <div className="space-y-4 animate-in fade-in duration-500 text-left">
               <div className="space-y-1">
-                <h2 className="text-xl md:text-2xl font-extrabold text-white tracking-tight">Choose Your Accountability Tier</h2>
+                <h2 className="text-xl md:text-2xl font-bold text-white tracking-tight">Choose Your Accountability Tier</h2>
                 <p className="text-zinc-400 text-xs">Select how you want to build consistency. Pro tier is highly recommended for serious preparation.</p>
               </div>
 
@@ -403,7 +310,7 @@ export function Onboarding() {
                 <button
                   type="button"
                   onClick={() => setPlan("Free")}
-                  className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all cursor-pointer ${
+                  className={`flex-1 py-2 text-xs font-semibold rounded-lg transition-all cursor-pointer ${
                     plan === "Free" ? "bg-zinc-800 text-white shadow" : "text-zinc-500"
                   }`}
                 >
@@ -412,7 +319,7 @@ export function Onboarding() {
                 <button
                   type="button"
                   onClick={() => setPlan("Pro")}
-                  className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all flex items-center justify-center gap-1 cursor-pointer ${
+                  className={`flex-1 py-2 text-xs font-semibold rounded-lg transition-all flex items-center justify-center gap-1 cursor-pointer ${
                     plan === "Pro" ? "bg-violet-600 text-white shadow" : "text-zinc-500"
                   }`}
                 >
@@ -424,9 +331,9 @@ export function Onboarding() {
               {/* Mobile Single Card Render */}
               <div className="block md:hidden">
                 {plan === "Free" ? (
-                  <div className="p-5 rounded-2xl border border-zinc-800 bg-[#0A0A0E] text-left space-y-4 shadow-xl">
+                  <div className="p-5 rounded-2xl border border-white/[0.04] bg-white/[0.01] text-left space-y-4 shadow-xl">
                     <div>
-                      <h3 className="font-extrabold text-white text-lg tracking-tight">Basic Accountability</h3>
+                      <h3 className="font-bold text-white text-lg tracking-tight">Basic Accountability</h3>
                       <p className="text-xs text-zinc-400 mt-1 leading-relaxed">
                         Habit logging and basic streak tracking for routine builders.
                       </p>
@@ -445,18 +352,18 @@ export function Onboarding() {
                         <span>1 grace coin to protect streak</span>
                       </li>
                     </ul>
-                    <div className="border-t border-zinc-800/60 pt-3 flex justify-between items-center">
-                      <span className="text-sm font-extrabold text-zinc-350">Free Forever</span>
-                      <span className="text-xs text-emerald-400 font-bold uppercase tracking-wider">Active</span>
+                    <div className="border-t border-white/[0.04] pt-3 flex justify-between items-center">
+                      <span className="text-sm font-semibold text-zinc-350">Free Forever</span>
+                      <span className="text-xs text-emerald-400 font-semibold uppercase tracking-wider">Active</span>
                     </div>
                   </div>
                 ) : (
-                  <div className="p-5 rounded-2xl border border-violet-500/40 bg-violet-950/5 text-left space-y-4 relative overflow-hidden shadow-[0_0_25px_rgba(124,58,237,0.1)]">
-                    <div className="absolute top-0 right-0 bg-violet-600 text-white text-[8px] font-black px-3 py-1 uppercase tracking-wider rounded-bl-lg">
+                  <div className="p-5 rounded-2xl border border-violet-500/30 bg-violet-500/[0.02] text-left space-y-4 relative overflow-hidden shadow-[0_0_25px_rgba(124,58,237,0.05)]">
+                    <div className="absolute top-0 right-0 bg-violet-600 text-white text-[8px] font-bold px-3 py-1 uppercase tracking-wider rounded-bl-lg">
                       RECOMMENDED
                     </div>
                     <div>
-                      <h3 className="font-extrabold text-white text-lg tracking-tight">Premium Prep Mode</h3>
+                      <h3 className="font-bold text-white text-lg tracking-tight">Premium Prep Mode</h3>
                       <p className="text-xs text-zinc-300 mt-1 leading-relaxed">
                         Complete feature set designed for placement preparation.
                       </p>
@@ -466,7 +373,7 @@ export function Onboarding() {
                         <TrendingUp className="w-4 h-4 text-emerald-400 shrink-0" />
                         <span>+10% Cash Streak Payout Bonus</span>
                       </li>
-                      <li className="flex items-center gap-2.5 text-violet-355">
+                      <li className="flex items-center gap-2.5 text-violet-300">
                         <Users className="w-4 h-4 text-violet-400 shrink-0" />
                         <span>Join PvP battles & Challenges</span>
                       </li>
@@ -479,13 +386,14 @@ export function Onboarding() {
                         <span>Gemini AI Performance Advisor</span>
                       </li>
                     </ul>
-                    <div className="border-t border-violet-900/20 pt-3 space-y-2">
+                    <div className="border-t border-white/[0.04] pt-3 space-y-2">
                       <div className="flex justify-between items-center w-full">
-                        <span className="text-sm font-extrabold text-violet-450">₹49 setup + deposit</span>
-                        <span className="text-[10px] text-violet-400 font-bold uppercase tracking-wider">Active</span>
+                        <span className="text-sm font-semibold text-violet-400">₹49 setup + deposit</span>
+                        <span className="text-[10px] text-violet-400 font-semibold uppercase tracking-wider">Active</span>
                       </div>
-                      <div className="text-[10px] text-violet-300/80 leading-normal italic font-medium flex items-center gap-1.5 bg-violet-500/5 border border-violet-500/10 rounded-lg p-1.5">
-                        <span>🍔 Less than a burger price to unlock Pro!</span>
+                      <div className="text-[10px] text-zinc-400 leading-normal font-medium flex items-center gap-1.5 bg-white/[0.02] border border-white/[0.04] rounded-lg p-2">
+                        <Sparkles className="w-3.5 h-3.5 text-violet-400 shrink-0" />
+                        <span>Affordable pricing to help you stay committed.</span>
                       </div>
                     </div>
                   </div>
@@ -500,19 +408,19 @@ export function Onboarding() {
                   type="button"
                   className={`p-4 sm:p-6 rounded-2xl border text-left transition-all duration-300 flex flex-col justify-between min-h-[290px] sm:min-h-[340px] relative overflow-hidden group ${
                     plan === "Free"
-                      ? "border-zinc-700 bg-[#121217] shadow-sm ring-1 ring-zinc-500/20"
-                      : "border-zinc-800 bg-[#0A0A0E] hover:border-zinc-700 hover:bg-[#0D0D12]"
+                      ? "border-zinc-700 bg-zinc-900/30 shadow-sm"
+                      : "border-white/[0.04] bg-white/[0.01] hover:border-zinc-800 hover:bg-white/[0.02]"
                   }`}
                 >
                   <div className="space-y-3">
                     <div className="flex justify-between items-center">
-                      <span className="px-2.5 py-0.5 rounded-full bg-zinc-850 border border-zinc-800 text-[9px] uppercase font-bold tracking-wider text-zinc-400">
+                      <span className="px-2.5 py-0.5 rounded-full bg-zinc-850 border border-zinc-805 text-[9px] uppercase font-semibold tracking-wider text-zinc-400">
                         Free Tier
                       </span>
                       {plan === "Free" && <CheckCircle2 className="w-4.5 h-4.5 text-emerald-400" />}
                     </div>
                     <div>
-                      <h3 className="font-extrabold text-white text-lg tracking-tight">Basic Accountability</h3>
+                      <h3 className="font-bold text-white text-lg tracking-tight">Basic Accountability</h3>
                       <p className="text-xs text-zinc-400 mt-1 leading-relaxed">
                         Habit logging and basic streak tracking for routine builders.
                       </p>
@@ -536,9 +444,9 @@ export function Onboarding() {
                       </li>
                     </ul>
                   </div>
-                  <div className="mt-4 flex justify-between items-center w-full border-t border-zinc-800/60 pt-3">
-                    <span className="text-sm font-extrabold text-zinc-350">Free Forever</span>
-                    {plan === "Free" && <span className="text-xs text-emerald-400 font-bold uppercase tracking-wider">Selected</span>}
+                  <div className="mt-4 flex justify-between items-center w-full border-t border-white/[0.04] pt-3">
+                    <span className="text-sm font-semibold text-zinc-350">Free Forever</span>
+                    {plan === "Free" && <span className="text-xs text-emerald-400 font-semibold uppercase tracking-wider">Selected</span>}
                   </div>
                 </button>
 
@@ -548,22 +456,22 @@ export function Onboarding() {
                   type="button"
                   className={`p-4 sm:p-6 rounded-2xl border text-left transition-all duration-300 relative flex flex-col justify-between min-h-[290px] sm:min-h-[340px] overflow-hidden group ${
                     plan === "Pro"
-                      ? "border-violet-500 bg-violet-955/5 shadow-md ring-1 ring-violet-500/20"
-                      : "border-zinc-800 bg-[#0A0A0E] hover:border-violet-500/20 hover:bg-[#0E0E14]"
+                      ? "border-violet-500 bg-violet-500/[0.02] shadow-md"
+                      : "border-white/[0.04] bg-white/[0.01] hover:border-violet-500/20 hover:bg-[#0E0E14]"
                   }`}
                 >
-                  <div className="absolute top-0 right-0 bg-violet-600 text-white text-[8px] font-black px-4 py-1 uppercase tracking-wider rounded-bl-lg shadow-md">
+                  <div className="absolute top-0 right-0 bg-violet-600 text-white text-[8px] font-bold px-4 py-1 uppercase tracking-wider rounded-bl-lg shadow-md">
                     RECOMMENDED
                   </div>
                   <div className="space-y-3">
                     <div className="flex justify-between items-center">
-                      <span className="px-2.5 py-0.5 rounded-full bg-violet-500/10 border border-violet-500/20 text-[9px] uppercase font-bold tracking-wider text-violet-300">
+                      <span className="px-2.5 py-0.5 rounded-full bg-violet-500/10 border border-violet-500/20 text-[9px] uppercase font-semibold tracking-wider text-violet-300">
                         Pro Tier
                       </span>
                       {plan === "Pro" && <CheckCircle2 className="w-4.5 h-4.5 text-violet-400" />}
                     </div>
                     <div>
-                      <h3 className="font-extrabold text-white text-lg tracking-tight">Premium Prep Mode</h3>
+                      <h3 className="font-bold text-white text-lg tracking-tight">Premium Prep Mode</h3>
                       <p className="text-xs text-zinc-300 mt-1 leading-relaxed">
                         Complete feature set designed for placement preparation.
                       </p>
@@ -573,11 +481,11 @@ export function Onboarding() {
                         <Check className="w-4 h-4 text-emerald-400 shrink-0" />
                         <span>+10% Cash Streak Payout Bonus</span>
                       </li>
-                      <li className="flex items-center gap-2.5 text-violet-350">
+                      <li className="flex items-center gap-2.5 text-violet-300">
                         <Users className="w-4 h-4 text-violet-400 shrink-0" />
                         <span>Join PvP battles & Challenges</span>
                       </li>
-                      <li className="flex items-center gap-2.5 text-zinc-355">
+                      <li className="flex items-center gap-2.5 text-zinc-300">
                         <Zap className="w-4 h-4 text-violet-400 shrink-0" />
                         <span>Double Grace Coins (milestones)</span>
                       </li>
@@ -585,26 +493,26 @@ export function Onboarding() {
                         <Sparkles className="w-4 h-4 text-violet-400 shrink-0" />
                         <span>Gemini AI Performance Advisor</span>
                       </li>
-                      <li className="flex items-center gap-2.5 text-zinc-550">
+                      <li className="flex items-center gap-2.5 text-zinc-500">
                         <Info className="w-4 h-4 text-zinc-550 shrink-0" />
                         <span className="text-[10px]">Requires refundable deposit stake</span>
                       </li>
                     </ul>
                   </div>
-                  <div className="mt-4 flex flex-col w-full border-t border-violet-900/20 pt-3 gap-1">
+                  <div className="mt-4 flex flex-col w-full border-t border-white/[0.04] pt-3 gap-1">
                     <div className="flex justify-between items-center w-full">
-                      <span className="text-sm font-extrabold text-violet-450">₹49 setup + deposit</span>
-                      {plan === "Pro" && <span className="text-[10px] text-violet-400 font-bold uppercase tracking-wider">Active</span>}
+                      <span className="text-sm font-semibold text-violet-400">₹49 setup + deposit</span>
+                      {plan === "Pro" && <span className="text-[10px] text-violet-400 font-semibold uppercase tracking-wider">Active</span>}
                     </div>
-                    <div className="text-[10px] text-violet-300/80 leading-normal italic font-medium flex items-center gap-1.5 bg-violet-500/5 border border-violet-500/10 rounded-lg p-1.5 mt-0.5">
-                      <span className="text-xs shrink-0">🍔</span>
-                      <span>Less than a burger price to unlock Pro!</span>
+                    <div className="text-[10px] text-zinc-400 leading-normal font-medium flex items-center gap-1.5 bg-white/[0.02] border border-white/[0.04] rounded-lg p-2 mt-1">
+                      <Sparkles className="w-3.5 h-3.5 text-violet-400 shrink-0" />
+                      <span>Affordable pricing to help you stay committed.</span>
                     </div>
                   </div>
                 </button>
               </div>
 
-              <div className="flex gap-4 pt-3 border-t border-zinc-800/40 mt-3">
+              <div className="flex gap-4 pt-3 border-t border-white/[0.04] mt-3">
                 <button
                   onClick={handleBack}
                   className="px-5 py-2.5 border border-zinc-800 hover:bg-[#16161F] rounded-xl font-semibold text-xs transition-all text-zinc-400 hover:text-white"
@@ -635,47 +543,47 @@ export function Onboarding() {
                 <button
                   onClick={() => setAmount(5)}
                   type="button"
-                  className={`p-3 rounded-2xl border text-center transition-all flex flex-col items-center justify-center gap-1.5 cursor-pointer ${
+                  className={`p-4 rounded-xl border text-center transition-all flex flex-col items-center justify-center gap-1.5 cursor-pointer ${
                     amount === 5
-                      ? "border-emerald-500 bg-emerald-500/10 text-emerald-400 font-bold shadow-lg"
-                      : "border-zinc-800 bg-[#0C0C10] text-zinc-400 hover:border-zinc-700"
+                      ? "border-emerald-500/50 bg-emerald-500/[0.02] text-emerald-400 font-semibold"
+                      : "border-white/[0.04] bg-white/[0.01] text-zinc-400 hover:border-zinc-800"
                   }`}
                 >
-                  <span className="text-[10px] sm:text-xs font-semibold">Casual</span>
-                  <span className="text-base sm:text-xl font-black text-white">₹5</span>
+                  <span className="text-[10px] sm:text-xs font-semibold text-zinc-400">Casual</span>
+                  <span className="text-base sm:text-lg font-bold text-white">₹5</span>
                   <span className="text-[9px] text-zinc-500">₹150 total</span>
                 </button>
 
                 <button
                   onClick={() => setAmount(20)}
                   type="button"
-                  className={`p-3 rounded-2xl border text-center transition-all flex flex-col items-center justify-center gap-1.5 cursor-pointer ${
+                  className={`p-4 rounded-xl border text-center transition-all flex flex-col items-center justify-center gap-1.5 cursor-pointer ${
                     amount === 20
-                      ? "border-violet-500 bg-violet-500/10 text-violet-400 font-bold shadow-lg"
-                      : "border-zinc-800 bg-[#0C0C10] text-zinc-400 hover:border-zinc-700"
+                      ? "border-violet-500/50 bg-violet-500/[0.02] text-violet-400 font-semibold"
+                      : "border-white/[0.04] bg-white/[0.01] text-zinc-400 hover:border-zinc-800"
                   }`}
                 >
-                  <span className="text-[10px] sm:text-xs font-semibold">Prep</span>
-                  <span className="text-base sm:text-xl font-black text-white">₹20</span>
+                  <span className="text-[10px] sm:text-xs font-semibold text-zinc-400">Prep</span>
+                  <span className="text-base sm:text-lg font-bold text-white">₹20</span>
                   <span className="text-[9px] text-zinc-500">₹600 total</span>
                 </button>
 
                 <button
                   onClick={() => setAmount(50)}
                   type="button"
-                  className={`p-3 rounded-2xl border text-center transition-all flex flex-col items-center justify-center gap-1.5 cursor-pointer ${
+                  className={`p-4 rounded-xl border text-center transition-all flex flex-col items-center justify-center gap-1.5 cursor-pointer ${
                     amount === 50
-                      ? "border-amber-500 bg-amber-500/10 text-amber-400 font-bold shadow-lg"
-                      : "border-zinc-800 bg-[#0C0C10] text-zinc-400 hover:border-zinc-700"
+                      ? "border-amber-500/50 bg-amber-500/[0.02] text-amber-400 font-semibold"
+                      : "border-white/[0.04] bg-white/[0.01] text-zinc-400 hover:border-zinc-800"
                   }`}
                 >
-                  <span className="text-[10px] sm:text-xs font-semibold">High</span>
-                  <span className="text-base sm:text-xl font-black text-white">₹50</span>
+                  <span className="text-[10px] sm:text-xs font-semibold text-zinc-400">High</span>
+                  <span className="text-base sm:text-lg font-bold text-white">₹50</span>
                   <span className="text-[9px] text-zinc-500">₹1,500 total</span>
                 </button>
               </div>
 
-              <div className="p-4 rounded-xl bg-zinc-900 border border-zinc-800 text-xs leading-relaxed text-zinc-400">
+              <div className="p-4 rounded-xl bg-white/[0.01] border border-white/[0.04] text-xs leading-relaxed text-zinc-400">
                 Having "skin in the game" psychologically increases consistency by up to 3x. Your deposit is fully returned if you maintain your commitment.
               </div>
 
@@ -702,75 +610,75 @@ export function Onboarding() {
           {step === 5 && (
             <div className="space-y-4 animate-in fade-in duration-500 text-left">
               <div className="space-y-1">
-                <h2 className="text-xl md:text-2xl font-extrabold text-white tracking-tight">Review Your Commitment Challenge</h2>
-                <p className="text-zinc-405 text-xs">Verify your 30-day program specifications before checkout.</p>
+                <h2 className="text-xl md:text-2xl font-bold text-white tracking-tight">Review Your Commitment Challenge</h2>
+                <p className="text-zinc-400 text-xs">Verify your 30-day program specifications before checkout.</p>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5 items-stretch pt-1">
                 {/* Left Side: Summary Table */}
-                <div className="bg-[#0C0C10] border border-zinc-800 rounded-2xl p-5 flex flex-col justify-between space-y-4">
+                <div className="bg-white/[0.01] border border-white/[0.04] rounded-2xl p-5 flex flex-col justify-between space-y-4">
                   <div className="space-y-2.5">
-                    <h3 className="font-bold text-white text-sm border-b border-zinc-800/80 pb-2">Challenge Details</h3>
-                    <div className="flex justify-between items-center text-xs border-b border-zinc-800/60 pb-2">
+                    <h3 className="font-bold text-white text-sm border-b border-white/[0.04] pb-2">Challenge Details</h3>
+                    <div className="flex justify-between items-center text-xs border-b border-white/[0.04] pb-2">
                       <span className="text-zinc-500">Selected Plan</span>
-                      <span className="font-bold text-zinc-200 capitalize">{plan} Mode</span>
+                      <span className="font-semibold text-zinc-200 capitalize">{plan} Mode</span>
                     </div>
 
-                    <div className="flex justify-between items-center text-xs border-b border-zinc-800/60 pb-2">
+                    <div className="flex justify-between items-center text-xs border-b border-white/[0.04] pb-2">
                       <span className="text-zinc-500">Daily Commitment</span>
-                      <span className="font-bold text-zinc-200">₹{amount} / day</span>
+                      <span className="font-semibold text-zinc-200">₹{amount} / day</span>
                     </div>
 
-                    <div className="flex justify-between items-center text-xs border-b border-zinc-800/60 pb-2">
+                    <div className="flex justify-between items-center text-xs border-b border-white/[0.04] pb-2">
                       <span className="text-zinc-500">Challenge Duration</span>
                       <span className="font-semibold text-zinc-300">30 Days</span>
                     </div>
 
                     {plan === "Pro" && (
                       <>
-                        <div className="flex justify-between items-center text-xs border-b border-zinc-800/60 pb-2">
+                        <div className="flex justify-between items-center text-xs border-b border-white/[0.04] pb-2">
                           <span className="text-zinc-500">Pro Setup Fee</span>
                           <span className="font-semibold text-violet-400">₹49</span>
                         </div>
-                        <div className="flex justify-between items-center text-xs border-b border-zinc-800/60 pb-2">
+                        <div className="flex justify-between items-center text-xs border-b border-white/[0.04] pb-2">
                           <span className="text-zinc-500">Premium 10% Bonus Payout</span>
-                          <span className="font-extrabold text-emerald-400">+₹{Math.round(depositTotal * 0.1)}</span>
+                          <span className="font-semibold text-emerald-400">+₹{Math.round(depositTotal * 0.1)}</span>
                         </div>
                       </>
                     )}
 
-                    <div className="flex justify-between items-center text-xs border-b border-zinc-800/60 pb-2 pt-0.5">
+                    <div className="flex justify-between items-center text-xs border-b border-white/[0.04] pb-2 pt-0.5">
                       <span className="text-zinc-400">Total Projected Payout</span>
-                      <span className="font-extrabold text-emerald-400 text-sm">
+                      <span className="font-semibold text-emerald-400 text-sm">
                         ₹{plan === "Pro" ? Math.round(depositTotal * 1.1) : depositTotal}
                       </span>
                     </div>
                   </div>
 
-                  <div className="flex justify-between items-center text-xs pt-1.5 bg-zinc-900/20 p-2.5 rounded-xl border border-zinc-800">
+                  <div className="flex justify-between items-center text-xs pt-1.5 bg-white/[0.02] p-2.5 rounded-xl border border-white/[0.04]">
                     <span className="text-zinc-400 font-semibold">Refundable Deposit</span>
-                    <span className="font-black text-lg text-violet-400">₹{depositTotal}</span>
+                    <span className="font-bold text-lg text-violet-400">₹{depositTotal}</span>
                   </div>
                 </div>
 
                 {/* Right Side: Simple Rules */}
                 <div className="space-y-3 flex flex-col justify-between">
-                  <div className="p-4 md:p-5 rounded-2xl border border-emerald-500/10 bg-[#0C0C10] space-y-2.5 flex-1 flex flex-col justify-center">
+                  <div className="p-4 md:p-5 rounded-2xl border border-emerald-500/10 bg-white/[0.01] space-y-2.5 flex-1 flex flex-col justify-center">
                     <div>
-                      <h4 className="font-bold text-emerald-400 text-xs flex items-center gap-1.5 mb-2">
+                      <h4 className="font-semibold text-emerald-400 text-xs flex items-center gap-1.5 mb-2">
                         <CheckCircle2 className="w-4.5 h-4.5 text-emerald-400" />
                         If You Maintain Consistency
                       </h4>
                       <ul className="space-y-1.5 text-[11px] text-zinc-300">
                         <li className="flex items-start gap-2">
                           <Check className="w-3 h-3 text-emerald-400 shrink-0 mt-0.5" />
-                          <span>Get your full <strong>₹{depositTotal}</strong> refundable deposit back.</span>
+                          <span>Get your full <strong className="text-white font-semibold">₹{depositTotal}</strong> refundable deposit back.</span>
                         </li>
                         <li className="flex items-start gap-2">
                           <Check className="w-3 h-3 text-emerald-400 shrink-0 mt-0.5" />
                           {plan === "Pro" ? (
                             <span>
-                              Receive extra <strong className="text-emerald-400 font-bold">10% cash bonus (+₹{Math.round(depositTotal * 0.1)})</strong>. Total payout: <strong className="text-emerald-400 font-extrabold">₹{Math.round(depositTotal * 1.1)}</strong>!
+                              Receive extra <strong className="text-emerald-400 font-semibold">10% cash bonus (+₹{Math.round(depositTotal * 0.1)})</strong>. Total payout: <strong className="text-emerald-400 font-semibold">₹{Math.round(depositTotal * 1.1)}</strong>!
                             </span>
                           ) : (
                             <span className="text-zinc-400">
@@ -786,16 +694,16 @@ export function Onboarding() {
                     </div>
                   </div>
 
-                  <div className="p-4 md:p-5 rounded-2xl border border-amber-500/10 bg-[#0C0C10] space-y-2.5 flex-1 flex flex-col justify-center">
+                  <div className="p-4 md:p-5 rounded-2xl border border-amber-500/10 bg-white/[0.01] space-y-2.5 flex-1 flex flex-col justify-center">
                     <div>
-                      <h4 className="font-bold text-amber-400 text-xs flex items-center gap-1.5 mb-2">
+                      <h4 className="font-semibold text-amber-400 text-xs flex items-center gap-1.5 mb-2">
                         <AlertTriangle className="w-4.5 h-4.5 text-amber-400 shrink-0" />
                         If You Miss a Day
                       </h4>
                       <ul className="space-y-1.5 text-[11px] text-zinc-300">
                         <li className="flex items-start gap-2">
                           <div className="w-1.5 h-1.5 rounded-full bg-amber-400 shrink-0 mt-1.5" />
-                          <span><strong>₹{amount}</strong> deducted from your deposit pool (only for missed days).</span>
+                          <span><strong className="text-white font-semibold">₹{amount}</strong> deducted from your deposit pool (only for missed days).</span>
                         </li>
                         <li className="flex items-start gap-2">
                           <div className="w-1.5 h-1.5 rounded-full bg-amber-400 shrink-0 mt-1.5" />
@@ -811,7 +719,7 @@ export function Onboarding() {
                 </div>
               </div>
 
-              <div className="flex gap-4 pt-3 border-t border-zinc-800/40 mt-3">
+              <div className="flex gap-4 pt-3 border-t border-white/[0.04] mt-3">
                 <button
                   onClick={handleBack}
                   className="px-5 py-2.5 border border-zinc-800 hover:bg-[#16161F] rounded-xl font-semibold text-xs transition-all text-zinc-400 hover:text-white"
@@ -841,10 +749,10 @@ export function Onboarding() {
                     </div>
                   </div>
                   <div className="space-y-2">
-                    <h3 className="text-xl font-bold text-white animate-pulse">
+                    <h3 className="text-xl font-semibold text-white animate-pulse">
                       {processingStep === 1 ? "Connecting to Bank..." : "Verifying Transaction..."}
                     </h3>
-                    <p className="text-zinc-500 text-xs uppercase tracking-widest font-mono font-bold">
+                    <p className="text-zinc-500 text-xs uppercase tracking-widest font-mono font-semibold">
                       {processingStep === 1 ? "ESTABLISHING SECURE CONNECTION" : "PROCESSING PAYMENT OF ₹" + (plan === "Pro" ? (amount ? amount * 30 : 0) + 49 : (amount ? amount * 30 : 0))}
                     </p>
                   </div>
@@ -852,17 +760,17 @@ export function Onboarding() {
               ) : (
                 <>
                   <div className="space-y-1">
-                    <h3 className="text-xl md:text-2xl font-extrabold text-white tracking-tight">Secure Checkout</h3>
-                    <p className="text-xs text-zinc-405 leading-relaxed">
+                    <h3 className="text-xl md:text-2xl font-bold text-white tracking-tight">Secure Checkout</h3>
+                    <p className="text-xs text-zinc-400 leading-relaxed">
                       Complete your payment securely. Your refundable deposit will be returned after 30 days of consistency.
                     </p>
                   </div>
 
                   {/* Sandbox Banner */}
                   <div className="p-3 bg-amber-500/5 border border-amber-500/20 rounded-xl flex items-start gap-2.5 text-amber-300/90 shadow-sm shadow-amber-500/2">
-                    <Info className="w-4 h-4 shrink-0 mt-0.5 text-amber-405" />
+                    <Lock className="w-4 h-4 shrink-0 mt-0.5 text-amber-400" />
                     <div>
-                      <h4 className="text-xs font-bold text-white uppercase tracking-wider">🔒 Sandbox Mode Enabled — Production Gateway Pending</h4>
+                      <h4 className="text-xs font-semibold text-white uppercase tracking-wider">Sandbox Mode Enabled — Production Gateway Pending</h4>
                       <p className="text-[11px] text-zinc-400 mt-0.5 leading-relaxed">
                         No real money will be charged. Please use the simulated checkout to complete onboarding verification and test the consistency flow.
                       </p>
@@ -872,14 +780,14 @@ export function Onboarding() {
                   {error && (
                     <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-3 flex items-start gap-3">
                       <AlertTriangle className="w-4.5 h-4.5 text-red-400 shrink-0 mt-0.5" />
-                      <p className="text-xs text-red-350">{error}</p>
+                      <p className="text-xs text-red-300">{error}</p>
                     </div>
                   )}
 
-                  <div className="p-5 rounded-2xl border border-zinc-800 bg-[#0C0C10] space-y-3 shadow-inner">
+                  <div className="p-5 rounded-2xl border border-white/[0.04] bg-white/[0.01] space-y-3 shadow-inner">
                     <div className="flex items-center justify-between text-xs">
                       <span className="text-zinc-500">Selected Plan</span>
-                      <span className="text-white font-bold capitalize flex items-center gap-1.5">
+                      <span className="text-white font-semibold capitalize flex items-center gap-1.5">
                         {plan === "Pro" && <Sparkles className="w-3.5 h-3.5 text-violet-400" />}
                         {plan} Mode
                       </span>
@@ -887,54 +795,54 @@ export function Onboarding() {
                     
                     <div className="flex items-center justify-between text-xs">
                       <span className="text-zinc-500">Daily Commitment</span>
-                      <span className="text-white font-bold">₹{amount}/day</span>
+                      <span className="text-white font-semibold">₹{amount}/day</span>
                     </div>
                     
-                    <div className="h-px bg-zinc-800 w-full" />
+                    <div className="h-px bg-white/[0.04] w-full" />
                     
                     <div className="flex items-center justify-between">
                       <div className="flex flex-col">
-                        <span className="text-zinc-300 font-bold text-xs">Refundable Deposit</span>
-                        <span className="text-zinc-550 text-[9px]">Held securely for 30 days. Fully refundable.</span>
+                        <span className="text-zinc-300 font-semibold text-xs">Refundable Deposit</span>
+                        <span className="text-zinc-500 text-[9px]">Held securely for 30 days. Fully refundable.</span>
                       </div>
-                      <span className="text-white font-black text-sm">₹{amount ? amount * 30 : 0}</span>
+                      <span className="text-white font-semibold text-sm">₹{amount ? amount * 30 : 0}</span>
                     </div>
 
                     {plan === "Pro" ? (
                       <>
-                        <div className="flex items-center justify-between pt-1 border-b border-zinc-800/40 pb-1 text-xs">
+                        <div className="flex items-center justify-between pt-1 border-b border-white/[0.04] pb-1 text-xs">
                           <div className="flex flex-col">
-                            <span className="text-violet-300 font-bold">Pro Setup & Subscription</span>
-                            <span className="text-violet-550/60 text-[9px]">1 month feature access</span>
+                            <span className="text-violet-300 font-semibold">Pro Setup & Subscription</span>
+                            <span className="text-violet-500/60 text-[9px]">1 month feature access</span>
                           </div>
-                          <span className="text-violet-400 font-black">₹49</span>
+                          <span className="text-violet-400 font-semibold">₹49</span>
                         </div>
                         <div className="flex items-center justify-between pt-1 text-xs">
                           <div className="flex flex-col">
-                            <span className="text-emerald-400 font-bold">Projected Monthly Refund Payout</span>
+                            <span className="text-emerald-400 font-semibold">Projected Monthly Refund Payout</span>
                             <span className="text-zinc-500 text-[9px]">Your ₹{amount ? amount * 30 : 0} deposit + 10% Cash Streak Bonus</span>
                           </div>
-                          <span className="text-emerald-400 font-black text-sm">₹{Math.round((amount ? amount * 30 : 0) * 1.1)}</span>
+                          <span className="text-emerald-400 font-semibold text-sm">₹{Math.round((amount ? amount * 30 : 0) * 1.1)}</span>
                         </div>
                       </>
                     ) : (
                       <div className="flex items-center justify-between pt-1 text-xs">
                         <div className="flex flex-col">
-                          <span className="text-emerald-400 font-bold">Projected Monthly Refund Payout</span>
+                          <span className="text-emerald-400 font-semibold">Projected Monthly Refund Payout</span>
                           <span className="text-zinc-500 text-[9px]">Your ₹{amount ? amount * 30 : 0} deposit returned on consistency</span>
                         </div>
-                        <span className="text-emerald-400 font-black text-sm">₹{amount ? amount * 30 : 0}</span>
+                        <span className="text-emerald-400 font-semibold text-sm">₹{amount ? amount * 30 : 0}</span>
                       </div>
                     )}
                     
-                    <div className="h-px bg-zinc-800 w-full" />
+                    <div className="h-px bg-white/[0.04] w-full" />
 
                     <div className="flex items-center justify-between pt-1">
                       <div className="flex flex-col">
-                        <span className="text-white font-extrabold text-sm">Total to Pay</span>
+                        <span className="text-white font-semibold text-sm">Total to Pay</span>
                         <span className="text-emerald-400/80 text-[10px] font-semibold">Includes all payment fees & taxes</span>
                       </div>
-                      <span className="text-emerald-400 font-black text-xl">
+                      <span className="text-emerald-400 font-bold text-xl">
                         ₹{plan === "Pro" ? (amount ? amount * 30 : 0) + 49 : (amount ? amount * 30 : 0)}
                       </span>
                     </div>
@@ -951,7 +859,8 @@ export function Onboarding() {
                         <Loader2 className="w-4 h-4 animate-spin" />
                       ) : (
                         <>
-                          ⚡ Simulate Secure Payment (Test Mode)
+                          <Zap className="w-4 h-4 shrink-0 text-white" />
+                          Simulate Secure Payment (Test Mode)
                           <ArrowRight className="w-4 h-4" />
                         </>
                       )}
@@ -975,7 +884,7 @@ export function Onboarding() {
                       </button>
                     </div>
 
-                    <div className="flex justify-center items-center gap-1.5 text-[9px] text-zinc-550 pt-1">
+                    <div className="flex justify-center items-center gap-1.5 text-[9px] text-zinc-500 pt-1">
                       <Shield className="w-3.5 h-3.5 text-emerald-500" />
                       <span>256-bit Encrypted SSL Secure Checkout Connection</span>
                     </div>
@@ -993,7 +902,7 @@ export function Onboarding() {
               </div>
 
               <div className="space-y-2">
-                <h1 className="text-2xl font-extrabold text-white">Challenge Activated!</h1>
+                <h1 className="text-2xl font-bold text-white">Challenge Activated!</h1>
                 <p className="text-zinc-400 text-xs">Your accountability framework is officially active.</p>
               </div>
 
@@ -1039,7 +948,6 @@ export function Onboarding() {
               </p>
             </div>
           )}
-
         </div>
 
         {/* Back Link */}

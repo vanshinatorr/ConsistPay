@@ -64,6 +64,9 @@ export function Auth() {
       if (!res.ok) throw new Error(data.message);
       setStep("otp");
       toast.success("Code sent successfully!");
+      if (data.mockOtp) {
+        setOtp(data.mockOtp);
+      }
     } catch (err: any) {
       toast.error(err.message || "Failed to send code");
     } finally {

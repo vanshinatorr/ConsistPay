@@ -54,4 +54,7 @@ const submissionSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+submissionSchema.index({ userId: 1, date: -1 });
+submissionSchema.index({ userId: 1, status: 1 });
+
 module.exports = mongoose.model("Submission", submissionSchema);
