@@ -26,7 +26,7 @@ export function Footer({ className }: FooterProps = {}) {
           <div>
             <Link
               to="/dashboard"
-              className="flex items-center gap-3 mb-5"
+              className="flex items-center gap-3 mb-3"
             >
               <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center">
                 <Code2 className="w-5 h-5 text-white" />
@@ -37,13 +37,13 @@ export function Footer({ className }: FooterProps = {}) {
               </span>
             </Link>
 
-            <p className="text-sm leading-7 text-zinc-400 max-w-sm">
+            <p className="text-xs leading-normal text-zinc-400 max-w-sm">
               Consistency backed by commitment. Built for developers who perform
               better under accountability than motivation.
             </p>
 
             {/* Social Icons */}
-            <div className="flex items-center gap-4 mt-7">
+            <div className="flex items-center gap-4 mt-4">
               <a
                 href="https://instagram.com/vansh_vj"
                 target="_blank"
@@ -66,11 +66,11 @@ export function Footer({ className }: FooterProps = {}) {
 
           {/* Platform Links */}
           <div>
-            <h3 className="text-sm font-semibold uppercase tracking-[0.18em] text-white mb-6">
+            <h3 className="text-xs font-semibold uppercase tracking-[0.18em] text-zinc-200 mb-3">
               Platform
             </h3>
 
-            <div className="space-y-4">
+            <div className="space-y-2">
               <Link
                 to="/faq"
                 className="block text-sm text-zinc-400 hover:text-white transition-colors"
@@ -96,11 +96,11 @@ export function Footer({ className }: FooterProps = {}) {
 
           {/* Support */}
           <div>
-            <h3 className="text-sm font-semibold uppercase tracking-[0.18em] text-white mb-6">
+            <h3 className="text-xs font-semibold uppercase tracking-[0.18em] text-zinc-200 mb-3">
               Support
             </h3>
 
-            <div className="space-y-4">
+            <div className="space-y-2">
               <a
                 href="https://wa.me/918529975095"
                 target="_blank"
@@ -127,7 +127,7 @@ export function Footer({ className }: FooterProps = {}) {
         </div>
 
         {/* Bottom */}
-        <div className="mt-10 md:mt-8 pt-6 border-t border-white/[0.04] flex flex-col md:flex-row items-center justify-between gap-4">
+        <div className="mt-6 pt-4 border-t border-white/[0.04] flex flex-col md:flex-row items-center justify-between gap-4">
           <p className="text-xs text-zinc-500">
             © 2026 ConsistPay. All rights reserved.
           </p>
