@@ -21,9 +21,9 @@ export function WhyConsistPay() {
   ];
 
   return (
-    <section className="px-6 py-24 relative overflow-hidden bg-[#0A0C10]">
+    <section className="px-6 py-12 md:py-0 relative overflow-hidden bg-transparent w-full">
       <div className="max-w-5xl mx-auto relative z-10">
-        <div className="text-center mb-16">
+        <div className="text-center mb-10 md:mb-12">
           <h2 className="text-4xl sm:text-5xl font-black mb-4 text-transparent bg-clip-text bg-gradient-to-r from-white to-slate-400 tracking-tight">
             Why ConsistPay?
           </h2>
@@ -32,7 +32,7 @@ export function WhyConsistPay() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
           {/* Typical Apps */}
           <div className="bg-[#13151f] border border-red-500/10 rounded-3xl p-8 md:p-10 relative overflow-hidden group">
             <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-red-500/30 to-transparent" />

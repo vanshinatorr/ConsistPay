@@ -5,7 +5,7 @@ export function HeroNew() {
   const navigate = useNavigate();
 
   return (
-    <section className="relative px-6 py-24 md:py-32 overflow-hidden">
+    <section className="relative px-6 py-24 md:py-0 overflow-hidden w-full">
       <style>{`
         @keyframes scanline {
           0% { transform: translateY(-100%); }
