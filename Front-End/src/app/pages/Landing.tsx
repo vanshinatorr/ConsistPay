@@ -132,7 +132,7 @@ export function Landing() {
         </div>
 
         {/* Section 2: Why ConsistPay & Social Proof */}
-        <div className="hidden md:flex md:snap-start md:snap-always md:h-screen flex-col justify-between pt-16 pb-4 relative overflow-hidden border-t border-white/5 bg-[#0A0C10] w-full">
+        <div className="hidden md:flex md:snap-start md:snap-always md:h-screen flex-col justify-between pt-20 pb-4 relative overflow-hidden border-t border-white/5 bg-[#0A0C10] w-full">
           <div className="flex-1 flex items-center justify-center">
             <WhyConsistPay />
           </div>
@@ -142,18 +142,18 @@ export function Landing() {
         </div>
 
         {/* Section 3: How It Works */}
-        <div className="md:snap-start md:snap-always md:h-screen flex flex-col justify-center relative overflow-hidden border-t border-white/5 bg-[#06080D]">
+        <div className="md:snap-start md:snap-always md:h-screen flex flex-col justify-center pt-20 relative overflow-hidden border-t border-white/5 bg-[#06080D]">
           <HowItWorks />
         </div>
 
         {/* Section 4: More Features */}
-        <div className="hidden md:flex md:snap-start md:snap-always md:h-screen flex-col justify-center relative overflow-hidden border-t border-white/5 bg-[#0A0C10]">
+        <div className="hidden md:flex md:snap-start md:snap-always md:h-screen flex-col justify-center pt-20 relative overflow-hidden border-t border-white/5 bg-[#0A0C10]">
           <MoreFeatures />
         </div>
 
         {/* Section 5: Pre-Footer CTA & Footer */}
         <div className="md:snap-start md:snap-always md:h-screen flex flex-col justify-between relative overflow-hidden border-t border-white/5 bg-[#06080D]">
-          <div className="flex-1 flex items-center justify-center">
+          <div className="flex-1 flex items-center justify-center pt-20">
             <section className="py-0 relative overflow-hidden w-full hidden md:block">
               <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-violet-900/10 via-[#06080D] to-[#06080D] opacity-100" />
               <div className="max-w-4xl mx-auto px-6 relative z-10 text-center">
