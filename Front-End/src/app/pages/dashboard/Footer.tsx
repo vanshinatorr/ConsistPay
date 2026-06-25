@@ -19,7 +19,7 @@ export function Footer({ className }: FooterProps = {}) {
 
 
       {/* Main Footer */}
-      <div className="relative max-w-6xl mx-auto px-6 py-14">
+      <div className="relative max-w-6xl mx-auto px-6 py-10 md:py-8">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
           
           {/* Brand */}
@@ -127,7 +127,7 @@ export function Footer({ className }: FooterProps = {}) {
         </div>
 
         {/* Bottom */}
-        <div className="mt-14 pt-6 border-t border-white/[0.04] flex flex-col md:flex-row items-center justify-between gap-4">
+        <div className="mt-10 md:mt-8 pt-6 border-t border-white/[0.04] flex flex-col md:flex-row items-center justify-between gap-4">
           <p className="text-xs text-zinc-500">
             © 2026 ConsistPay. All rights reserved.
           </p>

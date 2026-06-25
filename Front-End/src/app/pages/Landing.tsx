@@ -150,24 +150,22 @@ export function Landing() {
         </div>
 
         {/* Section 5: Pre-Footer CTA & Footer */}
-        <div className="md:snap-start md:snap-always md:h-screen flex flex-col justify-between relative overflow-hidden border-t border-white/5 bg-[#06080D]">
-          <div className="flex-1 flex items-center justify-center">
-            <section className="py-12 md:py-16 relative overflow-hidden w-full hidden md:block">
-              <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-violet-900/10 via-[#06080D] to-[#06080D] opacity-100" />
-              <div className="max-w-4xl mx-auto px-6 relative z-10 text-center">
-                <h2 className="text-4xl md:text-5xl font-bold tracking-tight mb-6 text-transparent bg-clip-text bg-gradient-to-r from-white via-zinc-100 to-zinc-400">
-                  Ready to build unstoppable habits?
-                </h2>
-                <p className="text-lg text-zinc-400 mb-10 max-w-2xl mx-auto leading-relaxed">
-                  Join the developers who have committed to consistency and transformed their skills. Stop breaking promises to yourself.
-                </p>
-                <Link to="/signup" className="group relative inline-flex items-center gap-2 px-8 py-3.5 bg-white text-black hover:bg-zinc-100 font-semibold rounded-xl transition-all duration-300 shadow-lg shadow-white/5 hover:scale-[1.02]">
-                  Start Your Journey Free
-                  <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
-                </Link>
-              </div>
-            </section>
-          </div>
+        <div className="md:snap-start md:snap-always md:h-screen flex flex-col justify-center gap-8 md:gap-10 relative overflow-hidden border-t border-white/5 bg-[#06080D]">
+          <section className="py-0 relative overflow-hidden w-full hidden md:block">
+            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-violet-900/10 via-[#06080D] to-[#06080D] opacity-100" />
+            <div className="max-w-4xl mx-auto px-6 relative z-10 text-center">
+              <h2 className="text-4xl md:text-5xl font-bold tracking-tight mb-6 text-transparent bg-clip-text bg-gradient-to-r from-white via-zinc-100 to-zinc-400">
+                Ready to build unstoppable habits?
+              </h2>
+              <p className="text-lg text-zinc-400 mb-10 max-w-2xl mx-auto leading-relaxed">
+                Join the developers who have committed to consistency and transformed their skills. Stop breaking promises to yourself.
+              </p>
+              <Link to="/signup" className="group relative inline-flex items-center gap-2 px-8 py-3.5 bg-white text-black hover:bg-zinc-100 font-semibold rounded-xl transition-all duration-300 shadow-lg shadow-white/5 hover:scale-[1.02]">
+                Start Your Journey Free
+                <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+              </Link>
+            </div>
+          </section>
           <Footer className="mt-0" />
         </div>
       </main>
