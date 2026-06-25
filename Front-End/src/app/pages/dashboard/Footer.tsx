@@ -1,11 +1,11 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import {
-  Code2,
   ExternalLink,
   Instagram,
   Linkedin,
 } from "lucide-react";
+import { Logo } from "../../components/Logo";
 
 interface FooterProps {
   className?: string;
@@ -29,7 +29,7 @@ export function Footer({ className }: FooterProps = {}) {
               className="flex items-center gap-3 mb-3"
             >
               <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center">
-                <Code2 className="w-5 h-5 text-white" />
+                <Logo className="w-5 h-5 text-white" />
               </div>
 
               <span className="text-2xl font-semibold tracking-tight text-white">

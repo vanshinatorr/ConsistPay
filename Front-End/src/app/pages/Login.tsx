@@ -1,4 +1,4 @@
-import { Code2 } from "lucide-react";
+import { Logo } from "../components/Logo";
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { Input } from "../components/ui/input";
@@ -69,7 +69,7 @@ export function Login() {
         {/* Logo + App Name */}
         <Link to="/" className="flex items-center justify-center gap-3 mb-10">
           <div className="w-10 h-10 bg-gradient-to-br from-violet-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg shadow-violet-500/10">
-            <Code2 className="w-5 h-5 text-white" />
+            <Logo className="w-5 h-5 text-white" />
           </div>
           <span className="text-xl font-bold bg-gradient-to-r from-white to-zinc-400 bg-clip-text text-transparent">
             ConsistPay

@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import { Code2, Bell, CheckCircle2, Swords, Trophy, Flame, Sparkles, X } from "lucide-react";
+import { Bell, CheckCircle2, Swords, Trophy, Flame, Sparkles, X } from "lucide-react";
+import { Logo } from "../../components/Logo";
 import { Link, useLocation } from "react-router-dom";
 import { BattleHubModal } from "../../components/battle/BattleHubModal";
 
@@ -97,7 +98,7 @@ export function Navbar({ initials, plan = "free", avatar, isAvatarUrl }: NavbarP
               className="flex items-center gap-3 shrink-0"
             >
               <div className="w-10 h-10 bg-gradient-to-br from-violet-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg shadow-violet-500/30">
-                <Code2 className="w-6 h-6 text-white" />
+                <Logo className="w-6 h-6 text-white" />
               </div>
 
               <span className="hidden sm:block text-lg font-bold bg-gradient-to-r from-white to-zinc-400 bg-clip-text text-transparent">
