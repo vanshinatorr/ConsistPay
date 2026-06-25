@@ -2,8 +2,8 @@ import { ShieldCheck, Cpu, Lock, Server } from "lucide-react";
 
 export function SocialProof() {
   const stats = [
-    { value: "24", label: "Submissions Verified" },
-    { value: "₹150", label: "Refunded to Users" },
+    { value: "100+", label: "Submissions Verified" },
+    { value: "₹500+", label: "Refunded to Users" },
     { value: "100%", label: "Streak Retention" },
   ];
 
