@@ -1,4 +1,4 @@
-import { Code2, ArrowLeft, TrendingUp, Award, Flame, Target } from "lucide-react";
+import { Code2, ArrowLeft, TrendingUp, Award, Flame, Target, Crown, Trophy, Medal } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 
@@ -31,7 +31,7 @@ const avatarColors = [
 const AvatarRenderer = ({ avatar, className, colorClass }: { avatar: string, className: string, colorClass: string }) => {
   const isUrl = avatar.startsWith("http");
   if (isUrl) {
-    return <img src={avatar} alt="Avatar" className={`${className} object-cover bg-white/5 border border-white/10`} />;
+    return <img src={avatar} alt="Avatar" className={`${className} object-cover bg-white/5 border border-white/[0.04]`} />;
   }
   return <div className={`${className} bg-gradient-to-br ${colorClass} text-white`}>{avatar}</div>;
 };
@@ -119,7 +119,7 @@ export function Leaderboard() {
       </div>
 
       {/* Navbar */}
-      <nav className="sticky top-0 z-50 border-b border-white/10 bg-[#0D0D0F]/80 backdrop-blur-xl">
+      <nav className="sticky top-0 z-50 border-b border-white/[0.04] bg-[#0D0D0F]/80 backdrop-blur-xl">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between">
             <Link to="/dashboard" className="flex items-center gap-2 text-zinc-400 hover:text-white transition-colors">
@@ -159,11 +159,11 @@ export function Leaderboard() {
         {/* Your Rank Card */}
         <div className="relative mb-6">
           <div className="absolute inset-0 bg-gradient-to-br from-violet-500/20 to-emerald-500/20 rounded-2xl blur-xl opacity-60" />
-          <div className="relative bg-violet-500/10 backdrop-blur-xl border border-violet-500/30 rounded-2xl p-5">
+          <div className="relative bg-[#0F0F13] border border-white/[0.04] rounded-2xl p-5">
             <p className="text-zinc-400 text-xs mb-3 uppercase tracking-wider">Your Position</p>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
-                <div className="w-10 h-10 bg-white/10 rounded-lg flex items-center justify-center font-bold text-violet-300">
+                <div className="w-10 h-10 bg-white/5 border border-white/[0.04] rounded-lg flex items-center justify-center font-bold text-violet-300">
                   #{currentUser.rank}
                 </div>
                 <AvatarRenderer 
@@ -173,7 +173,10 @@ export function Leaderboard() {
                 />
                 <div>
                   <div className="font-bold text-violet-300">You</div>
-                  <div className="text-xs text-zinc-400">🔥 {currentUser.streak} day streak</div>
+                  <div className="flex items-center gap-1 text-xs text-zinc-400 mt-0.5">
+                    <Flame className="w-3.5 h-3.5 text-orange-400" />
+                    <span>{currentUser.streak} day streak</span>
+                  </div>
                 </div>
               </div>
               <div className="text-right">
@@ -189,8 +192,12 @@ export function Leaderboard() {
           {/* 2nd */}
           <div className="relative mt-6">
             <div className="absolute inset-0 bg-zinc-400/10 rounded-2xl blur-lg opacity-60" />
-            <div className="relative bg-white/5 border border-zinc-400/20 rounded-2xl p-4 text-center">
-              <div className="text-2xl mb-1">🥈</div>
+            <div className="relative bg-[#0F0F13] border border-white/[0.04] rounded-2xl p-4 text-center">
+              <div className="flex justify-center mb-2">
+                <div className="p-2 bg-zinc-500/10 border border-zinc-500/20 rounded-xl">
+                  <Trophy className="w-5 h-5 text-zinc-400" />
+                </div>
+              </div>
               <AvatarRenderer 
                 avatar={sorted[1]?.avatar || "US"} 
                 className="w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm mx-auto mb-2" 
@@ -204,8 +211,12 @@ export function Leaderboard() {
           {/* 1st */}
           <div className="relative -mt-2">
             <div className="absolute inset-0 bg-yellow-500/20 rounded-2xl blur-lg opacity-60" />
-            <div className="relative bg-yellow-500/10 border border-yellow-500/30 rounded-2xl p-4 text-center">
-              <div className="text-3xl mb-1">🥇</div>
+            <div className="relative bg-[#0F0F13] border border-yellow-500/20 rounded-2xl p-4 text-center">
+              <div className="flex justify-center mb-2">
+                <div className="p-2 bg-yellow-500/10 border border-yellow-500/20 rounded-xl">
+                  <Crown className="w-6 h-6 text-yellow-400 animate-bounce" style={{ animationDuration: '3s' }} />
+                </div>
+              </div>
               <AvatarRenderer 
                 avatar={sorted[0]?.avatar || "US"} 
                 className="w-12 h-12 rounded-full flex items-center justify-center font-bold mx-auto mb-2" 
@@ -219,8 +230,12 @@ export function Leaderboard() {
           {/* 3rd */}
           <div className="relative mt-6">
             <div className="absolute inset-0 bg-orange-500/10 rounded-2xl blur-lg opacity-60" />
-            <div className="relative bg-white/5 border border-orange-500/20 rounded-2xl p-4 text-center">
-              <div className="text-2xl mb-1">🥉</div>
+            <div className="relative bg-[#0F0F13] border border-white/[0.04] rounded-2xl p-4 text-center">
+              <div className="flex justify-center mb-2">
+                <div className="p-2 bg-orange-500/10 border border-orange-500/20 rounded-xl">
+                  <Medal className="w-5 h-5 text-orange-400" />
+                </div>
+              </div>
               <AvatarRenderer 
                 avatar={sorted[2]?.avatar || "US"} 
                 className="w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm mx-auto mb-2" 
@@ -233,7 +248,7 @@ export function Leaderboard() {
         </div>
 
         {/* Tabs */}
-        <div className="flex gap-2 mb-6 bg-white/5 border border-white/10 rounded-xl p-1">
+        <div className="flex gap-2 mb-6 bg-[#0F0F13] border border-white/[0.04] rounded-xl p-1">
           {tabs.map(({ key, label, icon: Icon }) => (
             <button
               key={key}
@@ -253,23 +268,23 @@ export function Leaderboard() {
         {/* Full List */}
         <div className="relative">
           <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-white/2 rounded-2xl blur-xl opacity-40" />
-          <div className="relative bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl overflow-hidden">
+          <div className="relative bg-[#0F0F13] border border-white/[0.04] rounded-2xl overflow-hidden shadow-xl">
             {sorted.map((user, index) => (
               <div
                 key={user.name}
-                className={`flex items-center justify-between px-5 py-4 border-b border-white/5 last:border-0 transition-all
+                className={`flex items-center justify-between px-5 py-4 border-b border-white/[0.04] last:border-0 transition-all
                   ${user.isCurrentUser
                     ? "bg-violet-500/10 border-l-2 border-l-violet-500"
-                    : "hover:bg-white/3"
+                    : "hover:bg-white/[0.02]"
                   }`}
               >
                 <div className="flex items-center gap-4">
                   {/* Rank */}
-                  <div className={`w-8 h-8 flex items-center justify-center font-bold text-sm rounded-lg
-                    ${user.rank === 1 ? "bg-yellow-500/20 text-yellow-400" : ""}
-                    ${user.rank === 2 ? "bg-zinc-400/20 text-zinc-300" : ""}
-                    ${user.rank === 3 ? "bg-orange-500/20 text-orange-400" : ""}
-                    ${user.rank > 3 ? "bg-white/10 text-zinc-400" : ""}
+                  <div className={`w-8 h-8 flex items-center justify-center font-bold text-sm rounded-lg border
+                    ${user.rank === 1 ? "bg-yellow-500/10 border-yellow-500/20 text-yellow-400" : ""}
+                    ${user.rank === 2 ? "bg-zinc-400/10 border-zinc-400/20 text-zinc-300" : ""}
+                    ${user.rank === 3 ? "bg-orange-500/10 border-orange-500/20 text-orange-400" : ""}
+                    ${user.rank > 3 ? "bg-white/5 border-white/[0.04] text-zinc-400" : ""}
                   `}>
                     {user.rank}
                   </div>
@@ -283,11 +298,14 @@ export function Leaderboard() {
 
                   {/* Name */}
                   <div>
-                    <div className={`font-semibold ${user.isCurrentUser ? "text-violet-300" : ""}`}>
-                      {user.username || user.name}
-                      {user.isCurrentUser && <span className="ml-2 text-xs bg-violet-500/20 text-violet-300 px-2 py-0.5 rounded-full">You</span>}
+                    <div className={`font-semibold flex items-center gap-1.5 ${user.isCurrentUser ? "text-violet-300" : ""}`}>
+                      <span>{user.username || user.name}</span>
+                      {user.isCurrentUser && <span className="text-[10px] bg-violet-500/20 text-violet-300 px-1.5 py-0.5 rounded-full font-bold">You</span>}
                     </div>
-                    <div className="text-xs text-zinc-500">🔥 {user.streak} day streak</div>
+                    <div className="flex items-center gap-1 text-xs text-zinc-500 mt-0.5">
+                      <Flame className="w-3.5 h-3.5 text-orange-500/60" />
+                      <span>{user.streak} day streak</span>
+                    </div>
                   </div>
                 </div>
 
@@ -297,8 +315,15 @@ export function Leaderboard() {
                     {getValue(user)}
                   </div>
                   {user.rank <= 3 && (
-                    <div className="text-xs text-zinc-500">
-                      {user.rank === 1 ? "👑 Leader" : `#${user.rank}`}
+                    <div className="text-xs text-zinc-500 flex items-center justify-end gap-1 mt-0.5">
+                      {user.rank === 1 ? (
+                        <>
+                          <Crown className="w-3 h-3 text-yellow-400" />
+                          <span className="font-semibold text-yellow-400">Leader</span>
+                        </>
+                      ) : (
+                        <span>#{user.rank}</span>
+                      )}
                     </div>
                   )}
                 </div>

@@ -1,4 +1,4 @@
-import { Code2, Check, X, Info, Trophy, Zap, Users, TrendingUp, Gift, Shield } from "lucide-react";
+import { Code2, Check, X, Info, Trophy, Zap, Users, TrendingUp, Gift, Shield, Coins, Target } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 
@@ -60,7 +60,7 @@ export function Pricing() {
   ];
 
   return (
-    <div className="min-h-screen text-white" style={{ backgroundColor: '#0D0D0F' }}>
+    <div className="min-h-screen text-white bg-[#0D0D0F]">
       {/* Background Gradients */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-0 left-1/4 w-96 h-96 bg-violet-500/10 rounded-full blur-[120px]" />
@@ -69,7 +69,7 @@ export function Pricing() {
       </div>
 
       {/* Navbar */}
-      <nav className="sticky top-0 z-50 border-b border-white/10 bg-[#0D0D0F]/80 backdrop-blur-xl">
+      <nav className="sticky top-0 z-50 border-b border-white/[0.04] bg-[#0D0D0F]/80 backdrop-blur-xl">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between">
             {/* Logo */}
@@ -119,7 +119,7 @@ export function Pricing() {
         <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto mb-20">
           {/* FREE PLAN */}
           <div className="relative">
-            <div className="relative bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-8 hover:border-white/20 transition-all">
+            <div className="relative bg-[#0F0F13] border border-white/[0.04] rounded-2xl p-8 hover:border-white/10 transition-all shadow-xl">
               <div className="mb-8">
                 <h3 className="text-2xl font-bold mb-2">Free</h3>
                 <p className="text-zinc-400 text-sm mb-6">Perfect for getting started</p>
@@ -131,7 +131,7 @@ export function Pricing() {
 
               <Link
                 to="/signup"
-                className="block w-full py-3 bg-white/10 hover:bg-white/15 text-white font-semibold rounded-lg transition-all duration-300 text-center mb-8 border border-white/20"
+                className="block w-full py-3 bg-white/5 hover:bg-white/10 text-white font-semibold rounded-lg transition-all duration-300 text-center mb-8 border border-white/[0.04]"
               >
                 Get Started Free
               </Link>
@@ -142,7 +142,7 @@ export function Pricing() {
                     {feature.included ? (
                       <Check className="w-5 h-5 text-emerald-400 flex-shrink-0 mt-0.5" />
                     ) : (
-                      <X className="w-5 h-5 text-zinc-600 flex-shrink-0 mt-0.5" />
+                      <X className="w-5 h-5 text-zinc-650 flex-shrink-0 mt-0.5" />
                     )}
                     <span className={`text-sm ${feature.included ? 'text-zinc-300' : 'text-zinc-600'}`}>
                       {feature.text}
@@ -163,7 +163,7 @@ export function Pricing() {
               Most Popular
             </div>
 
-            <div className="relative bg-white/5 backdrop-blur-xl border border-violet-500/30 rounded-2xl p-8 hover:border-violet-500/50 transition-all">
+            <div className="relative bg-[#0F0F13] border border-violet-500/30 rounded-2xl p-8 hover:border-violet-500/50 transition-all shadow-xl">
               <div className="mb-8">
                 <h3 className="text-2xl font-bold mb-2 bg-gradient-to-r from-violet-300 to-purple-300 bg-clip-text text-transparent">
                   Pro
@@ -186,26 +186,23 @@ export function Pricing() {
               </button>
 
               <div className="space-y-4">
-
-
-{proPlanFeatures.map((feature, index) => (
-  <div
-    key={index}
-    className={`flex items-start gap-3 ${feature.highlight ? 'cursor-pointer group' : ''}`}
-    onClick={feature.highlight ? () => setShowModal(true) : undefined}
-  >
-    <Check className={`w-5 h-5 flex-shrink-0 mt-0.5 ${feature.highlight ? 'text-violet-400' : 'text-emerald-400'}`} />
-    <div className="flex-1 flex items-center gap-2">
-      <span className={`text-sm ${feature.highlight ? 'text-violet-300 font-medium group-hover:text-violet-200' : 'text-zinc-300'}`}>
-        {feature.text}
-      </span>
-      {feature.highlight && (
-        <Info className="w-4 h-4 text-violet-400 group-hover:text-violet-300 flex-shrink-0" />
-      )}
-    </div>
-  </div>
-))}
-
+                {proPlanFeatures.map((feature, index) => (
+                  <div
+                    key={index}
+                    className={`flex items-start gap-3 ${feature.highlight ? 'cursor-pointer group' : ''}`}
+                    onClick={feature.highlight ? () => setShowModal(true) : undefined}
+                  >
+                    <Check className={`w-5 h-5 flex-shrink-0 mt-0.5 ${feature.highlight ? 'text-violet-400' : 'text-emerald-400'}`} />
+                    <div className="flex-1 flex items-center gap-2">
+                      <span className={`text-sm ${feature.highlight ? 'text-violet-300 font-medium group-hover:text-violet-200' : 'text-zinc-300'}`}>
+                        {feature.text}
+                      </span>
+                      {feature.highlight && (
+                        <Info className="w-4 h-4 text-violet-400 group-hover:text-violet-300 flex-shrink-0" />
+                      )}
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
           </div>
@@ -217,8 +214,8 @@ export function Pricing() {
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
             <div className="relative group">
               <div className="absolute inset-0 bg-gradient-to-br from-violet-500/20 to-purple-500/20 rounded-xl blur-lg opacity-0 group-hover:opacity-100 transition-opacity" />
-              <div className="relative bg-white/5 backdrop-blur-xl border border-white/10 rounded-xl p-6 hover:border-violet-500/30 transition-all">
-                <div className="w-12 h-12 bg-violet-500/10 rounded-lg flex items-center justify-center mb-4">
+              <div className="relative bg-[#0F0F13] border border-white/[0.04] rounded-xl p-6 hover:border-violet-500/30 transition-all shadow-lg">
+                <div className="w-12 h-12 bg-violet-500/10 rounded-lg flex items-center justify-center mb-4 border border-violet-500/10">
                   <Trophy className="w-6 h-6 text-violet-400" />
                 </div>
                 <h3 className="font-semibold mb-2">Real Stakes</h3>
@@ -230,8 +227,8 @@ export function Pricing() {
 
             <div className="relative group">
               <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/20 to-green-500/20 rounded-xl blur-lg opacity-0 group-hover:opacity-100 transition-opacity" />
-              <div className="relative bg-white/5 backdrop-blur-xl border border-white/10 rounded-xl p-6 hover:border-emerald-500/30 transition-all">
-                <div className="w-12 h-12 bg-emerald-500/10 rounded-lg flex items-center justify-center mb-4">
+              <div className="relative bg-[#0F0F13] border border-white/[0.04] rounded-xl p-6 hover:border-emerald-500/30 transition-all shadow-lg">
+                <div className="w-12 h-12 bg-emerald-500/10 rounded-lg flex items-center justify-center mb-4 border border-emerald-500/10">
                   <Users className="w-6 h-6 text-emerald-400" />
                 </div>
                 <h3 className="font-semibold mb-2">Versus Mode</h3>
@@ -243,8 +240,8 @@ export function Pricing() {
 
             <div className="relative group">
               <div className="absolute inset-0 bg-gradient-to-br from-violet-500/20 to-purple-500/20 rounded-xl blur-lg opacity-0 group-hover:opacity-100 transition-opacity" />
-              <div className="relative bg-white/5 backdrop-blur-xl border border-white/10 rounded-xl p-6 hover:border-violet-500/30 transition-all">
-                <div className="w-12 h-12 bg-violet-500/10 rounded-lg flex items-center justify-center mb-4">
+              <div className="relative bg-[#0F0F13] border border-white/[0.04] rounded-xl p-6 hover:border-violet-500/30 transition-all shadow-lg">
+                <div className="w-12 h-12 bg-violet-500/10 rounded-lg flex items-center justify-center mb-4 border border-violet-500/10">
                   <TrendingUp className="w-6 h-6 text-violet-400" />
                 </div>
                 <h3 className="font-semibold mb-2">Track Progress</h3>
@@ -256,8 +253,8 @@ export function Pricing() {
 
             <div className="relative group">
               <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/20 to-green-500/20 rounded-xl blur-lg opacity-0 group-hover:opacity-100 transition-opacity" />
-              <div className="relative bg-white/5 backdrop-blur-xl border border-white/10 rounded-xl p-6 hover:border-emerald-500/30 transition-all">
-                <div className="w-12 h-12 bg-emerald-500/10 rounded-lg flex items-center justify-center mb-4">
+              <div className="relative bg-[#0F0F13] border border-white/[0.04] rounded-xl p-6 hover:border-emerald-500/30 transition-all shadow-lg">
+                <div className="w-12 h-12 bg-emerald-500/10 rounded-lg flex items-center justify-center mb-4 border border-emerald-500/10">
                   <Shield className="w-6 h-6 text-emerald-400" />
                 </div>
                 <h3 className="font-semibold mb-2">100% Refundable</h3>
@@ -273,7 +270,7 @@ export function Pricing() {
         <div className="max-w-3xl mx-auto mt-20">
           <h2 className="text-3xl font-bold text-center mb-12">Frequently Asked Questions</h2>
           <div className="space-y-4">
-            <details className="group bg-white/5 backdrop-blur-xl border border-white/10 rounded-xl p-6 hover:border-white/20 transition-all">
+            <details className="group bg-[#0F0F13] border border-white/[0.04] rounded-xl p-6 hover:border-white/10 transition-all shadow-md">
               <summary className="font-semibold cursor-pointer flex items-center justify-between">
                 How does the deposit work?
                 <span className="text-zinc-400 group-open:rotate-180 transition-transform">▼</span>
@@ -283,7 +280,7 @@ export function Pricing() {
               </p>
             </details>
 
-            <details className="group bg-white/5 backdrop-blur-xl border border-white/10 rounded-xl p-6 hover:border-white/20 transition-all">
+            <details className="group bg-[#0F0F13] border border-white/[0.04] rounded-xl p-6 hover:border-white/10 transition-all shadow-md">
               <summary className="font-semibold cursor-pointer flex items-center justify-between">
                 What are grace coins?
                 <span className="text-zinc-400 group-open:rotate-180 transition-transform">▼</span>
@@ -293,7 +290,7 @@ export function Pricing() {
               </p>
             </details>
 
-            <details className="group bg-white/5 backdrop-blur-xl border border-white/10 rounded-xl p-6 hover:border-white/20 transition-all">
+            <details className="group bg-[#0F0F13] border border-white/[0.04] rounded-xl p-6 hover:border-white/10 transition-all shadow-md">
               <summary className="font-semibold cursor-pointer flex items-center justify-between">
                 Can I cancel anytime?
                 <span className="text-zinc-400 group-open:rotate-180 transition-transform">▼</span>
@@ -310,14 +307,14 @@ export function Pricing() {
       {showModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm" onClick={() => setShowModal(false)}>
           <div
-            className="relative max-w-2xl w-full bg-[#0D0D0F] border border-violet-500/30 rounded-2xl shadow-2xl max-h-[90vh] overflow-y-auto"
+            className="relative max-w-2xl w-full bg-[#0F0F13] border border-violet-500/30 rounded-2xl shadow-2xl max-h-[90vh] overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Glow Effect */}
             <div className="absolute inset-0 bg-gradient-to-br from-violet-500/20 to-purple-500/20 rounded-2xl blur-xl opacity-60 -z-10" />
 
             {/* Header */}
-            <div className="sticky top-0 bg-[#0D0D0F]/95 backdrop-blur-xl border-b border-white/10 p-6 rounded-t-2xl">
+            <div className="sticky top-0 bg-[#0F0F13]/95 backdrop-blur-xl border-b border-white/[0.04] p-6 rounded-t-2xl">
               <div className="flex items-start justify-between">
                 <div>
                   <h3 className="text-2xl font-bold mb-2 flex items-center gap-2">
@@ -328,7 +325,7 @@ export function Pricing() {
                 </div>
                 <button
                   onClick={() => setShowModal(false)}
-                  className="w-8 h-8 flex items-center justify-center rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 transition-colors"
+                  className="w-8 h-8 flex items-center justify-center rounded-lg bg-white/5 hover:bg-white/10 border border-white/[0.04] transition-colors"
                 >
                   <X className="w-5 h-5" />
                 </button>
@@ -355,18 +352,26 @@ export function Pricing() {
 
               {/* Pricing */}
               <div className="grid sm:grid-cols-2 gap-4">
-                <div className="bg-white/5 border border-white/10 rounded-xl p-5">
-                  <div className="text-3xl mb-2">💰</div>
-                  <h4 className="font-semibold mb-1">Entry Fee</h4>
-                  <p className="text-2xl font-bold text-violet-400 mb-1">₹19</p>
-                  <p className="text-xs text-zinc-400">One-time per challenge</p>
+                <div className="bg-[#0D0D0F] border border-white/[0.04] rounded-xl p-5 flex items-start gap-4">
+                  <div className="p-3 bg-violet-500/10 border border-violet-500/20 rounded-xl text-violet-400 shrink-0">
+                    <Coins className="w-6 h-6" />
+                  </div>
+                  <div>
+                    <h4 className="font-semibold mb-1">Entry Fee</h4>
+                    <p className="text-2xl font-bold text-violet-400 mb-0.5">₹19</p>
+                    <p className="text-xs text-zinc-400">One-time per challenge</p>
+                  </div>
                 </div>
 
-                <div className="bg-white/5 border border-white/10 rounded-xl p-5">
-                  <div className="text-3xl mb-2">🎯</div>
-                  <h4 className="font-semibold mb-1">Stake Amount</h4>
-                  <p className="text-2xl font-bold text-emerald-400 mb-1">₹100 - ₹1000</p>
-                  <p className="text-xs text-zinc-400">You choose the stakes</p>
+                <div className="bg-[#0D0D0F] border border-white/[0.04] rounded-xl p-5 flex items-start gap-4">
+                  <div className="p-3 bg-emerald-500/10 border border-emerald-500/20 rounded-xl text-emerald-400 shrink-0">
+                    <Target className="w-6 h-6" />
+                  </div>
+                  <div>
+                    <h4 className="font-semibold mb-1">Stake Amount</h4>
+                    <p className="text-2xl font-bold text-emerald-400 mb-0.5">₹100 - ₹1000</p>
+                    <p className="text-xs text-zinc-400">You choose the stakes</p>
+                  </div>
                 </div>
               </div>
 
@@ -420,7 +425,7 @@ export function Pricing() {
               </div>
 
               {/* Rules */}
-              <div className="bg-white/5 border border-white/10 rounded-xl p-5">
+              <div className="bg-[#0D0D0F] border border-white/[0.04] rounded-xl p-5">
                 <h4 className="font-semibold mb-3 flex items-center gap-2">
                   <Info className="w-5 h-5 text-emerald-400" />
                   Important Rules
@@ -478,7 +483,7 @@ export function Pricing() {
               <div className="flex gap-3">
                 <button
                   onClick={() => setShowModal(false)}
-                  className="flex-1 py-3 bg-white/5 hover:bg-white/10 text-white font-semibold rounded-lg transition-all border border-white/10"
+                  className="flex-1 py-3 bg-white/5 hover:bg-white/10 text-white font-semibold rounded-lg transition-all border border-white/[0.04]"
                 >
                   Close
                 </button>

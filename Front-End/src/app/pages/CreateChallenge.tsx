@@ -618,7 +618,7 @@ export function CreateChallenge() {
                       </div>
                       
                       <h3 className="text-xl font-bold text-white mb-3 flex items-center gap-2">
-                        🔒 Premium Duel Locked
+                        Premium Duel Locked
                       </h3>
                       
                       <p className="text-zinc-400 text-sm leading-relaxed mb-8 max-w-sm">

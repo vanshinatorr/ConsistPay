@@ -115,7 +115,7 @@ export function JoinChallenge() {
   if (error && screen === "preview") {
     return (
       <div className="min-h-screen text-white" style={{ backgroundColor: "#0D0D0F" }}>
-        <nav className="sticky top-0 z-50 border-b border-white/10 bg-[#0D0D0F]/80 backdrop-blur-xl">
+        <nav className="sticky top-0 z-50 border-b border-white/[0.04] bg-[#0D0D0F]/80 backdrop-blur-xl">
           <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
             <div className="flex items-center justify-between">
               <Link to="/dashboard" className="flex items-center gap-2 text-zinc-400 hover:text-white transition-colors">
@@ -126,7 +126,7 @@ export function JoinChallenge() {
           </div>
         </nav>
         <div className="flex flex-col items-center justify-center min-h-[80vh] px-4">
-          <div className="max-w-md w-full bg-[#0A0A0C] border border-white/10 rounded-3xl p-8 text-center space-y-6 shadow-2xl">
+          <div className="max-w-md w-full bg-[#0F0F13] border border-white/[0.04] rounded-3xl p-8 text-center space-y-6 shadow-2xl">
             <div className="w-16 h-16 bg-red-500/10 border border-red-500/20 rounded-2xl flex items-center justify-center mx-auto mb-2">
               <Shield className="w-8 h-8 text-red-400" />
             </div>
@@ -141,7 +141,7 @@ export function JoinChallenge() {
                 placeholder="Enter new invite code"
                 value={retryCode}
                 onChange={(e) => setRetryCode(e.target.value.toUpperCase())}
-                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-center font-mono tracking-widest outline-none focus:border-violet-500/50 transition-colors uppercase"
+                className="w-full bg-[#0D0D0F] border border-white/[0.04] rounded-xl px-4 py-3 text-center font-mono tracking-widest outline-none focus:border-violet-500/50 transition-colors uppercase"
               />
               <button
                 onClick={handleRetry}
@@ -153,7 +153,7 @@ export function JoinChallenge() {
             </div>
             <Link
               to="/dashboard"
-              className="block w-full py-3 rounded-xl font-bold text-center bg-white/5 hover:bg-white/10 transition-all text-zinc-300 mt-2 text-sm"
+              className="block w-full py-3 rounded-xl font-bold text-center bg-white/5 border border-white/[0.04] hover:bg-white/10 transition-all text-zinc-300 mt-2 text-sm"
             >
               Return to Dashboard
             </Link>
@@ -178,7 +178,7 @@ export function JoinChallenge() {
       </div>
 
       {/* Navbar */}
-      <nav className="sticky top-0 z-50 border-b border-white/10 bg-[#0D0D0F]/80 backdrop-blur-xl">
+      <nav className="sticky top-0 z-50 border-b border-white/[0.04] bg-[#0D0D0F]/80 backdrop-blur-xl">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between">
             <Link to="/dashboard" className="flex items-center gap-2 text-zinc-400 hover:text-white transition-colors">
@@ -194,7 +194,7 @@ export function JoinChallenge() {
               </span>
             </div>
             <div className="w-24 flex justify-end">
-              <span className="text-xs bg-white/5 border border-white/10 px-2 py-1 rounded-md text-zinc-400">Join Challenge</span>
+              <span className="text-xs bg-white/5 border border-white/[0.04] px-2 py-1 rounded-md text-zinc-400">Join Challenge</span>
             </div>
           </div>
         </div>
@@ -223,7 +223,7 @@ export function JoinChallenge() {
             {/* VS Card */}
             <div className="relative">
               <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/10 to-teal-500/10 rounded-3xl blur-xl opacity-60" />
-              <div className="relative bg-[#0A0A0C] border border-white/10 rounded-3xl p-8 shadow-2xl">
+              <div className="relative bg-[#0F0F13] border border-white/[0.04] rounded-3xl p-8 shadow-2xl">
                 
                 {/* Visual VS Setup */}
                 <div className="flex items-center justify-center gap-6 mb-8">
@@ -249,7 +249,7 @@ export function JoinChallenge() {
                     { label: "Entry Fee", value: `₹${challengeData.entryFee}`, highlight: false },
                     { label: "Total Prize Pool", value: `₹${challengeData.stake * 2}`, highlight: true },
                   ].map(({ label, value, highlight }) => (
-                    <div key={label} className="flex justify-between items-center py-3 border-b border-white/5 last:border-0">
+                    <div key={label} className="flex justify-between items-center py-3 border-b border-white/[0.04] last:border-0">
                       <span className="text-zinc-400 text-sm">{label}</span>
                       <span className={`font-bold ${highlight ? "text-yellow-400 text-xl" : "text-white"}`}>{value}</span>
                     </div>
@@ -259,7 +259,7 @@ export function JoinChallenge() {
             </div>
 
             {/* Rules */}
-            <div className="bg-white/5 border border-white/10 rounded-2xl p-6 backdrop-blur-xl">
+            <div className="bg-[#0F0F13] border border-white/[0.04] rounded-2xl p-6 backdrop-blur-xl shadow-xl">
               <h3 className="text-sm font-bold text-white mb-4 uppercase tracking-wider flex items-center gap-2">
                 <Shield className="w-4 h-4 text-emerald-400" /> Contract Rules
               </h3>
@@ -283,13 +283,11 @@ export function JoinChallenge() {
               </ul>
             </div>
 
-
-
             {/* CTAs */}
             <div className="flex flex-col sm:flex-row gap-3 pt-4">
               <Link
                 to="/dashboard"
-                className="w-full sm:w-1/3 py-4 rounded-xl font-semibold text-center bg-white/5 border border-white/10 hover:bg-white/10 transition-all text-sm"
+                className="w-full sm:w-1/3 py-4 rounded-xl font-semibold text-center bg-white/5 border border-white/[0.04] hover:bg-white/10 transition-all text-sm"
               >
                 Decline
               </Link>
@@ -335,13 +333,14 @@ export function JoinChallenge() {
             <div className="flex flex-col sm:flex-row gap-4 w-full max-w-md">
               <button
                 onClick={() => navigate(`/battle/${joinedData?.challengeId}?success=true`)}
-                className="flex-1 py-4 rounded-xl font-bold bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white transition-all hover:scale-[1.02] shadow-xl text-center"
+                className="flex-1 py-4 rounded-xl font-bold bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white transition-all hover:scale-[1.02] shadow-xl text-center flex items-center justify-center gap-2"
               >
-                Enter Challenge Arena ⚔️
+                <Sword className="w-5 h-5 animate-pulse" />
+                Enter Challenge Arena
               </button>
               <button
                 onClick={() => navigate("/dashboard")}
-                className="flex-1 py-4 rounded-xl font-bold bg-white/5 hover:bg-white/10 border border-white/10 text-white transition-all text-center"
+                className="flex-1 py-4 rounded-xl font-bold bg-white/5 hover:bg-white/10 border border-white/[0.04] text-white transition-all text-center"
               >
                 Go to Dashboard
               </button>

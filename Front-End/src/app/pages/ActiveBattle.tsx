@@ -1,4 +1,4 @@
-import { Code2, ArrowLeft, Trophy, Zap, Clock, User, ShieldAlert, Sparkles, CheckCircle, XCircle, Lock, Target, Swords, AlertCircle } from "lucide-react";
+import { Code2, ArrowLeft, Trophy, Zap, Clock, User, ShieldAlert, Sparkles, CheckCircle, XCircle, Lock, Target, Swords, Sword, AlertCircle } from "lucide-react";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 
@@ -69,7 +69,7 @@ export function ActiveBattle() {
   if (error || !challenge) {
     return (
       <div className="min-h-screen text-white bg-[#0D0D0F]">
-        <nav className="sticky top-0 z-50 border-b border-white/10 bg-[#0D0D0F]/80 backdrop-blur-xl">
+        <nav className="sticky top-0 z-50 border-b border-white/[0.04] bg-[#0D0D0F]/80 backdrop-blur-xl">
           <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
             <div className="flex items-center justify-between">
               <Link to="/dashboard" className="flex items-center gap-2 text-zinc-400 hover:text-white transition-colors">
@@ -80,12 +80,16 @@ export function ActiveBattle() {
           </div>
         </nav>
         <div className="flex items-center justify-center min-h-[80vh] p-4">
-          <div className="max-w-md w-full bg-white/5 border border-white/10 rounded-3xl p-8 text-center space-y-4">
-            <div className="text-4xl mb-4">⚠️</div>
+          <div className="max-w-md w-full bg-[#0F0F13] border border-white/[0.04] rounded-3xl p-8 text-center space-y-6">
+            <div className="flex justify-center">
+              <div className="p-3.5 bg-rose-500/10 border border-rose-500/20 rounded-2xl text-rose-400">
+                <AlertCircle className="w-8 h-8" />
+              </div>
+            </div>
             <h2 className="text-2xl font-bold text-white tracking-tight">Challenge Not Found</h2>
             <p className="text-zinc-400 text-sm">{error || "This challenge doesn't exist or you don't have access."}</p>
             <div className="pt-4">
-              <Link to="/dashboard" className="block w-full py-4 rounded-xl font-bold bg-white/10 hover:bg-white/15 transition-all text-white">
+              <Link to="/dashboard" className="block w-full py-4 rounded-xl font-bold bg-white/5 border border-white/[0.04] hover:bg-white/10 transition-all text-white">
                 Return to Dashboard
               </Link>
             </div>
@@ -125,31 +129,31 @@ export function ActiveBattle() {
 
   if (status === "active") {
     if (myData.score === oppData.score) {
-      leadMessage = "It's a Tie! Keep coding to break the deadlock. 🤝";
+      leadMessage = "It's a Tie! Keep coding to break the deadlock.";
       leadStyle = "bg-violet-500/10 border-violet-500/20 text-violet-300 shadow-[0_0_15px_rgba(139,92,246,0.1)]";
       leadIcon = <Swords className="w-5 h-5 text-violet-400" />;
     } else if (myData.score > oppData.score) {
       const diff = myData.score - oppData.score;
-      leadMessage = `You are leading by ${diff} point${diff > 1 ? "s" : ""}! Keep the fire burning. 🔥`;
+      leadMessage = `You are leading by ${diff} point${diff > 1 ? "s" : ""}! Keep up the momentum.`;
       leadStyle = "bg-emerald-500/10 border-emerald-500/20 text-emerald-300 shadow-[0_0_15px_rgba(16,185,129,0.1)]";
       leadIcon = <Zap className="w-5 h-5 text-emerald-400 animate-pulse" />;
     } else {
       const diff = oppData.score - myData.score;
-      leadMessage = `${oppData.name} is leading by ${diff} point${diff > 1 ? "s" : ""}. Push harder to catch up! ⚡`;
+      leadMessage = `${oppData.name} is leading by ${diff} point${diff > 1 ? "s" : ""}. Push harder to catch up!`;
       leadStyle = "bg-rose-500/10 border-rose-500/20 text-rose-300 shadow-[0_0_15px_rgba(244,63,94,0.1)]";
       leadIcon = <Sparkles className="w-5 h-5 text-rose-400" />;
     }
   } else if (status === "completed") {
     if (myData.score === oppData.score) {
-      leadMessage = "Challenge completed. It's a Tie! Stakes are split. 🤝";
+      leadMessage = "Challenge completed. It's a Tie! Stakes are split.";
       leadStyle = "bg-blue-500/10 border-blue-500/20 text-blue-300";
       leadIcon = <Trophy className="w-5 h-5 text-blue-400" />;
     } else if (myData.score > oppData.score) {
-      leadMessage = "Congratulations! You won the challenge and claimed the prize pool! 🏆";
+      leadMessage = "Congratulations! You won the challenge and claimed the prize pool!";
       leadStyle = "bg-yellow-500/10 border-yellow-500/20 text-yellow-300 shadow-[0_0_20px_rgba(234,179,8,0.2)]";
       leadIcon = <Trophy className="w-5 h-5 text-yellow-400" />;
     } else {
-      leadMessage = `Challenge completed. ${oppData.name} claimed the victory. Better luck next time! ⚔️`;
+      leadMessage = `Challenge completed. ${oppData.name} claimed the victory. Better luck next time!`;
       leadStyle = "bg-zinc-800 border-zinc-700 text-zinc-400";
       leadIcon = <ShieldAlert className="w-5 h-5" />;
     }
@@ -179,7 +183,7 @@ export function ActiveBattle() {
       case "future":
       default:
         return (
-          <div className="w-8 h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-zinc-600">
+          <div className="w-8 h-8 rounded-full bg-white/5 border border-white/[0.04] flex items-center justify-center text-zinc-650">
             <Lock className="w-3.5 h-3.5" />
           </div>
         );
@@ -216,7 +220,7 @@ export function ActiveBattle() {
       </div>
 
       {/* Navbar */}
-      <nav className="sticky top-0 z-50 border-b border-white/10 bg-[#0D0D0F]/80 backdrop-blur-xl">
+      <nav className="sticky top-0 z-50 border-b border-white/[0.04] bg-[#0D0D0F]/80 backdrop-blur-xl">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between">
             <Link to="/dashboard" className="flex items-center gap-2 text-zinc-400 hover:text-white transition-colors">
@@ -235,7 +239,7 @@ export function ActiveBattle() {
               <span className={`text-xs px-3 py-1 rounded-full font-bold border uppercase
                 ${status === 'active' || status === 'ACTIVE' ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400' : 
                   status === 'completed' || status === 'COMPLETED' ? 'bg-blue-500/10 border-blue-500/30 text-blue-400' : 
-                  'bg-white/5 border-white/10 text-zinc-400'}`}>
+                  'bg-white/5 border-white/[0.04] text-zinc-400'}`}>
                 {status}
               </span>
             </div>
@@ -257,7 +261,7 @@ export function ActiveBattle() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           
           {/* My Stats */}
-          <div className="bg-white/5 border border-white/10 rounded-3xl p-6 backdrop-blur-sm relative overflow-hidden">
+          <div className="bg-[#0F0F13] border border-white/[0.04] rounded-3xl p-6 backdrop-blur-sm relative overflow-hidden shadow-xl">
             <div className="absolute top-0 left-0 w-1 h-full bg-violet-500" />
             <div className="flex items-center gap-4 mb-4">
               <div className="w-14 h-14 bg-gradient-to-br from-violet-500 to-purple-600 rounded-full flex items-center justify-center font-bold text-xl shadow-lg shadow-violet-500/20">
@@ -279,20 +283,20 @@ export function ActiveBattle() {
           {/* VS & Pool */}
           <div className="flex flex-col items-center justify-center py-6 md:py-0">
             <div className="text-center mb-4">
-              <p className="text-[10px] text-yellow-400 font-bold uppercase tracking-widest mb-1 flex items-center justify-center gap-1">
-                <Trophy className="w-3 h-3 animate-bounce" /> Prize Pool
+              <p className="text-[10px] text-yellow-400 font-bold uppercase tracking-widest mb-1 flex items-center justify-center gap-1.5">
+                <Trophy className="w-3 h-3" /> Prize Pool
               </p>
               <div className="text-4xl font-black bg-gradient-to-r from-yellow-300 to-yellow-500 bg-clip-text text-transparent">
                 ₹{pool}
               </div>
             </div>
-            <div className="w-12 h-12 rounded-full bg-white/5 border border-white/10 flex items-center justify-center italic font-black text-zinc-500">
+            <div className="w-12 h-12 rounded-full bg-white/5 border border-white/[0.04] flex items-center justify-center italic font-black text-zinc-500 shadow-md">
               VS
             </div>
           </div>
 
           {/* Opponent Stats */}
-          <div className="bg-white/5 border border-white/10 rounded-3xl p-6 backdrop-blur-sm relative overflow-hidden">
+          <div className="bg-[#0F0F13] border border-white/[0.04] rounded-3xl p-6 backdrop-blur-sm relative overflow-hidden shadow-xl">
             <div className="absolute top-0 right-0 w-1 h-full bg-emerald-500" />
             <div className="flex items-center gap-4 flex-row-reverse text-right mb-4">
               <div className="w-14 h-14 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-full flex items-center justify-center font-bold text-xl shadow-lg shadow-emerald-500/20 text-black">
@@ -314,7 +318,7 @@ export function ActiveBattle() {
         </div>
 
         {/* Timeline / Progress Section */}
-        <div className="bg-white/5 border border-white/10 rounded-3xl p-6 sm:p-8 backdrop-blur-sm">
+        <div className="bg-[#0F0F13] border border-white/[0.04] rounded-3xl p-6 sm:p-8 backdrop-blur-sm shadow-xl">
           <div className="flex items-center justify-between mb-6">
             <h3 className="text-base font-bold flex items-center gap-2 text-zinc-200">
               <Clock className="w-5 h-5 text-zinc-400" /> Challenge Timeline
@@ -340,7 +344,7 @@ export function ActiveBattle() {
 
         {/* Circular Duel Grid: Circular track mapping day outcomes */}
         {grid.length > 0 && (
-          <div className="bg-white/5 border border-white/10 rounded-3xl p-6 sm:p-8 backdrop-blur-sm">
+          <div className="bg-[#0F0F13] border border-white/[0.04] rounded-3xl p-6 sm:p-8 backdrop-blur-sm shadow-xl">
             <div className="flex items-center justify-between mb-6 pb-4 border-b border-white/5">
               <h3 className="text-base font-extrabold flex items-center gap-2 text-zinc-200">
                 <Swords className="w-5 h-5 text-zinc-400" /> 1v1 Consistency Duel Track
@@ -395,7 +399,7 @@ export function ActiveBattle() {
         )}
 
         {/* Live Coding Activity Feed */}
-        <div className="bg-white/5 border border-white/10 rounded-3xl p-6 sm:p-8 backdrop-blur-sm">
+        <div className="bg-[#0F0F13] border border-white/[0.04] rounded-3xl p-6 sm:p-8 backdrop-blur-sm shadow-xl">
           <div className="flex items-center gap-2 mb-6 pb-4 border-b border-white/5">
             <Zap className="w-5 h-5 text-amber-500" />
             <h3 className="text-base font-extrabold text-zinc-200">Live Solves Activity Feed</h3>
@@ -432,7 +436,7 @@ export function ActiveBattle() {
 
         {/* Rules & Warnings */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-3xl p-6">
+          <div className="bg-[#0F0F13] border border-emerald-500/20 rounded-3xl p-6 shadow-md">
             <h4 className="font-bold text-emerald-400 mb-3 flex items-center gap-2">
               <CheckCircle className="w-5 h-5" /> How to Win
             </h4>
@@ -440,7 +444,7 @@ export function ActiveBattle() {
               Submit your LeetCode or Code360 progress daily on the dashboard. The single source of truth is your daily screenshot verified by Gemini AI. <strong className="text-emerald-300">Solving multiple questions in a single day still counts as 1 day completed</strong> (extra solves only increase your overall leaderboard score, not your score in this challenge). The person with the most verified days by the end of the duration takes the entire pool.
             </p>
           </div>
-          <div className="bg-red-500/5 border border-red-500/20 rounded-3xl p-6">
+          <div className="bg-[#0F0F13] border border-red-500/20 rounded-3xl p-6 shadow-md">
             <h4 className="font-bold text-red-400 mb-3 flex items-center gap-2">
               <ShieldAlert className="w-5 h-5" /> Strict Deadlines
             </h4>
@@ -460,7 +464,7 @@ export function ActiveBattle() {
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-emerald-500/5 rounded-full blur-[120px] pointer-events-none" />
 
           {/* Modal Container */}
-          <div className="relative w-full max-w-lg max-h-[90vh] overflow-y-auto bg-[#0E0E12]/95 border border-white/10 rounded-[2rem] sm:rounded-[2.5rem] p-6 sm:p-8 text-center shadow-[0_0_50px_rgba(16,185,129,0.15),inset_0_0_20px_rgba(255,255,255,0.02)] animate-in zoom-in-95 duration-500">
+          <div className="relative w-full max-w-lg max-h-[90vh] overflow-y-auto bg-[#0F0F13]/95 border border-white/10 rounded-[2rem] sm:rounded-[2.5rem] p-6 sm:p-8 text-center shadow-[0_0_50px_rgba(16,185,129,0.15),inset_0_0_20px_rgba(255,255,255,0.02)] animate-in zoom-in-95 duration-500">
             {/* Decorative Corner Glows */}
             <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-emerald-500/10 blur-[60px]" />
             <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-violet-500/10 blur-[60px]" />
@@ -476,7 +480,7 @@ export function ActiveBattle() {
 
             {/* Title / Header */}
             <h2 className="text-3xl sm:text-4xl font-black mb-1 bg-gradient-to-r from-emerald-400 via-teal-300 to-emerald-400 bg-clip-text text-transparent tracking-tight">
-              CHALLENGE IS LIVE! ⚔️
+              CHALLENGE IS LIVE!
             </h2>
             <p className="text-zinc-400 text-sm mb-4">
               Your consistency duel with <strong className="text-white font-semibold">{oppData.name}</strong> has officially started!
@@ -527,7 +531,7 @@ export function ActiveBattle() {
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 text-zinc-300 text-xs font-semibold mb-6 shadow-inner">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
               <span>₹{myData.stake || challenge.stake} Stake Locked</span>
-              <span className="text-zinc-600">•</span>
+              <span className="text-zinc-650">•</span>
               <span className="text-yellow-400 font-bold">₹{pool} Prize Pool</span>
             </div>
 
@@ -576,7 +580,8 @@ export function ActiveBattle() {
               onClick={handleDismissSuccess}
               className="w-full py-4 rounded-xl font-bold bg-gradient-to-r from-emerald-500 via-teal-500 to-emerald-600 text-white shadow-[0_0_20px_rgba(16,185,129,0.25)] hover:shadow-[0_0_30px_rgba(16,185,129,0.45)] hover:scale-[1.01] active:scale-[0.99] transition-all duration-300 text-sm flex items-center justify-center gap-2 cursor-pointer"
             >
-              <span>Enter the Arena ⚔️</span>
+              <Sword className="w-4 h-4 animate-pulse" />
+              <span>Enter the Arena</span>
             </button>
           </div>
         </div>
