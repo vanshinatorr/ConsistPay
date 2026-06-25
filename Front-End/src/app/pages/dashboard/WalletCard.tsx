@@ -144,7 +144,7 @@ export function WalletCard({
         
         {/* Header with Tabs */}
         <div className="flex items-center justify-between mb-6 relative z-10">
-          <div className="flex bg-black/40 p-1 rounded-xl border border-white/5 w-full max-w-[200px]">
+          <div className="flex bg-black/40 p-1 rounded-xl border border-white/[0.04] w-full max-w-[200px]">
             <button
               onClick={() => setActiveTab("consistency")}
               className={`flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-lg text-xs font-semibold transition-all duration-300 ${
@@ -173,7 +173,7 @@ export function WalletCard({
               className={`text-[10px] px-2 py-1 rounded-full font-semibold border uppercase tracking-wider ${
                 plan?.toLowerCase() === "pro"
                   ? "text-violet-400 bg-violet-500/10 border-violet-500/20"
-                  : "text-zinc-400 bg-white/5 border-white/10"
+                  : "text-zinc-400 bg-white/[0.04] border border-white/[0.04]"
               }`}
             >
               {plan?.toLowerCase() === "pro" ? "Pro" : "Free"}
@@ -340,7 +340,7 @@ export function WalletCard({
                   
                   <button 
                     onClick={() => setShowInfoModal(true)}
-                    className="absolute top-4 right-4 p-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-zinc-400 hover:text-white transition-all flex items-center gap-1 text-[10px] uppercase font-semibold tracking-wider border border-white/5"
+                    className="absolute top-4 right-4 p-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-zinc-400 hover:text-white transition-all flex items-center gap-1 text-[10px] uppercase font-semibold tracking-wider border border-white/[0.04]"
                     title="What is Versus Mode?"
                   >
                     <Info className="w-3.5 h-3.5" /> Info
@@ -368,7 +368,7 @@ export function WalletCard({
 
                   <button 
                     onClick={() => setShowTopupModal(true)}
-                    className="w-full py-3 rounded-xl font-semibold bg-white/5 hover:bg-white/10 text-zinc-300 hover:text-white border border-white/10 transition-all flex items-center justify-center gap-2"
+                    className="w-full py-3 rounded-xl font-semibold bg-white/5 hover:bg-white/10 text-zinc-300 hover:text-white border border-white/[0.04] transition-all flex items-center justify-center gap-2"
                   >
                     <Coins className="w-4 h-4 text-violet-400" /> Add Funds
                   </button>

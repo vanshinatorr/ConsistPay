@@ -177,7 +177,7 @@ export function Auth() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0A0A0C] flex relative overflow-hidden font-sans">
+    <div className="min-h-screen bg-[#0F0F13] flex relative overflow-hidden font-sans">
       <Toaster position="top-center" toastOptions={{ style: { background: '#18181B', color: '#fff', border: '1px solid rgba(255,255,255,0.1)' } }} />
       
       {/* Subtle Premium Background */}
@@ -187,9 +187,9 @@ export function Auth() {
       </div>
 
       {/* LEFT SIDE - Motivation Panel */}
-      <div className="hidden lg:flex lg:w-1/2 flex-col justify-center px-16 xl:px-24 relative z-10 border-r border-white/5">
+      <div className="hidden lg:flex lg:w-1/2 flex-col justify-center px-16 xl:px-24 relative z-10 border-r border-white/[0.04]">
         <Link to="/" className="flex items-center gap-3 mb-24 w-fit group">
-          <div className="w-10 h-10 bg-white/5 border border-white/10 rounded-xl flex items-center justify-center group-hover:bg-white/10 transition-colors">
+          <div className="w-10 h-10 bg-white/5 border border-white/[0.04] rounded-xl flex items-center justify-center group-hover:bg-white/10 transition-colors">
             <Code2 className="w-5 h-5 text-white" />
           </div>
           <span className="text-xl font-semibold text-white tracking-tight">ConsistPay</span>
@@ -221,13 +221,13 @@ export function Auth() {
         <div className="flex items-center gap-4">
           <div className="flex -space-x-3">
              {/* Human Avatar */}
-             <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix&backgroundColor=ffdfbf" alt="User" className="w-10 h-10 rounded-full border-2 border-[#0A0A0C]" />
+             <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix&backgroundColor=ffdfbf" alt="User" className="w-10 h-10 rounded-full border-2 border-[#0F0F13]" />
              {/* Aesthetic Cat */}
-             <img src="https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=100&h=100&fit=crop" alt="User" className="w-10 h-10 rounded-full border-2 border-[#0A0A0C] object-cover" />
+             <img src="https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=100&h=100&fit=crop" alt="User" className="w-10 h-10 rounded-full border-2 border-[#0F0F13] object-cover" />
              {/* Male Avatar */}
-             <img src="https://api.dicebear.com/7.x/micah/svg?seed=Oliver&backgroundColor=b6e3f4" alt="User" className="w-10 h-10 rounded-full border-2 border-[#0A0A0C]" />
+             <img src="https://api.dicebear.com/7.x/micah/svg?seed=Oliver&backgroundColor=b6e3f4" alt="User" className="w-10 h-10 rounded-full border-2 border-[#0F0F13]" />
              
-             <div className="w-10 h-10 rounded-full border-2 border-[#0A0A0C] bg-zinc-800 flex items-center justify-center text-xs font-bold text-white z-10 shadow-inner">
+             <div className="w-10 h-10 rounded-full border-2 border-[#0F0F13] bg-zinc-800 flex items-center justify-center text-xs font-bold text-white z-10 shadow-inner">
                30+
              </div>
           </div>
@@ -256,7 +256,7 @@ export function Auth() {
 
         <div className="w-full max-w-[420px] relative z-10">
           {/* Auth Card */}
-          <div className="bg-[#0E0E12] border border-white/10 rounded-[24px] p-8 sm:p-10 shadow-2xl relative overflow-hidden">
+          <div className="bg-[#0F0F13] border border-white/[0.04] rounded-[24px] p-8 sm:p-10 shadow-2xl relative overflow-hidden">
           
           {/* STEP 1: IDENTITY */}
           {step === "identity" && (
@@ -275,9 +275,9 @@ export function Auth() {
               </GoogleOAuthProvider>
 
               <div className="relative flex items-center gap-4 my-6">
-                <div className="h-px bg-white/10 flex-1" />
+                <div className="h-px bg-white/[0.04] flex-1" />
                 <span className="text-zinc-500 text-sm">OR</span>
-                <div className="h-px bg-white/10 flex-1" />
+                <div className="h-px bg-white/[0.04] flex-1" />
               </div>
 
               <form onSubmit={handleSendOtp} className="space-y-4">
@@ -290,7 +290,7 @@ export function Auth() {
                     value={identifier}
                     onChange={(e) => setIdentifier(e.target.value)}
                     placeholder="Enter your email"
-                    className="w-full bg-[#0D0D0F] border border-white/10 rounded-xl px-4 py-3 text-white placeholder-zinc-600 focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 transition-all"
+                    className="w-full bg-[#0F0F13] border border-white/[0.04] rounded-xl px-4 py-3 text-white placeholder-zinc-600 focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 transition-all"
                     required
                   />
                 </div>
@@ -320,7 +320,7 @@ export function Auth() {
                     value={otp}
                     onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').slice(0,6))}
                     placeholder="• • • • • •"
-                    className="w-full bg-[#111113] border border-white/10 rounded-xl px-4 py-4 text-center text-2xl tracking-[1em] text-white placeholder-zinc-600 focus:outline-none focus:border-violet-500 transition-all"
+                    className="w-full bg-[#0F0F13] border border-white/[0.04] rounded-xl px-4 py-4 text-center text-2xl tracking-[1em] text-white placeholder-zinc-600 focus:outline-none focus:border-violet-500 transition-all"
                     required
                   />
                 </div>
@@ -358,7 +358,7 @@ export function Auth() {
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     placeholder="John Doe"
-                    className="w-full bg-[#0D0D0F] border border-white/10 rounded-xl px-4 py-3 text-white placeholder-zinc-600 focus:outline-none focus:border-emerald-500 transition-all"
+                    className="w-full bg-[#0F0F13] border border-white/[0.04] rounded-xl px-4 py-3 text-white placeholder-zinc-600 focus:outline-none focus:border-emerald-500 transition-all"
                     required
                   />
                 </div>
@@ -373,10 +373,10 @@ export function Auth() {
                       value={username}
                       onChange={(e) => setUsername(e.target.value.toLowerCase().replace(/[^a-z0-9_]/g, ''))}
                       placeholder="johndoe"
-                      className={`w-full bg-[#0D0D0F] border rounded-xl pl-9 pr-10 py-3 text-white placeholder-zinc-600 focus:outline-none transition-all ${
+                      className={`w-full bg-[#0F0F13] border rounded-xl pl-9 pr-10 py-3 text-white placeholder-zinc-600 focus:outline-none transition-all ${
                         usernameAvailable === true ? "border-emerald-500/50 focus:border-emerald-500" :
                         usernameAvailable === false ? "border-red-500/50 focus:border-red-500" :
-                        "border-white/10 focus:border-violet-500"
+                        "border-white/[0.04] focus:border-violet-500"
                       }`}
                       required
                       minLength={3}

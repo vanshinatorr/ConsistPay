@@ -89,7 +89,7 @@ export function Navbar({ initials, plan = "free", avatar, isAvatarUrl }: NavbarP
 
   return (
     <>
-      <nav className="sticky top-0 z-50 border-b border-white/10 bg-[#0D0D0F]/80 backdrop-blur-xl">
+      <nav className="sticky top-0 z-50 border-b border-white/[0.04] bg-[#0F0F13]/80 backdrop-blur-xl">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
           <div className="flex items-center justify-between">
             <Link
@@ -162,20 +162,20 @@ export function Navbar({ initials, plan = "free", avatar, isAvatarUrl }: NavbarP
                   className={`relative p-2.5 rounded-xl border transition-all duration-200 cursor-pointer ${
                     showNotifs 
                       ? "bg-violet-500/20 border-violet-500/40 text-violet-300 shadow-[0_0_15px_rgba(139,92,246,0.15)]" 
-                      : "bg-white/5 border-white/10 text-zinc-300 hover:bg-white/10"
+                      : "bg-white/5 border border-white/[0.04] text-zinc-300 hover:bg-white/10"
                   }`}
                 >
                   <Bell className="w-5 h-5" />
                   {unreadCount > 0 && (
-                    <span className="absolute top-2 right-2 w-2 h-2 bg-emerald-400 rounded-full ring-2 ring-[#0D0D0F]" />
+                    <span className="absolute top-2 right-2 w-2 h-2 bg-emerald-400 rounded-full ring-2 ring-[#0F0F13]" />
                   )}
                 </button>
 
                 {/* Dropdown Menu */}
                 {showNotifs && (
-                  <div className="absolute right-0 mt-3 w-[380px] bg-[#0c0c0e] border border-white/10 rounded-2xl shadow-2xl overflow-hidden z-50 animate-in fade-in zoom-in-95 duration-200">
+                  <div className="absolute right-0 mt-3 w-[380px] bg-[#0F0F13] border border-white/[0.04] rounded-2xl shadow-2xl overflow-hidden z-50 animate-in fade-in zoom-in-95 duration-200">
                     
-                    <div className="px-5 py-4 border-b border-white/10 flex items-center justify-between bg-white/[0.02] backdrop-blur-md">
+                    <div className="px-5 py-4 border-b border-white/[0.04] flex items-center justify-between bg-white/[0.02] backdrop-blur-md">
                       <div className="flex items-center gap-2">
                         <h3 className="font-semibold text-white text-sm">Notifications</h3>
                         {unreadCount > 0 && (
@@ -274,7 +274,7 @@ export function Navbar({ initials, plan = "free", avatar, isAvatarUrl }: NavbarP
 
               <Link
                 to="/profile"
-                className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold text-sm ${isAvatarUrl ? 'bg-white/5 border border-white/10' : 'bg-gradient-to-br from-emerald-400 to-emerald-600'}`}
+                className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold text-sm ${isAvatarUrl ? 'bg-white/5 border border-white/[0.04]' : 'bg-gradient-to-br from-emerald-400 to-emerald-600'}`}
               >
                 {isAvatarUrl ? (
                   <img src={avatar} alt="Avatar" className="w-full h-full object-cover rounded-full" />

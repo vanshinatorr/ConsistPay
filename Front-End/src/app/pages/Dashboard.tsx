@@ -430,7 +430,7 @@ export function Dashboard() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#0D0D0F] flex items-center justify-center">
+      <div className="min-h-screen bg-[#0F0F13] flex items-center justify-center">
         <div className="text-center">
           <div className="w-12 h-12 border-2 border-violet-500 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
           <p className="text-zinc-400 text-sm">Loading your dashboard...</p>
@@ -440,7 +440,7 @@ export function Dashboard() {
   }
 
   return (
-    <div className="min-h-screen text-white" style={{ backgroundColor: "#0D0D0F" }}>
+    <div className="min-h-screen text-white" style={{ backgroundColor: "#0F0F13" }}>
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-0 right-1/4 w-96 h-96 bg-violet-500/10 rounded-full blur-[120px]" />
         <div className="absolute bottom-1/4 left-1/4 w-96 h-96 bg-emerald-500/10 rounded-full blur-[120px]" />

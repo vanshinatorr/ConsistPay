@@ -116,7 +116,7 @@ export function DashboardBattleWidget({ onRefreshRequest }: DashboardBattleWidge
 
   if (loading && activeChallenges.length === 0 && !pendingChallenge) {
     return (
-      <div className="w-full bg-white/5 border border-white/10 rounded-2xl p-6 text-center animate-pulse mb-6">
+      <div className="w-full bg-white/5 border border-white/[0.04] rounded-2xl p-6 text-center animate-pulse mb-6">
         <span className="text-sm text-zinc-400">Loading challenges...</span>
       </div>
     );
@@ -127,12 +127,12 @@ export function DashboardBattleWidget({ onRefreshRequest }: DashboardBattleWidge
       
       {/* ─── PENDING CHALLENGE BANNER ─── */}
       {pendingChallenge && timeLeft > 0 && (
-        <div className="relative rounded-2xl border border-amber-500/20 bg-gradient-to-r from-amber-500/5 via-[#0D0D0F]/90 to-[#0D0D0F]/90 p-5 md:p-6 overflow-hidden flex flex-col md:flex-row items-center justify-between gap-6 shadow-xl animate-in fade-in slide-in-from-top-4 duration-300">
+        <div className="relative rounded-2xl border border-amber-500/20 bg-gradient-to-r from-amber-500/5 via-[#0F0F13]/90 to-[#0F0F13]/90 p-5 md:p-6 overflow-hidden flex flex-col md:flex-row items-center justify-between gap-6 shadow-xl animate-in fade-in slide-in-from-top-4 duration-300">
           <div className="absolute inset-0 bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:14px_24px] pointer-events-none" />
           <div className="absolute -left-20 -top-20 w-44 h-44 bg-amber-500/10 rounded-full blur-[60px] pointer-events-none" />
           
           <div className="relative z-10 flex items-center gap-4 w-full md:w-auto">
-            <div className="w-12 h-12 bg-gradient-to-br from-amber-400 to-orange-500 rounded-xl flex items-center justify-center shrink-0 shadow-lg shadow-amber-500/20 border border-white/10">
+            <div className="w-12 h-12 bg-gradient-to-br from-amber-400 to-orange-500 rounded-xl flex items-center justify-center shrink-0 shadow-lg shadow-amber-500/20 border border-white/[0.04]">
               <Zap className="w-5 h-5 text-black" />
             </div>
             
@@ -150,7 +150,7 @@ export function DashboardBattleWidget({ onRefreshRequest }: DashboardBattleWidge
               </p>
               
               {/* Copy Invite Code Box */}
-              <div className="flex items-center gap-2 mt-2 bg-white/5 border border-white/10 rounded-lg px-3 py-1.5 w-fit mx-auto md:mx-0">
+              <div className="flex items-center gap-2 mt-2 bg-white/5 border border-white/[0.04] rounded-lg px-3 py-1.5 w-fit mx-auto md:mx-0">
                 <span className="text-xs text-zinc-500 uppercase tracking-widest font-mono">Code:</span>
                 <span className="text-xs font-mono font-bold text-white tracking-wider">{pendingChallenge.inviteCode}</span>
                 <button 
@@ -174,7 +174,7 @@ export function DashboardBattleWidget({ onRefreshRequest }: DashboardBattleWidge
             <div className="flex gap-2 w-full sm:w-auto justify-end">
               <button
                 onClick={() => navigate('/create-challenge')}
-                className="flex-1 sm:flex-none px-4 py-2.5 bg-white/5 hover:bg-white/10 text-white rounded-xl font-bold border border-white/10 transition-all text-xs flex items-center justify-center gap-1.5"
+                className="flex-1 sm:flex-none px-4 py-2.5 bg-white/5 hover:bg-white/10 text-white rounded-xl font-bold border border-white/[0.04] transition-all text-xs flex items-center justify-center gap-1.5"
               >
                 View Screen
               </button>
@@ -200,7 +200,7 @@ export function DashboardBattleWidget({ onRefreshRequest }: DashboardBattleWidge
             </h2>
             <button 
               onClick={() => navigate('/create-challenge')} 
-              className="text-[12px] font-medium text-zinc-300 hover:text-white bg-white/5 hover:bg-white/10 px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition-colors border border-white/10"
+              className="text-[12px] font-medium text-zinc-300 hover:text-white bg-white/5 hover:bg-white/10 px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition-colors border border-white/[0.04]"
             >
               <Plus className="w-3.5 h-3.5" /> New Challenge
             </button>
@@ -219,10 +219,10 @@ export function DashboardBattleWidget({ onRefreshRequest }: DashboardBattleWidge
                 <div 
                   key={challengeItem.id}
                   onClick={() => navigate(`/battle/${challengeItem.id}`)}
-                  className="relative rounded-2xl border border-white/5 bg-[#121214] overflow-hidden group cursor-pointer hover:border-white/10 transition-all duration-300 flex flex-col"
+                  className="relative rounded-2xl border border-white/[0.04] bg-[#0F0F13] overflow-hidden group cursor-pointer hover:border-white/10 transition-all duration-300 flex flex-col"
                 >
                   {/* Top section: Context */}
-                  <div className="p-4 md:p-5 border-b border-white/5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-white/[0.01]">
+                  <div className="p-4 md:p-5 border-b border-white/[0.04] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-white/[0.01]">
                      <div className="flex items-center gap-3">
                         <div className="w-10 h-10 rounded-xl bg-violet-500/10 flex items-center justify-center border border-violet-500/20 shrink-0">
                            <Target className="w-5 h-5 text-violet-400" />
@@ -244,7 +244,7 @@ export function DashboardBattleWidget({ onRefreshRequest }: DashboardBattleWidge
                          <span className="text-[10px] font-medium text-zinc-500 uppercase tracking-wider mb-0.5">Total Pool</span>
                          <span className="text-sm font-bold text-emerald-400">₹{challengeItem.pool}</span>
                        </div>
-                       <div className="hidden sm:flex w-8 h-8 rounded-full bg-white/5 border border-white/10 items-center justify-center group-hover:bg-white/10 transition-colors">
+                       <div className="hidden sm:flex w-8 h-8 rounded-full bg-white/5 border border-white/[0.04] items-center justify-center group-hover:bg-white/10 transition-colors">
                           <ArrowRight className="w-4 h-4 text-zinc-400" />
                        </div>
                      </div>
@@ -255,7 +255,7 @@ export function DashboardBattleWidget({ onRefreshRequest }: DashboardBattleWidge
                      
                      {/* Participant 1 (You) */}
                      <div className="flex items-center gap-4">
-                        <div className="w-8 h-8 rounded-full border border-white/10 overflow-hidden shrink-0 bg-[#0D0D10] flex items-center justify-center font-bold text-[10px] text-zinc-300 uppercase">
+                        <div className="w-8 h-8 rounded-full border border-white/[0.04] overflow-hidden shrink-0 bg-[#0F0F13] flex items-center justify-center font-bold text-[10px] text-zinc-300 uppercase">
                            {myData.name ? myData.name.substring(0, 2) : "ME"}
                         </div>
                         <div className="flex-1">
@@ -273,7 +273,7 @@ export function DashboardBattleWidget({ onRefreshRequest }: DashboardBattleWidge
 
                      {/* Participant 2 (Opponent) */}
                      <div className="flex items-center gap-4">
-                        <div className="w-8 h-8 rounded-full border border-white/10 overflow-hidden shrink-0 bg-[#0D0D10] flex items-center justify-center font-bold text-[10px] text-zinc-300 uppercase">
+                        <div className="w-8 h-8 rounded-full border border-white/[0.04] overflow-hidden shrink-0 bg-[#0F0F13] flex items-center justify-center font-bold text-[10px] text-zinc-300 uppercase">
                            {oppData.name ? oppData.name.substring(0, 2) : "OP"}
                         </div>
                         <div className="flex-1">
@@ -296,14 +296,14 @@ export function DashboardBattleWidget({ onRefreshRequest }: DashboardBattleWidge
       ) : (
         /* Empty State */
         !pendingChallenge && (
-          <div className="relative rounded-2xl border border-white/10 bg-gradient-to-r from-violet-950/10 via-[#0D0D0F]/90 to-[#0D0D0F]/90 p-6 md:p-8 overflow-hidden flex flex-col md:flex-row items-center justify-between gap-6 group shadow-2xl">
+          <div className="relative rounded-2xl border border-white/[0.04] bg-gradient-to-r from-violet-950/10 via-[#0F0F13]/90 to-[#0F0F13]/90 p-6 md:p-8 overflow-hidden flex flex-col md:flex-row items-center justify-between gap-6 group shadow-2xl">
             {/* Decorative background grid and glow */}
             <div className="absolute inset-0 bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:14px_24px] pointer-events-none" />
             <div className="absolute -left-20 -top-20 w-52 h-52 bg-violet-500/10 rounded-full blur-[80px] pointer-events-none" />
             <div className="absolute right-0 top-0 bottom-0 w-[2px] bg-gradient-to-b from-violet-500/30 to-fuchsia-500/30" />
 
             <div className="relative z-10 flex items-center gap-5 w-full md:w-auto">
-              <div className="w-14 h-14 bg-gradient-to-br from-violet-500 to-fuchsia-600 rounded-xl flex items-center justify-center shrink-0 shadow-lg shadow-violet-500/20 border border-white/10">
+              <div className="w-14 h-14 bg-gradient-to-br from-violet-500 to-fuchsia-600 rounded-xl flex items-center justify-center shrink-0 shadow-lg shadow-violet-500/20 border border-white/[0.04]">
                 <Swords className="w-6 h-6 text-white" />
               </div>
               

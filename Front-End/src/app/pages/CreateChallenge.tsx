@@ -198,7 +198,7 @@ export function CreateChallenge() {
   const isAvatarUrl = userAvatar?.startsWith("http");
 
   return (
-    <div className="min-h-screen bg-[#0A0A0C] text-white selection:bg-violet-500/30 overflow-x-hidden font-sans">
+    <div className="min-h-screen bg-[#0F0F13] text-white selection:bg-violet-500/30 overflow-x-hidden font-sans">
       {/* Dynamic Background */}
       <div className="fixed inset-0 pointer-events-none">
         <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] rounded-full bg-violet-600/10 blur-[120px]" />
@@ -207,7 +207,7 @@ export function CreateChallenge() {
       </div>
 
       {/* Navbar */}
-      <nav className="sticky top-0 z-50 border-b border-white/10 bg-[#0D0D0F]/80 backdrop-blur-xl">
+      <nav className="sticky top-0 z-50 border-b border-white/[0.04] bg-[#0F0F13]/80 backdrop-blur-xl">
         <div className={`mx-auto px-4 sm:px-6 lg:px-8 py-4 transition-all duration-500 ${screen === 'hub' ? 'max-w-6xl' : 'max-w-3xl'}`}>
           <div className="flex items-center justify-between">
             <button 
@@ -804,7 +804,7 @@ export function CreateChallenge() {
                 </div>
 
                 {/* Secret Invite Code Card */}
-                <div className="w-full max-w-md bg-[#0D0D0F] border border-white/10 rounded-3xl p-6 text-center relative overflow-hidden group shadow-2xl">
+                <div className="w-full max-w-md bg-[#0F0F13] border border-white/[0.04] rounded-3xl p-6 text-center relative overflow-hidden group shadow-2xl">
                   <div className="absolute inset-0 bg-gradient-to-br from-violet-500/5 to-fuchsia-500/5 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                   
                   <p className="text-[10px] text-zinc-500 font-bold tracking-[0.25em] uppercase mb-4">Secret Invite Code</p>
@@ -819,7 +819,7 @@ export function CreateChallenge() {
                       className={`flex-1 flex items-center justify-center gap-1.5 py-3 rounded-xl font-bold text-sm transition-all duration-300
                         ${copied
                           ? "bg-emerald-500/20 border border-emerald-500/20 text-emerald-400"
-                          : "bg-white/5 border border-white/10 hover:bg-white/10 text-white"
+                          : "bg-white/5 border border-white/[0.04] hover:bg-white/10 text-white"
                         }`}
                     >
                       {copied ? <CheckCircle className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
@@ -840,7 +840,7 @@ export function CreateChallenge() {
                       <span>Code expires in <span className="font-mono font-black tracking-wider">{formatTime(timeLeft)}</span></span>
                     </div>
                   ) : (
-                    <div className="flex items-center gap-1.5 text-zinc-400 bg-white/5 px-4 py-2 rounded-xl font-bold border border-white/10 text-xs">
+                    <div className="flex items-center gap-1.5 text-zinc-400 bg-white/5 px-4 py-2 rounded-xl font-bold border border-white/[0.04] text-xs">
                       <Shield className="w-4 h-4" /> 
                       <span>Code Expired. Refunded to wallet.</span>
                     </div>
@@ -861,7 +861,7 @@ export function CreateChallenge() {
               <div className="animate-in fade-in zoom-in-95 duration-500 flex flex-col items-center justify-center py-10">
                 <div className="relative flex items-center justify-center mb-8 animate-bounce" style={{ animationDuration: '3s' }}>
                   <div className="absolute w-24 h-24 bg-emerald-500/10 rounded-full animate-ping" style={{ animationDuration: '2.5s' }}></div>
-                  <div className="w-20 h-20 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-3xl flex items-center justify-center z-10 shadow-xl shadow-emerald-500/20 border border-white/10">
+                  <div className="w-20 h-20 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-3xl flex items-center justify-center z-10 shadow-xl shadow-emerald-500/20 border border-white/[0.04]">
                     <Shield className="w-9 h-9 text-white" />
                   </div>
                 </div>
@@ -874,11 +874,11 @@ export function CreateChallenge() {
                   The pending challenge invitation has been expired. All funds have been returned to your wallet.
                 </p>
 
-                <div className="w-full max-w-md bg-[#0D0D0F]/90 border border-white/5 rounded-2xl p-6 text-center mb-8">
+                <div className="w-full max-w-md bg-[#0F0F13]/90 border border-white/[0.04] rounded-2xl p-6 text-center mb-8">
                   <div className="text-xs text-zinc-500 uppercase tracking-widest mb-1.5 font-semibold">Amount Refunded</div>
                   <div className="text-3xl font-black text-emerald-400 mb-4">₹{total}</div>
                   
-                  <div className="flex justify-between items-center text-xs pt-4 border-t border-white/5 text-zinc-400">
+                  <div className="flex justify-between items-center text-xs pt-4 border-t border-white/[0.04] text-zinc-400">
                     <span>New Wallet Balance</span>
                     <span className="font-bold text-white">₹{battleBalance}</span>
                   </div>

@@ -134,7 +134,7 @@ export function ConsistencyCalendar({
             <div className="flex items-center gap-1">
               <button
                 onClick={onPrevMonth}
-                className="p-1 rounded bg-white/5 border border-white/10 hover:bg-white/10 transition-colors text-zinc-400 hover:text-white"
+                className="p-1 rounded bg-white/5 border border-white/[0.04] hover:bg-white/10 transition-colors text-zinc-400 hover:text-white"
               >
                 <ChevronLeft className="w-3.5 h-3.5" />
               </button>
@@ -142,7 +142,7 @@ export function ConsistencyCalendar({
               <button
                 onClick={onNextMonth}
                 disabled={isNextDisabled}
-                className="p-1 rounded bg-white/5 border border-white/10 hover:bg-white/10 transition-colors text-zinc-400 hover:text-white disabled:opacity-30 disabled:pointer-events-none"
+                className="p-1 rounded bg-white/5 border border-white/[0.04] hover:bg-white/10 transition-colors text-zinc-400 hover:text-white disabled:opacity-30 disabled:pointer-events-none"
               >
                 <ChevronRight className="w-3.5 h-3.5" />
               </button>

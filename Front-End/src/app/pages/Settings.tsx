@@ -168,7 +168,7 @@ export function Settings() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#0D0D0F] flex items-center justify-center">
+      <div className="min-h-screen bg-[#0F0F13] flex items-center justify-center">
         <Loader2 className="w-8 h-8 text-violet-500 animate-spin" />
       </div>
     );
@@ -178,7 +178,7 @@ export function Settings() {
   const username = email ? email.split("@")[0] : "user";
 
   return (
-    <div className="min-h-screen text-white" style={{ backgroundColor: "#0D0D0F" }}>
+    <div className="min-h-screen text-white" style={{ backgroundColor: "#0F0F13" }}>
       {/* Background */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-0 right-1/4 w-96 h-96 bg-violet-500/10 rounded-full blur-[120px]" />
@@ -186,7 +186,7 @@ export function Settings() {
       </div>
 
       {/* Navbar */}
-      <nav className="sticky top-0 z-50 border-b border-white/10 bg-[#0D0D0F]/80 backdrop-blur-xl">
+      <nav className="sticky top-0 z-50 border-b border-white/[0.04] bg-[#0F0F13]/80 backdrop-blur-xl">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between">
             <Link to="/dashboard" className="flex items-center gap-2 text-zinc-400 hover:text-white transition-colors">
@@ -213,7 +213,7 @@ export function Settings() {
 
           {/* Sidebar */}
           <div className="lg:col-span-1">
-            <div className="bg-white/5 border border-white/10 rounded-2xl p-2 space-y-1">
+            <div className="bg-white/5 border border-white/[0.04] rounded-2xl p-2 space-y-1">
               {sections.map(({ key, label, icon: Icon }) => (
                 <button
                   key={key}
@@ -233,7 +233,7 @@ export function Settings() {
               ))}
 
               {/* Logout */}
-              <div className="pt-2 mt-2 border-t border-white/10">
+              <div className="pt-2 mt-2 border-t border-white/[0.04]">
                 <button
                   onClick={handleLogout}
                   className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-red-400 hover:bg-red-500/10 transition-all"
@@ -252,11 +252,11 @@ export function Settings() {
             {activeSection === "account" && (
               <div className="relative">
                 <div className="absolute inset-0 bg-gradient-to-br from-violet-500/10 to-purple-500/10 rounded-2xl blur-xl opacity-60" />
-                <div className="relative bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6">
+                <div className="relative bg-white/5 backdrop-blur-xl border border-white/[0.04] rounded-2xl p-6">
                   <h2 className="text-lg font-bold mb-6">Account Details</h2>
 
                   {/* Avatar */}
-                  <div className="flex flex-col mb-6 p-4 bg-white/5 rounded-xl border border-white/10">
+                  <div className="flex flex-col mb-6 p-4 bg-white/5 rounded-xl border border-white/[0.04]">
                     <div className="flex items-center gap-4">
                       <div className="w-16 h-16 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-2xl flex items-center justify-center text-3xl font-bold shadow-lg shadow-emerald-500/20">
                         {avatar ? (
@@ -283,12 +283,12 @@ export function Settings() {
 
                     {/* Avatar Selector Grid */}
                     {showAvatarSelector && (
-                      <div className="mt-4 pt-4 border-t border-white/10">
+                      <div className="mt-4 pt-4 border-t border-white/[0.04]">
                         <p className="text-xs text-zinc-400 mb-3">Choose an avatar emoji</p>
                         <div className="flex flex-wrap gap-2">
                           <button
                             onClick={() => { setAvatar(""); setShowAvatarSelector(false); }}
-                            className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all ${!avatar ? "bg-violet-500/20 border-violet-500/50 border" : "bg-white/5 border border-white/10 hover:bg-white/10"}`}
+                            className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all ${!avatar ? "bg-violet-500/20 border-violet-500/50 border" : "bg-white/5 border border-white/[0.04] hover:bg-white/10"}`}
                           >
                             <span className="text-xs font-bold text-zinc-300">{defaultAvatar}</span>
                           </button>
@@ -296,7 +296,7 @@ export function Settings() {
                             <button
                               key={emoji}
                               onClick={() => { setAvatar(emoji); setShowAvatarSelector(false); }}
-                              className={`w-10 h-10 rounded-xl text-xl flex items-center justify-center transition-all ${avatar === emoji ? "bg-violet-500/20 border-violet-500/50 border scale-110" : "bg-white/5 border border-white/10 hover:bg-white/10 hover:scale-105"}`}
+                              className={`w-10 h-10 rounded-xl text-xl flex items-center justify-center transition-all ${avatar === emoji ? "bg-violet-500/20 border-violet-500/50 border scale-110" : "bg-white/5 border border-white/[0.04] hover:bg-white/10 hover:scale-105"}`}
                             >
                               {emoji}
                             </button>
@@ -323,7 +323,7 @@ export function Settings() {
                           type={type}
                           value={value}
                           onChange={(e) => setter(e.target.value)}
-                          className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder:text-zinc-600 focus:outline-none focus:border-violet-500/50 transition-all"
+                          className="w-full px-4 py-3 bg-white/5 border border-white/[0.04] rounded-xl text-white placeholder:text-zinc-600 focus:outline-none focus:border-violet-500/50 transition-all"
                         />
                       </div>
                     ))}
@@ -338,7 +338,7 @@ export function Settings() {
                         : "bg-gradient-to-r from-violet-500 to-purple-600 hover:from-violet-400 hover:to-purple-500 shadow-lg shadow-violet-500/30 disabled:opacity-50"
                       }`}
                   >
-                    {saveLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : saved ? "✅ Saved!" : "Save Changes"}
+                    {saveLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : saved ? "Saved!" : "Save Changes"}
                   </button>
                 </div>
               </div>
@@ -348,7 +348,7 @@ export function Settings() {
             {activeSection === "commitment" && (
               <div className="relative">
                 <div className="absolute inset-0 bg-gradient-to-br from-yellow-500/10 to-orange-500/10 rounded-2xl blur-xl opacity-60" />
-                <div className="relative bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6">
+                <div className="relative bg-white/5 backdrop-blur-xl border border-white/[0.04] rounded-2xl p-6">
                   <h2 className="text-lg font-bold mb-2">Daily Commitment</h2>
                   <p className="text-zinc-400 text-sm mb-6 flex items-center gap-2">
                     <Lock className="w-4 h-4 text-yellow-500" />
@@ -369,7 +369,7 @@ export function Settings() {
                           className={`relative p-4 rounded-xl border text-left transition-all
                             ${isActive
                               ? "bg-yellow-500/20 border-yellow-500/40 shadow-lg shadow-yellow-500/10"
-                              : "opacity-40 bg-white/5 border-white/10 grayscale"
+                              : "opacity-40 bg-white/5 border-white/[0.04] grayscale"
                             }`}
                         >
                           {pro && (
@@ -385,7 +385,7 @@ export function Settings() {
                     })}
                   </div>
 
-                  <div className="bg-white/5 border border-white/10 rounded-xl p-4">
+                  <div className="bg-white/5 border border-white/[0.04] rounded-xl p-4">
                     <div className="flex justify-between text-sm mb-1">
                       <span className="text-zinc-400">Current active plan</span>
                       <span className="font-semibold text-yellow-400">{dailyCommitment} coins/day</span>
@@ -403,7 +403,7 @@ export function Settings() {
             {activeSection === "notifications" && (
               <div className="relative">
                 <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-cyan-500/10 rounded-2xl blur-xl opacity-60" />
-                <div className="relative bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6">
+                <div className="relative bg-white/5 backdrop-blur-xl border border-white/[0.04] rounded-2xl p-6">
                   <h2 className="text-lg font-bold mb-6">Notification Preferences</h2>
 
                   <div className="space-y-3">
@@ -417,7 +417,7 @@ export function Settings() {
                     ].map(({ key, label, desc }) => (
                       <div
                         key={key}
-                        className="flex items-center justify-between p-4 bg-white/5 border border-white/10 rounded-xl"
+                        className="flex items-center justify-between p-4 bg-white/5 border border-white/[0.04] rounded-xl"
                       >
                         <div>
                           <div className="font-semibold text-sm">{label}</div>
@@ -456,7 +456,7 @@ export function Settings() {
                         : "bg-gradient-to-r from-violet-500 to-purple-600 hover:from-violet-400 hover:to-purple-500 shadow-lg shadow-violet-500/30 disabled:opacity-50"
                       }`}
                   >
-                    {saveLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : saved ? "✅ Saved!" : "Save Preferences"}
+                    {saveLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : saved ? "Saved!" : "Save Preferences"}
                   </button>
                 </div>
               </div>
@@ -466,7 +466,7 @@ export function Settings() {
             {activeSection === "security" && (
               <div className="relative">
                 <div className="absolute inset-0 bg-gradient-to-br from-red-500/10 to-pink-500/10 rounded-2xl blur-xl opacity-60" />
-                <div className="relative bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6">
+                <div className="relative bg-white/5 backdrop-blur-xl border border-white/[0.04] rounded-2xl p-6">
                   <h2 className="text-lg font-bold mb-6">Change Password</h2>
 
                   {errorMsg && (
@@ -488,7 +488,7 @@ export function Settings() {
                           value={value}
                           onChange={(e) => setter(e.target.value)}
                           placeholder="••••••••"
-                          className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder:text-zinc-600 focus:outline-none focus:border-violet-500/50 transition-all"
+                          className="w-full px-4 py-3 bg-white/5 border border-white/[0.04] rounded-xl text-white placeholder:text-zinc-600 focus:outline-none focus:border-violet-500/50 transition-all"
                         />
                       </div>
                     ))}
@@ -503,12 +503,12 @@ export function Settings() {
                         : "bg-gradient-to-r from-red-500 to-pink-600 hover:from-red-400 hover:to-pink-500 shadow-lg shadow-red-500/30 disabled:opacity-50"
                       }`}
                   >
-                    {saveLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : saved ? "✅ Password Updated!" : "Update Password"}
+                    {saveLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : saved ? "Password Updated!" : "Update Password"}
                   </button>
 
                   {/* Danger Zone */}
                   <div className="mt-8 p-4 border border-red-500/20 rounded-xl bg-red-500/5">
-                    <h3 className="text-sm font-bold text-red-400 mb-2">⚠️ Danger Zone</h3>
+                    <h3 className="text-sm font-bold text-red-400 mb-2">Danger Zone</h3>
                     <p className="text-xs text-zinc-500 mb-3">Deleting your account is permanent. All data will be lost.</p>
                     <button className="text-xs text-red-400 border border-red-500/30 px-3 py-2 rounded-lg hover:bg-red-500/10 transition-all">
                       Delete Account
@@ -527,7 +527,7 @@ export function Settings() {
                   <div className="relative bg-white/5 backdrop-blur-xl border border-violet-500/20 rounded-2xl p-6">
                     <div className="flex items-center justify-between mb-4">
                       <h2 className="text-lg font-bold">Current Plan</h2>
-                      <span className="text-xs bg-emerald-500/20 border border-emerald-500/30 text-emerald-300 px-2 py-1 rounded-full">✅ Active</span>
+                      <span className="text-xs bg-emerald-500/20 border border-emerald-500/30 text-emerald-300 px-2 py-1 rounded-full">Active</span>
                     </div>
                     
                     {plan?.toLowerCase() === "pro" ? (
@@ -575,7 +575,7 @@ export function Settings() {
                 {/* Billing */}
                 <div className="relative">
                   <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-white/2 rounded-2xl blur-xl opacity-40" />
-                  <div className="relative bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6">
+                  <div className="relative bg-white/5 backdrop-blur-xl border border-white/[0.04] rounded-2xl p-6">
                     <h2 className="text-lg font-bold mb-4">Billing</h2>
                     
                     {plan?.toLowerCase() === "pro" ? (
@@ -600,7 +600,7 @@ export function Settings() {
                     <div className="flex gap-3 mt-5">
                       <Link
                         to="/pricing"
-                        className="flex-1 py-3 rounded-xl font-semibold text-center bg-white/5 border border-white/10 hover:bg-white/10 transition-all text-sm flex items-center justify-center gap-1"
+                        className="flex-1 py-3 rounded-xl font-semibold text-center bg-white/5 border border-white/[0.04] hover:bg-white/10 transition-all text-sm flex items-center justify-center gap-1"
                       >
                         {plan?.toLowerCase() === "pro" ? "Manage Plan" : "Upgrade to Pro"}
                         <ChevronRight className="w-4 h-4" />

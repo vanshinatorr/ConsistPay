@@ -99,7 +99,7 @@ export function Onboarding() {
   const depositTotal = amount ? amount * 30 : 0;
 
   return (
-    <div className="min-h-screen text-white flex flex-col items-center justify-center p-6 relative overflow-y-auto" style={{ backgroundColor: "#08080B" }}>
+    <div className="min-h-screen text-white flex flex-col items-center justify-center p-6 relative overflow-y-auto" style={{ backgroundColor: "#0F0F13" }}>
       
       {/* Background Decorative Ambient Blobs */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
@@ -120,7 +120,7 @@ export function Onboarding() {
         </div>
 
         {/* Wizard Container */}
-        <div className="bg-[#0F0F13] border border-zinc-800 rounded-3xl p-5 md:p-10 shadow-2xl relative">
+        <div className="bg-[#0F0F13] border border-white/[0.04] rounded-3xl p-5 md:p-10 shadow-2xl relative">
           
           {/* Progress Indicators (Only for Steps 1-6) */}
           {step < 7 && (
@@ -282,7 +282,7 @@ export function Onboarding() {
               <div className="flex gap-3 pt-2">
                 <button
                   onClick={handleBack}
-                  className="px-5 py-3 border border-white/10 hover:bg-white/5 rounded-xl font-medium text-sm transition-all"
+                  className="px-5 py-3 border border-white/[0.04] hover:bg-white/5 rounded-xl font-medium text-sm transition-all"
                 >
                   Back
                 </button>
@@ -306,12 +306,12 @@ export function Onboarding() {
               </div>
 
               {/* Mobile Plan Selector (Segmented Tabs) */}
-              <div className="flex md:hidden bg-zinc-900/60 p-1 rounded-xl border border-zinc-800/80 mb-4 select-none">
+              <div className="flex md:hidden bg-zinc-900/60 p-1 rounded-xl border border-white/[0.04] mb-4 select-none">
                 <button
                   type="button"
                   onClick={() => setPlan("Free")}
                   className={`flex-1 py-2 text-xs font-semibold rounded-lg transition-all cursor-pointer ${
-                    plan === "Free" ? "bg-zinc-800 text-white shadow" : "text-zinc-500"
+                    plan === "Free" ? "bg-white/10 text-white shadow" : "text-zinc-500"
                   }`}
                 >
                   Free Plan
@@ -408,8 +408,8 @@ export function Onboarding() {
                   type="button"
                   className={`p-4 sm:p-6 rounded-2xl border text-left transition-all duration-300 flex flex-col justify-between min-h-[290px] sm:min-h-[340px] relative overflow-hidden group ${
                     plan === "Free"
-                      ? "border-zinc-700 bg-zinc-900/30 shadow-sm"
-                      : "border-white/[0.04] bg-white/[0.01] hover:border-zinc-800 hover:bg-white/[0.02]"
+                      ? "border-white/[0.08] bg-white/[0.02] shadow-sm"
+                      : "border-white/[0.04] bg-white/[0.01] hover:border-white/[0.08] hover:bg-white/[0.02]"
                   }`}
                 >
                   <div className="space-y-3">
@@ -515,7 +515,7 @@ export function Onboarding() {
               <div className="flex gap-4 pt-3 border-t border-white/[0.04] mt-3">
                 <button
                   onClick={handleBack}
-                  className="px-5 py-2.5 border border-zinc-800 hover:bg-[#16161F] rounded-xl font-semibold text-xs transition-all text-zinc-400 hover:text-white"
+                  className="px-5 py-2.5 border border-white/[0.04] hover:bg-[#16161F] rounded-xl font-semibold text-xs transition-all text-zinc-400 hover:text-white"
                 >
                   Back
                 </button>
@@ -546,7 +546,7 @@ export function Onboarding() {
                   className={`p-4 rounded-xl border text-center transition-all flex flex-col items-center justify-center gap-1.5 cursor-pointer ${
                     amount === 5
                       ? "border-emerald-500/50 bg-emerald-500/[0.02] text-emerald-400 font-semibold"
-                      : "border-white/[0.04] bg-white/[0.01] text-zinc-400 hover:border-zinc-800"
+                      : "border-white/[0.04] bg-[#0F0F13] text-zinc-400 hover:border-white/[0.08]"
                   }`}
                 >
                   <span className="text-[10px] sm:text-xs font-semibold text-zinc-400">Casual</span>
@@ -560,7 +560,7 @@ export function Onboarding() {
                   className={`p-4 rounded-xl border text-center transition-all flex flex-col items-center justify-center gap-1.5 cursor-pointer ${
                     amount === 20
                       ? "border-violet-500/50 bg-violet-500/[0.02] text-violet-400 font-semibold"
-                      : "border-white/[0.04] bg-white/[0.01] text-zinc-400 hover:border-zinc-800"
+                      : "border-white/[0.04] bg-[#0F0F13] text-zinc-400 hover:border-white/[0.08]"
                   }`}
                 >
                   <span className="text-[10px] sm:text-xs font-semibold text-zinc-400">Prep</span>
@@ -574,7 +574,7 @@ export function Onboarding() {
                   className={`p-4 rounded-xl border text-center transition-all flex flex-col items-center justify-center gap-1.5 cursor-pointer ${
                     amount === 50
                       ? "border-amber-500/50 bg-amber-500/[0.02] text-amber-400 font-semibold"
-                      : "border-white/[0.04] bg-white/[0.01] text-zinc-400 hover:border-zinc-800"
+                      : "border-white/[0.04] bg-[#0F0F13] text-zinc-400 hover:border-white/[0.08]"
                   }`}
                 >
                   <span className="text-[10px] sm:text-xs font-semibold text-zinc-400">High</span>
@@ -583,14 +583,14 @@ export function Onboarding() {
                 </button>
               </div>
 
-              <div className="p-4 rounded-xl bg-white/[0.01] border border-white/[0.04] text-xs leading-relaxed text-zinc-400">
+              <div className="p-4 rounded-xl bg-[#0F0F13] border border-white/[0.04] text-xs leading-relaxed text-zinc-400">
                 Having "skin in the game" psychologically increases consistency by up to 3x. Your deposit is fully returned if you maintain your commitment.
               </div>
 
               <div className="flex gap-3 pt-2">
                 <button
                   onClick={handleBack}
-                  className="px-5 py-3 border border-zinc-800 hover:bg-white/5 rounded-xl font-medium text-sm transition-all text-zinc-400 hover:text-white"
+                  className="px-5 py-3 border border-white/[0.04] hover:bg-white/5 rounded-xl font-medium text-sm transition-all text-zinc-400 hover:text-white"
                 >
                   Back
                 </button>
@@ -616,7 +616,7 @@ export function Onboarding() {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5 items-stretch pt-1">
                 {/* Left Side: Summary Table */}
-                <div className="bg-white/[0.01] border border-white/[0.04] rounded-2xl p-5 flex flex-col justify-between space-y-4">
+                <div className="bg-[#0F0F13] border border-white/[0.04] rounded-2xl p-5 flex flex-col justify-between space-y-4">
                   <div className="space-y-2.5">
                     <h3 className="font-bold text-white text-sm border-b border-white/[0.04] pb-2">Challenge Details</h3>
                     <div className="flex justify-between items-center text-xs border-b border-white/[0.04] pb-2">
@@ -655,7 +655,7 @@ export function Onboarding() {
                     </div>
                   </div>
 
-                  <div className="flex justify-between items-center text-xs pt-1.5 bg-white/[0.02] p-2.5 rounded-xl border border-white/[0.04]">
+                  <div className="flex justify-between items-center text-xs pt-1.5 bg-[#0F0F13] p-2.5 rounded-xl border border-white/[0.04]">
                     <span className="text-zinc-400 font-semibold">Refundable Deposit</span>
                     <span className="font-bold text-lg text-violet-400">₹{depositTotal}</span>
                   </div>
@@ -663,7 +663,7 @@ export function Onboarding() {
 
                 {/* Right Side: Simple Rules */}
                 <div className="space-y-3 flex flex-col justify-between">
-                  <div className="p-4 md:p-5 rounded-2xl border border-emerald-500/10 bg-white/[0.01] space-y-2.5 flex-1 flex flex-col justify-center">
+                  <div className="p-4 md:p-5 rounded-2xl border border-emerald-500/10 bg-[#0F0F13] space-y-2.5 flex-1 flex flex-col justify-center">
                     <div>
                       <h4 className="font-semibold text-emerald-400 text-xs flex items-center gap-1.5 mb-2">
                         <CheckCircle2 className="w-4.5 h-4.5 text-emerald-400" />
@@ -694,7 +694,7 @@ export function Onboarding() {
                     </div>
                   </div>
 
-                  <div className="p-4 md:p-5 rounded-2xl border border-amber-500/10 bg-white/[0.01] space-y-2.5 flex-1 flex flex-col justify-center">
+                  <div className="p-4 md:p-5 rounded-2xl border border-amber-500/10 bg-[#0F0F13] space-y-2.5 flex-1 flex flex-col justify-center">
                     <div>
                       <h4 className="font-semibold text-amber-400 text-xs flex items-center gap-1.5 mb-2">
                         <AlertTriangle className="w-4.5 h-4.5 text-amber-400 shrink-0" />
@@ -722,7 +722,7 @@ export function Onboarding() {
               <div className="flex gap-4 pt-3 border-t border-white/[0.04] mt-3">
                 <button
                   onClick={handleBack}
-                  className="px-5 py-2.5 border border-zinc-800 hover:bg-[#16161F] rounded-xl font-semibold text-xs transition-all text-zinc-400 hover:text-white"
+                  className="px-5 py-2.5 border border-white/[0.04] hover:bg-[#16161F] rounded-xl font-semibold text-xs transition-all text-zinc-400 hover:text-white"
                 >
                   Back
                 </button>
@@ -784,7 +784,7 @@ export function Onboarding() {
                     </div>
                   )}
 
-                  <div className="p-5 rounded-2xl border border-white/[0.04] bg-white/[0.01] space-y-3 shadow-inner">
+                  <div className="p-5 rounded-2xl border border-white/[0.04] bg-[#0F0F13] space-y-3 shadow-inner">
                     <div className="flex items-center justify-between text-xs">
                       <span className="text-zinc-500">Selected Plan</span>
                       <span className="text-white font-semibold capitalize flex items-center gap-1.5">
@@ -869,7 +869,7 @@ export function Onboarding() {
                     <button
                       onClick={handleRazorpayPayment}
                       disabled={loading}
-                      className="w-full py-3 bg-[#16161F] border border-zinc-800 hover:bg-[#1E1E2A] disabled:opacity-50 text-zinc-300 font-semibold rounded-xl transition-all flex items-center justify-center gap-2 text-xs"
+                      className="w-full py-3 bg-[#16161F] border border-white/[0.04] hover:bg-[#1E1E2A] disabled:opacity-50 text-zinc-300 font-semibold rounded-xl transition-all flex items-center justify-center gap-2 text-xs"
                     >
                       Razorpay Checkout (UPI, Cards, Netbanking)
                     </button>
@@ -878,7 +878,7 @@ export function Onboarding() {
                       <button
                         onClick={handleBack}
                         disabled={loading}
-                        className="w-full py-2 border border-zinc-850 hover:bg-[#16161F] text-zinc-500 hover:text-zinc-300 font-semibold rounded-xl text-[10px] transition-all flex justify-center items-center"
+                        className="w-full py-2 border border-white/[0.04] hover:bg-[#16161F] text-zinc-500 hover:text-zinc-300 font-semibold rounded-xl text-[10px] transition-all flex justify-center items-center"
                       >
                         Back to Review
                       </button>

@@ -78,7 +78,7 @@ export function TodaysChallenge({
         <div className="relative bg-[#0F0F13] border border-white/[0.04] rounded-2xl p-6 overflow-hidden min-h-[522px] flex flex-col justify-between h-full flex-1">
           {/* AI Verification Loading Overlay */}
           {aiLoading && (
-            <div className="absolute inset-0 bg-[#0D0D0F]/85 backdrop-blur-md z-30 flex flex-col items-center justify-center text-center p-6 animate-in fade-in duration-300">
+            <div className="absolute inset-0 bg-[#0F0F13]/85 backdrop-blur-md z-30 flex flex-col items-center justify-center text-center p-6 animate-in fade-in duration-300">
               <div className="relative mb-6">
                 <div className="w-16 h-16 border-4 border-violet-500/20 border-t-violet-500 rounded-full animate-spin"></div>
                 <div className="absolute inset-0 flex items-center justify-center">

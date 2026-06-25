@@ -9,7 +9,7 @@ import {
 
 export function Footer() {
   return (
-    <footer className="mt-24 relative border-t border-white/10 overflow-hidden">
+    <footer className="mt-24 relative border-t border-white/[0.04] overflow-hidden">
       {/* Subtle Background Glow */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(34,197,94,0.015),transparent_45%)] pointer-events-none" />
 
@@ -44,7 +44,7 @@ export function Footer() {
                 href="https://instagram.com/vansh_vj"
                 target="_blank"
                 rel="noreferrer"
-                className="w-10 h-10 rounded-xl border border-white/10 bg-white/[0.03] flex items-center justify-center text-zinc-400 hover:text-white hover:border-white/20 hover:bg-white/[0.05] transition-all duration-300"
+                className="w-10 h-10 rounded-xl border border-white/[0.04] bg-white/[0.03] flex items-center justify-center text-zinc-400 hover:text-white hover:border-white/20 hover:bg-white/[0.05] transition-all duration-300"
               >
                 <Instagram className="w-4 h-4" />
               </a>
@@ -53,7 +53,7 @@ export function Footer() {
                 href="https://www.linkedin.com/in/vansh-vijay/"
                 target="_blank"
                 rel="noreferrer"
-                className="w-10 h-10 rounded-xl border border-white/10 bg-white/[0.03] flex items-center justify-center text-zinc-400 hover:text-white hover:border-white/20 hover:bg-white/[0.05] transition-all duration-300"
+                className="w-10 h-10 rounded-xl border border-white/[0.04] bg-white/[0.03] flex items-center justify-center text-zinc-400 hover:text-white hover:border-white/20 hover:bg-white/[0.05] transition-all duration-300"
               >
                 <Linkedin className="w-4 h-4" />
               </a>
@@ -123,7 +123,7 @@ export function Footer() {
         </div>
 
         {/* Bottom */}
-        <div className="mt-14 pt-6 border-t border-white/5 flex flex-col md:flex-row items-center justify-between gap-4">
+        <div className="mt-14 pt-6 border-t border-white/[0.04] flex flex-col md:flex-row items-center justify-between gap-4">
           <p className="text-xs text-zinc-500">
             © 2026 ConsistPay. All rights reserved.
           </p>

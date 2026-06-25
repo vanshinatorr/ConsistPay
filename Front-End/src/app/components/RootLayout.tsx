@@ -111,7 +111,7 @@ export function RootLayout() {
 
   if (loading && !isPublicPage) {
     return (
-      <div className="h-screen w-screen bg-[#0a0a0a] flex justify-center items-center">
+      <div className="h-screen w-screen bg-[#0F0F13] flex justify-center items-center">
         <div className="w-8 h-8 border-4 border-violet-500 border-t-transparent rounded-full animate-spin"></div>
       </div>
     );
@@ -127,7 +127,7 @@ export function RootLayout() {
   ];
 
   return (
-    <div className={`min-h-screen bg-[#0D0D0F] text-white flex flex-col ${showBottomNav ? "pb-20 md:pb-0" : ""}`}>
+    <div className={`min-h-screen bg-[#0F0F13] text-white flex flex-col ${showBottomNav ? "pb-20 md:pb-0" : ""}`}>
       <Toaster theme="dark" position="bottom-center" />
       <div className="flex-1">
         <Outlet />
@@ -135,7 +135,7 @@ export function RootLayout() {
 
       {/* Sticky Bottom Tab Bar for Mobile SaaS Feel */}
       {showBottomNav && (
-        <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-[#0D0D0F]/80 backdrop-blur-xl border-t border-white/10 pb-6 pt-3 px-6 flex justify-around items-center shadow-[0_-10px_25px_rgba(0,0,0,0.5)]">
+        <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-[#0F0F13]/80 backdrop-blur-xl border-t border-white/[0.04] pb-6 pt-3 px-6 flex justify-around items-center shadow-[0_-10px_25px_rgba(0,0,0,0.5)]">
           {tabs.map((tab) => {
             const isActive = path === tab.path || (tab.path !== "/dashboard" && path.startsWith(tab.path.substring(0, 5)));
             const IconComponent = tab.Icon;

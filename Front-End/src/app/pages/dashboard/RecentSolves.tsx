@@ -23,7 +23,7 @@ export function RecentSolves({ recentSolves }: RecentSolvesProps) {
   const getPlatformStyle = (p: string) => {
     if (p === "LC") return "bg-blue-500/20 text-blue-400 border-blue-500/30";
     if (p === "GFG") return "bg-green-500/20 text-green-400 border-green-500/30";
-    return "bg-white/10 text-zinc-400 border-white/20";
+    return "bg-white/5 text-zinc-400 border-white/[0.04]";
   };
 
   return (
@@ -46,7 +46,7 @@ export function RecentSolves({ recentSolves }: RecentSolvesProps) {
                 </div>
               ))
             ) : (
-              <div className="flex flex-col items-center justify-center py-8 text-zinc-500 border border-dashed border-white/10 rounded-xl">
+              <div className="flex flex-col items-center justify-center py-8 text-zinc-555 border border-dashed border-white/[0.04] rounded-xl">
                 <span className="text-sm">No recent solves yet.</span>
                 <span className="text-xs mt-1">Submit your first problem to start your streak!</span>
               </div>
