@@ -7,9 +7,13 @@ import {
   Linkedin,
 } from "lucide-react";
 
-export function Footer() {
+interface FooterProps {
+  className?: string;
+}
+
+export function Footer({ className }: FooterProps = {}) {
   return (
-    <footer className="mt-24 relative border-t border-white/[0.04] overflow-hidden">
+    <footer className={`${className !== undefined ? className : "mt-24"} relative border-t border-white/[0.04] overflow-hidden`}>
       {/* Subtle Background Glow */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(34,197,94,0.015),transparent_45%)] pointer-events-none" />
 

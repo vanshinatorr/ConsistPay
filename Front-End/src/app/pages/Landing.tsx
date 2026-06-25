@@ -12,7 +12,7 @@ export function Landing() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
-    <div className="text-slate-100 bg-[#06080D] relative overflow-x-hidden md:h-screen md:overflow-y-auto md:snap-y md:snap-mandatory scroll-smooth">
+    <div className="text-slate-100 bg-[#06080D] relative w-full md:h-screen md:overflow-hidden">
       {/* Ambient background glows */}
       <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-violet-600/20 rounded-full blur-[150px] pointer-events-none -translate-y-1/2" />
       <div className="absolute top-1/3 right-0 w-[400px] h-[400px] bg-fuchsia-600/10 rounded-full blur-[120px] pointer-events-none translate-x-1/2" />
@@ -123,9 +123,9 @@ export function Landing() {
       </nav>
 
       {/* Main Content */}
-      <main className="w-full">
+      <main className="w-full min-h-screen md:h-full md:overflow-y-auto md:snap-y md:snap-mandatory scroll-smooth">
         {/* Section 1: Hero & Social Proof */}
-        <div className="md:snap-start md:min-h-screen flex flex-col justify-between pt-24 pb-8 relative overflow-hidden">
+        <div className="md:snap-start md:snap-always md:h-screen flex flex-col justify-between pt-24 pb-8 relative overflow-hidden">
           <div className="flex-1 flex items-center justify-center">
             <HeroNew />
           </div>
@@ -135,24 +135,24 @@ export function Landing() {
         </div>
 
         {/* Section 2: Why ConsistPay */}
-        <div className="hidden md:flex md:snap-start md:min-h-screen flex-col justify-center relative overflow-hidden border-t border-white/5 bg-[#06080D]">
+        <div className="hidden md:flex md:snap-start md:snap-always md:h-screen flex-col justify-center relative overflow-hidden border-t border-white/5 bg-[#06080D]">
           <WhyConsistPay />
         </div>
 
         {/* Section 3: How It Works */}
-        <div className="md:snap-start md:min-h-screen flex flex-col justify-center relative overflow-hidden border-t border-white/5 bg-[#0A0C10]">
+        <div className="md:snap-start md:snap-always md:h-screen flex flex-col justify-center relative overflow-hidden border-t border-white/5 bg-[#0A0C10]">
           <HowItWorks />
         </div>
 
         {/* Section 4: More Features */}
-        <div className="hidden md:flex md:snap-start md:min-h-screen flex-col justify-center relative overflow-hidden border-t border-white/5 bg-[#06080D]">
+        <div className="hidden md:flex md:snap-start md:snap-always md:h-screen flex-col justify-center relative overflow-hidden border-t border-white/5 bg-[#06080D]">
           <MoreFeatures />
         </div>
 
         {/* Section 5: Pre-Footer CTA & Footer */}
-        <div className="md:snap-start md:min-h-screen flex flex-col justify-between relative overflow-hidden border-t border-white/5 bg-[#06080D]">
+        <div className="md:snap-start md:snap-always md:h-screen flex flex-col justify-between relative overflow-hidden border-t border-white/5 bg-[#06080D]">
           <div className="flex-1 flex items-center justify-center">
-            <section className="py-20 relative overflow-hidden w-full hidden md:block">
+            <section className="py-12 md:py-16 relative overflow-hidden w-full hidden md:block">
               <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-violet-900/10 via-[#06080D] to-[#06080D] opacity-100" />
               <div className="max-w-4xl mx-auto px-6 relative z-10 text-center">
                 <h2 className="text-4xl md:text-5xl font-bold tracking-tight mb-6 text-transparent bg-clip-text bg-gradient-to-r from-white via-zinc-100 to-zinc-400">
@@ -168,7 +168,7 @@ export function Landing() {
               </div>
             </section>
           </div>
-          <Footer />
+          <Footer className="mt-0" />
         </div>
       </main>
     </div>
