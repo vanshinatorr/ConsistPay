@@ -12,7 +12,7 @@ export function SocialProof() {
       {/* Very subtle top gradient line */}
       <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent" />
       
-      <div className="max-w-7xl mx-auto flex flex-col pt-6">
+      <div className="max-w-7xl mx-auto flex flex-col pt-4">
         {/* Live Indicator */}
         <div className="flex items-center justify-center gap-2 mb-2">
           <div className="flex h-1.5 w-1.5 relative">
@@ -23,7 +23,7 @@ export function SocialProof() {
         </div>
 
         {/* Stats Row */}
-        <div className="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-white/5 py-6 md:py-8 relative">
+        <div className="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-white/5 py-4 md:py-5 relative">
           {/* Ambient background glow behind stats */}
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-violet-900/10 via-transparent to-transparent opacity-50" />
           
@@ -39,9 +39,8 @@ export function SocialProof() {
           ))}
         </div>
         
-        {/* Trust Logos Row */}
-        <div className="border-t border-white/5 py-5 bg-black/20 flex flex-col items-center justify-center relative">
-          <span className="text-[9px] font-bold text-slate-500 uppercase tracking-widest mb-4">Powered by Enterprise Infrastructure</span>
+        <div className="border-t border-white/5 py-4 bg-black/20 flex flex-col items-center justify-center relative">
+          <span className="text-[9px] font-bold text-slate-500 uppercase tracking-widest mb-2">Powered by Enterprise Infrastructure</span>
           <div className="flex flex-wrap justify-center gap-8 md:gap-16 opacity-60 hover:opacity-100 transition-opacity duration-300">
             <div className="flex items-center gap-2 text-slate-400 hover:text-white transition-colors cursor-default grayscale hover:grayscale-0">
               <ShieldCheck className="w-4 h-4" />
