@@ -55,6 +55,13 @@ const checkAndNotifyBadges = async (user, totalSolved, totalMissed, totalProblem
         type: "streak"
       },
       {
+        key: "solved_50",
+        title: "🎉 Achievement Unlocked: Dedicated Coder!",
+        desc: "Brilliant! You've solved 50 or more coding problems overall.",
+        unlocked: totalProblemsSolved >= 50,
+        type: "system"
+      },
+      {
         key: "consistency_90",
         title: "🎉 Achievement Unlocked: Consistency King!",
         desc: "Outstanding! You've achieved a consistency score of 90% or above.",
@@ -66,6 +73,13 @@ const checkAndNotifyBadges = async (user, totalSolved, totalMissed, totalProblem
         title: "🎉 Achievement Unlocked: Elite Member!",
         desc: "Welcome to the Pro league of coding consistency.",
         unlocked: user.plan && user.plan.toLowerCase() === "pro",
+        type: "system"
+      },
+      {
+        key: "solved_100",
+        title: "🎉 Achievement Unlocked: Supercommitter!",
+        desc: "Heroic milestone! You've solved 100 or more coding problems overall.",
+        unlocked: totalProblemsSolved >= 100,
         type: "system"
       },
       {
@@ -94,6 +108,13 @@ const checkAndNotifyBadges = async (user, totalSolved, totalMissed, totalProblem
         title: "🎉 Achievement Unlocked: Streak Master!",
         desc: "Legendary! You've reached a consistency streak of 50 days.",
         unlocked: user.streak >= 50 || user.maxStreak >= 50,
+        type: "streak"
+      },
+      {
+        key: "streak_100",
+        title: "🎉 Achievement Unlocked: Consistency Legend!",
+        desc: "Unbelievable! You've reached a consistency streak of 100 days.",
+        unlocked: user.streak >= 100 || user.maxStreak >= 100,
         type: "streak"
       }
     ];

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Award, Flame, Shield, Gem, Crown, Swords, Info, Lock, X, Coins, Trophy } from "lucide-react";
+import { Award, Flame, Shield, Gem, Crown, Swords, Info, Lock, X, Coins, Trophy, Sparkles } from "lucide-react";
 import confetti from "canvas-confetti";
 
 interface AwardsCardProps {
@@ -104,6 +104,16 @@ export function AwardsCard({
       icon: Flame,
     },
     {
+      id: "solved_50",
+      name: "Dedicated Coder",
+      desc: "Solved 50+ coding problems overall. You are writing clean, efficient code and scaling up solutions.",
+      requirement: "Solve 50+ coding problems",
+      unlocked: onboardingComplete && totalProblemsSolved >= 50,
+      colorClass: "text-blue-400 bg-blue-500/10 border-blue-500/30",
+      glowClass: "from-blue-500/20 to-indigo-500/20",
+      icon: Gem,
+    },
+    {
       id: "consistency_90",
       name: "Consistency King",
       desc: "Maintained a >= 90% consistency score. A true master of daily execution.",
@@ -122,6 +132,16 @@ export function AwardsCard({
       colorClass: "text-violet-400 bg-violet-500/10 border-violet-500/30",
       glowClass: "from-violet-500/20 to-fuchsia-500/20",
       icon: Gem,
+    },
+    {
+      id: "solved_100",
+      name: "Supercommitter",
+      desc: "Solved 100+ coding problems overall! That is an incredible milestone of syntax mastery and algorithms.",
+      requirement: "Solve 100+ coding problems",
+      unlocked: onboardingComplete && totalProblemsSolved >= 100,
+      colorClass: "text-pink-400 bg-pink-500/10 border-pink-500/30",
+      glowClass: "from-pink-500/20 to-rose-500/20",
+      icon: Sparkles,
     },
     {
       id: "grace_5",
@@ -161,6 +181,16 @@ export function AwardsCard({
       unlocked: onboardingComplete && (streak >= 50 || maxStreak >= 50),
       colorClass: "text-red-400 bg-red-500/10 border-red-500/30",
       glowClass: "from-red-500/20 to-rose-500/20",
+      icon: Trophy,
+    },
+    {
+      id: "streak_100",
+      name: "Consistency Legend",
+      desc: "Hit an absolutely legendary 100-day consistency streak! You are in the top 0.1% of dedicated developers.",
+      requirement: "Reach a 100-day streak",
+      unlocked: onboardingComplete && (streak >= 100 || maxStreak >= 100),
+      colorClass: "text-amber-400 bg-amber-500/10 border-amber-500/30",
+      glowClass: "from-amber-500/20 to-yellow-500/20",
       icon: Trophy,
     },
   ];
