@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Bell, CheckCircle2, Swords, Trophy, Flame, Sparkles, X } from "lucide-react";
 import { Logo } from "../../components/Logo";
 import { Link, useLocation } from "react-router-dom";
@@ -16,6 +16,21 @@ export function Navbar({ initials, plan = "free", avatar, isAvatarUrl }: NavbarP
   const [isBattleModalOpen, setIsBattleModalOpen] = useState(false);
   const [showNotifs, setShowNotifs] = useState(false);
   const [notifications, setNotifications] = useState<any[]>([]);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setShowNotifs(false);
+      }
+    };
+    if (showNotifs) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [showNotifs]);
 
   const API_URL = import.meta.env.VITE_API_URL;
   const token = localStorage.getItem("token") || "";
@@ -44,14 +59,37 @@ export function Navbar({ initials, plan = "free", avatar, isAvatarUrl }: NavbarP
 
   const handleMarkAsRead = async () => {
     try {
-      await fetch(`${API_URL}/api/notifications/read`, {
+      const res = await fetch(`${API_URL}/api/notifications/read`, {
         method: "PUT",
         headers: { Authorization: `Bearer ${token}` }
       });
-      // Update local state to show all as read instantly
-      setNotifications(notifications.map(n => ({ ...n, read: true })));
+      if (res.ok) {
+        setNotifications(prev => prev.map(n => ({ ...n, read: true })));
+      } else {
+        console.error("Failed to mark notifications as read on server:", res.status);
+      }
     } catch (err) {
       console.error("Failed to mark as read:", err);
+    }
+  };
+
+  const handleMarkSingleAsRead = async (id: string) => {
+    // Optimistic UI update
+    setNotifications(prev => prev.map(n => (n._id === id || n.id === id) ? { ...n, read: true } : n));
+    try {
+      const res = await fetch(`${API_URL}/api/notifications/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({ read: true })
+      });
+      if (!res.ok) {
+        console.error("Failed to mark single notification as read on server:", res.status);
+      }
+    } catch (err) {
+      console.error("Failed to mark single notification as read:", err);
     }
   };
 
@@ -153,13 +191,12 @@ export function Navbar({ initials, plan = "free", avatar, isAvatarUrl }: NavbarP
             <div className="flex items-center gap-4 shrink-0">
               
               {/* Notification Bell */}
-              <div className="relative">
+              <div className="relative" ref={dropdownRef}>
                 <button 
                   onClick={() => {
                     setShowNotifs(!showNotifs);
                     if (!showNotifs) fetchNotifications(); // fetch when opened
                   }}
-                  onBlur={() => setTimeout(() => setShowNotifs(false), 200)}
                   className={`relative p-2.5 rounded-xl border transition-all duration-200 cursor-pointer ${
                     showNotifs 
                       ? "bg-violet-500/20 border-violet-500/40 text-violet-300 shadow-[0_0_15px_rgba(139,92,246,0.15)]" 
@@ -187,8 +224,8 @@ export function Navbar({ initials, plan = "free", avatar, isAvatarUrl }: NavbarP
                       </div>
                       {unreadCount > 0 && (
                         <button 
-                          onMouseDown={(e) => { e.preventDefault(); handleMarkAsRead(); }}
-                          className="text-[11px] font-medium text-zinc-400 hover:text-white transition-colors"
+                          onClick={(e) => { e.stopPropagation(); handleMarkAsRead(); }}
+                          className="text-[11px] font-medium text-zinc-400 hover:text-white transition-colors cursor-pointer"
                         >
                           Mark all as read
                         </button>
@@ -231,7 +268,11 @@ export function Navbar({ initials, plan = "free", avatar, isAvatarUrl }: NavbarP
                           }
 
                           return (
-                            <div key={n._id || n.id} className={`group relative p-4 border-b border-white/[0.04] hover:bg-white/[0.04] transition-all cursor-pointer flex gap-4 ${!n.read ? 'bg-violet-500/[0.03]' : ''}`}>
+                            <div 
+                              key={n._id || n.id} 
+                              onClick={() => !n.read && handleMarkSingleAsRead(n._id || n.id)}
+                              className={`group relative p-4 border-b border-white/[0.04] hover:bg-white/[0.04] transition-all cursor-pointer flex gap-4 ${!n.read ? 'bg-violet-500/[0.03]' : ''}`}
+                            >
                               
                               {/* Unread Indicator Bar */}
                               {!n.read && (

@@ -24,6 +24,8 @@ export function RootLayout() {
     return !!localStorage.getItem("token");
   });
 
+  const [hasVerifiedToken, setHasVerifiedToken] = useState(false);
+
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [location.pathname]);
@@ -56,11 +58,39 @@ export function RootLayout() {
 
         if (!token) {
           setIsAuth(false);
+          setHasVerifiedToken(false);
           if (!isPublicPage) {
             navigate("/login");
           } else {
             setLoading(false);
           }
+          return;
+        }
+
+        // If we have already verified the token during this layout lifecycle and have cached user data,
+        // we can perform client-side routing checks without hitting the API redundantly.
+        if (hasVerifiedToken && cachedUserStr) {
+          try {
+            const data = JSON.parse(cachedUserStr);
+            const isLandingOrAuthPage = path === "/" || path === "/login" || path === "/signup" || path === "/auth";
+
+            if (isLandingOrAuthPage) {
+              if (data.onboardingComplete === false) {
+                navigate("/onboarding");
+              } else {
+                navigate("/dashboard");
+              }
+            } else {
+              if (data.onboardingComplete === true && path === "/onboarding") {
+                navigate("/dashboard");
+              } else if (data.onboardingComplete === false && path !== "/onboarding" && path !== "/payment") {
+                navigate("/onboarding");
+              }
+            }
+          } catch (e) {
+            // Ignore parse errors
+          }
+          setLoading(false);
           return;
         }
 
@@ -72,6 +102,7 @@ export function RootLayout() {
 
         if (res.ok) {
           setIsAuth(true);
+          setHasVerifiedToken(true);
           const data = await res.json();
           // Keep cache fresh
           localStorage.setItem("consistpay_user_data", JSON.stringify(data));
@@ -93,6 +124,7 @@ export function RootLayout() {
           }
         } else {
           setIsAuth(false);
+          setHasVerifiedToken(false);
           localStorage.removeItem("token");
           localStorage.removeItem("consistpay_user_data");
           if (!isPublicPage) {
@@ -107,7 +139,7 @@ export function RootLayout() {
     };
 
     checkAuth();
-  }, [location.pathname, navigate]);
+  }, [location.pathname, navigate, hasVerifiedToken]);
 
   if (loading && !isPublicPage) {
     return (

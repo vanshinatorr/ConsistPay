@@ -2,10 +2,11 @@ const User = require("../models/User");
 const Submission = require("../models/Submission");
 const bcrypt = require("bcryptjs");
 
+const activeUserRequests = new Set();
+
 const checkAndNotifyBadges = async (user, totalSolved, totalMissed) => {
   try {
     const Notification = require("../models/Notification");
-    const { createNotification } = require("./notificationController");
 
     const totalDays = totalSolved + totalMissed;
     const consistencyScore = totalDays > 0 ? Math.round((totalSolved / totalDays) * 100) : 0;
@@ -50,13 +51,20 @@ const checkAndNotifyBadges = async (user, totalSolved, totalMissed) => {
 
     for (const badge of badgeChecks) {
       if (badge.unlocked) {
-        const existing = await Notification.findOne({
-          userId: user._id,
-          title: badge.title
-        });
-        if (!existing) {
-          await createNotification(user._id, badge.title, badge.desc, badge.type);
-        }
+        // Atomic search & insert to guarantee a single notification gets created even under concurrency
+        await Notification.findOneAndUpdate(
+          { userId: user._id, title: badge.title },
+          {
+            $setOnInsert: {
+              userId: user._id,
+              title: badge.title,
+              desc: badge.desc,
+              type: badge.type,
+              read: false
+            }
+          },
+          { upsert: true, new: true }
+        );
       }
     }
   } catch (error) {
@@ -65,6 +73,20 @@ const checkAndNotifyBadges = async (user, totalSolved, totalMissed) => {
 };
 
 const getMe = async (req, res) => {
+  const userIdStr = req.user._id.toString();
+
+  // If another profile request is currently active for this user, wait for it to finish to prevent parallel runs of streak/badge helpers
+  if (activeUserRequests.has(userIdStr)) {
+    for (let i = 0; i < 30; i++) {
+      await new Promise((resolve) => setTimeout(resolve, 100));
+      if (!activeUserRequests.has(userIdStr)) {
+        break;
+      }
+    }
+  }
+
+  activeUserRequests.add(userIdStr);
+
   try {
     let user = await User.findById(req.user._id).select("-password");
     if (user) {
@@ -105,6 +127,8 @@ const getMe = async (req, res) => {
     });
   } catch (error) {
     res.status(500).json({ message: error.message });
+  } finally {
+    activeUserRequests.delete(userIdStr);
   }
 };
 
