@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Award, Flame, Shield, Gem, Crown, Swords, Info, Lock, X, Coins, Trophy, Sparkles } from "lucide-react";
+import { Award, Flame, Shield, Gem, Crown, Swords, Info, Lock, X, Coins, Trophy, Sparkles, ChevronRight } from "lucide-react";
 import confetti from "canvas-confetti";
 
 interface AwardsCardProps {
@@ -41,6 +41,97 @@ export function AwardsCard({
   const [showAll, setShowAll] = useState(false);
   const [selectedBadge, setSelectedBadge] = useState<Badge | null>(null);
   const [newlyUnlockedQueue, setNewlyUnlockedQueue] = useState<Badge[]>([]);
+  const [wigglingId, setWigglingId] = useState<string | null>(null);
+
+  // Dynamic progress mapping helper
+  const getBadgeProgress = (badgeId: string): { current: number; target: number; percentage: number; unit: string } => {
+    let current = 0;
+    let target = 1;
+    let unit = "";
+
+    switch (badgeId) {
+      case "solved_1":
+        current = totalSolved;
+        target = 1;
+        unit = "solved";
+        break;
+      case "streak_7":
+        current = Math.max(streak, maxStreak);
+        target = 7;
+        unit = "days";
+        break;
+      case "grace_shield":
+        current = graceCoins;
+        target = 1;
+        unit = "coin";
+        break;
+      case "gladiator":
+        current = battleBalance > 0 ? 1 : 0;
+        target = 1;
+        unit = "battle";
+        break;
+      case "solved_10":
+        current = totalProblemsSolved;
+        target = 10;
+        unit = "solved";
+        break;
+      case "streak_15":
+        current = Math.max(streak, maxStreak);
+        target = 15;
+        unit = "days";
+        break;
+      case "solved_50":
+        current = totalProblemsSolved;
+        target = 50;
+        unit = "solved";
+        break;
+      case "consistency_90":
+        current = consistencyScore;
+        target = 90;
+        unit = "% score";
+        break;
+      case "elite":
+        current = plan.toLowerCase() === "pro" ? 1 : 0;
+        target = 1;
+        unit = "upgrade";
+        break;
+      case "solved_100":
+        current = totalProblemsSolved;
+        target = 100;
+        unit = "solved";
+        break;
+      case "grace_5":
+        current = graceCoins;
+        target = 5;
+        unit = "coins";
+        break;
+      case "streak_30":
+        current = Math.max(streak, maxStreak);
+        target = 30;
+        unit = "days";
+        break;
+      case "commitment_50":
+        current = dailyCommitment;
+        target = 50;
+        unit = "₹ limit";
+        break;
+      case "max_streak_50":
+        current = Math.max(streak, maxStreak);
+        target = 50;
+        unit = "days";
+        break;
+      case "streak_100":
+        current = Math.max(streak, maxStreak);
+        target = 100;
+        unit = "days";
+        break;
+      default:
+        break;
+    }
+
+    const percentage = Math.min(100, Math.max(0, (current / target) * 100));
+    return { current, target, percentage, unit };
+  };
 
   const badges: Badge[] = [
     {
@@ -237,9 +328,15 @@ export function AwardsCard({
   };
 
   const handleBadgeClick = (badge: Badge) => {
+    setSelectedBadge(badge);
     if (badge.unlocked) {
-      setSelectedBadge(badge);
       fireCelebrationConfetti();
+    } else {
+      // Trigger wiggle shake animation
+      setWigglingId(badge.id);
+      setTimeout(() => {
+        setWigglingId(null);
+      }, 400);
     }
   };
 
@@ -328,6 +425,15 @@ export function AwardsCard({
           70% { transform: scale(1.05); }
           100% { transform: scale(1); opacity: 1; }
         }
+        @keyframes wiggle {
+          0%, 100% { transform: rotate(0deg); }
+          25% { transform: rotate(-8deg) scale(0.95); }
+          50% { transform: rotate(8deg) scale(1.05); }
+          75% { transform: rotate(-4deg) scale(0.98); }
+        }
+        .animate-wiggle {
+          animation: wiggle 0.4s ease-in-out;
+        }
         .hexagon-shine {
           position: relative;
           overflow: hidden;
@@ -396,60 +502,121 @@ export function AwardsCard({
         <div className="flex-1 flex flex-wrap items-center gap-3.5 py-1">
           {visibleBadges.map((badge) => {
             const BadgeIcon = badge.icon;
+            const isWiggling = wigglingId === badge.id;
             return (
               <div
                 key={badge.id}
                 onClick={() => handleBadgeClick(badge)}
-                className={`relative group/badge flex items-center justify-center shrink-0 ${badge.unlocked ? "cursor-pointer" : "cursor-not-allowed"}`}
+                className={`relative group/badge flex items-center justify-center shrink-0 cursor-pointer transition-transform duration-300 ${
+                  isWiggling ? "animate-wiggle" : ""
+                }`}
               >
                 {/* Hexagon Shape Container */}
-                <div className="relative w-12 h-12 flex items-center justify-center transition-all duration-300 hover:scale-115 active:scale-95 hexagon-shine">
-                  {badge.unlocked ? (
-                    <>
-                      {/* Dashboard Glow and Spinning Ring */}
-                      <div className={`absolute inset-0 bg-gradient-to-br ${badge.glowClass} blur-md opacity-0 group-hover/badge:opacity-100 transition-opacity duration-300`} />
-                      <div className="unlocked-ring" />
-                      
-                      {/* Hexagon SVG polygon */}
-                      <svg className="absolute w-full h-full text-violet-950/20 group-hover/badge:text-violet-900/40 transition-all" viewBox="0 0 100 100" fill="currentColor">
-                        <polygon points="50,5 93,25 93,75 50,95 7,75 7,25" stroke="rgba(139,92,246,0.3)" strokeWidth="3" />
-                      </svg>
-                      
-                      {/* Icon overlay */}
-                      <div className={`relative z-10 p-2.5 rounded-full ${badge.colorClass}`}>
-                        <BadgeIcon className="w-5 h-5 fill-current/10" />
-                      </div>
-                    </>
-                  ) : (
-                    <>
-                      {/* Locked State Hexagon with Semi-Transparent Icon inside */}
-                      <svg className="absolute w-full h-full text-zinc-950/40 group-hover/badge:text-zinc-900/60 transition-all" viewBox="0 0 100 100" fill="currentColor">
-                        <polygon points="50,5 93,25 93,75 50,95 7,75 7,25" stroke="rgba(255,255,255,0.05)" strokeWidth="3" />
-                      </svg>
-                      <div className="relative z-10 p-2.5 text-zinc-650/40 opacity-40 grayscale transition-all group-hover/badge:opacity-60">
-                        <BadgeIcon className="w-5 h-5" />
-                      </div>
-                      {/* Tiny lock badge on top right */}
-                      <div className="absolute -top-1.5 -right-1.5 w-4.5 h-4.5 rounded-full bg-zinc-950 border border-white/10 flex items-center justify-center text-zinc-400 shadow-lg z-20 transition-transform group-hover/badge:scale-110">
-                        <Lock className="w-2.5 h-2.5" />
-                      </div>
-                    </>
+                <div className="relative w-12 h-12 flex items-center justify-center transition-all duration-300 hover:scale-115 active:scale-95">
+                  {/* Inner shine wrapper with overflow-hidden */}
+                  <div className="absolute inset-0 flex items-center justify-center rounded-lg overflow-hidden hexagon-shine">
+                    {badge.unlocked ? (
+                      <>
+                        {/* Dashboard Glow and Spinning Ring */}
+                        <div className={`absolute inset-0 bg-gradient-to-br ${badge.glowClass} blur-md opacity-0 group-hover/badge:opacity-100 transition-opacity duration-300`} />
+                        <div className="unlocked-ring" />
+                        
+                        {/* Hexagon SVG polygon */}
+                        <svg className="absolute w-full h-full text-violet-950/20 group-hover/badge:text-violet-900/40 transition-all" viewBox="0 0 100 100" fill="currentColor">
+                          <polygon points="50,5 93,25 93,75 50,95 7,75 7,25" stroke="rgba(139,92,246,0.3)" strokeWidth="3" />
+                        </svg>
+                        
+                        {/* Icon overlay */}
+                        <div className={`relative z-10 p-2.5 rounded-full ${badge.colorClass}`}>
+                          <BadgeIcon className="w-5 h-5 fill-current/10" />
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        {/* Glow backdrop on hover */}
+                        <div className={`absolute inset-0 bg-gradient-to-br ${badge.glowClass} blur-md opacity-0 group-hover/badge:opacity-40 transition-opacity duration-300`} />
+                        
+                        {/* Locked State Hexagon with Semi-Transparent Icon inside */}
+                        <svg className="absolute w-full h-full text-zinc-950/40 group-hover/badge:text-zinc-900/60 transition-all" viewBox="0 0 100 100" fill="currentColor">
+                          <polygon 
+                            points="50,5 93,25 93,75 50,95 7,75 7,25" 
+                            stroke="rgba(255,255,255,0.05)" 
+                            strokeWidth="3" 
+                            className="transition-colors duration-300 group-hover/badge:stroke-zinc-500/40"
+                          />
+                        </svg>
+                        
+                        <div className={`relative z-10 p-2.5 rounded-full transition-all duration-300 filter grayscale opacity-25 group-hover/badge:grayscale-0 group-hover/badge:opacity-85 ${badge.colorClass}`}>
+                          <BadgeIcon className="w-5 h-5 fill-current/10" />
+                        </div>
+                      </>
+                    )}
+                  </div>
+
+                  {/* Tiny lock badge on top right - placed OUTSIDE the overflow-hidden container to avoid clipping */}
+                  {!badge.unlocked && (
+                    <div className="absolute -top-1.5 -right-1.5 w-4.5 h-4.5 rounded-full bg-zinc-950 border border-white/10 flex items-center justify-center text-zinc-400 shadow-lg z-20 transition-all duration-300 group-hover/badge:scale-110 group-hover/badge:bg-zinc-900 group-hover/badge:text-zinc-200">
+                      <Lock className="w-2.5 h-2.5 transition-transform duration-300 group-hover/badge:rotate-12" />
+                    </div>
                   )}
                 </div>
 
-                {/* Normal Hover Tooltip */}
-                <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-3.5 w-44 bg-[#121216]/95 border border-white/[0.08] backdrop-blur-md rounded-xl p-3 shadow-2xl opacity-0 scale-95 pointer-events-none group-hover/badge:opacity-100 group-hover/badge:scale-100 transition-all duration-200 z-50">
-                  <div className="text-xs font-extrabold text-white mb-0.5">{badge.name}</div>
-                  <p className="text-[10px] text-zinc-400 leading-normal">{badge.requirement}</p>
-                  <div className="h-px bg-white/[0.06] my-1.5" />
-                  <div className="flex items-center gap-1">
-                    <Info className="w-3 h-3 text-zinc-500 shrink-0" />
-                    <span className="text-[9px] text-zinc-500 font-medium">
-                      {badge.unlocked ? "Click to Celebrate! 🎉" : "Locked"}
-                    </span>
+                {/* Enhanced Hover Tooltip with Live Progress */}
+                <div 
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleBadgeClick(badge);
+                  }}
+                  className="absolute bottom-full left-1/2 -translate-x-1/2 mb-3.5 w-52 bg-[#0F0F13]/98 border border-white/[0.08] backdrop-blur-md rounded-xl p-3.5 shadow-2xl opacity-0 scale-95 pointer-events-none group-hover/badge:opacity-100 group-hover/badge:scale-100 group-hover/badge:pointer-events-auto transition-all duration-200 z-50 hover:border-violet-500/40 hover:shadow-[0_0_20px_rgba(139,92,246,0.15)]"
+                >
+                  {/* Tooltip Hover Bridge */}
+                  <div className="absolute top-full left-0 right-0 h-4 bg-transparent -translate-y-1" />
+
+                  <div className="text-xs font-extrabold text-white mb-0.5 flex items-center justify-between gap-1.5">
+                    <span>{badge.name}</span>
+                    {!badge.unlocked && <Lock className="w-3 h-3 text-zinc-500 shrink-0" />}
+                  </div>
+                  <p className="text-[10px] text-zinc-400 leading-normal mb-2">{badge.requirement}</p>
+                  
+                  {/* Live Progress Section */}
+                  {(() => {
+                    const prog = getBadgeProgress(badge.id);
+                    return (
+                      <div className="space-y-1 mb-2">
+                        <div className="flex items-center justify-between text-[9px] text-zinc-500 font-semibold">
+                          <span>Progress</span>
+                          <span className="text-zinc-300 font-bold">
+                            {prog.current} / {prog.target} {prog.unit}
+                          </span>
+                        </div>
+                        <div className="w-full h-1 bg-zinc-800 rounded-full overflow-hidden">
+                          <div 
+                            className={`h-full bg-gradient-to-r ${badge.unlocked ? "from-emerald-500 to-teal-500" : "from-zinc-500 to-zinc-455"} transition-all duration-500`}
+                            style={{ width: `${prog.percentage}%` }}
+                          />
+                        </div>
+                      </div>
+                    );
+                  })()}
+
+                  <div className="h-px bg-white/[0.06] my-2" />
+                  <div className="flex items-center justify-between gap-1.5">
+                    <div className="flex items-center gap-1">
+                      <Info className="w-3 h-3 text-zinc-500 shrink-0" />
+                      <span className="text-[9px] text-zinc-500 font-medium">Info</span>
+                    </div>
+                    {badge.unlocked ? (
+                      <span className="inline-flex items-center gap-0.5 text-[9px] font-bold text-violet-400 bg-violet-500/10 border border-violet-500/20 px-1.5 py-0.5 rounded-md hover:bg-violet-500/20 hover:scale-105 active:scale-95 transition-all">
+                        Celebrate 🎉
+                      </span>
+                    ) : (
+                      <span className="inline-flex items-center gap-0.5 text-[9px] font-bold text-zinc-400 bg-zinc-800/80 border border-zinc-700/60 px-1.5 py-0.5 rounded-md hover:bg-zinc-700 hover:text-white hover:scale-105 active:scale-95 transition-all">
+                        Details <ChevronRight className="w-2 h-2 shrink-0" />
+                      </span>
+                    )}
                   </div>
                   {/* Tooltip Arrow */}
-                  <div className="absolute top-full left-1/2 -translate-x-1/2 border-[5px] border-transparent border-t-[#121216] pointer-events-none" />
+                  <div className="absolute top-full left-1/2 -translate-x-1/2 border-[5px] border-transparent border-t-[#0F0F13] pointer-events-none" />
                 </div>
               </div>
             );
@@ -467,16 +634,18 @@ export function AwardsCard({
         )}
       </div>
 
-      {/* ================= CELEBRATION MODAL (Wow Factor) ================= */}
+      {/* ================= CELEBRATION / PREVIEW MODAL ================= */}
       {selectedBadge && (
         <div className="fixed inset-0 bg-black/90 backdrop-blur-lg z-[200] flex items-center justify-center p-4 animate-in fade-in duration-350">
           {/* Card Container with custom bounce animation */}
-          <div className="celebration-modal-card relative w-full max-w-md bg-[#0F0F13] border border-violet-500/30 rounded-3xl p-8 shadow-[0_0_50px_rgba(139,92,246,0.15)] text-center overflow-hidden">
+          <div className="celebration-modal-card relative w-full max-w-md bg-[#0F0F13] border border-violet-500/20 rounded-3xl p-8 shadow-[0_0_50px_rgba(139,92,246,0.1)] text-center overflow-hidden">
             {/* Glowing Backdrop inside Modal */}
-            <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-48 h-48 bg-violet-500/20 rounded-full blur-[60px] pointer-events-none" />
+            <div className={`absolute -top-24 left-1/2 -translate-x-1/2 w-48 h-48 rounded-full blur-[60px] pointer-events-none ${selectedBadge.unlocked ? "bg-violet-500/20" : "bg-zinc-800/10"}`} />
             
             {/* Sunburst rays rotating backdrop */}
-            <div className="sunburst-rays absolute left-1/2 top-[12%] -translate-x-1/2 -translate-y-1/2 pointer-events-none z-0" />
+            {selectedBadge.unlocked && (
+              <div className="sunburst-rays absolute left-1/2 top-[12%] -translate-x-1/2 -translate-y-1/2 pointer-events-none z-0" />
+            )}
 
             {/* Close Button */}
             <button 
@@ -488,37 +657,90 @@ export function AwardsCard({
 
             {/* Giant Hexagon Badge Icon */}
             <div className="relative w-24 h-24 mx-auto mb-6 flex items-center justify-center hover:scale-105 transition-transform duration-300 z-10">
-              <svg className="absolute w-full h-full text-violet-950/30" viewBox="0 0 100 100" fill="currentColor">
-                <polygon points="50,5 93,25 93,75 50,95 7,75 7,25" stroke="rgba(139, 92, 246, 0.5)" strokeWidth="4" />
+              <svg className={`absolute w-full h-full ${selectedBadge.unlocked ? "text-violet-950/30" : "text-zinc-950/40"}`} viewBox="0 0 100 100" fill="currentColor">
+                <polygon 
+                  points="50,5 93,25 93,75 50,95 7,75 7,25" 
+                  stroke={selectedBadge.unlocked ? "rgba(139, 92, 246, 0.5)" : "rgba(255, 255, 255, 0.1)"} 
+                  strokeWidth="4" 
+                />
               </svg>
-              <div className={`p-4 rounded-full ${selectedBadge.colorClass}`}>
+              <div className={`p-4 rounded-full transition-all duration-300 ${selectedBadge.unlocked ? selectedBadge.colorClass : `${selectedBadge.colorClass} filter grayscale opacity-40`}`}>
                 {React.createElement(selectedBadge.icon, { className: "w-10 h-10 fill-current/10" })}
               </div>
+              
+              {!selectedBadge.unlocked && (
+                <div className="absolute -top-1 -right-1 w-7 h-7 rounded-full bg-zinc-900 border border-white/15 flex items-center justify-center text-zinc-400 shadow-xl z-20">
+                  <Lock className="w-3.5 h-3.5" />
+                </div>
+              )}
             </div>
 
             {/* Header Text */}
-            <span className="text-[10px] font-black text-violet-400 uppercase tracking-[0.2em] mb-2 block z-10">
-              Achievement Unlocked
+            <span className={`text-[10px] font-black uppercase tracking-[0.2em] mb-2 block z-10 ${selectedBadge.unlocked ? "text-violet-400" : "text-zinc-500"}`}>
+              {selectedBadge.unlocked ? "Achievement Unlocked" : "Locked Achievement"}
             </span>
+            
             <h3 className="text-2xl font-black text-white mb-3 z-10">
               {selectedBadge.name}
             </h3>
             
-            <p className="text-sm text-zinc-300 leading-relaxed mb-6 z-10">
+            <p className="text-sm text-zinc-400 leading-relaxed mb-6 z-10">
               {selectedBadge.desc}
             </p>
 
-            {/* Verification Tag */}
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 rounded-full text-xs font-semibold mb-6 z-10">
-              <Award className="w-4 h-4" /> Verified Award
-            </div>
+            {/* Requirement / Progress Details */}
+            {!selectedBadge.unlocked ? (
+              <div className="mb-6 px-4.5 py-4 bg-white/[0.02] border border-white/[0.04] rounded-2xl text-left z-10 relative">
+                <div className="text-[10px] font-bold text-zinc-500 uppercase tracking-wider mb-1">Requirement</div>
+                <div className="text-xs text-zinc-300 leading-relaxed mb-4">{selectedBadge.requirement}</div>
+                
+                {/* Progress bar info */}
+                {(() => {
+                  const prog = getBadgeProgress(selectedBadge.id);
+                  return (
+                    <div className="space-y-2">
+                      <div className="flex justify-between items-center text-[10px]">
+                        <span className="text-zinc-500 font-semibold">Completion Progress</span>
+                        <span className="text-zinc-300 font-extrabold">{prog.current} / {prog.target} {prog.unit}</span>
+                      </div>
+                      
+                      <div className="relative w-full h-2.5 bg-zinc-950 border border-white/5 rounded-full overflow-hidden">
+                        <div 
+                          className="h-full bg-gradient-to-r from-violet-600 to-indigo-500 transition-all duration-700 relative"
+                          style={{ width: `${prog.percentage}%` }}
+                        >
+                          <div className="absolute inset-0 bg-white/10 animate-[shine-sweep_3s_infinite_linear]" style={{ width: '40%' }} />
+                        </div>
+                      </div>
+                      
+                      <div className="text-[10px] text-zinc-500 mt-1 italic text-center">
+                        {prog.percentage === 0 
+                          ? "Not started yet. Solve problems to begin!" 
+                          : prog.percentage >= 80 
+                          ? "So close! Just a little more effort to unlock this badge." 
+                          : "Keep up the consistency to claim this badge!"}
+                      </div>
+                    </div>
+                  );
+                })()}
+              </div>
+            ) : (
+              /* Verification Tag */
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 rounded-full text-xs font-semibold mb-6 z-10">
+                <Award className="w-4 h-4" /> Verified Award
+              </div>
+            )}
 
             {/* Action button */}
             <button
               onClick={() => setSelectedBadge(null)}
-              className="w-full py-3 bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-500 hover:to-purple-500 text-white rounded-xl font-bold text-sm transition-all shadow-lg shadow-violet-500/25 cursor-pointer z-10"
+              className={`w-full py-3 text-white rounded-xl font-bold text-sm transition-all shadow-lg cursor-pointer z-10 ${
+                selectedBadge.unlocked 
+                  ? "bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-500 hover:to-purple-500 shadow-violet-500/25" 
+                  : "bg-zinc-800 hover:bg-zinc-700 shadow-black/20"
+              }`}
             >
-              Awesome!
+              {selectedBadge.unlocked ? "Awesome!" : "Keep Coding! 💪"}
             </button>
           </div>
         </div>
