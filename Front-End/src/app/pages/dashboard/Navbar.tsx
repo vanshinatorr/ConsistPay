@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { Bell, CheckCircle2, Swords, Trophy, Flame, Sparkles, X } from "lucide-react";
+import { Bell, CheckCircle2, Swords, Trophy, Flame, Sparkles, X, ChevronRight } from "lucide-react";
 import { Logo } from "../../components/Logo";
 import { Link, useLocation } from "react-router-dom";
 import { BattleHubModal } from "../../components/battle/BattleHubModal";
@@ -54,7 +54,16 @@ export function Navbar({ initials, plan = "free", avatar, isAvatarUrl }: NavbarP
     fetchNotifications();
     // Refresh notifications every minute
     const interval = setInterval(fetchNotifications, 60000);
-    return () => clearInterval(interval);
+
+    const handleUpdate = () => {
+      fetchNotifications();
+    };
+    window.addEventListener("notifications-updated", handleUpdate);
+
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener("notifications-updated", handleUpdate);
+    };
   }, []);
 
   const handleMarkAsRead = async () => {
@@ -65,6 +74,7 @@ export function Navbar({ initials, plan = "free", avatar, isAvatarUrl }: NavbarP
       });
       if (res.ok) {
         setNotifications(prev => prev.map(n => ({ ...n, read: true })));
+        window.dispatchEvent(new CustomEvent("notifications-updated"));
       } else {
         console.error("Failed to mark notifications as read on server:", res.status);
       }
@@ -85,7 +95,9 @@ export function Navbar({ initials, plan = "free", avatar, isAvatarUrl }: NavbarP
         },
         body: JSON.stringify({ read: true })
       });
-      if (!res.ok) {
+      if (res.ok) {
+        window.dispatchEvent(new CustomEvent("notifications-updated"));
+      } else {
         console.error("Failed to mark single notification as read on server:", res.status);
       }
     } catch (err) {
@@ -99,16 +111,20 @@ export function Navbar({ initials, plan = "free", avatar, isAvatarUrl }: NavbarP
     setNotifications(prev => prev.filter(n => (n._id || n.id) !== id));
     
     try {
-      await fetch(`${API_URL}/api/notifications/${id}`, {
+      const res = await fetch(`${API_URL}/api/notifications/${id}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` }
       });
+      if (res.ok) {
+        window.dispatchEvent(new CustomEvent("notifications-updated"));
+      }
     } catch (err) {
       console.error("Failed to delete notification:", err);
     }
   };
 
   const unreadCount = notifications.filter(n => !n.read).length;
+  const unreadNotifications = notifications.filter(n => !n.read);
 
   const timeAgo = (dateString: string) => {
     const diff = new Date().getTime() - new Date(dateString).getTime();
@@ -232,8 +248,8 @@ export function Navbar({ initials, plan = "free", avatar, isAvatarUrl }: NavbarP
                       )}
                     </div>
                     
-                    <div className="max-h-[400px] overflow-y-auto overflow-x-hidden custom-scrollbar">
-                      {notifications.length === 0 ? (
+                    <div className="max-h-[380px] overflow-y-auto overflow-x-hidden custom-scrollbar">
+                      {unreadNotifications.length === 0 ? (
                         <div className="p-10 flex flex-col items-center justify-center text-center">
                           <div className="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center mb-3">
                             <Bell className="w-5 h-5 text-zinc-500" />
@@ -242,7 +258,7 @@ export function Navbar({ initials, plan = "free", avatar, isAvatarUrl }: NavbarP
                           <p className="text-zinc-500 text-xs mt-1">No new notifications right now.</p>
                         </div>
                       ) : (
-                        notifications.map(n => {
+                        unreadNotifications.map(n => {
                           // Determine icon and color based on title
                           let Icon = Sparkles;
                           let iconColor = "text-violet-400";
@@ -309,6 +325,17 @@ export function Navbar({ initials, plan = "free", avatar, isAvatarUrl }: NavbarP
                           );
                         })
                       )}
+                    </div>
+
+                    {/* View History Footer */}
+                    <div className="px-5 py-3 border-t border-white/[0.04] bg-white/[0.01] text-center">
+                      <Link 
+                        to="/notifications" 
+                        onClick={() => setShowNotifs(false)}
+                        className="text-xs font-semibold text-violet-400 hover:text-violet-300 transition-colors inline-flex items-center gap-1 hover:scale-105 active:scale-95 transition-all"
+                      >
+                        View Notification History <ChevronRight className="w-3.5 h-3.5 shrink-0" />
+                      </Link>
                     </div>
                   </div>
                 )}

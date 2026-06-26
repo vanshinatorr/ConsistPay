@@ -2,7 +2,7 @@ import { Code2, ArrowLeft, Bell, CheckCheck, Trash2, Flame, Sword, Coins, Shield
 import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 
-type NotifType = "streak" | "challenge" | "coin" | "leaderboard" | "grace" | "system";
+type NotifType = "streak" | "challenge" | "coin" | "leaderboard" | "grace" | "system" | "wallet" | "battle";
 
 interface Notification {
   _id: string;
@@ -17,17 +17,21 @@ interface Notification {
 const typeColors: Record<NotifType, string> = {
   streak: "from-orange-500/20 to-red-500/20 border-orange-500/20 text-orange-400",
   challenge: "from-violet-500/20 to-purple-500/20 border-violet-500/20 text-violet-400",
+  battle: "from-rose-500/20 to-red-500/20 border-rose-500/20 text-rose-400",
   coin: "from-yellow-500/20 to-orange-500/20 border-yellow-500/20 text-yellow-400",
-  leaderboard: "from-emerald-500/20 to-teal-500/20 border-emerald-500/20 text-emerald-400",
+  wallet: "from-yellow-500/20 to-orange-500/20 border-yellow-500/20 text-yellow-400",
   grace: "from-blue-500/20 to-cyan-500/20 border-blue-500/20 text-blue-400",
-  system: "from-zinc-500/20 to-zinc-650/20 border-zinc-500/20 text-zinc-400",
+  leaderboard: "from-emerald-500/20 to-teal-500/20 border-emerald-500/20 text-emerald-400",
+  system: "from-zinc-500/20 to-[#1f1f2e]/20 border-white/[0.04] text-zinc-400",
 };
 
 const getNotifIcon = (type: NotifType) => {
   switch (type) {
     case "streak": return Flame;
-    case "challenge": return Sword;
-    case "coin": return Coins;
+    case "challenge":
+    case "battle": return Sword;
+    case "coin":
+    case "wallet": return Coins;
     case "grace": return Shield;
     case "leaderboard": return TrendingUp;
     case "system": return Zap;
@@ -62,6 +66,21 @@ export function Notifications() {
 
   useEffect(() => {
     fetchNotifications();
+
+    const handleUpdate = () => {
+      // Refresh notifications in background without full loading spinner
+      fetch(`${API_URL}/api/notifications`, {
+        headers: { Authorization: `Bearer ${token}` }
+      })
+        .then(res => res.ok && res.json())
+        .then(data => {
+          if (data) setNotifications(data);
+        })
+        .catch(err => console.error("Error refreshing notifications:", err));
+    };
+
+    window.addEventListener("notifications-updated", handleUpdate);
+    return () => window.removeEventListener("notifications-updated", handleUpdate);
   }, [API_URL, token]);
 
   const unreadCount = notifications.filter(n => !n.read).length;
@@ -79,6 +98,7 @@ export function Notifications() {
       if (res.ok) {
         setNotifications(prev => prev.map(n => ({ ...n, read: true })));
         import("sonner").then(mod => mod.toast.success("All notifications marked as read."));
+        window.dispatchEvent(new CustomEvent("notifications-updated"));
       }
     } catch (err) {
       console.error(err);
@@ -100,6 +120,7 @@ export function Notifications() {
       });
       if (res.ok) {
         setNotifications(prev => prev.map(n => (n._id === notifId || n.id === notifId) ? { ...n, read: true } : n));
+        window.dispatchEvent(new CustomEvent("notifications-updated"));
       }
     } catch (err) {
       console.error(err);
@@ -115,6 +136,7 @@ export function Notifications() {
       if (res.ok) {
         setNotifications(prev => prev.filter(n => (n._id !== id && n.id !== id)));
         import("sonner").then(mod => mod.toast.success("Notification deleted."));
+        window.dispatchEvent(new CustomEvent("notifications-updated"));
       }
     } catch (err) {
       console.error(err);
