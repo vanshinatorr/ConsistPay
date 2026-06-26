@@ -1,14 +1,18 @@
 import React, { useState } from "react";
-import { Award, Flame, Shield, Gem, Crown, Swords, Info, Lock, X } from "lucide-react";
+import { Award, Flame, Shield, Gem, Crown, Swords, Info, Lock, X, Coins, Trophy } from "lucide-react";
 import confetti from "canvas-confetti";
 
 interface AwardsCardProps {
   streak: number;
+  maxStreak?: number;
   consistencyScore: number;
   battleBalance: number;
   graceCoins: number;
   plan: string;
   onboardingComplete?: boolean;
+  totalSolved?: number;
+  totalProblemsSolved?: number;
+  dailyCommitment?: number;
 }
 
 interface Badge {
@@ -24,45 +28,39 @@ interface Badge {
 
 export function AwardsCard({
   streak,
+  maxStreak = 0,
   consistencyScore,
   battleBalance,
   graceCoins,
   plan,
   onboardingComplete = true,
+  totalSolved = 0,
+  totalProblemsSolved = 0,
+  dailyCommitment = 5,
 }: AwardsCardProps) {
   const [showAll, setShowAll] = useState(false);
   const [selectedBadge, setSelectedBadge] = useState<Badge | null>(null);
 
   const badges: Badge[] = [
     {
+      id: "solved_1",
+      name: "First Steps",
+      desc: "Solved your first coding problem! The journey of a thousand miles begins with a single line of code.",
+      requirement: "Solve 1 coding problem",
+      unlocked: onboardingComplete && totalSolved >= 1,
+      colorClass: "text-teal-400 bg-teal-500/10 border-teal-500/30",
+      glowClass: "from-teal-500/20 to-emerald-500/20",
+      icon: Award,
+    },
+    {
       id: "streak_7",
       name: "Streak Starter",
       desc: "You showed up for 7 days straight! This is where habit meets momentum.",
       requirement: "Reach a 7-day streak",
-      unlocked: onboardingComplete && streak >= 7,
+      unlocked: onboardingComplete && (streak >= 7 || maxStreak >= 7),
       colorClass: "text-orange-400 bg-orange-500/10 border-orange-500/30",
       glowClass: "from-orange-500/20 to-red-500/20",
       icon: Flame,
-    },
-    {
-      id: "consistency_90",
-      name: "Consistency King",
-      desc: "Maintained a $\ge 90\%$ consistency score. A true master of daily execution.",
-      requirement: "90%+ Consistency score",
-      unlocked: onboardingComplete && consistencyScore >= 90,
-      colorClass: "text-amber-400 bg-amber-500/10 border-amber-500/30",
-      glowClass: "from-amber-500/20 to-yellow-500/20",
-      icon: Crown,
-    },
-    {
-      id: "gladiator",
-      name: "DSA Gladiator",
-      desc: "Stepped into the 1v1 consistency arena. High stakes, high discipline.",
-      requirement: "Add funds/participate in battles",
-      unlocked: onboardingComplete && battleBalance > 0,
-      colorClass: "text-rose-400 bg-rose-500/10 border-rose-500/30",
-      glowClass: "from-rose-500/20 to-pink-500/20",
-      icon: Swords,
     },
     {
       id: "grace_shield",
@@ -75,6 +73,46 @@ export function AwardsCard({
       icon: Shield,
     },
     {
+      id: "gladiator",
+      name: "DSA Gladiator",
+      desc: "Stepped into the 1v1 consistency arena. High stakes, high discipline.",
+      requirement: "Add funds/participate in battles",
+      unlocked: onboardingComplete && battleBalance > 0,
+      colorClass: "text-rose-400 bg-rose-500/10 border-rose-500/30",
+      glowClass: "from-rose-500/20 to-pink-500/20",
+      icon: Swords,
+    },
+    {
+      id: "solved_10",
+      name: "Problem Solver",
+      desc: "Solved 10+ coding problems overall. Getting comfortable with the syntax and paradigms.",
+      requirement: "Solve 10+ coding problems",
+      unlocked: onboardingComplete && totalProblemsSolved >= 10,
+      colorClass: "text-cyan-400 bg-cyan-500/10 border-cyan-500/30",
+      glowClass: "from-cyan-500/20 to-sky-500/20",
+      icon: Gem,
+    },
+    {
+      id: "streak_15",
+      name: "Habit Builder",
+      desc: "Maintained a 15-day consistency streak. Coding is officially starting to feel like a daily habit.",
+      requirement: "Reach a 15-day streak",
+      unlocked: onboardingComplete && (streak >= 15 || maxStreak >= 15),
+      colorClass: "text-blue-400 bg-blue-500/10 border-blue-500/30",
+      glowClass: "from-blue-500/20 to-indigo-500/20",
+      icon: Flame,
+    },
+    {
+      id: "consistency_90",
+      name: "Consistency King",
+      desc: "Maintained a >= 90% consistency score. A true master of daily execution.",
+      requirement: "90%+ Consistency score",
+      unlocked: onboardingComplete && consistencyScore >= 90,
+      colorClass: "text-amber-400 bg-amber-500/10 border-amber-500/30",
+      glowClass: "from-amber-500/20 to-yellow-500/20",
+      icon: Crown,
+    },
+    {
       id: "elite",
       name: "Elite Member",
       desc: "Upgraded to Pro habit tracking. Dedicated to long-term compounding growth.",
@@ -84,10 +122,57 @@ export function AwardsCard({
       glowClass: "from-violet-500/20 to-fuchsia-500/20",
       icon: Gem,
     },
+    {
+      id: "grace_5",
+      name: "Grace Hoarder",
+      desc: "Accumulated 5 or more Grace Coins! You are heavily guarded against accidental streak resets.",
+      requirement: "Accumulate 5+ Grace Coins",
+      unlocked: onboardingComplete && graceCoins >= 5,
+      colorClass: "text-emerald-400 bg-emerald-500/10 border-emerald-500/30",
+      glowClass: "from-emerald-500/20 to-teal-500/20",
+      icon: Shield,
+    },
+    {
+      id: "streak_30",
+      name: "Consistency Champion",
+      desc: "Hit a legendary 30-day streak! You are now part of the consistency elite.",
+      requirement: "Reach a 30-day streak",
+      unlocked: onboardingComplete && (streak >= 30 || maxStreak >= 30),
+      colorClass: "text-purple-400 bg-purple-500/10 border-purple-500/30",
+      glowClass: "from-purple-500/20 to-pink-500/20",
+      icon: Crown,
+    },
+    {
+      id: "commitment_50",
+      name: "High Roller",
+      desc: "Set your daily coding commitment to ₹50. Heavy skin in the game makes for ultimate focus.",
+      requirement: "Set daily commitment to ₹50",
+      unlocked: onboardingComplete && dailyCommitment === 50,
+      colorClass: "text-yellow-400 bg-yellow-500/10 border-yellow-500/30",
+      glowClass: "from-yellow-500/20 to-orange-500/20",
+      icon: Coins,
+    },
+    {
+      id: "max_streak_50",
+      name: "Streak Master",
+      desc: "Achieved a lifetime max streak of 50 days or more. Absolutely unstoppable!",
+      requirement: "Reach a 50-day streak",
+      unlocked: onboardingComplete && (streak >= 50 || maxStreak >= 50),
+      colorClass: "text-red-400 bg-red-500/10 border-red-500/30",
+      glowClass: "from-red-500/20 to-rose-500/20",
+      icon: Trophy,
+    },
   ];
 
-  const unlockedCount = badges.filter((b) => b.unlocked).length;
-  const visibleBadges = showAll ? badges : badges.slice(0, 4);
+  // Sort badges: unlocked ones first, locked ones second
+  const sortedBadges = [...badges].sort((a, b) => {
+    if (a.unlocked && !b.unlocked) return -1;
+    if (!a.unlocked && b.unlocked) return 1;
+    return 0;
+  });
+
+  const unlockedCount = sortedBadges.filter((b) => b.unlocked).length;
+  const visibleBadges = showAll ? sortedBadges : sortedBadges.slice(0, 6);
 
   const handleBadgeClick = (badge: Badge) => {
     if (badge.unlocked) {
@@ -225,7 +310,7 @@ export function AwardsCard({
         </div>
 
         {/* Toggle Button */}
-        {badges.length > 4 && (
+        {sortedBadges.length > 6 && (
           <button
             onClick={() => setShowAll(!showAll)}
             className="w-full text-center text-[10px] font-bold text-zinc-400 hover:text-white transition-colors pt-2 border-t border-white/[0.02] cursor-pointer"

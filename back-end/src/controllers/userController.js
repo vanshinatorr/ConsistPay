@@ -4,7 +4,7 @@ const bcrypt = require("bcryptjs");
 
 const activeUserRequests = new Set();
 
-const checkAndNotifyBadges = async (user, totalSolved, totalMissed) => {
+const checkAndNotifyBadges = async (user, totalSolved, totalMissed, totalProblemsSolved) => {
   try {
     const Notification = require("../models/Notification");
 
@@ -13,10 +13,45 @@ const checkAndNotifyBadges = async (user, totalSolved, totalMissed) => {
 
     const badgeChecks = [
       {
+        key: "solved_1",
+        title: "🎉 Achievement Unlocked: First Steps!",
+        desc: "Congratulations on solving your first coding problem! Keep up the momentum.",
+        unlocked: totalSolved >= 1,
+        type: "system"
+      },
+      {
         key: "streak_7",
         title: "🎉 Achievement Unlocked: Streak Starter!",
         desc: "Congratulations! You've maintained a consistency streak of 7 days.",
-        unlocked: user.streak >= 7,
+        unlocked: user.streak >= 7 || user.maxStreak >= 7,
+        type: "streak"
+      },
+      {
+        key: "grace_shield",
+        title: "🎉 Achievement Unlocked: Shield of Grace!",
+        desc: "Streak protection active. You possess at least one Grace Coin.",
+        unlocked: user.graceCoins >= 1,
+        type: "wallet"
+      },
+      {
+        key: "gladiator",
+        title: "🎉 Achievement Unlocked: DSA Gladiator!",
+        desc: "You've entered the battle arena with an active battle balance.",
+        unlocked: user.battleBalance > 0,
+        type: "battle"
+      },
+      {
+        key: "solved_10",
+        title: "🎉 Achievement Unlocked: Problem Solver!",
+        desc: "Fantastic job! You've solved 10 or more coding problems overall.",
+        unlocked: totalProblemsSolved >= 10,
+        type: "system"
+      },
+      {
+        key: "streak_15",
+        title: "🎉 Achievement Unlocked: Habit Builder!",
+        desc: "Impressive! You've maintained a consistency streak of 15 days.",
+        unlocked: user.streak >= 15 || user.maxStreak >= 15,
         type: "streak"
       },
       {
@@ -27,25 +62,39 @@ const checkAndNotifyBadges = async (user, totalSolved, totalMissed) => {
         type: "streak"
       },
       {
-        key: "gladiator",
-        title: "🎉 Achievement Unlocked: DSA Gladiator!",
-        desc: "You've entered the battle arena with an active battle balance.",
-        unlocked: user.battleBalance > 0,
-        type: "battle"
-      },
-      {
-        key: "grace_shield",
-        title: "🎉 Achievement Unlocked: Shield of Grace!",
-        desc: "Streak protection active. You possess at least one Grace Coin.",
-        unlocked: user.graceCoins >= 1,
-        type: "wallet"
-      },
-      {
         key: "elite",
         title: "🎉 Achievement Unlocked: Elite Member!",
         desc: "Welcome to the Pro league of coding consistency.",
         unlocked: user.plan && user.plan.toLowerCase() === "pro",
         type: "system"
+      },
+      {
+        key: "grace_5",
+        title: "🎉 Achievement Unlocked: Grace Hoarder!",
+        desc: "You have accumulated 5 or more Grace Coins for ultimate safety.",
+        unlocked: user.graceCoins >= 5,
+        type: "wallet"
+      },
+      {
+        key: "streak_30",
+        title: "🎉 Achievement Unlocked: Consistency Champion!",
+        desc: "Remarkable! You've maintained a consistency streak of 30 days.",
+        unlocked: user.streak >= 30 || user.maxStreak >= 30,
+        type: "streak"
+      },
+      {
+        key: "commitment_50",
+        title: "🎉 Achievement Unlocked: High Roller!",
+        desc: "You've set your daily coding commitment to ₹50. High stakes, high rewards!",
+        unlocked: user.dailyCommitment === 50,
+        type: "wallet"
+      },
+      {
+        key: "max_streak_50",
+        title: "🎉 Achievement Unlocked: Streak Master!",
+        desc: "Legendary! You've reached a consistency streak of 50 days.",
+        unlocked: user.streak >= 50 || user.maxStreak >= 50,
+        type: "streak"
       }
     ];
 
@@ -103,7 +152,7 @@ const getMe = async (req, res) => {
     const totalMissed = await Submission.countDocuments({ userId: req.user._id, status: "missed" });
 
     // Check dynamic achievements and write notifications if earned
-    await checkAndNotifyBadges(user, totalSolved, totalMissed);
+    await checkAndNotifyBadges(user, totalSolved, totalMissed, totalProblemsSolved);
     
     res.status(200).json({
       _id: user._id,

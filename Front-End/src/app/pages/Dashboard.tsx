@@ -627,11 +627,15 @@ export function Dashboard() {
               {/* Awards Card */}
               <AwardsCard
                 streak={userData?.streak ?? 0}
+                maxStreak={userData?.maxStreak ?? 0}
                 consistencyScore={consistencyScore}
                 battleBalance={userData?.battleBalance ?? 0}
                 graceCoins={userData?.graceCoins ?? 0}
                 plan={userData?.plan ?? "free"}
                 onboardingComplete={userData?.onboardingComplete ?? true}
+                totalSolved={userData?.totalSolved ?? 0}
+                totalProblemsSolved={userData?.totalProblemsSolved ?? 0}
+                dailyCommitment={userData?.dailyCommitment ?? 5}
               />
             </div>
             {/* Recent Solves */}
