@@ -200,7 +200,7 @@ export function Dashboard() {
         const data = await res.json();
         // Filter out missed submissions (e.g. status: "missed" / "No Submission")
         const completedSolves = data.filter((sub: any) => sub.status === "completed" && sub.problemName !== "No Submission");
-        const formatted = completedSolves.slice(0, 5).map((sub: any) => {
+        const formatted = completedSolves.map((sub: any) => {
           const date = new Date(sub.createdAt || sub.date);
           const now = new Date();
           const diffMs = now.getTime() - date.getTime();
@@ -222,7 +222,9 @@ export function Dashboard() {
             name: sub.problemName || "Unknown Problem",
             difficulty: sub.difficulty || "Medium",
             topic: sub.topic || "General",
-            time: timeStr
+            time: timeStr,
+            date: date.toLocaleDateString("en-US", { day: "numeric", month: "short", year: "numeric" }),
+            rawDate: sub.createdAt || sub.date
           };
         });
         setRecentSolves(formatted);
