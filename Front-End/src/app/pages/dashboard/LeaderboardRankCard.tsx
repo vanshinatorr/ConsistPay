@@ -53,9 +53,6 @@ export function LeaderboardRankCard({
               ) : (
                 `#${rank}`
               )}
-              <span className="text-xs font-semibold text-zinc-500 ml-2">
-                / {totalUsers || 50}
-              </span>
             </div>
             <p className="text-[11px] text-zinc-500 mt-2 font-medium">
               Based on global streak and solutions verified
