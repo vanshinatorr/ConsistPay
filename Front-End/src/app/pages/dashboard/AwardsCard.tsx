@@ -173,7 +173,7 @@ export function AwardsCard({
   });
 
   const unlockedCount = sortedBadges.filter((b) => b.unlocked).length;
-  const visibleBadges = showAll ? sortedBadges : sortedBadges.slice(0, 6);
+  const visibleBadges = showAll ? sortedBadges : sortedBadges.slice(0, 5);
 
   const fireCelebrationConfetti = () => {
     confetti({
@@ -423,7 +423,7 @@ export function AwardsCard({
         </div>
 
         {/* Toggle Button */}
-        {sortedBadges.length > 6 && (
+        {sortedBadges.length > 5 && (
           <button
             onClick={() => setShowAll(!showAll)}
             className="w-full text-center text-[10px] font-bold text-zinc-400 hover:text-white transition-colors pt-2 border-t border-white/[0.02] cursor-pointer"
