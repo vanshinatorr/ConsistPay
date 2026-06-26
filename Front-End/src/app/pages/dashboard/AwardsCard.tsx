@@ -422,12 +422,16 @@ export function AwardsCard({
                     </>
                   ) : (
                     <>
-                      {/* Locked State Hexagon */}
-                      <svg className="absolute w-full h-full text-zinc-900/50" viewBox="0 0 100 100" fill="currentColor">
-                        <polygon points="50,5 93,25 93,75 50,95 7,75 7,25" stroke="rgba(255,255,255,0.06)" strokeWidth="3" />
+                      {/* Locked State Hexagon with Semi-Transparent Icon inside */}
+                      <svg className="absolute w-full h-full text-zinc-950/40 group-hover/badge:text-zinc-900/60 transition-all" viewBox="0 0 100 100" fill="currentColor">
+                        <polygon points="50,5 93,25 93,75 50,95 7,75 7,25" stroke="rgba(255,255,255,0.05)" strokeWidth="3" />
                       </svg>
-                      <div className="relative z-10 p-2.5 text-zinc-600">
-                        <Lock className="w-4 h-4" />
+                      <div className="relative z-10 p-2.5 text-zinc-650/40 opacity-40 grayscale transition-all group-hover/badge:opacity-60">
+                        <BadgeIcon className="w-5 h-5" />
+                      </div>
+                      {/* Tiny lock badge on top right */}
+                      <div className="absolute -top-1.5 -right-1.5 w-4.5 h-4.5 rounded-full bg-zinc-950 border border-white/10 flex items-center justify-center text-zinc-400 shadow-lg z-20 transition-transform group-hover/badge:scale-110">
+                        <Lock className="w-2.5 h-2.5" />
                       </div>
                     </>
                   )}
