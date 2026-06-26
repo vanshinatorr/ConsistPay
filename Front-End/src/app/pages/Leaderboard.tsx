@@ -195,34 +195,35 @@ export function Leaderboard() {
           </div>
 
           {/* 1st Place */}
-          <div className="relative bg-[#161622]/40 border border-yellow-500/25 rounded-2xl p-4.5 backdrop-blur-xl shadow-[0_0_25px_rgba(234,179,8,0.03)] flex items-center justify-between overflow-hidden group hover:scale-[1.01] hover:border-yellow-500/40 transition-all duration-300">
+          <div className="relative bg-gradient-to-r from-yellow-500/[0.06] via-[#161622]/40 to-transparent border border-yellow-500/30 rounded-2xl p-4.5 backdrop-blur-xl shadow-[0_0_25px_rgba(234,179,8,0.05),inset_0_1px_1px_rgba(234,179,8,0.08)] flex items-center justify-between overflow-hidden group hover:scale-[1.01] hover:border-yellow-500/45 transition-all duration-300">
             {/* Subtle gold radial background glow */}
-            <div className="absolute top-0 right-0 w-32 h-32 bg-yellow-500/[0.02] rounded-full blur-2xl pointer-events-none" />
+            <div className="absolute top-0 right-0 w-32 h-32 bg-yellow-500/[0.03] rounded-full blur-2xl pointer-events-none" />
             <div className="flex items-center gap-3 relative z-10">
               <div className="relative">
                 <AvatarRenderer 
                   avatar={sorted[0]?.avatar || "US"} 
-                  className="w-13 h-13 rounded-full flex items-center justify-center font-bold text-sm ring-4 ring-yellow-500/40 ring-offset-2 ring-offset-[#0F0F13]" 
+                  className="w-12 h-12 rounded-full flex items-center justify-center font-bold text-xs ring-4 ring-yellow-500/50 ring-offset-2 ring-offset-[#0F0F13]" 
                   colorClass="from-amber-400 to-yellow-600"
                 />
-                <Crown className="w-4 h-4 text-yellow-400 absolute -top-3 left-1/2 -translate-x-1/2 animate-bounce" style={{ animationDuration: '3s' }} />
-                <span className="absolute -bottom-1 -right-1 w-5.5 h-5.5 bg-[#1b1b22] text-[10px] font-black text-yellow-400 flex items-center justify-center rounded-full border border-yellow-500/45">
+                <span className="absolute -bottom-1 -right-1 w-5 h-5 bg-[#1b1b22] text-[9px] font-black text-yellow-450 flex items-center justify-center rounded-full border border-yellow-500/35">
                   1
                 </span>
               </div>
               <div>
-                <div className="font-extrabold text-xs text-white truncate max-w-[85px] sm:max-w-[100px] flex items-center gap-1">
-                  {sorted[0]?.username || sorted[0]?.name || "Empty Slot"}
+                <div className="font-black text-xs truncate max-w-[85px] sm:max-w-[100px] flex items-center gap-1">
+                  <span className="bg-gradient-to-r from-yellow-100 via-yellow-200 to-amber-300 bg-clip-text text-transparent font-black">
+                    {sorted[0]?.username || sorted[0]?.name || "Empty Slot"}
+                  </span>
                 </div>
-                <div className="text-[10px] text-yellow-400 font-extrabold mt-0.5">{getValue(sorted[0])}</div>
+                <div className="text-[10px] text-yellow-500/80 font-bold mt-0.5">{getValue(sorted[0])}</div>
                 <span className="inline-block text-[8px] text-yellow-400 font-black bg-yellow-500/10 px-1.5 py-0.2 rounded border border-yellow-500/20 mt-1 uppercase tracking-wider">
                   Leader
                 </span>
               </div>
             </div>
-            <div className="w-11 h-11 rounded-full bg-gradient-to-br from-yellow-300 via-amber-500 to-yellow-600 flex items-center justify-center border border-yellow-300 shadow-[0_0_20px_rgba(234,179,8,0.25)] shrink-0 select-none relative group-hover:scale-105 transition-transform duration-300">
+            <div className="w-10.5 h-10.5 rounded-full bg-gradient-to-br from-yellow-300 via-amber-500 to-yellow-600 flex items-center justify-center border border-yellow-300 shadow-[0_0_15px_rgba(234,179,8,0.25)] shrink-0 select-none relative group-hover:scale-105 transition-transform duration-300">
               <div className="absolute inset-0 bg-gradient-to-tr from-white/0 via-white/20 to-white/0 rounded-full opacity-40" />
-              <Crown className="w-5.5 h-5.5 text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.3)]" />
+              <Crown className="w-5 h-5 text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.3)]" />
             </div>
           </div>
 
