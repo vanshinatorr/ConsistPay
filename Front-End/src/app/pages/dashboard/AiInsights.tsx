@@ -80,13 +80,13 @@ export function AiInsights({
   aiData,
 }: AiInsightsProps) {
   return (
-    <div className="lg:col-span-5">
+    <div className="w-full h-full">
       <div className="relative h-full">
         {/* Glow */}
         <div className="absolute inset-0 bg-gradient-to-br from-violet-500/20 to-fuchsia-500/20 rounded-2xl blur-2xl opacity-40" />
 
         {/* Main Card */}
-        <div className="relative bg-[#0F0F13] border border-white/[0.04] rounded-2xl p-6 overflow-hidden">
+        <div className="relative bg-[#0F0F13] border border-white/[0.04] rounded-2xl p-6 overflow-hidden h-full flex flex-col">
 
           {/* Header */}
           <div className="flex items-center gap-2 mb-5">

@@ -50,9 +50,30 @@ const deleteNotification = async (req, res) => {
   }
 };
 
+const markSingleAsRead = async (req, res) => {
+  try {
+    const mongoose = require("mongoose");
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return res.status(400).json({ message: "Invalid notification ID format" });
+    }
+    const notification = await Notification.findOneAndUpdate(
+      { _id: req.params.id, userId: req.user._id },
+      { $set: { read: true } },
+      { new: true }
+    );
+    if (!notification) {
+      return res.status(404).json({ message: "Notification not found" });
+    }
+    res.status(200).json(notification);
+  } catch (error) {
+    res.status(500).json({ message: "Failed to update notification", error: error.message });
+  }
+};
+
 module.exports = {
   createNotification,
   getNotifications,
   markAsRead,
+  markSingleAsRead,
   deleteNotification
 };

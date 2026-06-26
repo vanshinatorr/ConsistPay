@@ -66,7 +66,7 @@ export function HowItWorks() {
       <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-emerald-600/10 blur-[150px] rounded-full pointer-events-none" />
 
       <div className="max-w-6xl mx-auto relative z-10">
-        <div className="text-center mb-6 md:mb-8 relative">
+        <div className="text-center mb-4 md:mb-5 relative">
           <h2 className="text-4xl sm:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white via-slate-200 to-slate-500 tracking-tight">
             How ConsistPay Works
           </h2>
@@ -76,89 +76,89 @@ export function HowItWorks() {
         <div className="hidden md:grid grid-cols-1 md:grid-cols-3 gap-4 relative z-10">
           
           {/* Box 1: Sign Up (Small) */}
-          <div className="col-span-1 bg-[#13151f]/80 backdrop-blur-xl border border-white/5 rounded-[2rem] p-6 flex flex-col justify-between group hover:bg-[#1a1d27] transition-all hover:-translate-y-1">
-            <div className="flex justify-between items-start mb-4">
+          <div className="col-span-1 bg-[#13151f]/80 backdrop-blur-xl border border-white/5 rounded-[2rem] p-5 flex flex-col justify-between group hover:bg-[#1a1d27] transition-all hover:-translate-y-1">
+            <div className="flex justify-between items-start mb-3">
               <div className="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center border border-white/10 group-hover:scale-110 transition-transform">
                 <UserPlus className="w-6 h-6 text-slate-300" />
               </div>
               <span className="text-5xl font-black text-white/5">01</span>
             </div>
             <div>
-              <h3 className="text-lg font-bold text-white mb-2 tracking-tight">{steps[0].title}</h3>
+              <h3 className="text-lg font-bold text-white mb-1 tracking-tight">{steps[0].title}</h3>
               <p className="text-xs text-slate-400 font-medium leading-relaxed">{steps[0].description}</p>
             </div>
           </div>
 
           {/* Box 2: Pick Plan (Small) */}
-          <div className="col-span-1 bg-[#13151f]/80 backdrop-blur-xl border border-white/5 rounded-[2rem] p-6 flex flex-col justify-between group hover:bg-[#1a1d27] transition-all hover:-translate-y-1">
-            <div className="flex justify-between items-start mb-4">
+          <div className="col-span-1 bg-[#13151f]/80 backdrop-blur-xl border border-white/5 rounded-[2rem] p-5 flex flex-col justify-between group hover:bg-[#1a1d27] transition-all hover:-translate-y-1">
+            <div className="flex justify-between items-start mb-3">
               <div className="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center border border-white/10 group-hover:scale-110 transition-transform">
                 <CreditCard className="w-6 h-6 text-slate-300" />
               </div>
               <span className="text-5xl font-black text-white/5">02</span>
             </div>
             <div>
-              <h3 className="text-lg font-bold text-white mb-2 tracking-tight">{steps[1].title}</h3>
+              <h3 className="text-lg font-bold text-white mb-1 tracking-tight">{steps[1].title}</h3>
               <p className="text-xs text-slate-400 font-medium leading-relaxed">{steps[1].description}</p>
             </div>
           </div>
 
           {/* Box 3: Deposit (Wide, Important) */}
-          <div className="col-span-1 md:col-span-1 bg-gradient-to-br from-violet-900/30 to-[#13151f]/80 backdrop-blur-xl border border-violet-500/20 rounded-[2rem] p-6 flex flex-col justify-between group hover:border-violet-500/40 transition-all hover:-translate-y-1 relative overflow-hidden">
+          <div className="col-span-1 md:col-span-1 bg-gradient-to-br from-violet-900/30 to-[#13151f]/80 backdrop-blur-xl border border-violet-500/20 rounded-[2rem] p-5 flex flex-col justify-between group hover:border-violet-500/40 transition-all hover:-translate-y-1 relative overflow-hidden">
             <div className="absolute top-0 right-0 w-32 h-32 bg-violet-500/20 blur-3xl" />
-            <div className="flex justify-between items-start mb-4 relative z-10">
+            <div className="flex justify-between items-start mb-3 relative z-10">
               <div className="w-12 h-12 rounded-2xl bg-violet-500/20 flex items-center justify-center border border-violet-500/30 group-hover:scale-110 transition-transform shadow-[0_0_15px_rgba(139,92,246,0.3)]">
                 <Wallet className="w-6 h-6 text-violet-400" />
               </div>
               <span className="text-5xl font-black text-violet-500/10">03</span>
             </div>
             <div className="relative z-10">
-              <h3 className="text-lg font-bold text-white mb-2 tracking-tight">{steps[2].title}</h3>
+              <h3 className="text-lg font-bold text-white mb-1 tracking-tight">{steps[2].title}</h3>
               <p className="text-xs text-slate-300 font-medium leading-relaxed">{steps[2].description}</p>
             </div>
           </div>
 
           {/* Box 4: Solve Daily */}
-          <div className="col-span-1 md:col-span-2 bg-gradient-to-br from-blue-900/20 to-[#13151f]/80 backdrop-blur-xl border border-blue-500/20 rounded-[2rem] p-6 flex flex-col justify-between group hover:border-blue-500/40 transition-all relative overflow-hidden shadow-2xl shadow-black/50">
+          <div className="col-span-1 md:col-span-2 bg-gradient-to-br from-blue-900/20 to-[#13151f]/80 backdrop-blur-xl border border-blue-500/20 rounded-[2rem] p-5 flex flex-col justify-between group hover:border-blue-500/40 transition-all relative overflow-hidden shadow-2xl shadow-black/50">
             {/* Ambient code background */}
             <div className="absolute inset-0 opacity-[0.03] pointer-events-none overflow-hidden text-[8px] font-mono leading-none break-all text-white">
               {`function verifyProof(code) { if (!code) return false; return true; } const engine = new Engine(); engine.start(); verifyProof(code); function verifyProof(code) { if (!code) return false; return true; } const engine = new Engine(); engine.start();`}
               {`function verifyProof(code) { if (!code) return false; return true; } const engine = new Engine(); engine.start(); verifyProof(code); function verifyProof(code) { if (!code) return false; return true; } const engine = new Engine(); engine.start();`}
             </div>
             
-            <div className="flex justify-between items-start mb-4 relative z-10">
-              <div className="w-14 h-14 rounded-2xl bg-blue-500/20 flex items-center justify-center border border-blue-500/30 shadow-[0_0_30px_rgba(59,130,246,0.2)] group-hover:scale-110 transition-transform">
-                <Link2 className="w-7 h-7 text-blue-400" />
+            <div className="flex justify-between items-start mb-3 relative z-10">
+              <div className="w-12 h-12 rounded-2xl bg-blue-500/20 flex items-center justify-center border border-blue-500/30 shadow-[0_0_30px_rgba(59,130,246,0.2)] group-hover:scale-110 transition-transform">
+                <Link2 className="w-6 h-6 text-blue-400" />
               </div>
               <span className="text-5xl font-black text-blue-500/10">04</span>
             </div>
             <div className="relative z-10">
-              <h3 className="text-xl font-bold text-white mb-2 tracking-tight">{steps[3].title}</h3>
+              <h3 className="text-xl font-bold text-white mb-1 tracking-tight">{steps[3].title}</h3>
               <p className="text-xs text-slate-400 font-medium leading-relaxed max-w-lg">{steps[3].description}</p>
             </div>
           </div>
 
           {/* Box 5: Streak (Small) */}
-          <div className="col-span-1 bg-[#13151f]/80 backdrop-blur-xl border border-white/5 rounded-[2rem] p-6 flex flex-col justify-between group hover:bg-[#1a1d27] transition-all hover:-translate-y-1">
-            <div className="flex justify-between items-start mb-4">
+          <div className="col-span-1 bg-[#13151f]/80 backdrop-blur-xl border border-white/5 rounded-[2rem] p-5 flex flex-col justify-between group hover:bg-[#1a1d27] transition-all hover:-translate-y-1">
+            <div className="flex justify-between items-start mb-3">
               <div className="w-12 h-12 rounded-2xl bg-orange-500/10 flex items-center justify-center border border-orange-500/20 group-hover:scale-110 transition-transform">
                 <Flame className="w-6 h-6 text-orange-400" />
               </div>
               <span className="text-5xl font-black text-white/5">05</span>
             </div>
             <div>
-              <h3 className="text-lg font-bold text-white mb-2 tracking-tight">{steps[4].title}</h3>
+              <h3 className="text-lg font-bold text-white mb-1 tracking-tight">{steps[4].title}</h3>
               <p className="text-xs text-slate-400 font-medium leading-relaxed">{steps[4].description}</p>
             </div>
           </div>
 
           {/* Box 6: Reward (Wide Footer-ish) */}
-          <div className="col-span-1 md:col-span-3 bg-gradient-to-r from-emerald-900/30 via-[#13151f] to-[#13151f] border border-emerald-500/20 rounded-[2rem] p-6 md:p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 md:gap-8 group hover:border-emerald-500/40 transition-all relative overflow-hidden">
+          <div className="col-span-1 md:col-span-3 bg-gradient-to-r from-emerald-900/30 via-[#13151f] to-[#13151f] border border-emerald-500/20 rounded-[2rem] p-5 md:p-5 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 md:gap-6 group hover:border-emerald-500/40 transition-all relative overflow-hidden">
             <div className="absolute top-1/2 left-0 w-64 h-64 bg-emerald-500/10 blur-[80px] -translate-y-1/2 rounded-full pointer-events-none" />
             
             <div className="flex items-center gap-4 relative z-10 shrink-0">
-              <div className="w-14 h-14 rounded-2xl bg-emerald-500/20 flex items-center justify-center border border-emerald-500/30 shrink-0 group-hover:scale-110 transition-transform shadow-[0_0_30px_rgba(16,185,129,0.2)]">
-                <BadgeIndianRupee className="w-7 h-7 text-emerald-400" />
+              <div className="w-12 h-12 rounded-2xl bg-emerald-500/20 flex items-center justify-center border border-emerald-500/30 shrink-0 group-hover:scale-110 transition-transform shadow-[0_0_30px_rgba(16,185,129,0.2)]">
+                <BadgeIndianRupee className="w-6 h-6 text-emerald-400" />
               </div>
               <div>
                 <span className="text-[10px] font-bold text-emerald-500 uppercase tracking-[0.15em] mb-1 block">Phase 06 — The Payout</span>

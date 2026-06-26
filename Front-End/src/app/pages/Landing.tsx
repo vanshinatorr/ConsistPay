@@ -143,7 +143,7 @@ export function Landing() {
         </div>
 
         {/* Section 3: How It Works */}
-        <div className="md:snap-start md:snap-always md:h-screen flex flex-col justify-center pt-20 relative overflow-hidden border-t border-white/5 bg-[#06080D]">
+        <div className="md:snap-start md:snap-always md:h-screen flex flex-col justify-center pt-16 pb-8 relative overflow-hidden border-t border-white/5 bg-[#06080D]">
           <HowItWorks />
         </div>
 

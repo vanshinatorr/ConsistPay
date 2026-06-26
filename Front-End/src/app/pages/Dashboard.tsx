@@ -9,6 +9,8 @@ import { ConsistencyCalendar } from "./dashboard/ConsistencyCalendar";
 import { DashboardBattleWidget } from "./dashboard/DashboardBattleWidget";
 import { RecentSolves } from "./dashboard/RecentSolves";
 import { AiInsights } from "./dashboard/AiInsights";
+import { LeaderboardRankCard } from "./dashboard/LeaderboardRankCard";
+import { AwardsCard } from "./dashboard/AwardsCard";
 import { JoinModal } from "./dashboard/JoinModal";
 import { Footer } from "./dashboard/Footer";
 import { CommitmentModal } from "../components/CommitmentModal";
@@ -38,6 +40,7 @@ interface UserData {
   plan: string;
   balance: number;
   streak: number;
+  maxStreak: number;
   graceCoins: number;
   dailyCommitment: number;
   totalSolved: number;
@@ -75,8 +78,44 @@ export function Dashboard() {
   const [showSetupModal, setShowSetupModal] = useState(false);
   const [activeMobileTab, setActiveMobileTab] = useState<"today" | "analytics" | "activity">("today");
 
+  const [leaderboardLoading, setLeaderboardLoading] = useState(true);
+  const [userRank, setUserRank] = useState<number>(1);
+  const [totalUsers, setTotalUsers] = useState<number>(0);
+
   const API = import.meta.env.VITE_API_URL;
   const token = localStorage.getItem("token") || "";
+
+  const fetchUserRank = async (myId?: string) => {
+    try {
+      setLeaderboardLoading(true);
+      const res = await fetch(`${API}/api/users/leaderboard`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setTotalUsers(data.length);
+        
+        let targetId = myId;
+        if (!targetId) {
+          const cachedUser = localStorage.getItem("consistpay_user_data");
+          if (cachedUser) {
+            targetId = JSON.parse(cachedUser)._id;
+          }
+        }
+
+        if (targetId) {
+          const rankIndex = data.findIndex((u: any) => u._id === targetId);
+          if (rankIndex !== -1) {
+            setUserRank(rankIndex + 1);
+          }
+        }
+      }
+    } catch (err) {
+      console.error("Failed to fetch user rank:", err);
+    } finally {
+      setLeaderboardLoading(false);
+    }
+  };
 
   const fetchUserData = async () => {
     try {
@@ -87,13 +126,19 @@ export function Dashboard() {
         localStorage.removeItem("token");
         localStorage.removeItem("consistpay_user_data");
         navigate("/login");
-        return;
+        return null;
       }
       const data = await res.json();
       setUserData(data);
       localStorage.setItem("consistpay_user_data", JSON.stringify(data));
+      
+      // Auto-trigger user rank fetch to keep dashboard stats synchronized
+      fetchUserRank(data._id);
+      
+      return data;
     } catch (err) {
       console.error("User fetch error:", err);
+      return null;
     }
   };
 
@@ -295,10 +340,12 @@ export function Dashboard() {
       setSubmitted(true);
       setProblemName("");
       setScreenshot(null);
-      await fetchUserData();
-      await fetchCalendarForYears(visibleYears);
-      await fetchTodaySubmission();
-      await fetchRecentSolves();
+      await Promise.all([
+        fetchUserData(),
+        fetchCalendarForYears(visibleYears),
+        fetchTodaySubmission(),
+        fetchRecentSolves(),
+      ]);
     } catch (err) {
       setSubmitError("Network error. Try again.");
     } finally {
@@ -564,13 +611,39 @@ export function Dashboard() {
 
         <DashboardBattleWidget onRefreshRequest={fetchUserData} />
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-6">
-          <RecentSolves recentSolves={recentSolves} />
-          <AiInsights
-            isUnlocked={!!(todaySubmission && todaySubmission.count > 0)}
-            aiLoading={aiLoading}
-            aiData={todaySubmission?.submission || undefined}
-          />
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-6 items-stretch">
+          {/* Left Column: Rank, Awards, and Recent Solves */}
+          <div className="lg:col-span-8 flex flex-col gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Leaderboard Rank Card */}
+              <LeaderboardRankCard
+                rank={userRank}
+                totalUsers={totalUsers}
+                loading={leaderboardLoading}
+                onboardingComplete={userData?.onboardingComplete ?? true}
+              />
+              {/* Awards Card */}
+              <AwardsCard
+                streak={userData?.streak ?? 0}
+                consistencyScore={consistencyScore}
+                battleBalance={userData?.battleBalance ?? 0}
+                graceCoins={userData?.graceCoins ?? 0}
+                plan={userData?.plan ?? "free"}
+                onboardingComplete={userData?.onboardingComplete ?? true}
+              />
+            </div>
+            {/* Recent Solves */}
+            <RecentSolves recentSolves={recentSolves} />
+          </div>
+
+          {/* Right Column: AI Insights */}
+          <div className="lg:col-span-4">
+            <AiInsights
+              isUnlocked={!!(todaySubmission && todaySubmission.count > 0)}
+              aiLoading={aiLoading}
+              aiData={todaySubmission?.submission || undefined}
+            />
+          </div>
         </div>
 
         {/* Modals */}

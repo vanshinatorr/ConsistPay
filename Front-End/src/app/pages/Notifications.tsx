@@ -73,7 +73,7 @@ export function Notifications() {
   const markAllRead = async () => {
     try {
       const res = await fetch(`${API_URL}/api/notifications/read`, {
-        method: "POST",
+        method: "PUT",
         headers: { Authorization: `Bearer ${token}` }
       });
       if (res.ok) {
