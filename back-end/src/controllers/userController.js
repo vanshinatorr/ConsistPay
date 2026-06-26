@@ -2,6 +2,68 @@ const User = require("../models/User");
 const Submission = require("../models/Submission");
 const bcrypt = require("bcryptjs");
 
+const checkAndNotifyBadges = async (user, totalSolved, totalMissed) => {
+  try {
+    const Notification = require("../models/Notification");
+    const { createNotification } = require("./notificationController");
+
+    const totalDays = totalSolved + totalMissed;
+    const consistencyScore = totalDays > 0 ? Math.round((totalSolved / totalDays) * 100) : 0;
+
+    const badgeChecks = [
+      {
+        key: "streak_7",
+        title: "🎉 Achievement Unlocked: Streak Starter!",
+        desc: "Congratulations! You've maintained a consistency streak of 7 days.",
+        unlocked: user.streak >= 7,
+        type: "streak"
+      },
+      {
+        key: "consistency_90",
+        title: "🎉 Achievement Unlocked: Consistency King!",
+        desc: "Outstanding! You've achieved a consistency score of 90% or above.",
+        unlocked: consistencyScore >= 90 && totalDays >= 5,
+        type: "streak"
+      },
+      {
+        key: "gladiator",
+        title: "🎉 Achievement Unlocked: DSA Gladiator!",
+        desc: "You've entered the battle arena with an active battle balance.",
+        unlocked: user.battleBalance > 0,
+        type: "battle"
+      },
+      {
+        key: "grace_shield",
+        title: "🎉 Achievement Unlocked: Shield of Grace!",
+        desc: "Streak protection active. You possess at least one Grace Coin.",
+        unlocked: user.graceCoins >= 1,
+        type: "wallet"
+      },
+      {
+        key: "elite",
+        title: "🎉 Achievement Unlocked: Elite Member!",
+        desc: "Welcome to the Pro league of coding consistency.",
+        unlocked: user.plan && user.plan.toLowerCase() === "pro",
+        type: "system"
+      }
+    ];
+
+    for (const badge of badgeChecks) {
+      if (badge.unlocked) {
+        const existing = await Notification.findOne({
+          userId: user._id,
+          title: badge.title
+        });
+        if (!existing) {
+          await createNotification(user._id, badge.title, badge.desc, badge.type);
+        }
+      }
+    }
+  } catch (error) {
+    console.error("Error in checkAndNotifyBadges:", error);
+  }
+};
+
 const getMe = async (req, res) => {
   try {
     let user = await User.findById(req.user._id).select("-password");
@@ -17,6 +79,9 @@ const getMe = async (req, res) => {
     // Total count of completed solutions (up to 3 per day)
     const totalProblemsSolved = await Submission.countDocuments({ userId: req.user._id, status: "completed" });
     const totalMissed = await Submission.countDocuments({ userId: req.user._id, status: "missed" });
+
+    // Check dynamic achievements and write notifications if earned
+    await checkAndNotifyBadges(user, totalSolved, totalMissed);
     
     res.status(200).json({
       _id: user._id,
