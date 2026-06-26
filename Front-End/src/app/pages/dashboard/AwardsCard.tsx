@@ -40,6 +40,7 @@ export function AwardsCard({
 }: AwardsCardProps) {
   const [showAll, setShowAll] = useState(false);
   const [selectedBadge, setSelectedBadge] = useState<Badge | null>(null);
+  const [newlyUnlockedQueue, setNewlyUnlockedQueue] = useState<Badge[]>([]);
 
   const badges: Badge[] = [
     {
@@ -174,18 +175,107 @@ export function AwardsCard({
   const unlockedCount = sortedBadges.filter((b) => b.unlocked).length;
   const visibleBadges = showAll ? sortedBadges : sortedBadges.slice(0, 6);
 
+  const fireCelebrationConfetti = () => {
+    confetti({
+      particleCount: 150,
+      spread: 80,
+      origin: { y: 0.6 },
+      colors: ["#8B5CF6", "#10B981", "#F59E0B", "#EF4444", "#3B82F6"]
+    });
+    
+    // Left side burst
+    setTimeout(() => {
+      confetti({
+        particleCount: 50,
+        angle: 60,
+        spread: 55,
+        origin: { x: 0, y: 0.8 },
+        colors: ["#8B5CF6", "#10B981", "#F59E0B"]
+      });
+    }, 250);
+
+    // Right side burst
+    setTimeout(() => {
+      confetti({
+        particleCount: 50,
+        angle: 120,
+        spread: 55,
+        origin: { x: 1, y: 0.8 },
+        colors: ["#8B5CF6", "#10B981", "#F59E0B"]
+      });
+    }, 400);
+  };
+
   const handleBadgeClick = (badge: Badge) => {
     if (badge.unlocked) {
       setSelectedBadge(badge);
-      // Trigger a satisfying confetti burst!
-      confetti({
-        particleCount: 150,
-        spread: 80,
-        origin: { y: 0.6 },
-        colors: ["#8B5CF6", "#10B981", "#F59E0B", "#EF4444", "#3B82F6"]
-      });
+      fireCelebrationConfetti();
     }
   };
+
+  // Automatic celebration for newly unlocked achievements
+  React.useEffect(() => {
+    if (!onboardingComplete) return;
+
+    // Get list of already celebrated badges
+    const celebratedStr = localStorage.getItem("consistpay_celebrated_badges");
+    let celebratedIds: string[] = [];
+    if (celebratedStr) {
+      try {
+        celebratedIds = JSON.parse(celebratedStr);
+      } catch (e) {
+        celebratedIds = [];
+      }
+    }
+
+    // Find unlocked badges that haven't been celebrated yet
+    const newlyUnlocked = sortedBadges.filter(
+      (b) => b.unlocked && !celebratedIds.includes(b.id)
+    );
+
+    if (newlyUnlocked.length > 0) {
+      // Add all newly unlocked badges to the queue
+      setNewlyUnlockedQueue((prev) => {
+        const combined = [...prev];
+        newlyUnlocked.forEach((newBadge) => {
+          if (!combined.some((b) => b.id === newBadge.id)) {
+            combined.push(newBadge);
+          }
+        });
+        return combined;
+      });
+
+      // Mark them as celebrated immediately in localStorage
+      const updatedCelebrated = [...new Set([...celebratedIds, ...newlyUnlocked.map((b) => b.id)])];
+      localStorage.setItem("consistpay_celebrated_badges", JSON.stringify(updatedCelebrated));
+    }
+  }, [
+    streak,
+    maxStreak,
+    consistencyScore,
+    battleBalance,
+    graceCoins,
+    plan,
+    onboardingComplete,
+    totalSolved,
+    totalProblemsSolved,
+    dailyCommitment,
+  ]);
+
+  // Process the queue
+  React.useEffect(() => {
+    if (newlyUnlockedQueue.length > 0 && !selectedBadge) {
+      const nextBadge = newlyUnlockedQueue[0];
+      setNewlyUnlockedQueue((prev) => prev.slice(1));
+      
+      // Auto open modal and fire confetti
+      setSelectedBadge(nextBadge);
+      
+      setTimeout(() => {
+        fireCelebrationConfetti();
+      }, 300);
+    }
+  }, [newlyUnlockedQueue, selectedBadge]);
 
   return (
     <div className="relative group h-full">
@@ -198,6 +288,15 @@ export function AwardsCard({
         @keyframes subtle-rotate {
           0% { transform: rotate(0deg); }
           100% { transform: rotate(360deg); }
+        }
+        @keyframes spin-slow {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
+        @keyframes card-bounce {
+          0% { transform: scale(0.9); opacity: 0; }
+          70% { transform: scale(1.05); }
+          100% { transform: scale(1); opacity: 1; }
         }
         .hexagon-shine {
           position: relative;
@@ -228,6 +327,20 @@ export function AwardsCard({
           border-radius: 50%;
           border: 1px dashed rgba(139, 92, 246, 0.3);
           animation: subtle-rotate 20s linear infinite;
+        }
+        .celebration-modal-card {
+          animation: card-bounce 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+        .sunburst-rays {
+          width: 320px;
+          height: 320px;
+          background-image: repeating-conic-gradient(
+            from 0deg,
+            rgba(139, 92, 246, 0.08) 0deg 15deg,
+            transparent 15deg 30deg
+          );
+          border-radius: 50%;
+          animation: spin-slow 25s linear infinite;
         }
       `}} />
 
@@ -322,24 +435,27 @@ export function AwardsCard({
 
       {/* ================= CELEBRATION MODAL (Wow Factor) ================= */}
       {selectedBadge && (
-        <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-[200] flex items-center justify-center p-4 animate-in fade-in duration-350">
-          {/* Card Container */}
-          <div className="relative w-full max-w-md bg-[#0F0F13] border border-violet-500/30 rounded-3xl p-8 shadow-2xl text-center overflow-hidden animate-in zoom-in-95 duration-300">
+        <div className="fixed inset-0 bg-black/90 backdrop-blur-lg z-[200] flex items-center justify-center p-4 animate-in fade-in duration-350">
+          {/* Card Container with custom bounce animation */}
+          <div className="celebration-modal-card relative w-full max-w-md bg-[#0F0F13] border border-violet-500/30 rounded-3xl p-8 shadow-[0_0_50px_rgba(139,92,246,0.15)] text-center overflow-hidden">
             {/* Glowing Backdrop inside Modal */}
             <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-48 h-48 bg-violet-500/20 rounded-full blur-[60px] pointer-events-none" />
             
+            {/* Sunburst rays rotating backdrop */}
+            <div className="sunburst-rays absolute left-1/2 top-[12%] -translate-x-1/2 -translate-y-1/2 pointer-events-none z-0" />
+
             {/* Close Button */}
             <button 
               onClick={() => setSelectedBadge(null)}
-              className="absolute top-4 right-4 w-8 h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-zinc-400 hover:text-white transition-colors cursor-pointer"
+              className="absolute top-4 right-4 w-8 h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-zinc-400 hover:text-white transition-colors cursor-pointer z-10"
             >
               <X className="w-4 h-4" />
             </button>
 
             {/* Giant Hexagon Badge Icon */}
-            <div className="relative w-24 h-24 mx-auto mb-6 flex items-center justify-center hover:scale-105 transition-transform duration-300">
+            <div className="relative w-24 h-24 mx-auto mb-6 flex items-center justify-center hover:scale-105 transition-transform duration-300 z-10">
               <svg className="absolute w-full h-full text-violet-950/30" viewBox="0 0 100 100" fill="currentColor">
-                <polygon points="50,5 93,25 93,75 50,95 7,75 7,25" stroke="rgba(139,92,246,0.5)" strokeWidth="4" />
+                <polygon points="50,5 93,25 93,75 50,95 7,75 7,25" stroke="rgba(139, 92, 246, 0.5)" strokeWidth="4" />
               </svg>
               <div className={`p-4 rounded-full ${selectedBadge.colorClass}`}>
                 {React.createElement(selectedBadge.icon, { className: "w-10 h-10 fill-current/10" })}
@@ -347,26 +463,26 @@ export function AwardsCard({
             </div>
 
             {/* Header Text */}
-            <span className="text-[10px] font-black text-violet-400 uppercase tracking-[0.2em] mb-2 block">
+            <span className="text-[10px] font-black text-violet-400 uppercase tracking-[0.2em] mb-2 block z-10">
               Achievement Unlocked
             </span>
-            <h3 className="text-2xl font-black text-white mb-3">
+            <h3 className="text-2xl font-black text-white mb-3 z-10">
               {selectedBadge.name}
             </h3>
             
-            <p className="text-sm text-zinc-300 leading-relaxed mb-6">
+            <p className="text-sm text-zinc-300 leading-relaxed mb-6 z-10">
               {selectedBadge.desc}
             </p>
 
             {/* Verification Tag */}
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 rounded-full text-xs font-semibold mb-6">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 rounded-full text-xs font-semibold mb-6 z-10">
               <Award className="w-4 h-4" /> Verified Award
             </div>
 
             {/* Action button */}
             <button
               onClick={() => setSelectedBadge(null)}
-              className="w-full py-3 bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-500 hover:to-purple-500 text-white rounded-xl font-bold text-sm transition-all shadow-lg shadow-violet-500/25 cursor-pointer"
+              className="w-full py-3 bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-500 hover:to-purple-500 text-white rounded-xl font-bold text-sm transition-all shadow-lg shadow-violet-500/25 cursor-pointer z-10"
             >
               Awesome!
             </button>
