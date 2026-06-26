@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { Bell, CheckCircle2, Swords, Trophy, Flame, Sparkles, X, ChevronRight } from "lucide-react";
+import { Bell, CheckCircle2, Swords, Trophy, Flame, Sparkles, X } from "lucide-react";
 import { Logo } from "../../components/Logo";
 import { Link, useLocation } from "react-router-dom";
 import { BattleHubModal } from "../../components/battle/BattleHubModal";
@@ -325,17 +325,6 @@ export function Navbar({ initials, plan = "free", avatar, isAvatarUrl }: NavbarP
                           );
                         })
                       )}
-                    </div>
-
-                    {/* View History Footer */}
-                    <div className="px-5 py-3 border-t border-white/[0.04] bg-white/[0.01] text-center">
-                      <Link 
-                        to="/notifications" 
-                        onClick={() => setShowNotifs(false)}
-                        className="text-xs font-semibold text-violet-400 hover:text-violet-300 transition-colors inline-flex items-center gap-1 hover:scale-105 active:scale-95 transition-all"
-                      >
-                        View Notification History <ChevronRight className="w-3.5 h-3.5 shrink-0" />
-                      </Link>
                     </div>
                   </div>
                 )}
