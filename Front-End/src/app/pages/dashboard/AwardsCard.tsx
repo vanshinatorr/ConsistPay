@@ -133,6 +133,101 @@ export function AwardsCard({
     return { current, target, percentage, unit };
   };
 
+  const getBadgeButtonStyles = (badge: Badge) => {
+    if (!badge.unlocked) {
+      return {
+        bgClass: "bg-zinc-900/80 hover:bg-zinc-800 border border-white/[0.06] text-zinc-400",
+        shadowClass: "shadow-black/20 hover:shadow-black/40",
+      };
+    }
+
+    // Unlocked: Dynamic brand color mapping
+    let fromColor = "from-violet-600";
+    let toColor = "to-purple-600";
+    let shadowColor = "shadow-violet-500/30";
+    let hoverFrom = "hover:from-violet-500";
+    let hoverTo = "hover:to-purple-500";
+    let borderClass = "border border-violet-500/30";
+
+    const color = badge.colorClass;
+    if (color.includes("teal")) {
+      fromColor = "from-teal-600";
+      toColor = "to-emerald-600";
+      shadowColor = "shadow-teal-500/30";
+      hoverFrom = "hover:from-teal-500";
+      hoverTo = "hover:to-emerald-500";
+      borderClass = "border border-teal-500/30";
+    } else if (color.includes("orange")) {
+      fromColor = "from-orange-600";
+      toColor = "to-red-600";
+      shadowColor = "shadow-orange-500/30";
+      hoverFrom = "hover:from-orange-500";
+      hoverTo = "hover:to-red-500";
+      borderClass = "border border-orange-500/30";
+    } else if (color.includes("emerald")) {
+      fromColor = "from-emerald-600";
+      toColor = "to-teal-600";
+      shadowColor = "shadow-emerald-500/30";
+      hoverFrom = "hover:from-emerald-500";
+      hoverTo = "hover:to-teal-500";
+      borderClass = "border border-emerald-500/30";
+    } else if (color.includes("rose")) {
+      fromColor = "from-rose-600";
+      toColor = "to-pink-600";
+      shadowColor = "shadow-rose-500/30";
+      hoverFrom = "hover:from-rose-500";
+      hoverTo = "hover:to-pink-500";
+      borderClass = "border border-rose-500/30";
+    } else if (color.includes("cyan")) {
+      fromColor = "from-cyan-600";
+      toColor = "to-sky-600";
+      shadowColor = "shadow-cyan-500/30";
+      hoverFrom = "hover:from-cyan-500";
+      hoverTo = "hover:to-sky-500";
+      borderClass = "border border-cyan-500/30";
+    } else if (color.includes("blue")) {
+      fromColor = "from-blue-600";
+      toColor = "to-indigo-600";
+      shadowColor = "shadow-blue-500/30";
+      hoverFrom = "hover:from-blue-500";
+      hoverTo = "hover:to-indigo-500";
+      borderClass = "border border-blue-500/30";
+    } else if (color.includes("amber") || color.includes("yellow")) {
+      fromColor = "from-amber-500";
+      toColor = "to-orange-500";
+      shadowColor = "shadow-amber-500/30";
+      hoverFrom = "hover:from-amber-400";
+      hoverTo = "hover:to-orange-400";
+      borderClass = "border border-amber-500/30";
+    } else if (color.includes("pink")) {
+      fromColor = "from-pink-600";
+      toColor = "to-rose-600";
+      shadowColor = "shadow-pink-500/30";
+      hoverFrom = "hover:from-pink-500";
+      hoverTo = "hover:to-rose-500";
+      borderClass = "border border-pink-500/30";
+    } else if (color.includes("purple") || color.includes("violet")) {
+      fromColor = "from-violet-600";
+      toColor = "to-fuchsia-600";
+      shadowColor = "shadow-violet-500/30";
+      hoverFrom = "hover:from-violet-500";
+      hoverTo = "hover:to-fuchsia-500";
+      borderClass = "border border-violet-500/30";
+    } else if (color.includes("red")) {
+      fromColor = "from-red-600";
+      toColor = "to-rose-600";
+      shadowColor = "shadow-red-500/30";
+      hoverFrom = "hover:from-red-500";
+      hoverTo = "hover:to-rose-500";
+      borderClass = "border border-red-500/30";
+    }
+
+    return {
+      bgClass: `bg-gradient-to-r ${fromColor} ${toColor} ${hoverFrom} ${hoverTo} text-white ${borderClass}`,
+      shadowClass: `shadow-lg ${shadowColor}`,
+    };
+  };
+
   const badges: Badge[] = [
     {
       id: "solved_1",
@@ -434,6 +529,29 @@ export function AwardsCard({
         .animate-wiggle {
           animation: wiggle 0.4s ease-in-out;
         }
+        .button-shine {
+          position: relative;
+          overflow: hidden;
+        }
+        .button-shine::after {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: -150%;
+          width: 50%;
+          height: 100%;
+          background: linear-gradient(
+            to right,
+            rgba(255, 255, 255, 0) 0%,
+            rgba(255, 255, 255, 0.25) 50%,
+            rgba(255, 255, 255, 0) 100%
+          );
+          transform: skewX(-20deg);
+          transition: left 0.75s ease-in-out;
+        }
+        .button-shine:hover::after {
+          left: 150%;
+        }
         .hexagon-shine {
           position: relative;
           overflow: hidden;
@@ -732,16 +850,17 @@ export function AwardsCard({
             )}
 
             {/* Action button */}
-            <button
-              onClick={() => setSelectedBadge(null)}
-              className={`w-full py-3 text-white rounded-xl font-bold text-sm transition-all shadow-lg cursor-pointer z-10 ${
-                selectedBadge.unlocked 
-                  ? "bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-500 hover:to-purple-500 shadow-violet-500/25" 
-                  : "bg-zinc-800 hover:bg-zinc-700 shadow-black/20"
-              }`}
-            >
-              {selectedBadge.unlocked ? "Awesome!" : "Keep Coding! 💪"}
-            </button>
+            {(() => {
+              const btnStyles = getBadgeButtonStyles(selectedBadge);
+              return (
+                <button
+                  onClick={() => setSelectedBadge(null)}
+                  className={`w-full py-3.5 rounded-xl font-extrabold text-sm transition-all duration-300 cursor-pointer z-10 flex items-center justify-center gap-2 hover:scale-[1.02] active:scale-[0.98] button-shine ${btnStyles.bgClass} ${btnStyles.shadowClass}`}
+                >
+                  {selectedBadge.unlocked ? "Awesome! Claimed 🎉" : "Keep Coding! 💪"}
+                </button>
+              );
+            })()}
           </div>
         </div>
       )}
