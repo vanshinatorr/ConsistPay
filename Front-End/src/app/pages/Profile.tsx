@@ -2,6 +2,7 @@ import { Code2, ArrowLeft, Settings, Award, TrendingUp, Zap, Edit3, Flame, Targe
 import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { AvatarSelectorModal } from "../components/AvatarSelectorModal";
+import { AwardsCard } from "./dashboard/AwardsCard";
 
 export function Profile() {
   const [userData, setUserData] = useState<any>(null);
@@ -90,14 +91,7 @@ export function Profile() {
   const totalDays = completedDays + missedDays;
   const consistencyScore = totalDays > 0 ? Math.round((completedDays / totalDays) * 100) : 0;
 
-  const badges = [
-    { icon: Flame, iconColor: "text-orange-400", label: "7 Day Streak", color: "from-orange-500/20 to-red-500/20", border: "border-orange-500/30", earned: currentStreak >= 7 },
-    { icon: Zap, iconColor: "text-yellow-400", label: "First Challenge", color: "from-yellow-500/20 to-orange-500/20", border: "border-yellow-500/30", earned: challengeStats.total >= 1 },
-    { icon: Trophy, iconColor: "text-yellow-500", label: "Challenge Winner", color: "from-yellow-500/20 to-yellow-600/20", border: "border-yellow-500/30", earned: challengeStats.won >= 1 },
-    { icon: Gem, iconColor: "text-blue-400", label: "30 Day Streak", color: "from-blue-500/20 to-cyan-500/20", border: "border-blue-500/30", earned: currentStreak >= 30 },
-    { icon: Moon, iconColor: "text-violet-400", label: "Night Coder", color: "from-violet-500/20 to-purple-500/20", border: "border-violet-500/30", earned: false },
-    { icon: Sparkles, iconColor: "text-yellow-400", label: "100% Consistency", color: "from-yellow-500/20 to-yellow-600/20", border: "border-yellow-500/30", earned: consistencyScore === 100 && completedDays > 0 },
-  ];
+
 
   return (
     <div className="min-h-screen text-white" style={{ backgroundColor: "#0D0D0F" }}>
@@ -278,39 +272,18 @@ export function Profile() {
         </div>
 
         {/* Badges */}
-        <div className="relative">
-          <div className="absolute inset-0 bg-gradient-to-br from-violet-500/10 to-pink-500/10 rounded-2xl blur-xl opacity-60" />
-          <div className="relative bg-[#0F0F13] border border-white/[0.04] rounded-2xl p-6">
-            <h2 className="text-lg font-bold mb-5 flex items-center gap-2">
-              <Award className="w-5 h-5 text-yellow-400" />
-              Badges
-              <span className="ml-auto text-xs text-zinc-500">{badges.filter(b => b.earned).length}/{badges.length} earned</span>
-            </h2>
-
-            <div className="grid grid-cols-3 gap-3">
-              {badges.map(({ icon: IconComponent, label, color, border, earned }) => (
-                <div
-                  key={label}
-                  className={`relative p-4 rounded-xl border text-center transition-all duration-300
-                    ${earned
-                      ? `bg-gradient-to-br ${color} ${border} shadow-lg shadow-white/5 hover:scale-105`
-                      : "bg-[#0D0D0F] border-white/[0.02] opacity-50 grayscale hover:opacity-75"
-                    }`}
-                >
-                  <div className="flex justify-center mb-2">
-                    <IconComponent className={`w-8 h-8 ${earned ? "text-white" : "text-zinc-500"}`} />
-                  </div>
-                  <div className="text-xs font-semibold text-zinc-300 leading-tight">{label}</div>
-                  {!earned && (
-                    <div className="absolute top-2 right-2 text-zinc-500 p-1 rounded-md bg-black/40 border border-white/[0.04]">
-                      <Lock className="w-3 h-3" />
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
+        <AwardsCard
+          streak={userData?.streak ?? 0}
+          maxStreak={userData?.maxStreak ?? 0}
+          consistencyScore={consistencyScore}
+          battleBalance={userData?.battleBalance ?? 0}
+          graceCoins={userData?.graceCoins ?? 0}
+          plan={userData?.plan ?? "free"}
+          onboardingComplete={userData?.onboardingComplete ?? true}
+          totalSolved={userData?.totalSolved ?? 0}
+          totalProblemsSolved={userData?.totalProblemsSolved ?? 0}
+          dailyCommitment={userData?.dailyCommitment ?? 5}
+        />
 
         {/* Plan Info */}
         <div className="relative">
