@@ -163,119 +163,176 @@ export function Leaderboard() {
           <p className="text-zinc-400 text-xs">See where you rank among all developers on the platform</p>
         </div>
 
-        {/* Top 3 Podium Unified Panel */}
-        <div className="relative mb-6 bg-[#121217]/50 border border-white/[0.04] rounded-2xl p-6 backdrop-blur-xl shadow-2xl overflow-hidden">
-          {/* Accent glow behind 1st place */}
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-64 h-64 bg-violet-500/5 rounded-full blur-[80px] pointer-events-none" />
-          
-          <div className="text-center mb-6">
-            <h2 className="text-[10px] font-black text-zinc-500 uppercase tracking-widest">Top Performers</h2>
-          </div>
-
-          <div className="grid grid-cols-3 gap-3 items-end max-w-md mx-auto relative z-10">
-            {/* 2nd Place */}
-            <div className="flex flex-col items-center">
-              <div className="relative mb-3 group">
-                <div className="absolute inset-0 bg-zinc-500/10 rounded-full blur-md opacity-0 group-hover:opacity-100 transition-opacity" />
+        {/* Top 3 Performers Row (Horizontal Card Grid) */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+          {/* 2nd Place */}
+          <div className="relative bg-[#121217]/50 border border-white/[0.04] rounded-2xl p-5 backdrop-blur-xl shadow-lg flex items-center justify-between overflow-hidden group hover:scale-[1.01] hover:bg-white/[0.01] transition-all">
+            <div className="flex items-center gap-3">
+              <div className="relative">
                 <AvatarRenderer 
                   avatar={sorted[1]?.avatar || "US"} 
-                  className="w-12 h-12 rounded-full flex items-center justify-center font-bold text-xs relative ring-2 ring-zinc-500 ring-offset-2 ring-offset-[#0F0F13] transition-transform group-hover:scale-105" 
+                  className="w-12 h-12 rounded-full flex items-center justify-center font-bold text-xs ring-2 ring-slate-500/40 ring-offset-2 ring-offset-[#0F0F13]" 
                   colorClass="from-slate-400 to-slate-650"
                 />
-                <div className="absolute -top-2.5 left-1/2 -translate-x-1/2 bg-[#1b1b22] text-zinc-300 text-[8px] font-black px-1.5 py-0.5 rounded-full border border-zinc-500/30 shadow-lg">
-                  2ND
-                </div>
+                <span className="absolute -bottom-1 -right-1 w-5 h-5 bg-[#1b1b22] text-[9px] font-black text-slate-300 flex items-center justify-center rounded-full border border-slate-500/30">
+                  2
+                </span>
               </div>
-              <div className="text-center w-full max-w-[85px] sm:max-w-[110px]">
-                <div className="font-semibold text-xs truncate text-zinc-200">{sorted[1]?.username || sorted[1]?.name || "Empty"}</div>
+              <div>
+                <div className="font-bold text-xs text-white truncate max-w-[85px] sm:max-w-[100px]">
+                  {sorted[1]?.username || sorted[1]?.name || "Empty Slot"}
+                </div>
                 <div className="text-[10px] text-zinc-500 font-bold mt-0.5">{getValue(sorted[1])}</div>
               </div>
-              {/* Podium Pedestal */}
-              <div className="w-full h-10 bg-gradient-to-t from-white/[0.01] to-white/[0.03] border-t border-white/[0.04] rounded-t-xl mt-3 flex items-center justify-center">
-                <Trophy className="w-3.5 h-3.5 text-zinc-400" />
-              </div>
             </div>
+            <div className="text-right flex flex-col items-end">
+              <Trophy className="w-5 h-5 text-slate-400" />
+              <span className="text-[9px] font-black text-slate-450 mt-1 uppercase">2nd Rank</span>
+            </div>
+          </div>
 
-            {/* 1st Place */}
-            <div className="flex flex-col items-center">
-              <div className="relative mb-3 group">
-                <div className="absolute inset-0 bg-yellow-500/10 rounded-full blur-lg opacity-80 group-hover:opacity-100 transition-opacity" />
+          {/* 1st Place */}
+          <div className="relative bg-[#121217]/70 border border-yellow-500/30 rounded-2xl p-5 backdrop-blur-xl shadow-[0_0_25px_rgba(234,179,8,0.04)] flex items-center justify-between overflow-hidden group hover:scale-[1.01] hover:border-yellow-500/50 transition-all">
+            {/* Subtle gold radial background glow */}
+            <div className="absolute top-0 right-0 w-32 h-32 bg-yellow-500/[0.03] rounded-full blur-2xl pointer-events-none" />
+            <div className="flex items-center gap-3">
+              <div className="relative">
                 <AvatarRenderer 
                   avatar={sorted[0]?.avatar || "US"} 
-                  className="w-16 h-16 rounded-full flex items-center justify-center font-bold text-sm relative ring-2 ring-yellow-500 ring-offset-2 ring-offset-[#0F0F13] transition-transform group-hover:scale-105" 
+                  className="w-14 h-14 rounded-full flex items-center justify-center font-bold text-sm ring-2 ring-yellow-500/60 ring-offset-2 ring-offset-[#0F0F13]" 
                   colorClass="from-amber-400 to-yellow-600"
                 />
-                <Crown className="w-4.5 h-4.5 text-yellow-400 absolute -top-3.5 left-1/2 -translate-x-1/2 animate-bounce" style={{ animationDuration: '3s' }} />
+                <Crown className="w-4 h-4 text-yellow-400 absolute -top-3 left-1/2 -translate-x-1/2 animate-bounce" style={{ animationDuration: '3s' }} />
+                <span className="absolute -bottom-1 -right-1 w-5.5 h-5.5 bg-[#1b1b22] text-[10px] font-black text-yellow-400 flex items-center justify-center rounded-full border border-yellow-500/40">
+                  1
+                </span>
               </div>
-              <div className="text-center w-full max-w-[95px] sm:max-w-[130px]">
-                <div className="font-bold text-xs truncate text-white">{sorted[0]?.username || sorted[0]?.name || "Empty"}</div>
-                <div className="text-[11px] text-yellow-400 font-extrabold mt-0.5">{getValue(sorted[0])}</div>
-              </div>
-              {/* Podium Pedestal */}
-              <div className="w-full h-15 bg-gradient-to-t from-yellow-500/[0.01] to-yellow-500/[0.05] border-t border-yellow-500/20 rounded-t-xl mt-3 flex items-center justify-center shadow-[0_-3px_12px_rgba(234,179,8,0.03)]">
-                <Crown className="w-4.5 h-4.5 text-yellow-500" />
+              <div>
+                <div className="font-bold text-xs text-white truncate max-w-[85px] sm:max-w-[100px] flex items-center gap-1">
+                  {sorted[0]?.username || sorted[0]?.name || "Empty Slot"}
+                </div>
+                <div className="text-[10px] text-yellow-400 font-extrabold mt-0.5">{getValue(sorted[0])}</div>
               </div>
             </div>
+            <div className="text-right flex flex-col items-end">
+              <Crown className="w-5 h-5 text-yellow-500" />
+              <span className="text-[9px] font-black text-yellow-400 mt-1 uppercase">Leader</span>
+            </div>
+          </div>
 
-            {/* 3rd Place */}
-            <div className="flex flex-col items-center">
-              <div className="relative mb-3 group">
-                <div className="absolute inset-0 bg-orange-500/10 rounded-full blur-md opacity-0 group-hover:opacity-100 transition-opacity" />
+          {/* 3rd Place */}
+          <div className="relative bg-[#121217]/50 border border-white/[0.04] rounded-2xl p-5 backdrop-blur-xl shadow-lg flex items-center justify-between overflow-hidden group hover:scale-[1.01] hover:bg-white/[0.01] transition-all">
+            <div className="flex items-center gap-3">
+              <div className="relative">
                 <AvatarRenderer 
                   avatar={sorted[2]?.avatar || "US"} 
-                  className="w-10 h-10 rounded-full flex items-center justify-center font-bold text-[10px] relative ring-2 ring-orange-500/60 ring-offset-2 ring-offset-[#0F0F13] transition-transform group-hover:scale-105" 
-                  colorClass="from-amber-600 to-orange-700"
+                  className="w-12 h-12 rounded-full flex items-center justify-center font-bold text-xs ring-2 ring-orange-500/45 ring-offset-2 ring-offset-[#0F0F13]" 
+                  colorClass="from-amber-600 to-orange-705"
                 />
-                <div className="absolute -top-2.5 left-1/2 -translate-x-1/2 bg-[#1b1b22] text-orange-400 text-[8px] font-black px-1.5 py-0.5 rounded-full border border-orange-500/30 shadow-lg">
-                  3RD
-                </div>
+                <span className="absolute -bottom-1 -right-1 w-5 h-5 bg-[#1b1b22] text-[9px] font-black text-orange-400 flex items-center justify-center rounded-full border border-orange-500/30">
+                  3
+                </span>
               </div>
-              <div className="text-center w-full max-w-[85px] sm:max-w-[110px]">
-                <div className="font-semibold text-xs truncate text-zinc-300">{sorted[2]?.username || sorted[2]?.name || "Empty"}</div>
+              <div>
+                <div className="font-bold text-xs text-white truncate max-w-[85px] sm:max-w-[100px]">
+                  {sorted[2]?.username || sorted[2]?.name || "Empty Slot"}
+                </div>
                 <div className="text-[10px] text-zinc-500 font-bold mt-0.5">{getValue(sorted[2])}</div>
               </div>
-              {/* Podium Pedestal */}
-              <div className="w-full h-7 bg-gradient-to-t from-white/[0.01] to-white/[0.02] border-t border-white/[0.03] rounded-t-xl mt-3 flex items-center justify-center">
-                <Medal className="w-3.5 h-3.5 text-orange-500/80" />
-              </div>
+            </div>
+            <div className="text-right flex flex-col items-end">
+              <Medal className="w-5 h-5 text-orange-500/80" />
+              <span className="text-[9px] font-black text-orange-400 mt-1 uppercase">3rd Rank</span>
             </div>
           </div>
         </div>
 
-        {/* Search & Filter Row */}
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 mb-4 w-full">
+        {/* My Position Row Card (Prominent display above list, similar to Codolio) */}
+        {currentUser && (
+          <div className="relative bg-gradient-to-r from-violet-500/[0.08] to-transparent border border-violet-500/20 rounded-2xl p-4 mb-6 overflow-hidden backdrop-blur-md flex items-center justify-between shadow-[0_4px_20px_rgba(139,92,246,0.03)]">
+            {/* Decorative left label */}
+            <div className="absolute top-0 left-0 bg-violet-600/90 text-white text-[8px] font-black px-2.5 py-0.8 rounded-br-lg tracking-widest uppercase border-r border-b border-violet-500/20 shadow-md">
+              My Position
+            </div>
+            
+            <div className="flex items-center gap-4 mt-2">
+              <div className="relative">
+                <AvatarRenderer 
+                  avatar={currentUser.avatar} 
+                  className="w-11 h-11 rounded-full flex items-center justify-center font-bold text-xs ring-2 ring-violet-500/30 ring-offset-2 ring-offset-[#0F0F13]" 
+                  colorClass="from-emerald-400 to-emerald-600"
+                />
+                <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-violet-600 text-white text-[9px] font-black flex items-center justify-center rounded-full border border-violet-500/40">
+                  #{currentUser.rank}
+                </div>
+              </div>
+              <div>
+                <div className="flex items-center gap-2">
+                  <span className="font-extrabold text-sm text-white">
+                    {currentUser.username || currentUser.name}
+                  </span>
+                  {currentUser.plan?.toLowerCase() === "pro" && (
+                    <span className="bg-violet-500/25 border border-violet-500/30 text-violet-300 text-[8px] font-black px-1.5 py-0.2 rounded uppercase">
+                      PRO
+                    </span>
+                  )}
+                  <span className="text-[8px] bg-emerald-500/20 text-emerald-300 border border-emerald-500/20 px-1.5 py-0.2 rounded font-black uppercase">
+                    YOU
+                  </span>
+                </div>
+                <p className="text-[10px] text-zinc-500 font-medium mt-0.5">Keep updating your streak to secure payouts!</p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-6 sm:gap-8 text-right mt-2">
+              <div>
+                <div className="text-[9px] font-black text-zinc-500 uppercase tracking-wider">Current Streak</div>
+                <div className="text-xs font-extrabold text-white flex items-center gap-1 mt-0.5 justify-end">
+                  <Flame className="w-3.5 h-3.5 text-orange-450" />
+                  <span>{currentUser.streak} days</span>
+                </div>
+              </div>
+              <div>
+                <div className="text-[9px] font-black text-zinc-500 uppercase tracking-wider">Value</div>
+                <div className="text-xs font-black text-violet-300 mt-0.5">{getValue(currentUser)}</div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Tabs & Search Bar integrated Row */}
+        <div className="flex items-center justify-between border-b border-white/[0.04] mb-5 gap-4">
           {/* Tabs */}
-          <div className="flex gap-1 bg-[#0F0F13] border border-white/[0.04] rounded-xl p-1 w-full sm:w-auto shrink-0">
-            {tabs.map(({ key, label, icon: Icon }) => (
+          <div className="flex gap-6">
+            {tabs.map(({ key, label }) => (
               <button
                 key={key}
                 onClick={() => setActiveTab(key)}
-                className={`flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-4 py-2 rounded-lg text-xs font-semibold transition-all cursor-pointer whitespace-nowrap
-                  ${activeTab === key
-                    ? "bg-violet-500/20 border border-violet-500/30 text-violet-300 shadow-[0_0_12px_rgba(139,92,246,0.1)]"
-                    : "text-zinc-400 hover:text-white"
-                  }`}
+                className={`pb-3 text-xs font-bold uppercase tracking-wider transition-all relative cursor-pointer
+                  ${activeTab === key ? "text-violet-400 font-extrabold" : "text-zinc-500 hover:text-zinc-300"}`}
               >
-                <Icon className="w-3.5 h-3.5" />
                 {label}
+                {activeTab === key && (
+                  <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-violet-500 rounded-full shadow-[0_0_8px_rgba(139,92,246,0.6)]" />
+                )}
               </button>
             ))}
           </div>
 
-          {/* Search input */}
-          <div className="relative w-full sm:w-64">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
+          {/* Search bar */}
+          <div className="relative w-48 sm:w-64 pb-2">
+            <Search className="absolute left-2.5 top-[38%] -translate-y-1/2 w-3.5 h-3.5 text-zinc-500" />
             <input
               type="text"
-              placeholder="Search developers..."
+              placeholder="Search..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-9 pr-8 py-2 bg-[#0F0F13] border border-white/[0.04] rounded-xl text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-violet-500/40 focus:ring-1 focus:ring-violet-500/20 transition-all"
+              className="w-full pl-8 pr-8 py-1.5 bg-white/5 border border-white/[0.04] rounded-lg text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-violet-500/40 focus:ring-1 focus:ring-violet-500/10 transition-all animate-none"
             />
             {searchQuery && (
               <button 
                 onClick={() => setSearchQuery("")}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-white text-xs cursor-pointer"
+                className="absolute right-2.5 top-[38%] -translate-y-1/2 text-zinc-500 hover:text-white text-xs cursor-pointer"
               >
                 Clear
               </button>
@@ -294,7 +351,7 @@ export function Leaderboard() {
           </div>
 
           {/* Scrollable Rows */}
-          <div className="max-h-[380px] overflow-y-auto custom-scrollbar divide-y divide-white/[0.02]">
+          <div className="max-h-[350px] overflow-y-auto custom-scrollbar divide-y divide-white/[0.02]">
             {filtered.length === 0 ? (
               <div className="py-16 text-center text-zinc-500 text-xs">
                 No developers found matching "{searchQuery}"
@@ -391,7 +448,7 @@ export function Leaderboard() {
               </div>
               <div className="flex items-center gap-5">
                 <div className="flex items-center gap-1.5">
-                  <Flame className="w-3.5 h-3.5 text-orange-400" />
+                  <Flame className="w-3.5 h-3.5 text-orange-450" />
                   <span className="text-xs text-zinc-300 font-medium">{currentUser.streak}d</span>
                 </div>
                 <div className="text-right">
