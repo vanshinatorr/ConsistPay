@@ -199,3 +199,102 @@
   background: rgba(255, 255, 255, 0.18);
 }
 
+/* ==========================================================================
+   ConsistPay Global Light Mode Overrides
+   ========================================================================== */
+html:not(.dark) body, 
+html:not(.dark) .min-h-screen,
+html:not(.dark) div[style*="backgroundColor"] {
+  background-color: #F8F9FA !important;
+  background: #F8F9FA !important;
+  color: #1F2937 !important;
+}
+
+html:not(.dark) h1,
+html:not(.dark) h2,
+html:not(.dark) h3,
+html:not(.dark) h4,
+html:not(.dark) h5,
+html:not(.dark) h6,
+html:not(.dark) .text-white,
+html:not(.dark) .text-zinc-100,
+html:not(.dark) .text-zinc-200 {
+  color: #111827 !important;
+}
+
+html:not(.dark) .text-zinc-300,
+html:not(.dark) .text-zinc-400 {
+  color: #374151 !important;
+}
+
+html:not(.dark) .text-zinc-550,
+html:not(.dark) .text-zinc-500 {
+  color: #6B7280 !important;
+}
+
+/* Nav Bar container overrides */
+html:not(.dark) nav.sticky,
+html:not(.dark) nav,
+html:not(.dark) header {
+  background-color: rgba(255, 255, 255, 0.8) !important;
+  border-color: #E5E7EB !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+}
+
+html:not(.dark) nav span, 
+html:not(.dark) nav a,
+html:not(.dark) header h1,
+html:not(.dark) header p {
+  color: #4B5563 !important;
+}
+
+html:not(.dark) nav a.text-violet-300,
+html:not(.dark) header span {
+  color: #6D28D9 !important;
+}
+
+/* Sidebar/Footer, cards, and modal components */
+html:not(.dark) .bg-white\/\[0\.02\],
+html:not(.dark) .bg-white\/\[0\.01\],
+html:not(.dark) .bg-white\/\[0\.03\],
+html:not(.dark) .bg-\[\#0C0C0F\],
+html:not(.dark) .bg-\[\#131316\],
+html:not(.dark) .bg-\[\#0F0F13\],
+html:not(.dark) .bg-zinc-950,
+html:not(.dark) .bg-[#0F0F13],
+html:not(.dark) .bg-white\/5 {
+  background-color: #FFFFFF !important;
+  background: #FFFFFF !important;
+  border-color: #E5E7EB !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02), 0 4px 6px -1px rgba(0, 0, 0, 0.01) !important;
+}
+
+/* Borders */
+html:not(.dark) .border-white\/\[0\.04\],
+html:not(.dark) .border-white\/5,
+html:not(.dark) .border-white\/10,
+html:not(.dark) .border-zinc-800 {
+  border-color: #E5E7EB !important;
+}
+
+/* Consistency Contribution Grid adjustments */
+html:not(.dark) .ConsistencyCalendar, 
+html:not(.dark) .consistency-grid, 
+html:not(.dark) rect[fill="rgba(255, 255, 255, 0.03)"],
+html:not(.dark) div[class*="bg-white/5"] {
+  background-color: #F3F4F6 !important;
+  border-color: #E5E7EB !important;
+}
+
+/* Notifications overlay dropdown box */
+html:not(.dark) .absolute.right-0.mt-3.w-\[380px\].bg-\[\#0F0F13\] {
+  background-color: #FFFFFF !important;
+  border-color: #E5E7EB !important;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.03) !important;
+}
+
+/* Buttons in light mode */
+html:not(.dark) .bg-white\/5.border-white\/\[0\.04\]:hover {
+  background-color: #F3F4F6 !important;
+}
+

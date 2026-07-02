@@ -6,6 +6,18 @@
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       <title>Design ConsistPay Landing Page (Community)</title>
       <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+      <script>
+        (function() {
+          const theme = localStorage.getItem("app_theme") || localStorage.getItem("admin_theme") || "dark";
+          if (theme === "dark") {
+            document.documentElement.classList.add("dark");
+            document.documentElement.classList.remove("light");
+          } else {
+            document.documentElement.classList.add("light");
+            document.documentElement.classList.remove("dark");
+          }
+        })();
+      </script>
     </head>
 
     <body>

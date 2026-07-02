@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { Bell, CheckCircle2, Swords, Trophy, Flame, Sparkles, X } from "lucide-react";
+import { Bell, CheckCircle2, Swords, Trophy, Flame, Sparkles, X, Sun, Moon } from "lucide-react";
 import { Logo } from "../../components/Logo";
 import { Link, useLocation } from "react-router-dom";
 import { BattleHubModal } from "../../components/battle/BattleHubModal";
@@ -17,6 +17,26 @@ export function Navbar({ initials, plan = "free", avatar, isAvatarUrl }: NavbarP
   const [showNotifs, setShowNotifs] = useState(false);
   const [notifications, setNotifications] = useState<any[]>([]);
   const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // Theme state
+  const [theme, setTheme] = useState<"dark" | "light">(() => {
+    return (localStorage.getItem("app_theme") as "dark" | "light") || "dark";
+  });
+
+  useEffect(() => {
+    localStorage.setItem("app_theme", theme);
+    if (theme === "dark") {
+      document.documentElement.classList.add("dark");
+      document.documentElement.classList.remove("light");
+    } else {
+      document.documentElement.classList.add("light");
+      document.documentElement.classList.remove("dark");
+    }
+  }, [theme]);
+
+  const toggleTheme = () => {
+    setTheme(prev => prev === "dark" ? "light" : "dark");
+  };
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -205,6 +225,19 @@ export function Navbar({ initials, plan = "free", avatar, isAvatarUrl }: NavbarP
             </div>
 
             <div className="flex items-center gap-4 shrink-0">
+
+              {/* Theme Toggle Button */}
+              <button
+                onClick={toggleTheme}
+                className="relative p-2.5 rounded-xl border transition-all duration-200 cursor-pointer bg-white/5 border-white/[0.04] text-zinc-300 hover:bg-white/10"
+                title={theme === "dark" ? "Switch to Light Mode" : "Switch to Dark Mode"}
+              >
+                {theme === "dark" ? (
+                  <Sun className="w-5 h-5 text-amber-400" />
+                ) : (
+                  <Moon className="w-5 h-5 text-violet-550" />
+                )}
+              </button>
               
               {/* Notification Bell */}
               <div className="relative" ref={dropdownRef}>
