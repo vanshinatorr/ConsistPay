@@ -525,7 +525,13 @@ export function Dashboard() {
         let count = 0;
 
         if (registrationDate && cellDate < registrationDate) {
-          status = "inactive";
+          const mapData = calendarMap.get(dateStr);
+          if (mapData && mapData.status === "completed") {
+            status = "completed";
+            count = mapData.count;
+          } else {
+            status = "inactive";
+          }
         } else if (cellDate > today) {
           status = "future";
         } else if (cellDate < today) {
