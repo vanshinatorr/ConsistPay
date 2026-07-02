@@ -9,6 +9,7 @@ const userSchema = new mongoose.Schema(
     password: { type: String },
     googleId: { type: String, unique: true, sparse: true },
     authProviders: [{ type: String, enum: ["email", "phone", "google"] }],
+    role: { type: String, enum: ["user", "admin"], default: "user" },
     streak: { type: Number, default: 0 },
     maxStreak: { type: Number, default: 0 },
     plan: { type: String, enum: ["free", "pro"], default: "free" },

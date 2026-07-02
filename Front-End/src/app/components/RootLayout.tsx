@@ -149,7 +149,7 @@ export function RootLayout() {
     );
   }
 
-  const showBottomNav = isAuth && !isPublicPage && path !== "/onboarding" && path !== "/payment";
+  const showBottomNav = isAuth && !isPublicPage && path !== "/onboarding" && path !== "/payment" && path !== "/admin";
 
   const tabs = [
     { label: "Dashboard", path: "/dashboard", Icon: LayoutDashboard },

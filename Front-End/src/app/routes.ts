@@ -15,6 +15,7 @@ import { Settings } from "./pages/Settings";
 import { Onboarding } from "./pages/Onboarding";
 import { Payment } from "./pages/Payment";
 import FaqPage from "./pages/FaqPage";
+import { AdminDashboard } from "./pages/AdminDashboard";
 import { RootLayout } from "./components/RootLayout";
 
 export const router = createBrowserRouter([
@@ -38,6 +39,7 @@ export const router = createBrowserRouter([
       { path: "/profile", Component: Profile },
       { path: "/notifications", Component: Notifications },
       { path: "/settings", Component: Settings },
+      { path: "/admin", Component: AdminDashboard },
       { path: "*", Component: NotFound },
     ]
   }
