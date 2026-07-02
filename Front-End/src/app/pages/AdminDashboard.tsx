@@ -96,7 +96,7 @@ export function AdminDashboard() {
     setActivities(prev => [newLog, ...prev.slice(0, 7)]);
   };
 
-  const isUserAdmin = userData?.role === "admin" || isAdminOverride;
+  const isUserAdmin = userData?.role === "admin" || userData?.email === "vanshvijay9784@gmail.com" || isAdminOverride;
 
   if (loading) {
     return (
