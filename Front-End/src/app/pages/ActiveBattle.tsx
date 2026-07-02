@@ -441,7 +441,7 @@ export function ActiveBattle() {
               <CheckCircle className="w-5 h-5" /> How to Win
             </h4>
             <p className="text-sm text-emerald-200/70 leading-relaxed">
-              Submit your LeetCode or Code360 progress daily on the dashboard. The single source of truth is your daily screenshot verified by Gemini AI. <strong className="text-emerald-300">Solving multiple questions in a single day still counts as 1 day completed</strong> (extra solves only increase your overall leaderboard score, not your score in this challenge). The person with the most verified days by the end of the duration takes the entire pool.
+              Solve problems on LeetCode and sync daily on the dashboard. The single source of truth is your daily solve verified by our automated LeetCode integration. <strong className="text-emerald-300">Solving multiple questions in a single day still counts as 1 day completed</strong> (extra solves only increase your overall leaderboard score, not your score in this challenge). The person with the most verified days by the end of the duration takes the entire pool.
             </p>
           </div>
           <div className="bg-[#0F0F13] border border-red-500/20 rounded-3xl p-6 shadow-md">
@@ -545,9 +545,9 @@ export function ActiveBattle() {
                   <Code2 className="w-5 h-5 text-emerald-400" />
                 </div>
                 <div>
-                  <p className="text-sm font-bold text-zinc-200 group-hover:text-white transition-colors">1. Solve Daily Coding Problems</p>
+                  <p className="text-sm font-bold text-zinc-200 group-hover:text-white transition-colors">1. Code Daily</p>
                   <p className="text-xs text-zinc-500 leading-relaxed mt-0.5">
-                    Solve coding challenges on LeetCode, GeeksForGeeks, or Code360 daily. <strong className="text-amber-400">Solving multiple questions in a day still counts as 1 point</strong> (this improves your overall leaderboard score, not your challenge points).
+                    Solve coding challenges on LeetCode daily. <strong className="text-amber-400">Solving multiple questions in a day still counts as 1 point</strong> (this improves your overall leaderboard score, not your challenge points).
                   </p>
                 </div>
               </div>
@@ -558,8 +558,8 @@ export function ActiveBattle() {
                   <Sparkles className="w-5 h-5 text-violet-400" />
                 </div>
                 <div>
-                  <p className="text-sm font-bold text-zinc-200 group-hover:text-white transition-colors">2. Submit Verification Screenshot</p>
-                  <p className="text-xs text-zinc-500 leading-relaxed mt-0.5">Upload screenshot proof daily on the dashboard. Rollover happens at midnight.</p>
+                  <p className="text-sm font-bold text-zinc-200 group-hover:text-white transition-colors">2. Sync Solve Status</p>
+                  <p className="text-xs text-zinc-500 leading-relaxed mt-0.5">Click the sync solves button on the dashboard to pull LeetCode status before midnight.</p>
                 </div>
               </div>
 

@@ -105,6 +105,20 @@ const syncUserStreak = async (userOrId) => {
             isFallback: true
           });
           console.log(`Created missed submission record for user ${user._id} on ${cursorStr}`);
+
+          // Plan commitment deduction logic from activeDeposit
+          if (user.planExpiresAt) {
+            const cursorDate = new Date(cursorStr + "T00:00:00Z");
+            const expiryDate = new Date(user.planExpiresAt);
+            cursorDate.setHours(0, 0, 0, 0);
+            expiryDate.setHours(0, 0, 0, 0);
+
+            if (cursorDate <= expiryDate && user.activeDeposit > 0) {
+              const deduction = Math.min(user.activeDeposit, user.dailyCommitment || 0);
+              user.activeDeposit -= deduction;
+              console.log(`Deducted ₹${deduction} from user ${user._id} activeDeposit for missed day ${cursorStr}. Remaining activeDeposit: ₹${user.activeDeposit}`);
+            }
+          }
         }
         dateCursor.setDate(dateCursor.getDate() + 1);
       }
@@ -124,15 +138,24 @@ const syncUserStreak = async (userOrId) => {
           user.streak = 0;
           // Deduct as many grace coins as possible to try to cover, then set to 0
           user.graceCoins = Math.max(0, user.graceCoins - missedDays);
+          user.currentCycleUnprotectedMisses = (user.currentCycleUnprotectedMisses || 0) + 1;
           streakNotificationTitle = "Streak Broken 💔";
           streakNotificationMessage = `You missed ${missedDays} ${missedDays === 1 ? "day" : "days"} and did not have enough Grace Coins. Your consistency streak has reset.`;
         }
-
-        await user.save();
-
-        if (streakNotificationTitle) {
-          await createNotification(user._id, streakNotificationTitle, streakNotificationMessage, "streak");
+      } else {
+        // Streak was already 0
+        if (missedDays > user.graceCoins) {
+          user.currentCycleUnprotectedMisses = (user.currentCycleUnprotectedMisses || 0) + 1;
+          user.graceCoins = Math.max(0, user.graceCoins - missedDays);
+        } else {
+          user.graceCoins -= missedDays;
         }
+      }
+
+      await user.save();
+
+      if (streakNotificationTitle) {
+        await createNotification(user._id, streakNotificationTitle, streakNotificationMessage, "streak");
       }
 
       return user;

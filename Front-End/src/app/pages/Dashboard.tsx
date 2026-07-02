@@ -8,7 +8,6 @@ import { WalletCard } from "./dashboard/WalletCard";
 import { ConsistencyCalendar } from "./dashboard/ConsistencyCalendar";
 import { DashboardBattleWidget } from "./dashboard/DashboardBattleWidget";
 import { RecentSolves } from "./dashboard/RecentSolves";
-import { AiInsights } from "./dashboard/AiInsights";
 import { LeaderboardRankCard } from "./dashboard/LeaderboardRankCard";
 import { AwardsCard } from "./dashboard/AwardsCard";
 import { JoinModal } from "./dashboard/JoinModal";
@@ -58,9 +57,10 @@ interface CalendarDay {
 
 export function Dashboard() {
   const navigate = useNavigate();
-  // ✅ UPDATED: problemName + screenshot instead of solutionLink
-  const [problemName, setProblemName] = useState("");
-  const [screenshot, setScreenshot] = useState<File | null>(null);
+  const [linkage, setLinkage] = useState<any>(null);
+  const [linkLoading, setLinkLoading] = useState(false);
+  const [verifyLoading, setVerifyLoading] = useState(false);
+  const [syncLoading, setSyncLoading] = useState(false);
 
   const [showJoinModal, setShowJoinModal] = useState(false);
   const [joinCode, setJoinCode] = useState("");
@@ -81,6 +81,8 @@ export function Dashboard() {
   const [leaderboardLoading, setLeaderboardLoading] = useState(true);
   const [userRank, setUserRank] = useState<number>(1);
   const [totalUsers, setTotalUsers] = useState<number>(0);
+  const [devMenuOpen, setDevMenuOpen] = useState(false);
+  const [devResetLoading, setDevResetLoading] = useState(false);
 
   const API = import.meta.env.VITE_API_URL;
   const token = localStorage.getItem("token") || "";
@@ -114,6 +116,20 @@ export function Dashboard() {
       console.error("Failed to fetch user rank:", err);
     } finally {
       setLeaderboardLoading(false);
+    }
+  };
+
+  const fetchLinkage = async () => {
+    try {
+      const res = await fetch(`${API}/api/platforms/linkage?platform=LeetCode`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setLinkage(data.linkage);
+      }
+    } catch (err) {
+      console.error("Error fetching platform linkage:", err);
     }
   };
 
@@ -268,6 +284,7 @@ export function Dashboard() {
           fetchCalendarForYears(initialYears),
           fetchTodaySubmission(),
           fetchRecentSolves(),
+          fetchLinkage(),
         ]);
       } catch (err) {
         console.error("Dashboard initial fetch failed:", err);
@@ -311,37 +328,86 @@ export function Dashboard() {
     return () => clearInterval(interval);
   }, [submitted]);
 
-  // ✅ UPDATED: screenshot base64 convert karke bhejo
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!problemName || !screenshot) return;
+  const handleLink = async (username: string) => {
+    setLinkLoading(true);
     setSubmitError("");
-    setAiLoading(true);
-
     try {
-      // Screenshot → base64
-      const base64 = await new Promise<string>((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = () => resolve((reader.result as string).split(",")[1]);
-        reader.onerror = () => reject("File read failed");
-        reader.readAsDataURL(screenshot);
-      });
+      if (username === "") {
+        // Change username -> delete linkage
+        const res = await fetch(`${API}/api/platforms/link`, {
+          method: "DELETE",
+          headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+          body: JSON.stringify({ platform: "LeetCode" })
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          setSubmitError(data.message || "Failed to clear linkage.");
+          return;
+        }
+        setLinkage(null);
+      } else {
+        const res = await fetch(`${API}/api/platforms/link`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+          body: JSON.stringify({ platform: "LeetCode", username })
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          setSubmitError(data.message || "Failed to link profile.");
+          return;
+        }
+        await fetchLinkage();
+      }
+    } catch (err) {
+      setSubmitError("Network error. Please try again.");
+    } finally {
+      setLinkLoading(false);
+    }
+  };
 
-      const res = await fetch(`${API}/api/submissions/submit`, {
+  const handleVerify = async () => {
+    setVerifyLoading(true);
+    setSubmitError("");
+    try {
+      const res = await fetch(`${API}/api/platforms/verify`, {
         method: "POST",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-        body: JSON.stringify({ problemName, screenshot: base64 }),
+        body: JSON.stringify({ platform: "LeetCode" })
       });
-
       const data = await res.json();
       if (!res.ok) {
-        setSubmitError(data.message || "Submission failed.");
+        setSubmitError(data.message || "Verification failed. Check token location.");
         return;
       }
+      await Promise.all([
+        fetchLinkage(),
+        fetchUserData()
+      ]);
+    } catch (err) {
+      setSubmitError("Network error. Please try again.");
+    } finally {
+      setVerifyLoading(false);
+    }
+  };
 
-      setSubmitted(true);
-      setProblemName("");
-      setScreenshot(null);
+  const handleSync = async () => {
+    setSyncLoading(true);
+    setSubmitError("");
+    try {
+      const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone || "Asia/Kolkata";
+      const res = await fetch(`${API}/api/platforms/sync`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ platform: "LeetCode", timezone: userTimeZone })
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setSubmitError(data.message || "Failed to sync solves.");
+        return;
+      }
+      if (data.solvedToday) {
+        setSubmitted(true);
+      }
       await Promise.all([
         fetchUserData(),
         fetchCalendarForYears(visibleYears),
@@ -349,9 +415,35 @@ export function Dashboard() {
         fetchRecentSolves(),
       ]);
     } catch (err) {
-      setSubmitError("Network error. Try again.");
+      setSubmitError("Network error. Please try again.");
     } finally {
-      setAiLoading(false);
+      setSyncLoading(false);
+    }
+  };
+
+  const handleDevReset = async () => {
+    const confirm = window.confirm("Are you sure? This will delete all your testing data.");
+    if (!confirm) return;
+
+    setDevResetLoading(true);
+    try {
+      const res = await fetch(`${API}/api/users/dev-reset`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json"
+        }
+      });
+      if (res.ok) {
+        localStorage.clear();
+        navigate("/signup");
+      } else {
+        alert("Failed to reset account.");
+      }
+    } catch (err) {
+      alert("Network error occurred.");
+    } finally {
+      setDevResetLoading(false);
     }
   };
 
@@ -471,9 +563,9 @@ export function Dashboard() {
 
   const faqs = [
     { q: "What is ConsistPay?", a: "A platform designed to build unshakable coding habits by putting small stakes on the line." },
-    { q: "How do you verify my submissions?", a: "Upload your accepted submission screenshot. We support LeetCode, GFG, and Code360." },
-    { q: "What happens if I miss a day?", a: "If you fail to submit by midnight, your daily commitment amount is deducted from your balance." },
-    { q: "How do grace coins work?", a: "Grace coins protect your streak on days you forget to submit. Auto-consumed to save your streak." },
+    { q: "How do you verify my submissions?", a: "Connect your LeetCode account. We automatically sync and verify your daily solves." },
+    { q: "What happens if I miss a day?", a: "If you fail to sync by midnight, your daily commitment amount is deducted from your balance." },
+    { q: "How do grace coins work?", a: "Grace coins protect your streak on days you forget to solve. Auto-consumed to save your streak." },
     { q: "Is the platform free to use?", a: "We offer a free tier with basic tracking. Upgrade to Pro for challenges and rewards." },
   ];
 
@@ -536,13 +628,56 @@ export function Dashboard() {
           </div>
         )}
 
+        {userData?.onboardingComplete && (userData?.planStatus === "grace_period" || userData?.planStatus === "expired") && (
+          <div className="mb-8 bg-gradient-to-r from-red-500/10 via-amber-500/5 to-red-500/10 border border-red-500/20 rounded-2xl p-6 relative overflow-hidden shadow-xl">
+            <div className="absolute top-0 right-0 w-64 h-64 bg-red-500/5 rounded-full blur-[80px]" />
+            <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+              <div className="flex items-start gap-4">
+                <div className="p-3 bg-red-500/10 rounded-xl text-red-400 shrink-0">
+                  <AlertTriangle className="w-6 h-6" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-bold text-white mb-1">
+                    {userData.planStatus === "grace_period" ? "⚠️ Plan Grace Period Active" : "🔴 Plan Expired"}
+                  </h3>
+                  <p className="text-zinc-400 text-sm leading-relaxed max-w-2xl">
+                    {userData.planStatus === "grace_period" 
+                      ? `Your 30-day coding plan has expired. You have ${userData.graceDaysLeft} ${userData.graceDaysLeft === 1 ? 'day' : 'days'} left of the grace period to submit for streak without earning rewards. Renew now to resume full accountability!`
+                      : "Your plan has expired and the grace period has ended. You can no longer submit daily coding solutions until you renew."
+                    }
+                  </p>
+                </div>
+              </div>
+              <div className="flex gap-3 w-full md:w-auto shrink-0">
+                {userData.balance > 0 && (
+                  <button 
+                    onClick={() => {
+                      const event = new CustomEvent("open-withdraw-modal");
+                      window.dispatchEvent(event);
+                    }}
+                    className="px-5 py-2.5 bg-white/5 border border-white/10 hover:bg-white/10 text-white text-sm font-semibold rounded-xl transition-all cursor-pointer text-center flex-1 md:flex-none"
+                  >
+                    Withdraw ₹{userData.balance}
+                  </button>
+                )}
+                <button
+                  onClick={() => setShowSetupModal(true)}
+                  className="px-5 py-2.5 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white text-sm font-bold rounded-xl transition-all w-full md:w-auto shadow-lg shadow-violet-500/20 cursor-pointer text-center flex-1 md:flex-none"
+                >
+                  Renew Plan
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
         <div className="flex flex-col gap-6 mb-6">
           {/* Row 1: Stats & Desktop Calendar */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch">
             <div className="lg:col-span-2">
               <StatsRow
                 currentStreak={currentStreak}
-                completedDays={userData?.totalProblemsSolved ?? 0}
+                completedDays={linkage?.isVerified ? (linkage.totalSolved || 0) : (userData?.totalProblemsSolved ?? 0)}
                 consistencyScore={consistencyScore}
                 onboardingComplete={userData?.onboardingComplete ?? true}
               />
@@ -565,18 +700,19 @@ export function Dashboard() {
             <div className="lg:col-span-2">
               {/* ✅ UPDATED props */}
               <TodaysChallenge
-                submitted={submitted}
-                handleSubmit={handleSubmit}
-                problemName={problemName}
-                setProblemName={setProblemName}
-                screenshot={screenshot}
-                setScreenshot={setScreenshot}
-                submitError={submitError}
+                linkage={linkage}
+                handleLink={handleLink}
+                handleVerify={handleVerify}
+                handleSync={handleSync}
+                linkLoading={linkLoading}
+                verifyLoading={verifyLoading}
+                syncLoading={syncLoading}
+                apiError={submitError}
+                setApiError={setSubmitError}
                 currentStreak={currentStreak}
                 dailyCommitment={dailyCommitment}
                 todayLine={todayLine}
                 timeLeft={timeLeft}
-                aiLoading={aiLoading}
                 onboardingComplete={userData?.onboardingComplete ?? true}
                 onSetupClick={() => setShowSetupModal(true)}
                 todaySubmissionsCount={todaySubmission?.count || 0}
@@ -592,6 +728,8 @@ export function Dashboard() {
                 graceCoins={graceCoins}
                 battleBalance={userData?.battleBalance ?? 0}
                 balance={userData?.balance ?? 0}
+                activeDeposit={userData?.activeDeposit ?? 0}
+                planStatus={userData?.planStatus}
                 onboardingComplete={userData?.onboardingComplete ?? true}
                 onRefreshRequest={fetchUserData}
               />
@@ -615,7 +753,7 @@ export function Dashboard() {
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-6 items-stretch">
           {/* Left Column: Rank, Awards, and Recent Solves */}
-          <div className="lg:col-span-8 flex flex-col gap-6">
+          <div className="lg:col-span-12 flex flex-col gap-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Leaderboard Rank Card */}
               <LeaderboardRankCard
@@ -641,15 +779,6 @@ export function Dashboard() {
             {/* Recent Solves */}
             <RecentSolves recentSolves={recentSolves} />
           </div>
-
-          {/* Right Column: AI Insights */}
-          <div className="lg:col-span-4">
-            <AiInsights
-              isUnlocked={!!(todaySubmission && todaySubmission.count > 0)}
-              aiLoading={aiLoading}
-              aiData={todaySubmission?.submission || undefined}
-            />
-          </div>
         </div>
 
         {/* Modals */}
@@ -661,6 +790,7 @@ export function Dashboard() {
             setShowSetupModal(false);
             fetchUserData();
           }}
+          currentBalance={userData?.balance ?? 0}
         />
 
         <Footer
@@ -669,6 +799,36 @@ export function Dashboard() {
           setOpenFaqIndex={setOpenFaqIndex}
         />
       </main>
+
+      {import.meta.env.DEV && (
+        <div className="fixed bottom-6 right-6 z-50">
+          <div className="relative">
+            <button
+              onClick={() => setDevMenuOpen(!devMenuOpen)}
+              className="flex items-center gap-1.5 px-3 py-2 bg-zinc-950 border border-zinc-800 hover:bg-zinc-900 hover:border-zinc-700 text-zinc-350 text-xs font-semibold rounded-xl shadow-2xl transition-all cursor-pointer select-none"
+            >
+              <span>⚙️</span> Developer Tools
+            </button>
+
+            {devMenuOpen && (
+              <div className="absolute bottom-full right-0 mb-2 w-48 bg-[#0F0F13] border border-white/[0.08] rounded-xl p-2 shadow-2xl animate-in slide-in-from-bottom-2 duration-200">
+                <button
+                  onClick={handleDevReset}
+                  disabled={devResetLoading}
+                  className="w-full text-left px-3 py-2 text-xs font-semibold text-red-400 hover:bg-red-500/10 rounded-lg transition-colors cursor-pointer flex items-center gap-1.5 select-none"
+                >
+                  {devResetLoading ? (
+                    <div className="w-3.5 h-3.5 border-2 border-red-400 border-t-transparent rounded-full animate-spin" />
+                  ) : (
+                    <span>🗑</span>
+                  )}
+                  Reset My Account
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

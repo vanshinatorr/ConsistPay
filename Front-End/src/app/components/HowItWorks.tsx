@@ -187,8 +187,8 @@ export function HowItWorks() {
             },
             {
               step: "02",
-              title: "Code & Submit Proof",
-              desc: "Solve coding questions on LeetCode/GFG and upload a screenshot before midnight.",
+              title: "Code & Sync Status",
+              desc: "Solve coding questions on LeetCode and sync your status on the dashboard before midnight.",
               icon: Link2,
               color: "text-blue-400 border-blue-500/20 bg-blue-500/10"
             },

@@ -75,6 +75,17 @@ export function Onboarding() {
           const data = await res.json();
           if (!res.ok) throw new Error(data.message || "Failed to process.");
 
+          // Update local storage cache immediately to prevent redirection loop
+          const cachedUserStr = localStorage.getItem("consistpay_user_data");
+          if (cachedUserStr) {
+            const cachedUser = JSON.parse(cachedUserStr);
+            cachedUser.onboardingComplete = true;
+            cachedUser.plan = data.plan;
+            cachedUser.balance = data.balance;
+            cachedUser.activeDeposit = data.activeDeposit;
+            localStorage.setItem("consistpay_user_data", JSON.stringify(cachedUser));
+          }
+
           setProcessingStep(3); // Success
           setTimeout(() => {
             setStep(7);
@@ -170,8 +181,8 @@ export function Onboarding() {
                     <Code2 className="w-5 h-5" />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-white text-sm">Daily Proof Tracking</h3>
-                    <p className="text-xs text-zinc-400 mt-0.5">Upload daily coding screenshots to maintain streaks and unlock benefits.</p>
+                    <h3 className="font-semibold text-white text-sm">Automatic Verification</h3>
+                    <p className="text-xs text-zinc-400 mt-0.5">Connect your LeetCode account to automatically sync and verify daily solves.</p>
                   </div>
                 </div>
 
@@ -232,8 +243,8 @@ export function Onboarding() {
                     2
                   </div>
                   <div className="pt-0.5">
-                    <h4 className="text-sm font-semibold text-white">Submit Daily Coding Proof</h4>
-                    <p className="text-xs text-zinc-400 mt-0.5">Upload your successful LeetCode, GFG, or Code360 solution screenshot before 12:00 AM.</p>
+                    <h4 className="text-sm font-semibold text-white">Connect LeetCode Profile</h4>
+                    <p className="text-xs text-zinc-400 mt-0.5">Link your LeetCode profile during setup and verify ownership in under a minute.</p>
                   </div>
                 </div>
 
@@ -242,8 +253,8 @@ export function Onboarding() {
                     3
                   </div>
                   <div className="pt-0.5">
-                    <h4 className="text-sm font-semibold text-white">Maintain Consistency</h4>
-                    <p className="text-xs text-zinc-400 mt-0.5">Gemini AI verifies your screenshot. Streaks are recorded, and grace coins protect your busy days.</p>
+                    <h4 className="text-sm font-semibold text-white">Solve & Auto-Sync</h4>
+                    <p className="text-xs text-zinc-400 mt-0.5">Solve problems on LeetCode. Our automated systems sync your solve history directly to update your streaks.</p>
                   </div>
                 </div>
 

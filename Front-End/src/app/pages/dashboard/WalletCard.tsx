@@ -92,6 +92,7 @@ import { Link } from "react-router-dom";
 import { Wallet, Swords, Lock, Info, Plus, Coins, Sparkles, TrendingDown, Shield } from "lucide-react";
 import TopupModal from "../../components/battle/TopupModal";
 import VersusInfoModal from "../../components/battle/VersusInfoModal";
+import { WithdrawModal } from "../../components/WithdrawModal";
 
 interface WalletCardProps {
   plan?: string;
@@ -102,6 +103,8 @@ interface WalletCardProps {
   graceCoins: number;
   battleBalance: number;
   balance?: number;
+  activeDeposit?: number;
+  planStatus?: string;
   onboardingComplete?: boolean;
   onRefreshRequest?: () => void;
 }
@@ -114,12 +117,17 @@ export function WalletCard({
   dailyCommitment,
   graceCoins,
   battleBalance,
+  balance = 0,
+  activeDeposit = 0,
+  planStatus = "active",
   onboardingComplete = true,
   onRefreshRequest,
 }: WalletCardProps) {
   const [activeTab, setActiveTab] = useState<"consistency" | "battle">("consistency");
   const [showTopupModal, setShowTopupModal] = useState(false);
   const [showInfoModal, setShowInfoModal] = useState(false);
+  const [showWithdrawModal, setShowWithdrawModal] = useState(false);
+  const [withdrawWalletType, setWithdrawWalletType] = useState<"consistency" | "battle">("consistency");
 
   const handleTopupSuccess = (newBalance: number) => {
     if (onRefreshRequest) {
@@ -180,19 +188,47 @@ export function WalletCard({
             </span>
           )}
         </div>
-
         {/* Tab Content: CONSISTENCY */}
         {activeTab === "consistency" && (
           <div className="flex flex-col flex-1 animate-in fade-in zoom-in-95 duration-200">
+            {/* Wallet Balance Display */}
+            <div className="bg-gradient-to-br from-emerald-500/[0.03] to-teal-500/[0.03] border border-emerald-500/10 rounded-xl p-4 mb-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <div className="text-xs text-emerald-400 font-semibold mb-1 flex items-center gap-1.5">
+                    <Coins className="w-3.5 h-3.5" /> Withdrawable Balance
+                  </div>
+                  <span className="text-2xl font-black font-mono text-white">
+                    ₹{onboardingComplete ? Math.round(balance) : "0"}
+                  </span>
+                </div>
+                {onboardingComplete && balance > 0 && (
+                  <button
+                    onClick={() => {
+                      setWithdrawWalletType("consistency");
+                      setShowWithdrawModal(true);
+                    }}
+                    className="px-3.5 py-1.5 bg-emerald-500 hover:bg-emerald-400 text-black text-xs font-bold rounded-lg transition-all shadow-md cursor-pointer"
+                  >
+                    Withdraw
+                  </button>
+                )}
+              </div>
+              <div className="text-[10px] text-zinc-500 mt-1.5">
+                Funds secured from completed coding commitments.
+              </div>
+            </div>
+
+            {/* Active Deposit Display */}
             <div className="bg-white/[0.01] border border-white/[0.04] rounded-xl p-4 mb-4">
               <div className="text-xs text-zinc-500 mb-1">
-                Total Deposited
+                Active Deposit Pool (Locked)
               </div>
-              <span className="text-xl font-bold font-mono">
-                ₹{onboardingComplete ? Math.round(monthlyBudget) : "0"}
+              <span className="text-xl font-bold font-mono text-zinc-300">
+                ₹{onboardingComplete ? Math.round(activeDeposit) : "0"}
               </span>
               <div className="text-xs text-zinc-500 mt-0.5">
-                ₹{dailyCommitment}/day commitment • 30-day challenge active
+                ₹{dailyCommitment}/day commitment • 30-day plan
               </div>
             </div>
 
@@ -220,41 +256,56 @@ export function WalletCard({
                   {missedDays} days
                 </div>
               </div>
-
             </div>
 
             <div className="mb-4">
               <div className="flex justify-between text-xs mb-2">
                 <span className="text-zinc-400">
-                  Monthly Progress
+                  Plan Progress
                 </span>
                 <span className="text-zinc-400">
-                  {completedDays}/30 days
+                  {completedDays + missedDays}/30 days
                 </span>
               </div>
               <div className="h-2 bg-white/5 rounded-full overflow-hidden">
                 <div
                   className="h-full bg-gradient-to-r from-emerald-500 to-teal-400 rounded-full transition-all duration-500"
                   style={{
-                    width: `${(completedDays / 30) * 100}%`,
+                    width: `${((completedDays + missedDays) / 30) * 100}%`,
                   }}
                 />
               </div>
             </div>
 
-            <div className="bg-yellow-500/5 border border-yellow-500/10 rounded-xl p-4 mt-auto">
-              <div className="text-xs text-zinc-450 mb-1 flex items-center gap-1.5">
-                <Coins className="w-3.5 h-3.5 text-yellow-400 shrink-0" /> Month-end Payout
+            {planStatus === "active" ? (
+              <div className="bg-yellow-500/5 border border-yellow-500/10 rounded-xl p-4 mt-auto">
+                <div className="text-xs text-zinc-450 mb-1 flex items-center gap-1.5">
+                  <Coins className="w-3.5 h-3.5 text-yellow-400 shrink-0" /> Month-end Payout Preview
+                </div>
+                <div className="text-2xl font-bold text-yellow-400">
+                  ₹{completedDays * dailyCommitment}
+                </div>
+                <div className="text-xs text-zinc-550 mt-1">
+                  {30 - completedDays - missedDays > 0
+                    ? `${30 - completedDays - missedDays} days left — keep submitting!`
+                    : "Plan complete! 🎉"}
+                </div>
               </div>
-              <div className="text-2xl font-bold text-yellow-400">
-                ₹{completedDays * dailyCommitment}
+            ) : (
+              <div className="bg-red-500/5 border border-red-500/10 rounded-xl p-4 mt-auto flex flex-col gap-2.5">
+                <div className="flex justify-between items-center">
+                  <div>
+                    <div className="text-xs text-red-400 font-bold">Plan Expired</div>
+                    <div className="text-[10px] text-zinc-500 mt-0.5">Please renew to resume earning.</div>
+                  </div>
+                  <span className={`text-[10px] px-2 py-0.5 rounded-full font-semibold border ${
+                    planStatus === "grace_period" ? "text-amber-400 border-amber-500/20 bg-amber-500/5" : "text-red-400 border-red-500/20 bg-red-500/5"
+                  }`}>
+                    {planStatus === "grace_period" ? "Grace Period" : "Expired"}
+                  </span>
+                </div>
               </div>
-              <div className="text-xs text-zinc-550 mt-1">
-                {30 - completedDays - missedDays > 0
-                  ? `${30 - completedDays - missedDays} days left — keep submitting!`
-                  : "Month complete! 🎉"}
-              </div>
-            </div>
+            )}
 
             <div className="mt-4 pt-4 border-t border-white/[0.04] flex items-start justify-between">
               <div>
@@ -373,6 +424,18 @@ export function WalletCard({
                     <Coins className="w-4 h-4 text-violet-400" /> Add Funds
                   </button>
                   
+                  {battleBalance > 0 && (
+                    <button 
+                      onClick={() => {
+                        setWithdrawWalletType("battle");
+                        setShowWithdrawModal(true);
+                      }}
+                      className="w-full py-3 rounded-xl font-semibold bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-450 border border-emerald-500/20 transition-all flex items-center justify-center gap-2 cursor-pointer"
+                    >
+                      <Coins className="w-4 h-4 text-emerald-400" /> Withdraw Winnings
+                    </button>
+                  )}
+                  
                   <div className="text-[9px] text-zinc-500 text-center leading-relaxed px-4 pt-1">
                     Deposited funds are locked securely and paid out automatically.
                   </div>
@@ -394,6 +457,16 @@ export function WalletCard({
       {showInfoModal && (
         <VersusInfoModal 
           onClose={() => setShowInfoModal(false)} 
+        />
+      )}
+
+      {showWithdrawModal && (
+        <WithdrawModal
+          isOpen={showWithdrawModal}
+          onClose={() => setShowWithdrawModal(false)}
+          availableBalance={withdrawWalletType === "battle" ? battleBalance : balance}
+          walletType={withdrawWalletType}
+          onSuccess={onRefreshRequest}
         />
       )}
     </div>

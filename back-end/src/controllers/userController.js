@@ -174,6 +174,46 @@ const getMe = async (req, res) => {
 
     // Check dynamic achievements and write notifications if earned
     await checkAndNotifyBadges(user, totalSolved, totalMissed, totalProblemsSolved);
+
+    let planStatus = "expired";
+    let graceDaysLeft = 0;
+    const now = new Date();
+
+    if (user.planExpiresAt) {
+      const expiresAt = new Date(user.planExpiresAt);
+      const graceEnd = new Date(expiresAt.getTime() + 3 * 24 * 60 * 60 * 1000); // 3 days grace
+      
+      if (now <= expiresAt) {
+        planStatus = "active";
+      } else if (now <= graceEnd) {
+        planStatus = "grace_period";
+        const diffMs = graceEnd.getTime() - now.getTime();
+        graceDaysLeft = Math.max(0, Math.ceil(diffMs / (1000 * 60 * 60 * 24)));
+      } else {
+        planStatus = "expired";
+      }
+
+      // Check 10% auto-credit check if plan has expired
+      if (now > expiresAt && !user.bonusCredited) {
+        if (user.plan === "pro" && (user.currentCycleUnprotectedMisses || 0) === 0) {
+          const totalDeposit = (user.dailyCommitment || 0) * 30;
+          const bonus = Math.round(totalDeposit * 0.1);
+          user.balance += bonus;
+          
+          const Notification = require("../models/Notification");
+          await Notification.create({
+            userId: user._id,
+            title: "10% Consistency Bonus! 🏆",
+            desc: `Congratulations on staying 100% consistent! We've credited ₹${bonus} (10% bonus) to your wallet.`,
+            type: "wallet",
+            read: false
+          });
+          console.log(`Credited consistency bonus ₹${bonus} to user ${user._id}`);
+        }
+        user.bonusCredited = true;
+        await user.save();
+      }
+    }
     
     res.status(200).json({
       _id: user._id,
@@ -182,6 +222,7 @@ const getMe = async (req, res) => {
       email: user.email,
       plan: user.plan,
       balance: user.balance,
+      activeDeposit: user.activeDeposit || 0,
       battleBalance: user.battleBalance,
       streak: user.streak,
       maxStreak: user.maxStreak || 0,
@@ -189,6 +230,8 @@ const getMe = async (req, res) => {
       dailyCommitment: user.dailyCommitment,
       onboardingComplete: user.onboardingComplete,
       planExpiresAt: user.planExpiresAt,
+      planStatus,
+      graceDaysLeft,
       avatar: user.avatar,
       createdAt: user.createdAt,
       totalSolved, // Unique days solved
@@ -338,4 +381,36 @@ const addBattleFunds = async (req, res) => {
   }
 };
 
-module.exports = { getMe, updateMe, getLeaderboard, addBattleFunds };
+const devResetUser = async (req, res) => {
+  if (process.env.NODE_ENV === "production") {
+    return res.status(403).json({ message: "Forbidden in production environment." });
+  }
+  try {
+    const userId = req.user._id;
+
+    // Delete all related records
+    const PlatformLinkage = require("../models/PlatformLinkage");
+    const Submission = require("../models/Submission");
+    const Notification = require("../models/Notification");
+    const Withdrawal = require("../models/Withdrawal");
+    const Challenge = require("../models/Challenge");
+    const User = require("../models/User");
+
+    await Promise.all([
+      PlatformLinkage.deleteMany({ userId }),
+      Submission.deleteMany({ userId }),
+      Notification.deleteMany({ userId }),
+      Withdrawal.deleteMany({ userId }),
+      Challenge.deleteMany({ $or: [{ creatorId: userId }, { opponentId: userId }] }),
+      User.deleteOne({ _id: userId })
+    ]);
+
+    console.log(`[DevReset] Successfully wiped all testing data for user ID: ${userId}`);
+    res.status(200).json({ message: "User account reset successfully." });
+  } catch (error) {
+    console.error("[DevReset] Error wiping data:", error.message);
+    res.status(500).json({ message: error.message });
+  }
+};
+
+module.exports = { getMe, updateMe, getLeaderboard, addBattleFunds, devResetUser };

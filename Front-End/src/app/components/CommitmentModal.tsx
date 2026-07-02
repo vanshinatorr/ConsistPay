@@ -25,15 +25,17 @@ interface CommitmentModalProps {
   isOpen: boolean;
   onClose: () => void;
   onComplete: () => void;
+  currentBalance?: number;
 }
 
-export function CommitmentModal({ isOpen, onClose, onComplete }: CommitmentModalProps) {
+export function CommitmentModal({ isOpen, onClose, onComplete, currentBalance = 0 }: CommitmentModalProps) {
   const [step, setStep] = useState(1);
   const [plan, setPlan] = useState<"Free" | "Pro" | null>(null);
   const [amount, setAmount] = useState<number | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [processingStep, setProcessingStep] = useState(0);
+  const [useWalletBalance, setUseWalletBalance] = useState(false);
 
   const API = import.meta.env.VITE_API_URL;
   const token = localStorage.getItem("token") || "";
@@ -53,7 +55,13 @@ export function CommitmentModal({ isOpen, onClose, onComplete }: CommitmentModal
       setError("");
 
       const depositAmount = amount ? amount * 30 : 0;
-      const totalAmount = plan === "Pro" ? depositAmount + 49 : depositAmount;
+      const baseCost = plan === "Pro" ? depositAmount + 49 : depositAmount;
+      const netCost = useWalletBalance ? Math.max(0, baseCost - currentBalance) : baseCost;
+
+      if (netCost === 0) {
+        await handleSkipPayment();
+        return;
+      }
 
       // Step 1: Create Order in backend
       const orderRes = await fetch(`${API}/api/payment/create-order`, {
@@ -66,7 +74,7 @@ export function CommitmentModal({ isOpen, onClose, onComplete }: CommitmentModal
           plan,
           dailyCommitment: amount,
           depositAmount,
-          totalAmount,
+          totalAmount: netCost,
         }),
       });
 
@@ -102,6 +110,7 @@ export function CommitmentModal({ isOpen, onClose, onComplete }: CommitmentModal
                 plan,
                 dailyCommitment: amount,
                 depositAmount,
+                useWalletBalance,
               }),
             });
 
@@ -168,6 +177,7 @@ export function CommitmentModal({ isOpen, onClose, onComplete }: CommitmentModal
               plan,
               dailyCommitment: amount,
               depositAmount,
+              useWalletBalance,
             }),
           });
           const data = await res.json();
@@ -278,8 +288,8 @@ export function CommitmentModal({ isOpen, onClose, onComplete }: CommitmentModal
                     <Code2 className="w-5 h-5" />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-white text-sm">Daily Proof Tracking</h3>
-                    <p className="text-xs text-zinc-400 mt-0.5">Upload daily coding screenshots to maintain streaks and unlock benefits.</p>
+                    <h3 className="font-semibold text-white text-sm">Automatic Verification</h3>
+                    <p className="text-xs text-zinc-400 mt-0.5">Connect your LeetCode account to automatically sync and verify daily solves.</p>
                   </div>
                 </div>
 
@@ -340,8 +350,8 @@ export function CommitmentModal({ isOpen, onClose, onComplete }: CommitmentModal
                     2
                   </div>
                   <div className="pt-0.5">
-                    <h4 className="text-sm font-semibold text-white">Submit Daily Coding Proof</h4>
-                    <p className="text-xs text-zinc-400 mt-0.5">Upload your successful LeetCode, GFG, or Code360 solution screenshot before 12:00 AM.</p>
+                    <h4 className="text-sm font-semibold text-white">Connect LeetCode Profile</h4>
+                    <p className="text-xs text-zinc-400 mt-0.5">Link your LeetCode profile during setup and verify ownership in under a minute.</p>
                   </div>
                 </div>
 
@@ -350,8 +360,8 @@ export function CommitmentModal({ isOpen, onClose, onComplete }: CommitmentModal
                     3
                   </div>
                   <div className="pt-0.5">
-                    <h4 className="text-sm font-semibold text-white">Maintain Consistency</h4>
-                    <p className="text-xs text-zinc-400 mt-0.5">Gemini AI verifies your screenshot. Streaks are recorded, and grace coins protect your busy days.</p>
+                    <h4 className="text-sm font-semibold text-white">Solve & Auto-Sync</h4>
+                    <p className="text-xs text-zinc-400 mt-0.5">Solve problems on LeetCode. Our automated systems sync your solve history directly to update your streaks.</p>
                   </div>
                 </div>
 
@@ -880,6 +890,24 @@ export function CommitmentModal({ isOpen, onClose, onComplete }: CommitmentModal
                       </div>
                     )}
                     
+                    {currentBalance > 0 && (
+                      <>
+                        <div className="h-px bg-white/[0.04] w-full" />
+                        <div className="flex items-center justify-between p-3 bg-emerald-500/5 border border-emerald-500/10 rounded-xl">
+                          <div className="flex flex-col">
+                            <span className="text-emerald-400 font-semibold text-xs">Apply Wallet Balance (Carry Forward)</span>
+                            <span className="text-zinc-400 text-[10px] mt-0.5">Use ₹{currentBalance} withdrawable funds</span>
+                          </div>
+                          <input
+                            type="checkbox"
+                            checked={useWalletBalance}
+                            onChange={(e) => setUseWalletBalance(e.target.checked)}
+                            className="w-4.5 h-4.5 accent-emerald-500 rounded border-zinc-800 bg-[#0C0C10] cursor-pointer"
+                          />
+                        </div>
+                      </>
+                    )}
+
                     <div className="h-px bg-white/[0.04] w-full" />
 
                     <div className="flex items-center justify-between pt-1">
@@ -888,7 +916,7 @@ export function CommitmentModal({ isOpen, onClose, onComplete }: CommitmentModal
                         <span className="text-emerald-400/80 text-[10px] font-semibold">Includes all payment fees & taxes</span>
                       </div>
                       <span className="text-emerald-400 font-bold text-xl">
-                        ₹{plan === "Pro" ? (amount ? amount * 30 : 0) + 49 : (amount ? amount * 30 : 0)}
+                        ₹{useWalletBalance ? Math.max(0, (plan === "Pro" ? (amount ? amount * 30 : 0) + 49 : (amount ? amount * 30 : 0)) - currentBalance) : (plan === "Pro" ? (amount ? amount * 30 : 0) + 49 : (amount ? amount * 30 : 0))}
                       </span>
                     </div>
                   </div>
@@ -898,26 +926,31 @@ export function CommitmentModal({ isOpen, onClose, onComplete }: CommitmentModal
                     <button
                       onClick={handleSkipPayment}
                       disabled={loading}
-                      className="w-full py-3 bg-violet-600 hover:bg-violet-500 disabled:opacity-50 text-white font-semibold rounded-xl shadow-lg transition-all flex items-center justify-center gap-2 text-sm"
+                      className="w-full py-3 bg-violet-600 hover:bg-violet-500 disabled:opacity-50 text-white font-semibold rounded-xl shadow-lg transition-all flex items-center justify-center gap-2 text-sm cursor-pointer"
                     >
                       {loading ? (
                         <Loader2 className="w-4 h-4 animate-spin" />
                       ) : (
                         <>
                           <Zap className="w-4 h-4 shrink-0 text-white" />
-                          Simulate Secure Payment (Test Mode)
+                          {useWalletBalance && currentBalance >= (plan === "Pro" ? (amount ? amount * 30 : 0) + 49 : (amount ? amount * 30 : 0))
+                            ? "Confirm Plan Activation (Free using Wallet)"
+                            : "Simulate Secure Payment (Test Mode)"
+                          }
                           <ArrowRight className="w-4 h-4" />
                         </>
                       )}
                     </button>
 
-                    <button
-                      onClick={handleRazorpayPayment}
-                      disabled={loading}
-                      className="w-full py-3 bg-white/[0.01] border border-white/[0.04] hover:bg-white/[0.03] disabled:opacity-50 text-zinc-300 font-semibold rounded-xl transition-all flex items-center justify-center gap-2 text-xs"
-                    >
-                      Razorpay Checkout (UPI, Cards, Netbanking)
-                    </button>
+                    {!(useWalletBalance && currentBalance >= (plan === "Pro" ? (amount ? amount * 30 : 0) + 49 : (amount ? amount * 30 : 0))) && (
+                      <button
+                        onClick={handleRazorpayPayment}
+                        disabled={loading}
+                        className="w-full py-3 bg-white/[0.01] border border-white/[0.04] hover:bg-white/[0.03] disabled:opacity-50 text-zinc-300 font-semibold rounded-xl transition-all flex items-center justify-center gap-2 text-xs cursor-pointer"
+                      >
+                        Razorpay Checkout (UPI, Cards, Netbanking)
+                      </button>
+                    )}
 
                     <div className="flex gap-4">
                       <button
@@ -964,15 +997,15 @@ export function CommitmentModal({ isOpen, onClose, onComplete }: CommitmentModal
                   <Check className="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
                   <div>
                     <h5 className="font-bold text-white">Daily Streak Tracking Enabled</h5>
-                    <p className="text-xs text-zinc-400 mt-1 leading-relaxed">Submit your DSA completion screenshot before midnight daily to build consistency.</p>
+                    <p className="text-xs text-zinc-400 mt-1 leading-relaxed">Solve problems daily on LeetCode and sync before midnight to build consistency.</p>
                   </div>
                 </div>
 
                 <div className="flex items-start gap-3.5 text-sm">
                   <Check className="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
                   <div>
-                    <h5 className="font-bold text-white">Gemini AI Assistant Online</h5>
-                    <p className="text-xs text-zinc-400 mt-1 leading-relaxed">Automated DSA proof verification and personalized placement advisory are active.</p>
+                    <h5 className="font-bold text-white">Auto-Sync System Online</h5>
+                    <p className="text-xs text-zinc-400 mt-1 leading-relaxed">Automated coding history sync and validation check are fully active.</p>
                   </div>
                 </div>
               </div>

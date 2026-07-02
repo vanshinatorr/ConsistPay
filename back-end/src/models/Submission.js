@@ -50,6 +50,21 @@ const submissionSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    submissionId: {
+      type: String,
+      unique: true,
+      sparse: true, // Allow multiple nulls for legacy/screenshot entries
+    },
+    verificationMethod: {
+      type: String,
+      enum: ["auto", "screenshot", "manual"],
+      default: "auto",
+    },
+    verificationStatus: {
+      type: String,
+      enum: ["verified", "pending", "failed"],
+      default: "verified",
+    },
   },
   { timestamps: true }
 );

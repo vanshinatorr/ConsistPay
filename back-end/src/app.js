@@ -54,8 +54,8 @@ app.use("/api/users", userRoutes);
 const challengeRoutes = require("./routes/challenges");
 app.use("/api/challenges", challengeRoutes);
 
-const aiRoutes = require("./routes/ai");
-app.use("/api/ai", aiRoutes);
+const platformRoutes = require("./routes/platforms");
+app.use("/api/platforms", platformRoutes);
 
 
 const paymentRoutes = require("./routes/payment");

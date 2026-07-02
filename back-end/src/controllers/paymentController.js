@@ -85,20 +85,30 @@ try {
   const user = await User.findById(req.user._id);
   const planLower = plan.toLowerCase();
   const isRenewal = user.onboardingComplete;
+  const useWalletBalance = req.body.useWalletBalance === true;
+  const depositVal = Number(depositAmount);
+
+  if (useWalletBalance) {
+    const offset = Math.min(user.balance || 0, depositVal);
+    user.balance = (user.balance || 0) - offset;
+  }
+
+  user.activeDeposit = depositVal;
   user.plan = planLower;
   user.dailyCommitment = Number(dailyCommitment);
-  user.balance = Number(depositAmount);
   user.onboardingComplete = true;
-  user.onboardingCompletedAt = user.onboardingCompletedAt || new Date();
+  user.onboardingCompletedAt = new Date();
   user.graceCoins = isRenewal ? ((user.graceCoins || 0) + 1) : 1;
-  if (planLower === "pro") {
-    user.planExpiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
-  }
+  user.planExpiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
+  user.currentCycleUnprotectedMisses = 0;
+  user.bonusCredited = false;
+
   await user.save();
   res.status(200).json({
     message: "Payment verified successfully!",
     plan: user.plan,
     balance: user.balance,
+    activeDeposit: user.activeDeposit,
     onboardingComplete: user.onboardingComplete,
   });
 } catch (error) {
@@ -114,23 +124,31 @@ try {
   
   const planLower = plan ? plan.toLowerCase() : "free";
   const isRenewal = user.onboardingComplete;
-  user.plan = planLower;
-  user.dailyCommitment = dailyCommitment;
-  user.balance = depositAmount;
-  user.onboardingComplete = true;
-  user.onboardingCompletedAt = user.onboardingCompletedAt || new Date();
-  user.graceCoins = isRenewal ? ((user.graceCoins || 0) + 1) : 1;
-  
-  if (planLower === "pro") {
-    user.planExpiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
+  const useWalletBalance = req.body.useWalletBalance === true;
+  const depositVal = Number(depositAmount);
+
+  if (useWalletBalance) {
+    const offset = Math.min(user.balance || 0, depositVal);
+    user.balance = (user.balance || 0) - offset;
   }
-  
+
+  user.activeDeposit = depositVal;
+  user.plan = planLower;
+  user.dailyCommitment = Number(dailyCommitment);
+  user.onboardingComplete = true;
+  user.onboardingCompletedAt = new Date();
+  user.graceCoins = isRenewal ? ((user.graceCoins || 0) + 1) : 1;
+  user.planExpiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
+  user.currentCycleUnprotectedMisses = 0;
+  user.bonusCredited = false;
+
   await user.save();
   
   res.status(200).json({
     message: "Payment successful!",
     plan: user.plan,
     balance: user.balance,
+    activeDeposit: user.activeDeposit,
     onboardingComplete: user.onboardingComplete,
   });
 } catch (error) {
@@ -344,6 +362,76 @@ const upgradePlan = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+const withdrawFunds = async (req, res) => {
+  try {
+    const { amount, upiId, walletType } = req.body;
+    const userId = req.user._id;
+    const Withdrawal = require("../models/Withdrawal");
+
+    const amountVal = Number(amount);
+    if (!amountVal || amountVal <= 0) {
+      return res.status(400).json({ message: "Invalid withdrawal amount." });
+    }
+    if (!upiId || !upiId.includes("@")) {
+      return res.status(400).json({ message: "Please enter a valid UPI ID (e.g. name@upi)." });
+    }
+
+    const user = await User.findById(userId);
+    const type = walletType === "battle" ? "battle" : "consistency";
+
+    if (type === "battle") {
+      if (user.battleBalance < amountVal) {
+        return res.status(400).json({ message: `Insufficient battle wallet balance. You only have ₹${user.battleBalance}.` });
+      }
+      user.battleBalance -= amountVal;
+    } else {
+      if (user.balance < amountVal) {
+        return res.status(400).json({ message: `Insufficient consistency wallet balance. You only have ₹${user.balance}.` });
+      }
+      user.balance -= amountVal;
+    }
+
+    await user.save();
+
+    const withdrawal = await Withdrawal.create({
+      userId,
+      amount: amountVal,
+      upiId,
+      status: "pending"
+    });
+
+    const Notification = require("../models/Notification");
+    await Notification.create({
+      userId,
+      title: "Withdrawal Initiated ⏳",
+      desc: `Your request to withdraw ₹${amountVal} to UPI: ${upiId} has been received.`,
+      type: "wallet",
+      read: false
+    });
+
+    res.status(200).json({
+      message: "Withdrawal request submitted successfully!",
+      balance: user.balance,
+      battleBalance: user.battleBalance,
+      withdrawal
+    });
+  } catch (error) {
+    console.error("Withdrawal error:", error);
+    res.status(500).json({ message: error.message });
+  }
+};
+
+const getWithdrawals = async (req, res) => {
+  try {
+    const Withdrawal = require("../models/Withdrawal");
+    const withdrawals = await Withdrawal.find({ userId: req.user._id }).sort({ createdAt: -1 });
+    res.status(200).json(withdrawals);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 module.exports = {
   createOrder,
   verifyPayment,
@@ -351,5 +439,7 @@ module.exports = {
   createTopupOrder,
   verifyTopup,
   skipTopup,
-  upgradePlan
+  upgradePlan,
+  withdrawFunds,
+  getWithdrawals
 };
