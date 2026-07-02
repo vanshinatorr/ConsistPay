@@ -88,6 +88,13 @@ class PlatformService {
     linkage.verifiedAt = new Date();
     await linkage.save();
 
+    // Trigger initial sync to pull historical LeetCode solves instantly
+    try {
+      await this.syncDailySolve(userId, platform);
+    } catch (syncErr) {
+      console.warn("[PlatformService] Initial verification sync failed:", syncErr.message);
+    }
+
     // Automatically complete user onboarding since they linked their account successfully
     const user = await User.findById(userId);
     if (user && !user.onboardingComplete) {
@@ -167,8 +174,9 @@ class PlatformService {
     const isFirstSubmissionToday = preSyncCount === 0;
     let newSolvesRecorded = 0;
 
-    // 3. Save new solves to the database
-    for (const problem of solveStatus.problems) {
+    // 3. Save new solves to the database (including historical submissions in the recent 20 list!)
+    const allRecentList = solveStatus.allSubmissions || [];
+    for (const problem of allRecentList) {
       // Check if submission was already recorded
       const existing = await Submission.findOne({ submissionId: problem.submissionId });
       if (!existing) {
@@ -179,7 +187,7 @@ class PlatformService {
           userId,
           problemName: problem.title,
           platform,
-          date: todayStr,
+          date: problem.dateStr, // Save under the actual date it was solved!
           status: "completed",
           topic: metadata.topic || "General DSA",
           difficulty: metadata.difficulty || "Easy",
@@ -190,9 +198,12 @@ class PlatformService {
           verificationMethod: "auto",
           verificationStatus: "verified",
         });
-        
-        newSolvesRecorded++;
-        console.log(`[PlatformService] Solved problem recorded: ${problem.title} (ID: ${problem.submissionId})`);
+
+        // Only count as "new solves recorded today" if it was solved today!
+        if (problem.dateStr === todayStr) {
+          newSolvesRecorded++;
+        }
+        console.log(`[PlatformService] Solved problem recorded historically/today: ${problem.title} (ID: ${problem.submissionId}) on date ${problem.dateStr}`);
       }
     }
 

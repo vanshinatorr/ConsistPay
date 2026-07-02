@@ -121,19 +121,38 @@ class LeetCodeProvider {
       });
     }
 
+    // Extract all recent submissions (with dates) to populate history
+    const allSubmissions = [];
+    const seenSubmissionIds = new Set();
+    for (const sub of submissions) {
+      const subDate = new Date(parseInt(sub.timestamp) * 1000);
+      const subDateStr = this._getLocalDateString(subDate, targetTimeZone);
+      if (!seenSubmissionIds.has(sub.id)) {
+        seenSubmissionIds.add(sub.id);
+        allSubmissions.push({
+          submissionId: sub.id,
+          title: sub.title,
+          slug: sub.titleSlug,
+          timestamp: parseInt(sub.timestamp),
+          dateStr: subDateStr
+        });
+      }
+    }
+
     return {
       solvedToday: problems.length > 0,
       solvedCount: problems.length,
       problems,
+      allSubmissions,
     };
   }
 
   /**
-   * Converts a date object to date string format (MM/DD/YYYY) localized to the user timezone
+   * Converts a date object to date string format (YYYY-MM-DD) localized to the user timezone
    */
   _getLocalDateString(date, timeZone) {
     try {
-      return new Intl.DateTimeFormat("en-US", {
+      return new Intl.DateTimeFormat("en-CA", {
         timeZone,
         year: "numeric",
         month: "2-digit",
@@ -141,7 +160,7 @@ class LeetCodeProvider {
       }).format(date);
     } catch (e) {
       console.warn(`[LeetCodeProvider] Invalid timezone "${timeZone}". Falling back to UTC.`);
-      return new Intl.DateTimeFormat("en-US", {
+      return new Intl.DateTimeFormat("en-CA", {
         timeZone: "UTC",
         year: "numeric",
         month: "2-digit",
