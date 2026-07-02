@@ -29,6 +29,16 @@ const RECENT_AC_SUBMISSIONS_QUERY = `
   }
 `;
 
+const GET_USER_CALENDAR_QUERY = `
+  query userProfileCalendar($username: String!) {
+    matchedUser(username: $username) {
+      userCalendar {
+        submissionCalendar
+      }
+    }
+  }
+`;
+
 class LeetCodeProvider {
   /**
    * Helper to execute GraphQL POST requests to LeetCode
@@ -145,6 +155,23 @@ class LeetCodeProvider {
       problems,
       allSubmissions,
     };
+  }
+
+  /**
+   * Fetch the full historical user calendar from LeetCode (returns parsed JSON of Unix timestamps -> counts)
+   */
+  async fetchUserCalendar(username) {
+    try {
+      const data = await this._makeGraphQLRequest(GET_USER_CALENDAR_QUERY, { username });
+      if (!data.matchedUser || !data.matchedUser.userCalendar) {
+        return {};
+      }
+      const calendarStr = data.matchedUser.userCalendar.submissionCalendar || "{}";
+      return JSON.parse(calendarStr);
+    } catch (e) {
+      console.error("[LeetCodeProvider] Failed to fetch or parse userCalendar:", e.message);
+      return {};
+    }
   }
 
   /**

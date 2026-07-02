@@ -124,6 +124,14 @@ class PlatformService {
     // Fetch daily status from LeetCode
     const solveStatus = await LeetCodeProvider.fetchDailySolveStatus(linkage.username, targetTimeZone);
 
+    // Fetch user's historical submission calendar map
+    let historicalCalendar = {};
+    try {
+      historicalCalendar = await LeetCodeProvider.fetchUserCalendar(linkage.username);
+    } catch (calErr) {
+      console.warn("[PlatformService] Failed to load user's full submission calendar:", calErr.message);
+    }
+
     // Keep lifetime solved count updated in linkage
     try {
       const userProfile = await LeetCodeProvider.fetchProfile(linkage.username);
@@ -204,6 +212,47 @@ class PlatformService {
           newSolvesRecorded++;
         }
         console.log(`[PlatformService] Solved problem recorded historically/today: ${problem.title} (ID: ${problem.submissionId}) on date ${problem.dateStr}`);
+      }
+    }
+
+    // 3.5. Record historical calendar submissions to light up their Consistency Calendar completely
+    const timestamps = Object.keys(historicalCalendar);
+    for (const timestampStr of timestamps) {
+      const ts = parseInt(timestampStr);
+      if (isNaN(ts)) continue;
+
+      // Convert Unix seconds to YYYY-MM-DD
+      const dateObj = new Date(ts * 1000);
+      const dateStr = new Intl.DateTimeFormat("en-CA", {
+        timeZone: targetTimeZone,
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit"
+      }).format(dateObj);
+
+      // Check if we already have a submission on this day
+      const existingDaySub = await Submission.findOne({
+        userId,
+        date: dateStr
+      });
+
+      if (!existingDaySub) {
+        // Create a historical practice placeholder submission so the calendar tile lights up green!
+        await Submission.create({
+          userId,
+          problemName: "LeetCode Practice",
+          platform,
+          date: dateStr,
+          status: "completed",
+          topic: "LeetCode Practice",
+          difficulty: "Easy",
+          recommendation: "Keep practicing daily.",
+          motivationLine: "One solve at a time.",
+          accepted: true,
+          submissionId: `leetcode-hist-${ts}`,
+          verificationMethod: "auto",
+          verificationStatus: "verified"
+        });
       }
     }
 
