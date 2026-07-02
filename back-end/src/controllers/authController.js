@@ -296,6 +296,12 @@ const completeSignup = async (req, res) => {
       newUser.googleId = decoded.googleId;
     }
 
+    // Assign "admin" role if database is empty or if user matches creator email
+    const totalUsers = await User.countDocuments({});
+    if (totalUsers === 0 || newUser.email === "vanshvijay9784@gmail.com") {
+      newUser.role = "admin";
+    }
+
     const user = await User.create(newUser);
 
     res.status(201).json({
