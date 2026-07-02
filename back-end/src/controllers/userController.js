@@ -165,12 +165,28 @@ const getMe = async (req, res) => {
     }
     
     // Find unique days with at least one completed submission
-    const uniqueDaysResult = await Submission.distinct("date", { userId: req.user._id, status: "completed" });
+    const solvedQuery = { userId: req.user._id, status: "completed" };
+    const missedQuery = { userId: req.user._id, status: "missed" };
+
+    if (user && user.planExpiresAt) {
+      const planStartDate = new Date(new Date(user.planExpiresAt).getTime() - 30 * 24 * 60 * 60 * 1000);
+      const planStartDateStr = new Intl.DateTimeFormat("en-CA", {
+        timeZone: "Asia/Kolkata",
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit"
+      }).format(planStartDate);
+      
+      solvedQuery.date = { $gte: planStartDateStr };
+      missedQuery.date = { $gte: planStartDateStr };
+    }
+
+    const uniqueDaysResult = await Submission.distinct("date", solvedQuery);
     const totalSolved = uniqueDaysResult.length;
     
     // Total count of completed solutions (up to 3 per day)
     const totalProblemsSolved = await Submission.countDocuments({ userId: req.user._id, status: "completed" });
-    const totalMissed = await Submission.countDocuments({ userId: req.user._id, status: "missed" });
+    const totalMissed = await Submission.countDocuments(missedQuery);
 
     // Check dynamic achievements and write notifications if earned
     await checkAndNotifyBadges(user, totalSolved, totalMissed, totalProblemsSolved);
