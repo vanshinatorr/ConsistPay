@@ -64,4 +64,7 @@ app.use("/api/payment", paymentRoutes);
 const notificationRoutes = require("./routes/notifications");
 app.use("/api/notifications", notificationRoutes);
 
+const adminRoutes = require("./routes/admin");
+app.use("/api/admin", adminRoutes);
+
 module.exports = app;
