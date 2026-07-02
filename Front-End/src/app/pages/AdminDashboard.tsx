@@ -15,7 +15,9 @@ import {
   HelpCircle,
   Play,
   CheckCircle,
-  ShieldAlert
+  ShieldAlert,
+  Sun,
+  Moon
 } from "lucide-react";
 
 // Types
@@ -33,12 +35,22 @@ export function AdminDashboard() {
   const [activeTab, setActiveTab] = useState<"overview" | "growth" | "users" | "platform" | "health" | "reserved">("overview");
   const [timeFilter, setTimeFilter] = useState<"today" | "7d" | "30d" | "90d">("7d");
   
+  // Theme state (persisted in localStorage!)
+  const [theme, setTheme] = useState<"dark" | "light">(() => {
+    return (localStorage.getItem("admin_theme") as "dark" | "light") || "dark";
+  });
+
+  // Persist theme choice
+  useEffect(() => {
+    localStorage.setItem("admin_theme", theme);
+  }, [theme]);
+  
   // Authorization states
   const [userData, setUserData] = useState<any>(null);
   const [isAdminOverride, setIsAdminOverride] = useState(false);
   const [authLoading, setAuthLoading] = useState(true);
 
-  // Stats stats
+  // Stats data state
   const [stats, setStats] = useState<any>(null);
   const [statsLoading, setStatsLoading] = useState(true);
 
@@ -181,36 +193,68 @@ export function AdminDashboard() {
   const linePath = points.length > 0 ? `M ${points.join(" L ")}` : "M 0 100";
   const areaPath = points.length > 0 ? `${linePath} L 100 100 L 0 100 Z` : "M 0 100";
 
+  // Dynamic theming helper values
+  const isDark = theme === "dark";
+
   return (
-    <div className="min-h-screen bg-[#08080A] text-zinc-300 flex flex-col font-sans select-none antialiased">
+    <div className={`min-h-screen flex flex-col font-sans select-none antialiased transition-colors duration-300 ${
+      isDark ? "bg-[#08080A] text-zinc-350" : "bg-[#F8F9FA] text-zinc-650"
+    }`}>
+      
       {/* 1. Header Navigation Bar */}
-      <header className="border-b border-white/[0.04] bg-[#0E0E12]/80 backdrop-blur-xl sticky top-0 z-40">
+      <header className={`border-b sticky top-0 z-40 transition-colors duration-300 ${
+        isDark ? "border-white/[0.04] bg-[#0E0E12]/80 backdrop-blur-xl" : "border-zinc-200/80 bg-white/80 backdrop-blur-xl"
+      }`}>
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
           <div className="flex items-center gap-4">
             <button
               onClick={() => navigate("/dashboard")}
-              className="p-1.5 rounded-lg border border-white/[0.04] hover:bg-white/5 transition-colors cursor-pointer"
+              className={`p-1.5 rounded-lg border transition-colors cursor-pointer ${
+                isDark ? "border-white/[0.04] hover:bg-white/5" : "border-zinc-200 hover:bg-zinc-50"
+              }`}
             >
-              <ArrowLeft className="w-4 h-4 text-zinc-400" />
+              <ArrowLeft className={`w-4 h-4 ${isDark ? "text-zinc-400" : "text-zinc-500"}`} />
             </button>
             <div>
               <div className="flex items-center gap-2">
-                <h1 className="text-md font-bold text-white tracking-tight">Admin Console</h1>
-                <span className="text-[9px] px-1.5 py-0.5 rounded bg-violet-500/20 text-violet-400 border border-violet-500/30 uppercase font-mono font-bold tracking-wider">
+                <h1 className={`text-md font-bold tracking-tight ${isDark ? "text-white" : "text-zinc-900"}`}>Admin Console</h1>
+                <span className={`text-[9px] px-1.5 py-0.5 rounded border uppercase font-mono font-bold tracking-wider ${
+                  isDark ? "bg-violet-500/20 text-violet-400 border-violet-500/30" : "bg-violet-50 text-violet-650 border-violet-200"
+                }`}>
                   Live Analytics
                 </span>
               </div>
-              <p className="text-[10px] text-zinc-550">ConsistPay live analytics and growth cockpit</p>
+              <p className={`text-[10px] ${isDark ? "text-zinc-550" : "text-zinc-400"}`}>ConsistPay live analytics and growth cockpit</p>
             </div>
           </div>
 
-          {/* Dev Override Pill */}
-          {isAdminOverride && (
-            <div className="flex items-center gap-2 text-[10px] bg-amber-500/10 border border-amber-500/20 px-2.5 py-1 rounded-full text-amber-400">
-              <span className="w-1.5 h-1.5 bg-amber-400 rounded-full animate-ping" />
-              Dev Override Active
-            </div>
-          )}
+          {/* Right Header items: Theme toggle and overrides */}
+          <div className="flex items-center gap-4">
+            
+            {/* Theme Toggle Switch */}
+            <button
+              onClick={() => setTheme(isDark ? "light" : "dark")}
+              className={`p-2 rounded-xl border transition-all cursor-pointer flex items-center justify-center ${
+                isDark 
+                  ? "border-white/[0.08] bg-[#121216] hover:bg-white/5 text-zinc-400" 
+                  : "border-zinc-200 bg-white hover:bg-zinc-50 text-zinc-600 shadow-sm"
+              }`}
+              title={isDark ? "Switch to Light Mode" : "Switch to Dark Mode"}
+            >
+              {isDark ? (
+                <Sun className="w-4 h-4 text-amber-400" />
+              ) : (
+                <Moon className="w-4 h-4 text-violet-600" />
+              )}
+            </button>
+
+            {isAdminOverride && (
+              <div className="flex items-center gap-2 text-[10px] bg-amber-500/10 border border-amber-500/20 px-2.5 py-1 rounded-full text-amber-400">
+                <span className="w-1.5 h-1.5 bg-amber-400 rounded-full animate-ping" />
+                Dev Override Active
+              </div>
+            )}
+          </div>
         </div>
       </header>
 
@@ -219,7 +263,9 @@ export function AdminDashboard() {
         
         {/* Left Control Sidebar */}
         <div className="lg:col-span-1 space-y-6">
-          <nav className="flex flex-col gap-1 bg-[#0C0C0F] border border-white/[0.04] p-2 rounded-2xl">
+          <nav className={`flex flex-col gap-1 p-2 rounded-2xl transition-all duration-300 ${
+            isDark ? "bg-[#0C0C0F] border border-white/[0.04]" : "bg-white border border-zinc-200/60 shadow-[0_1px_3px_rgba(0,0,0,0.02)]"
+          }`}>
             {[
               { id: "overview", label: "Overview", icon: Users },
               { id: "growth", label: "Growth Charts", icon: TrendingUp },
@@ -236,11 +282,15 @@ export function AdminDashboard() {
                   onClick={() => setActiveTab(tab.id as any)}
                   className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-xs font-semibold text-left transition-all cursor-pointer ${
                     active 
-                      ? "bg-white/5 text-white shadow-sm border border-white/[0.04]" 
-                      : "text-zinc-500 hover:text-zinc-300 hover:bg-white/[0.02]"
+                      ? isDark 
+                        ? "bg-white/5 text-white border border-white/[0.04]" 
+                        : "bg-zinc-100 text-zinc-900 border border-zinc-200/50"
+                      : isDark
+                        ? "text-zinc-500 hover:text-zinc-300 hover:bg-white/[0.02]"
+                        : "text-zinc-500 hover:text-zinc-800 hover:bg-zinc-50"
                   }`}
                 >
-                  <Icon className={`w-4 h-4 ${active ? "text-violet-400" : ""}`} />
+                  <Icon className={`w-4 h-4 ${active ? "text-violet-500" : ""}`} />
                   {tab.label}
                 </button>
               );
@@ -248,9 +298,11 @@ export function AdminDashboard() {
           </nav>
 
           {/* Interactive Live Live Event simulator */}
-          <div className="bg-gradient-to-b from-zinc-950 to-[#0F0F12] border border-white/[0.04] rounded-2xl p-4 space-y-3">
-            <h4 className="text-xs font-bold text-zinc-350">Live Demo Controller</h4>
-            <p className="text-[10px] text-zinc-550 leading-relaxed">
+          <div className={`border rounded-2xl p-4 space-y-3 transition-colors duration-300 ${
+            isDark ? "bg-gradient-to-b from-zinc-950 to-[#0F0F12] border-white/[0.04]" : "bg-gradient-to-b from-white to-zinc-50 border-zinc-200/60 shadow-[0_1px_3px_rgba(0,0,0,0.01)]"
+          }`}>
+            <h4 className={`text-xs font-bold ${isDark ? "text-zinc-350" : "text-zinc-700"}`}>Live Demo Controller</h4>
+            <p className={`text-[10px] leading-relaxed ${isDark ? "text-zinc-550" : "text-zinc-450"}`}>
               Use this widget during investor meetings to mock solve completions and show live feed updates.
             </p>
             <button
@@ -269,10 +321,12 @@ export function AdminDashboard() {
             <div className="space-y-6">
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 {[1, 2, 3, 4, 5, 6].map(i => (
-                  <div key={i} className="bg-[#0C0C0F] border border-white/[0.04] rounded-2xl p-6 h-28 animate-pulse space-y-3">
-                    <div className="h-2 w-20 bg-white/10 rounded" />
-                    <div className="h-6 w-16 bg-white/15 rounded" />
-                    <div className="h-2 w-24 bg-white/5 rounded" />
+                  <div key={i} className={`border rounded-2xl p-6 h-28 animate-pulse space-y-3 ${
+                    isDark ? "bg-[#0C0C0F] border-white/[0.04]" : "bg-white border-zinc-200"
+                  }`}>
+                    <div className="h-2 w-20 bg-zinc-750 rounded animate-pulse" />
+                    <div className="h-6 w-16 bg-zinc-750 rounded animate-pulse" />
+                    <div className="h-2 w-24 bg-zinc-750 rounded animate-pulse" />
                   </div>
                 ))}
               </div>
@@ -299,15 +353,17 @@ export function AdminDashboard() {
                     ].map((stat, idx) => {
                       const Icon = stat.icon;
                       return (
-                        <div key={idx} className="bg-[#0C0C0F] border border-white/[0.04] rounded-2xl p-5 space-y-3 flex flex-col justify-between">
+                        <div key={idx} className={`border rounded-2xl p-5 space-y-3 flex flex-col justify-between transition-all duration-300 ${
+                          isDark ? "bg-[#0C0C0F] border-white/[0.04]" : "bg-white border-zinc-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.015)]"
+                        }`}>
                           <div className="flex items-center justify-between">
-                            <span className="text-[10px] text-zinc-555 font-bold uppercase tracking-wider">{stat.label}</span>
-                            <div className="p-1.5 bg-white/[0.02] border border-white/[0.04] rounded-lg text-zinc-400">
+                            <span className={`text-[10px] font-bold uppercase tracking-wider ${isDark ? "text-zinc-550" : "text-zinc-400"}`}>{stat.label}</span>
+                            <div className={`p-1.5 border rounded-lg ${isDark ? "bg-white/[0.02] border-white/[0.04] text-zinc-450" : "bg-zinc-50 border-zinc-200 text-zinc-500"}`}>
                               <Icon className="w-3.5 h-3.5" />
                             </div>
                           </div>
                           <div className="space-y-1">
-                            <div className="text-2xl font-black font-mono text-white leading-none">{stat.val}</div>
+                            <div className={`text-2xl font-black font-mono leading-none ${isDark ? "text-white" : "text-zinc-905"}`}>{stat.val}</div>
                             <div className="text-[10px] text-zinc-500 font-medium flex items-center gap-1">
                               <TrendingUp className="w-3 h-3 text-emerald-500" />
                               <span>{stat.trend}</span>
@@ -319,9 +375,11 @@ export function AdminDashboard() {
                   </div>
 
                   {/* Real-time Logs section */}
-                  <div className="border-t border-white/[0.04] pt-6 space-y-4">
-                    <h3 className="text-xs font-bold uppercase tracking-wider text-zinc-500">Live Activity Feed</h3>
-                    <div className="bg-[#0C0C0F] border border-white/[0.04] rounded-2xl divide-y divide-white/[0.04]">
+                  <div className={`border-t pt-6 space-y-4 ${isDark ? "border-white/[0.04]" : "border-zinc-200"}`}>
+                    <h3 className={`text-xs font-bold uppercase tracking-wider ${isDark ? "text-zinc-500" : "text-zinc-400"}`}>Live Activity Feed</h3>
+                    <div className={`border rounded-2xl divide-y transition-colors duration-300 ${
+                      isDark ? "bg-[#0C0C0F] border-white/[0.04] divide-white/[0.04]" : "bg-white border-zinc-200/80 divide-zinc-150"
+                    }`}>
                       {activities.length === 0 ? (
                         <div className="p-8 text-center text-zinc-500 text-xs">No activity logged in database yet.</div>
                       ) : (
@@ -330,19 +388,19 @@ export function AdminDashboard() {
                             <div className="flex items-center gap-4">
                               <div className={`w-2 h-2 rounded-full ${
                                 act.type === "solve" ? "bg-emerald-500" :
-                                act.type === "link" ? "bg-blue-450" :
+                                act.type === "link" ? "bg-blue-500" :
                                 act.type === "streak" ? "bg-violet-500" :
                                 act.type === "signup" ? "bg-amber-400" : "bg-red-500"
                               }`} />
                               <div>
-                                <span className="font-bold text-white">{act.user}</span>
+                                <span className={`font-bold ${isDark ? "text-white" : "text-zinc-900"}`}>{act.user}</span>
                                 <span className="text-zinc-550 mx-2">•</span>
-                                <span className="text-zinc-300">{act.event}</span>
+                                <span className={isDark ? "text-zinc-300" : "text-zinc-650"}>{act.event}</span>
                               </div>
                             </div>
                             <div className="flex items-center gap-4">
-                              <span className="text-zinc-450 font-mono text-[10px]">{act.detail}</span>
-                              <span className="text-zinc-600 font-mono text-[10px]">{act.time}</span>
+                              <span className={`font-mono text-[10px] ${isDark ? "text-zinc-450" : "text-zinc-400"}`}>{act.detail}</span>
+                              <span className={`font-mono text-[10px] ${isDark ? "text-zinc-600" : "text-zinc-450"}`}>{act.time}</span>
                             </div>
                           </div>
                         ))
@@ -356,14 +414,16 @@ export function AdminDashboard() {
               {activeTab === "growth" && (
                 <div className="space-y-8 animate-in fade-in duration-300">
                   <div className="flex items-center justify-between">
-                    <h3 className="text-sm font-bold text-white tracking-tight">Traction Metrics</h3>
-                    <div className="flex bg-black/40 p-0.5 rounded-lg border border-white/[0.04]">
+                    <h3 className={`text-sm font-bold tracking-tight ${isDark ? "text-white" : "text-zinc-900"}`}>Traction Metrics</h3>
+                    <div className={`flex p-0.5 rounded-lg border ${isDark ? "bg-black/40 border-white/[0.04]" : "bg-zinc-200/50 border-zinc-200"}`}>
                       {(["today", "7d", "30d", "90d"] as const).map(f => (
                         <button
                           key={f}
                           onClick={() => setTimeFilter(f)}
                           className={`px-3 py-1 rounded text-[10px] font-bold uppercase tracking-wider transition-all cursor-pointer ${
-                            timeFilter === f ? "bg-white/5 text-white" : "text-zinc-500 hover:text-zinc-300"
+                            timeFilter === f 
+                              ? isDark ? "bg-white/5 text-white" : "bg-white text-zinc-900 shadow-sm border border-zinc-200/30"
+                              : "text-zinc-500 hover:text-zinc-300"
                           }`}
                         >
                           {f}
@@ -374,14 +434,16 @@ export function AdminDashboard() {
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {/* User Growth Chart */}
-                    <div className="bg-[#0C0C0F] border border-white/[0.04] rounded-2xl p-5 space-y-4">
+                    <div className={`border rounded-2xl p-5 space-y-4 transition-colors duration-300 ${
+                      isDark ? "bg-[#0C0C0F] border-white/[0.04]" : "bg-white border-zinc-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.015)]"
+                    }`}>
                       <div>
-                        <h4 className="text-xs font-bold text-zinc-450 uppercase tracking-wider">User Growth (WAU)</h4>
-                        <p className="text-[10px] text-zinc-550">Active registered handles weekly</p>
+                        <h4 className={`text-xs font-bold uppercase tracking-wider ${isDark ? "text-zinc-450" : "text-zinc-700"}`}>User Growth (WAU)</h4>
+                        <p className={`text-[10px] ${isDark ? "text-zinc-550" : "text-zinc-400"}`}>Active registered handles weekly</p>
                       </div>
                       <div className="h-40 relative flex items-end">
                         {growthList.length === 0 ? (
-                          <div className="w-full text-center text-zinc-600 text-xs py-12">No growth data in timeline.</div>
+                          <div className="w-full text-center text-zinc-500 text-xs py-12">No growth data in timeline.</div>
                         ) : (
                           <>
                             <svg className="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
@@ -397,7 +459,7 @@ export function AdminDashboard() {
                           </>
                         )}
                       </div>
-                      <div className="flex justify-between text-[9px] text-zinc-650 font-bold uppercase tracking-wider px-2">
+                      <div className="flex justify-between text-[9px] text-zinc-500 font-bold uppercase tracking-wider px-2">
                         <span>30 days ago</span>
                         <span>15 days ago</span>
                         <span>Today</span>
@@ -405,10 +467,12 @@ export function AdminDashboard() {
                     </div>
 
                     {/* Goals & Solves per Day */}
-                    <div className="bg-[#0C0C0F] border border-white/[0.04] rounded-2xl p-5 space-y-4">
+                    <div className={`border rounded-2xl p-5 space-y-4 transition-colors duration-300 ${
+                      isDark ? "bg-[#0C0C0F] border-white/[0.04]" : "bg-white border-zinc-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.015)]"
+                    }`}>
                       <div>
-                        <h4 className="text-xs font-bold text-zinc-450 uppercase tracking-wider">Daily Solves vs Success Rates</h4>
-                        <p className="text-[10px] text-zinc-550">Average verified solves daily</p>
+                        <h4 className={`text-xs font-bold uppercase tracking-wider ${isDark ? "text-zinc-450" : "text-zinc-700"}`}>Daily Solves vs Success Rates</h4>
+                        <p className={`text-[10px] ${isDark ? "text-zinc-550" : "text-zinc-400"}`}>Average verified solves daily</p>
                       </div>
                       <div className="h-40 flex items-end justify-between px-4 pb-1">
                         {[
@@ -425,7 +489,7 @@ export function AdminDashboard() {
                               <div style={{ height: `${d.count}%` }} className="w-2.5 bg-violet-600 rounded-t group-hover:bg-violet-400 transition-colors" />
                               <div style={{ height: `${d.rate}%` }} className="w-2.5 bg-emerald-500/20 rounded-t group-hover:bg-emerald-400 transition-colors" />
                             </div>
-                            <span className="text-[9px] font-mono text-zinc-600">{d.day}</span>
+                            <span className="text-[9px] font-mono text-zinc-500">{d.day}</span>
                           </div>
                         ))}
                       </div>
@@ -437,52 +501,56 @@ export function AdminDashboard() {
               {/* TAB 3: USER ANALYTICS */}
               {activeTab === "users" && (
                 <div className="space-y-6 animate-in fade-in duration-300">
-                  <h3 className="text-sm font-bold text-white tracking-tight uppercase tracking-wider">Top Performers & Activity Checks</h3>
+                  <h3 className={`text-sm font-bold uppercase tracking-wider ${isDark ? "text-white" : "text-zinc-900"}`}>Top Performers & Activity Checks</h3>
                   
-                  <div className="bg-[#0C0C0F] border border-white/[0.04] rounded-2xl overflow-hidden">
+                  <div className={`border rounded-2xl overflow-hidden transition-colors duration-300 ${
+                    isDark ? "bg-[#0C0C0F] border-white/[0.04]" : "bg-white border-zinc-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.015)]"
+                  }`}>
                     <table className="w-full text-xs text-left border-collapse">
                       <thead>
-                        <tr className="border-b border-white/[0.04] bg-white/[0.01]">
-                          <th className="p-4 font-bold text-zinc-400">User Name</th>
-                          <th className="p-4 font-bold text-zinc-400 text-center">LeetCode Username</th>
-                          <th className="p-4 font-bold text-zinc-400 text-center">Streak</th>
-                          <th className="p-4 font-bold text-zinc-400 text-center">Total Solved</th>
-                          <th className="p-4 font-bold text-zinc-400 text-center">Solved Today</th>
-                          <th className="p-4 font-bold text-zinc-400 text-center">Plan</th>
+                        <tr className={`border-b transition-colors duration-300 ${
+                          isDark ? "border-white/[0.04] bg-white/[0.01]" : "border-zinc-200/80 bg-zinc-50"
+                        }`}>
+                          <th className={`p-4 font-bold ${isDark ? "text-zinc-400" : "text-zinc-500"}`}>User Name</th>
+                          <th className={`p-4 font-bold text-center ${isDark ? "text-zinc-400" : "text-zinc-500"}`}>LeetCode Username</th>
+                          <th className={`p-4 font-bold text-center ${isDark ? "text-zinc-400" : "text-zinc-500"}`}>Streak</th>
+                          <th className={`p-4 font-bold text-center ${isDark ? "text-zinc-400" : "text-zinc-500"}`}>Total Solved</th>
+                          <th className={`p-4 font-bold text-center ${isDark ? "text-zinc-400" : "text-zinc-500"}`}>Solved Today</th>
+                          <th className={`p-4 font-bold text-center ${isDark ? "text-zinc-400" : "text-zinc-500"}`}>Plan</th>
                         </tr>
                       </thead>
-                      <tbody className="divide-y divide-white/[0.04] text-zinc-300">
+                      <tbody className={`divide-y ${isDark ? "divide-white/[0.04]" : "divide-zinc-150"}`}>
                         {stats?.userAnalytics?.length === 0 ? (
                           <tr>
-                            <td colSpan={6} className="p-8 text-center text-zinc-550 text-xs">No registered users in database.</td>
+                            <td colSpan={6} className="p-8 text-center text-zinc-500 text-xs">No registered users in database.</td>
                           </tr>
                         ) : (
                           stats?.userAnalytics?.map((row: any, idx: number) => (
-                            <tr key={idx} className="hover:bg-white/[0.01]">
+                            <tr key={idx} className={`transition-all duration-200 ${isDark ? "hover:bg-white/[0.01]" : "hover:bg-zinc-50/50"}`}>
                               <td className="p-4">
-                                <p className="font-semibold text-white">{row.user}</p>
+                                <p className={`font-semibold ${isDark ? "text-white" : "text-zinc-900"}`}>{row.user}</p>
                               </td>
                               <td className="p-4 text-center">
                                 {row.handle === "not-linked" ? (
-                                  <span className="text-zinc-550">Not Linked</span>
+                                  <span className="text-zinc-500">Not Linked</span>
                                 ) : (
-                                  <a href={`https://leetcode.com/${row.handle}`} target="_blank" rel="noreferrer" className="text-violet-400 hover:underline inline-flex items-center gap-1 text-[10px]">
+                                  <a href={`https://leetcode.com/${row.handle}`} target="_blank" rel="noreferrer" className="text-violet-500 hover:underline inline-flex items-center gap-1 text-[10px]">
                                     {row.handle} <ExternalLink className="w-2.5 h-2.5" />
                                   </a>
                                 )}
                               </td>
-                              <td className="p-4 text-center font-mono font-bold text-white">{row.streak} 🔥</td>
+                              <td className={`p-4 text-center font-mono font-bold ${isDark ? "text-white" : "text-zinc-900"}`}>{row.streak} 🔥</td>
                               <td className="p-4 text-center font-mono font-semibold">{row.solved}</td>
                               <td className="p-4 text-center">
                                 {row.today ? (
-                                  <span className="text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-0.5 rounded-full text-[10px] font-bold">Solved</span>
+                                  <span className="text-emerald-500 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-0.5 rounded-full text-[10px] font-bold">Solved</span>
                                 ) : (
                                   <span className="text-zinc-500 bg-white/[0.02] border border-white/[0.04] px-2.5 py-0.5 rounded-full text-[10px] font-bold">Pending</span>
                                 )}
                               </td>
                               <td className="p-4 text-center">
                                 <span className={`text-[10px] font-bold uppercase tracking-wider border px-2 py-0.5 rounded-full ${
-                                  row.plan === "Pro" ? "text-violet-400 border-violet-500/25 bg-violet-500/10" : "text-zinc-550 border-white/[0.04] bg-white/[0.02]"
+                                  row.plan === "Pro" ? "text-violet-500 border-violet-500/25 bg-violet-500/10" : "text-zinc-500 border-zinc-200 bg-zinc-50"
                                 }`}>{row.plan}</span>
                               </td>
                             </tr>
@@ -497,12 +565,14 @@ export function AdminDashboard() {
               {/* TAB 4: PLATFORM & WALLET ANALYTICS */}
               {activeTab === "platform" && (
                 <div className="space-y-6 animate-in fade-in duration-300">
-                  <h3 className="text-sm font-bold text-white tracking-tight uppercase tracking-wider">Economics & Integrations</h3>
+                  <h3 className={`text-sm font-bold uppercase tracking-wider ${isDark ? "text-white" : "text-zinc-900"}`}>Economics & Integrations</h3>
                   
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {/* Goal Analytics */}
-                    <div className="bg-[#0C0C0F] border border-white/[0.04] rounded-2xl p-6 space-y-4">
-                      <h4 className="text-xs font-bold text-zinc-400 uppercase tracking-wider">Goal Ratios & Failure Rates</h4>
+                    <div className={`border rounded-2xl p-6 space-y-4 transition-colors duration-300 ${
+                      isDark ? "bg-[#0C0C0F] border-white/[0.04]" : "bg-white border-zinc-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.015)]"
+                    }`}>
+                      <h4 className={`text-xs font-bold uppercase tracking-wider ${isDark ? "text-zinc-400" : "text-zinc-700"}`}>Goal Ratios & Failure Rates</h4>
                       <div className="flex items-center gap-6">
                         <div className="w-24 h-24 relative flex items-center justify-center shrink-0">
                           <svg className="w-full h-full transform -rotate-90" viewBox="0 0 36 36">
@@ -510,20 +580,20 @@ export function AdminDashboard() {
                             <path className="text-emerald-500" strokeDasharray="94, 100" strokeWidth="3" strokeLinecap="round" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
                           </svg>
                           <div className="absolute text-center">
-                            <p className="text-lg font-black text-white font-mono leading-none">94%</p>
-                            <p className="text-[8px] text-zinc-550 font-bold uppercase tracking-wider mt-0.5">Success</p>
+                            <p className={`text-lg font-black font-mono leading-none ${isDark ? "text-white" : "text-zinc-900"}`}>94%</p>
+                            <p className="text-[8px] text-zinc-500 font-bold uppercase tracking-wider mt-0.5">Success</p>
                           </div>
                         </div>
                         <div className="space-y-2.5 text-xs">
                           <div className="flex items-center gap-2">
                             <span className="w-2 h-2 rounded-full bg-emerald-500" />
-                            <span className="text-zinc-300">Goal Success: <b>94%</b></span>
+                            <span className="text-zinc-650">Goal Success: <b>94%</b></span>
                           </div>
                           <div className="flex items-center gap-2">
                             <span className="w-2 h-2 rounded-full bg-zinc-700" />
-                            <span className="text-zinc-400">Streak Resets (Loss): <b>6%</b></span>
+                            <span className="text-zinc-500">Streak Resets (Loss): <b>6%</b></span>
                           </div>
-                          <p className="text-[10px] text-zinc-550 leading-relaxed pt-1">
+                          <p className={`text-[10px] leading-relaxed pt-1 ${isDark ? "text-zinc-550" : "text-zinc-450"}`}>
                             High success rate shows consistent engagement, while the 6% failure rate feeds the rewards pool.
                           </p>
                         </div>
@@ -531,20 +601,22 @@ export function AdminDashboard() {
                     </div>
 
                     {/* Wallet statistics */}
-                    <div className="bg-[#0C0C0F] border border-white/[0.04] rounded-2xl p-6 space-y-4">
-                      <h4 className="text-xs font-bold text-zinc-400 uppercase tracking-wider">Distributed Coin Economy</h4>
-                      <div className="space-y-4 font-mono text-xs">
+                    <div className={`border rounded-2xl p-6 space-y-4 transition-colors duration-300 ${
+                      isDark ? "bg-[#0C0C0F] border-white/[0.04]" : "bg-white border-zinc-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.015)]"
+                    }`}>
+                      <h4 className={`text-xs font-bold uppercase tracking-wider ${isDark ? "text-zinc-400" : "text-zinc-700"}`}>Distributed Coin Economy</h4>
+                      <div className={`space-y-4 font-mono text-xs ${isDark ? "text-zinc-300" : "text-zinc-755"}`}>
                         <div className="flex justify-between">
                           <span className="text-zinc-500">Coins Earned Today</span>
-                          <span className="text-white font-bold">+{stats?.wallet?.coinsEarnedToday ?? 0} CP</span>
+                          <span className={`font-bold ${isDark ? "text-white" : "text-zinc-900"}`}>+{stats?.wallet?.coinsEarnedToday ?? 0} CP</span>
                         </div>
                         <div className="flex justify-between">
                           <span className="text-zinc-500">Active Deposit Pool</span>
-                          <span className="text-white font-bold">₹{stats?.wallet?.activeDepositPool ?? 0}</span>
+                          <span className={`font-bold ${isDark ? "text-white" : "text-zinc-900"}`}>₹{stats?.wallet?.activeDepositPool ?? 0}</span>
                         </div>
-                        <div className="flex justify-between border-t border-white/[0.04] pt-2">
+                        <div className={`flex justify-between border-t pt-2 ${isDark ? "border-white/[0.04]" : "border-zinc-200"}`}>
                           <span className="text-zinc-500 font-bold">Payout Reserves (Est)</span>
-                          <span className="text-emerald-405 font-bold">₹{(stats?.wallet?.payoutReserves ?? 0).toLocaleString()}</span>
+                          <span className="text-emerald-500 font-bold">₹{(stats?.wallet?.payoutReserves ?? 0).toLocaleString()}</span>
                         </div>
                       </div>
                     </div>
@@ -555,24 +627,26 @@ export function AdminDashboard() {
               {/* TAB 5: SYSTEM HEALTH */}
               {activeTab === "health" && (
                 <div className="space-y-6 animate-in fade-in duration-300">
-                  <h3 className="text-sm font-bold text-white tracking-tight uppercase tracking-wider">Infrastructure Status</h3>
+                  <h3 className={`text-sm font-bold uppercase tracking-wider ${isDark ? "text-white" : "text-zinc-900"}`}>Infrastructure Status</h3>
                   
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {[
-                      { name: "API Server Status", status: "Healthy", detail: "Response: 12ms avg", color: "bg-emerald-500 text-emerald-400 border-emerald-500/20" },
-                      { name: "MongoDB Status", status: "Connected", detail: "Active connections: 8", color: "bg-emerald-500 text-emerald-400 border-emerald-500/20" },
-                      { name: "Redis Cache Status", status: "Active (Fallback Mode)", detail: "Hit Rate: 98.4%", color: "bg-emerald-500 text-emerald-400 border-emerald-500/20" },
-                      { name: "Daily Sync Job Queue", status: "Idle", detail: "Jobs scheduled: 1", color: "bg-emerald-500 text-emerald-400 border-emerald-500/20" },
-                      { name: "Cron scheduler status", status: "Running", detail: "Rollover runs: 00:00 AM", color: "bg-emerald-500 text-emerald-400 border-emerald-500/20" },
-                      { name: "Failed Jobs Log", status: "0 Failures", detail: "Past 7 days", color: "bg-emerald-500 text-emerald-400 border-emerald-500/20" },
+                      { name: "API Server Status", status: "Healthy", detail: "Response: 12ms avg", color: "bg-emerald-500 text-emerald-500 border-emerald-500/20" },
+                      { name: "MongoDB Status", status: "Connected", detail: "Active connections: 8", color: "bg-emerald-500 text-emerald-500 border-emerald-500/20" },
+                      { name: "Redis Cache Status", status: "Active (Fallback Mode)", detail: "Hit Rate: 98.4%", color: "bg-emerald-500 text-emerald-500 border-emerald-500/20" },
+                      { name: "Daily Sync Job Queue", status: "Idle", detail: "Jobs scheduled: 1", color: "bg-emerald-500 text-emerald-500 border-emerald-500/20" },
+                      { name: "Cron scheduler status", status: "Running", detail: "Rollover runs: 00:00 AM", color: "bg-emerald-500 text-emerald-500 border-emerald-500/20" },
+                      { name: "Failed Jobs Log", status: "0 Failures", detail: "Past 7 days", color: "bg-emerald-500 text-emerald-500 border-emerald-500/20" },
                     ].map((srv, idx) => (
-                      <div key={idx} className="bg-[#0C0C0F] border border-white/[0.04] rounded-2xl p-5 flex items-start gap-4">
-                        <div className="p-2.5 bg-white/[0.01] border border-white/[0.04] rounded-xl text-zinc-400 shrink-0">
+                      <div key={idx} className={`border rounded-2xl p-5 flex items-start gap-4 transition-colors duration-300 ${
+                        isDark ? "bg-[#0C0C0F] border-white/[0.04]" : "bg-white border-zinc-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.015)]"
+                      }`}>
+                        <div className={`p-2.5 border rounded-xl shrink-0 ${isDark ? "bg-white/[0.01] border-white/[0.04] text-zinc-400" : "bg-zinc-50 border-zinc-200 text-zinc-500"}`}>
                           <Server className="w-4 h-4" />
                         </div>
                         <div className="space-y-1">
-                          <h5 className="font-bold text-white text-xs">{srv.name}</h5>
-                          <p className="text-[10px] text-zinc-550">{srv.detail}</p>
+                          <h5 className={`font-bold text-xs ${isDark ? "text-white" : "text-zinc-900"}`}>{srv.name}</h5>
+                          <p className={`text-[10px] ${isDark ? "text-zinc-550" : "text-zinc-400"}`}>{srv.detail}</p>
                           <div className="flex items-center gap-1.5 pt-1 text-[10px]">
                             <span className={`w-1.5 h-1.5 rounded-full ${srv.color.split(' ')[0]}`} />
                             <span className={`font-semibold ${srv.color.split(' ')[1]}`}>{srv.status}</span>
@@ -587,7 +661,7 @@ export function AdminDashboard() {
               {/* TAB 6: FUTURE RESERVED SECTIONS */}
               {activeTab === "reserved" && (
                 <div className="space-y-6 animate-in fade-in duration-300">
-                  <h3 className="text-sm font-bold text-white tracking-tight uppercase tracking-wider">Series-A Roadmap</h3>
+                  <h3 className={`text-sm font-bold uppercase tracking-wider ${isDark ? "text-white" : "text-zinc-900"}`}>Series-A Roadmap</h3>
                   
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {[
@@ -598,16 +672,18 @@ export function AdminDashboard() {
                     ].map((res, i) => {
                       const Icon = res.icon;
                       return (
-                        <div key={i} className="bg-[#0C0C0F]/50 border border-dashed border-white/[0.06] rounded-2xl p-6 flex flex-col justify-between opacity-60 hover:opacity-90 transition-all select-none min-h-[140px]">
+                        <div key={i} className={`border rounded-2xl p-6 flex flex-col justify-between opacity-60 hover:opacity-90 transition-all select-none min-h-[140px] ${
+                          isDark ? "bg-[#0C0C0F]/50 border-dashed border-white/[0.06]" : "bg-white border-dashed border-zinc-250 shadow-[0_1px_3px_rgba(0,0,0,0.01)]"
+                        }`}>
                           <div className="flex items-center justify-between">
-                            <span className="text-[10px] text-zinc-550 font-bold uppercase tracking-wider">Placeholder Slot</span>
-                            <div className="p-1.5 bg-white/[0.02] border border-white/[0.04] rounded-lg text-zinc-550">
+                            <span className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider">Placeholder Slot</span>
+                            <div className={`p-1.5 border rounded-lg ${isDark ? "bg-white/[0.02] border-white/[0.04] text-zinc-500" : "bg-zinc-50 border-zinc-200 text-zinc-400"}`}>
                               <Icon className="w-3.5 h-3.5" />
                             </div>
                           </div>
                           <div className="space-y-1 mt-4">
-                            <h5 className="font-bold text-white text-xs leading-none">{res.title}</h5>
-                            <p className="text-[10px] text-zinc-550 leading-relaxed mt-1">{res.desc}</p>
+                            <h5 className={`font-bold text-xs leading-none ${isDark ? "text-white" : "text-zinc-900"}`}>{res.title}</h5>
+                            <p className={`text-[10px] leading-relaxed mt-1 ${isDark ? "text-zinc-550" : "text-zinc-450"}`}>{res.desc}</p>
                           </div>
                         </div>
                       );
