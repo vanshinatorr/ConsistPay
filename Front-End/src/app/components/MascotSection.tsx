@@ -1,7 +1,14 @@
-import React from "react";
-import { X, Check } from "lucide-react";
+import React, { useState } from "react";
+import { X, Check, Calculator, ShieldCheck, TrendingUp } from "lucide-react";
 
 export function MascotSection() {
+  const [dailyStake, setDailyStake] = useState(20);
+  const [streakDays, setStreakDays] = useState(30);
+
+  const principal = dailyStake * streakDays;
+  const estYield = Math.floor(principal * 0.115); // 11.5% average slacker pool yield
+  const totalReturn = principal + estYield;
+
   const comparisons = [
     {
       typical: "Easy to bypass (no actual code verification checks)",
@@ -20,23 +27,88 @@ export function MascotSection() {
   return (
     <section className="px-6 py-20 md:py-24 relative overflow-hidden bg-[#090A0E] w-full border-b border-white/[0.04]">
       <div className="max-w-6xl mx-auto relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-[1.1fr_1.2fr] gap-16 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-[1.15fr_1.2fr] gap-16 items-start">
           
-          {/* Left Column: Huge Smart Narrator Mascot visual */}
-          <div className="flex flex-col items-center justify-center select-none">
-            <div className="relative flex flex-col items-center justify-center">
+          {/* Left Column: Mascot + Interactive Estimator */}
+          <div className="flex flex-col items-center justify-center select-none w-full sticky top-24">
+            
+            {/* Mascot Visual */}
+            <div className="relative flex flex-col items-center justify-center mb-8">
               <img 
                 src="/logo/mascot-full.png" 
                 alt="ConsistPay Accountability Partner - Consisty" 
-                className="w-72 sm:w-80 md:w-[24rem] h-auto object-contain relative z-10 transition-all duration-500 hover:scale-[1.03] hover:rotate-1"
+                className="w-60 sm:w-64 md:w-[18rem] h-auto object-contain relative z-10 transition-all duration-500 hover:scale-[1.03] hover:rotate-1"
               />
               {/* 3D Floor Shadow */}
-              <div className="w-56 sm:w-64 h-4 bg-white/5 rounded-[100%] blur-[12px] mt-2 opacity-50 relative z-0" />
+              <div className="w-40 sm:w-48 h-3.5 bg-white/5 rounded-[100%] blur-[12px] mt-2 opacity-50 relative z-0" />
             </div>
+
+            {/* Interactive Stake & Yield Calculator Widget */}
+            <div className="w-full max-w-sm bg-[#000000] border border-zinc-800 rounded-[2rem] p-6 shadow-2xl relative overflow-hidden">
+              <div className="flex items-center gap-2 mb-6 border-b border-white/[0.04] pb-4">
+                <Calculator className="w-4 h-4 text-zinc-400" />
+                <h4 className="text-xs font-bold text-white uppercase tracking-wider">
+                  Yield & Stake Estimator
+                </h4>
+              </div>
+
+              {/* Slider 1: Daily Stake */}
+              <div className="space-y-3 mb-5">
+                <div className="flex justify-between items-center text-xs">
+                  <span className="text-zinc-400 font-semibold">Daily Commitment Stake</span>
+                  <span className="font-bold text-white text-sm">₹{dailyStake} / day</span>
+                </div>
+                <input 
+                  type="range" 
+                  min="5" 
+                  max="100" 
+                  step="5"
+                  value={dailyStake} 
+                  onChange={(e) => setDailyStake(Number(e.target.value))}
+                  className="w-full h-1 bg-zinc-800 rounded-lg appearance-none cursor-pointer accent-white"
+                />
+              </div>
+
+              {/* Slider 2: Streak Target */}
+              <div className="space-y-3 mb-6">
+                <div className="flex justify-between items-center text-xs">
+                  <span className="text-zinc-400 font-semibold">Streak Target Goal</span>
+                  <span className="font-bold text-white text-sm">{streakDays} Days</span>
+                </div>
+                <input 
+                  type="range" 
+                  min="7" 
+                  max="30" 
+                  step="1"
+                  value={streakDays} 
+                  onChange={(e) => setStreakDays(Number(e.target.value))}
+                  className="w-full h-1 bg-zinc-800 rounded-lg appearance-none cursor-pointer accent-white"
+                />
+              </div>
+
+              {/* Output Metrics Panel */}
+              <div className="bg-[#090A0E] border border-zinc-850 rounded-xl p-4 space-y-3.5">
+                <div className="flex justify-between items-center text-xs">
+                  <span className="text-zinc-500 font-medium">Refundable Deposit</span>
+                  <span className="font-semibold text-white">₹{principal}</span>
+                </div>
+                <div className="flex justify-between items-center text-xs">
+                  <span className="text-zinc-505 font-medium flex items-center gap-1">
+                    Est. Slacker Dividend <TrendingUp className="w-3.5 h-3.5 text-emerald-400" />
+                  </span>
+                  <span className="font-semibold text-emerald-450">+₹{estYield}</span>
+                </div>
+                <div className="flex justify-between items-center text-xs pt-3.5 border-t border-white/[0.04]">
+                  <span className="text-zinc-300 font-bold">Total Return Payout</span>
+                  <span className="font-bold text-white">₹{totalReturn}</span>
+                </div>
+              </div>
+            </div>
+
           </div>
 
           {/* Right Column: Comparative Proof Blocks */}
-          <div className="flex flex-col gap-6">
+          <div className="flex flex-col gap-6 lg:pt-4">
             <div>
               <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest px-3 py-1.5 rounded-lg bg-white/[0.02] border border-white/[0.06] mb-4 inline-block font-mono">
                 Systems Comparison
