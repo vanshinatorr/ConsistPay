@@ -5,7 +5,6 @@ import { HeroNew } from "../components/HeroNew";
 import { SocialProof } from "../components/SocialProof";
 import { HowItWorks } from "../components/HowItWorks";
 import { MascotSection } from "../components/MascotSection";
-import { RoadmapSection } from "../components/RoadmapSection";
 import { Footer } from "./dashboard/Footer";
 
 export function Landing() {
@@ -123,10 +122,7 @@ export function Landing() {
         {/* Section 4: Verified Proof Stats */}
         <SocialProof />
 
-        {/* Section 5: Integrations Roadmap (Coming Soon) */}
-        <RoadmapSection />
-
-        {/* Section 6: Pre-Footer CTA */}
+        {/* Section 5: Pre-Footer CTA */}
         <div className="py-20 md:py-28 relative overflow-hidden bg-[#000000] border-b border-white/[0.04]">
           <div className="max-w-4xl mx-auto px-6 relative z-10 text-center">
             <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight mb-6 text-white">

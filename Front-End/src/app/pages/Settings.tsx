@@ -194,11 +194,13 @@ export function Settings() {
               <span className="text-sm">Dashboard</span>
             </Link>
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 bg-gradient-to-br from-violet-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg shadow-violet-500/30">
-                <Code2 className="w-5 h-5 text-white" />
-              </div>
-              <span className="text-lg font-bold bg-gradient-to-r from-white to-zinc-400 bg-clip-text text-transparent">
-                ConsistPay
+              <img
+                src="/logo/brand-logo.png"
+                alt="ConsistPay Logo"
+                className="h-8 w-auto object-contain select-none"
+              />
+              <span className="text-lg font-bold text-white">
+                Consist<span className="text-emerald-400">Pay</span>
               </span>
             </div>
             <div className="w-20" />

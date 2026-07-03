@@ -246,12 +246,14 @@ export function Auth() {
 
         {/* Mobile Logo */}
         <Link to="/" className="flex lg:hidden items-center justify-center gap-3 mb-12 group cursor-pointer relative z-10">
-          <div className="w-12 h-12 bg-gradient-to-br from-violet-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg shadow-violet-500/30">
-            <Code2 className="w-7 h-7 text-white" />
-          </div>
-          <span className="text-2xl font-bold bg-gradient-to-r from-white to-zinc-400 bg-clip-text text-transparent">
-            ConsistPay
-          </span>
+          <img
+                src="/logo/brand-logo.png"
+                alt="ConsistPay Logo"
+                className="h-8 w-auto object-contain select-none"
+              />
+              <span className="text-lg font-bold text-white">
+                Consist<span className="text-emerald-400">Pay</span>
+              </span>
         </Link>
 
         <div className="w-full max-w-[420px] relative z-10">
