@@ -5,6 +5,7 @@ import { Navbar } from "./dashboard/Navbar";
 import { StatsRow } from "./dashboard/StatsRow";
 import { TodaysChallenge } from "./dashboard/TodaysChallenge";
 import { WalletCard } from "./dashboard/WalletCard";
+import { VersusCard } from "./dashboard/VersusCard";
 import { DsaStatsCard } from "./dashboard/DsaStatsCard";
 import { PlatformsWidget } from "./dashboard/PlatformsWidget";
 import { ConsistencyCalendar } from "./dashboard/ConsistencyCalendar";
@@ -720,10 +721,10 @@ export function Dashboard() {
           {/* Row 2: Challenge a Friend Widget */}
           <DashboardBattleWidget onRefreshRequest={fetchUserData} />
 
-          {/* Row 3: Unified Metrics Cards (Wallet on Left, Leaderboard & DSA Solves on Right) */}
+          {/* Row 3: Unified Metrics Cards (Wallet, Versus, Leaderboard & DSA Stack) */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch">
-            {/* Left Column (2/3 width) - Wallet Card */}
-            <div className="lg:col-span-2">
+            {/* Column 1 - Wallet Card (Plan stats) */}
+            <div className="lg:col-span-1">
               <WalletCard
                 plan={userData?.plan}
                 monthlyBudget={monthlyBudget}
@@ -731,7 +732,6 @@ export function Dashboard() {
                 missedDays={missedDays}
                 dailyCommitment={dailyCommitment}
                 graceCoins={graceCoins}
-                battleBalance={userData?.battleBalance ?? 0}
                 balance={userData?.balance ?? 0}
                 activeDeposit={userData?.activeDeposit ?? 0}
                 planStatus={userData?.planStatus}
@@ -739,7 +739,16 @@ export function Dashboard() {
                 onRefreshRequest={fetchUserData}
               />
             </div>
-            {/* Right Column (1/3 width) - Stacked Leaderboard & DSA Solves */}
+            {/* Column 2 - Versus Card (Stakes & duels stats) */}
+            <div className="lg:col-span-1">
+              <VersusCard
+                plan={userData?.plan}
+                battleBalance={userData?.battleBalance ?? 0}
+                onboardingComplete={userData?.onboardingComplete ?? true}
+                onRefreshRequest={fetchUserData}
+              />
+            </div>
+            {/* Column 3 - Stacked Leaderboard & DSA Solves */}
             <div className="lg:col-span-1 flex flex-col gap-6">
               <LeaderboardRankCard
                 rank={userRank}
