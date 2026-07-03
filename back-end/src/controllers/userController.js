@@ -188,6 +188,23 @@ const getMe = async (req, res) => {
     const totalProblemsSolved = await Submission.countDocuments({ userId: req.user._id, status: "completed" });
     const totalMissed = await Submission.countDocuments(missedQuery);
 
+    // Aggregate solved questions by difficulty (defaulting blank or missing values to "Easy")
+    const easyCount = await Submission.countDocuments({ 
+      userId: req.user._id, 
+      status: "completed", 
+      difficulty: { $in: ["Easy", "", null] } 
+    });
+    const mediumCount = await Submission.countDocuments({ 
+      userId: req.user._id, 
+      status: "completed", 
+      difficulty: "Medium" 
+    });
+    const hardCount = await Submission.countDocuments({ 
+      userId: req.user._id, 
+      status: "completed", 
+      difficulty: "Hard" 
+    });
+
     // Check dynamic achievements and write notifications if earned
     await checkAndNotifyBadges(user, totalSolved, totalMissed, totalProblemsSolved);
 
@@ -252,7 +269,13 @@ const getMe = async (req, res) => {
       createdAt: user.createdAt,
       totalSolved, // Unique days solved
       totalProblemsSolved, // Raw count of completed submissions
-      totalMissed
+      totalMissed,
+      dsaStats: {
+        easy: easyCount,
+        medium: mediumCount,
+        hard: hardCount,
+        total: easyCount + mediumCount + hardCount
+      }
     });
   } catch (error) {
     res.status(500).json({ message: error.message });

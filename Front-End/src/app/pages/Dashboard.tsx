@@ -5,6 +5,7 @@ import { Navbar } from "./dashboard/Navbar";
 import { StatsRow } from "./dashboard/StatsRow";
 import { TodaysChallenge } from "./dashboard/TodaysChallenge";
 import { WalletCard } from "./dashboard/WalletCard";
+import { DsaStatsCard } from "./dashboard/DsaStatsCard";
 import { ConsistencyCalendar } from "./dashboard/ConsistencyCalendar";
 import { DashboardBattleWidget } from "./dashboard/DashboardBattleWidget";
 import { RecentSolves } from "./dashboard/RecentSolves";
@@ -743,7 +744,7 @@ export function Dashboard() {
                 todaySubmissionsCount={todaySubmission?.count || 0}
               />
             </div>
-            <div className="lg:col-span-1">
+            <div className="lg:col-span-1 flex flex-col gap-6">
               <WalletCard
                 plan={userData?.plan}
                 monthlyBudget={monthlyBudget}
@@ -757,6 +758,10 @@ export function Dashboard() {
                 planStatus={userData?.planStatus}
                 onboardingComplete={userData?.onboardingComplete ?? true}
                 onRefreshRequest={fetchUserData}
+              />
+              <DsaStatsCard
+                stats={userData?.dsaStats}
+                onboardingComplete={userData?.onboardingComplete ?? true}
               />
             </div>
           </div>
