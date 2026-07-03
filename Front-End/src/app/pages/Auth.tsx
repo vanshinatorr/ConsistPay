@@ -177,13 +177,13 @@ export function Auth() {
   };
 
   return (
-    <div className="min-h-screen bg-[#000000] flex relative overflow-hidden font-sans">
+    <div className="min-h-screen bg-[#0F0F13] flex relative overflow-hidden font-sans">
       <Toaster position="top-center" toastOptions={{ style: { background: '#18181B', color: '#fff', border: '1px solid rgba(255,255,255,0.1)' } }} />
       
       {/* Subtle Premium Background */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-emerald-500/[0.02] rounded-full blur-[100px]" />
-        <div className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-emerald-500/5 rounded-full blur-[100px]" />
+        <div className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-emerald-500/[0.04] rounded-full blur-[120px]" />
+        <div className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-teal-500/[0.03] rounded-full blur-[120px]" />
       </div>
 
       {/* LEFT SIDE - Motivation Panel */}
@@ -202,7 +202,7 @@ export function Auth() {
         <div>
           <h1 className="text-[3.5rem] xl:text-[4rem] font-bold text-white leading-[1.05] mb-8 tracking-tighter">
             CGPA can't, but <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-400 inline-block pb-2 -mb-2">One DSA question daily</span> <br />
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-300 to-teal-400 inline-block pb-2 -mb-2">One DSA question daily</span> <br />
             takes you to good placements.
           </h1>
         </div>
@@ -246,7 +246,7 @@ export function Auth() {
       <div className="w-full lg:w-1/2 flex flex-col justify-center items-center p-6 relative z-10">
         
         {/* Ambient glow behind card */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] bg-emerald-500/[0.02] rounded-full blur-[100px] pointer-events-none" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] bg-emerald-500/[0.03] rounded-full blur-[120px] pointer-events-none" />
 
         {/* Mobile Logo */}
         <Link to="/" className="flex lg:hidden items-center justify-center gap-3 mb-12 group cursor-pointer relative z-10">
@@ -303,7 +303,7 @@ export function Auth() {
                 <button
                   type="submit"
                   disabled={loading || !identifier}
-                  className="w-full flex items-center justify-center gap-2 bg-emerald-500 hover:bg-emerald-400 text-black font-bold rounded-xl px-4 py-3 transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-emerald-500/10"
+                  className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-bold rounded-xl px-4 py-3 shadow-lg shadow-emerald-950/20 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : "Continue with Code"}
                 </button>
@@ -333,7 +333,7 @@ export function Auth() {
                 <button
                   type="submit"
                   disabled={loading || otp.length < 6}
-                  className="w-full flex items-center justify-center gap-2 bg-emerald-500 hover:bg-emerald-400 text-black font-bold rounded-xl px-4 py-3 transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-emerald-500/10 mt-4"
+                  className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-bold rounded-xl px-4 py-3 shadow-lg shadow-emerald-950/20 mt-4 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : "Verify Code"}
                 </button>
@@ -403,7 +403,7 @@ export function Auth() {
                 <button
                   type="submit"
                   disabled={loading || !name || !username || usernameAvailable === false}
-                  className="w-full flex items-center justify-center gap-2 bg-emerald-500 hover:bg-emerald-400 text-black font-bold rounded-xl px-4 py-3 mt-4 transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-emerald-500/10"
+                  className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-bold rounded-xl px-4 py-3 mt-4 shadow-lg shadow-emerald-950/20 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : (
                     <>Finish Setup <ArrowRight className="w-4 h-4" /></>
