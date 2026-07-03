@@ -20,26 +20,18 @@ export function MascotSection() {
   return (
     <section className="px-6 py-20 md:py-24 relative overflow-hidden bg-[#090A0E] w-full border-b border-white/[0.04]">
       <div className="max-w-6xl mx-auto relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.2fr] gap-16 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-[1.1fr_1.2fr] gap-16 items-center">
           
-          {/* Left Column: Smart Narrator Mascot visual */}
-          <div className="flex flex-col items-center justify-center text-center select-none">
+          {/* Left Column: Huge Smart Narrator Mascot visual */}
+          <div className="flex flex-col items-center justify-center select-none">
             <div className="relative flex flex-col items-center justify-center">
               <img 
                 src="/logo/mascot-full.png" 
                 alt="ConsistPay Accountability Partner - Consisty" 
-                className="w-72 h-auto object-contain relative z-10 transition-all duration-500 hover:scale-[1.03] hover:rotate-1"
+                className="w-80 sm:w-96 md:w-[28rem] h-auto object-contain relative z-10 transition-all duration-500 hover:scale-[1.03] hover:rotate-1"
               />
               {/* 3D Floor Shadow */}
-              <div className="w-56 h-4 bg-white/5 rounded-[100%] blur-[12px] mt-2 opacity-50 relative z-0" />
-            </div>
-            
-            {/* Guide Bubble */}
-            <div className="mt-8 relative max-w-sm bg-[#000000] border border-white/[0.05] rounded-2xl p-4 shadow-lg text-left">
-              <div className="absolute top-[-6px] left-1/2 -translate-x-1/2 w-3 h-3 bg-[#000000] border-t border-l border-white/[0.05] rotate-45" />
-              <p className="text-xs text-zinc-350 font-medium leading-relaxed text-center relative z-10">
-                "Traditional habit trackers rely on motivation. But motivation is unreliable. ConsistPay is engineered as a system: lock your stake, practice daily, and succeed."
-              </p>
+              <div className="w-64 sm:w-80 h-4 bg-white/5 rounded-[100%] blur-[12px] mt-2 opacity-50 relative z-0" />
             </div>
           </div>
 
