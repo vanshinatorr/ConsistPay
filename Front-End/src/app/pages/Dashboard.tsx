@@ -721,16 +721,16 @@ export function Dashboard() {
           <DashboardBattleWidget onRefreshRequest={fetchUserData} />
 
           {/* Row 3: Top Widgets Row (Platforms Connect, Consistency Wallet, Versus Card + DSA Solves Stack) */}
-          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 items-stretch mb-6">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch mb-6">
             {/* Column 1 - Platforms Connect Widget */}
-            <div className="lg:col-span-1">
+            <div className="lg:col-span-2">
               <PlatformsWidget
                 onLinkageChanged={fetchUserData}
                 onboardingComplete={userData?.onboardingComplete ?? true}
               />
             </div>
             {/* Column 2 - Consistency Wallet Card (Core feature centered and prominent with direct Sync & Timer tools) */}
-            <div className="lg:col-span-2">
+            <div className="lg:col-span-7">
               <WalletCard
                 plan={userData?.plan}
                 monthlyBudget={monthlyBudget}
@@ -754,7 +754,7 @@ export function Dashboard() {
               />
             </div>
             {/* Column 3 - Versus Card & DSA Solves Card Stack */}
-            <div className="lg:col-span-1 flex flex-col gap-6">
+            <div className="lg:col-span-3 flex flex-col gap-6">
               <VersusCard
                 plan={userData?.plan}
                 battleBalance={userData?.battleBalance ?? 0}

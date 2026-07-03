@@ -162,6 +162,57 @@ export function PlatformsWidget({ onLinkageChanged, onboardingComplete = true }:
     }
   };
 
+  const getPlatformLogo = (platform: string) => {
+    switch (platform) {
+      case "LeetCode":
+        return (
+          <svg viewBox="0 0 24 24" className="w-4 h-4 fill-current text-[#FFA116]" xmlns="http://www.w3.org/2000/svg">
+            <path d="M16.102 17.93l-2.69 2.607c-.466.451-1.211.451-1.677 0l-4.51-4.375a1.235 1.235 0 0 1 0-1.707l4.51-4.375c.466-.452 1.211-.452 1.677 0l2.69 2.607c.466.452 1.211.452 1.677 0a1.235 1.235 0 0 0 0-1.707L13.23 6.6c-.466-.452-1.211-.452-1.677 0L4.17 13.78a2.47 2.47 0 0 0 0 3.414l7.382 7.15c.466.452 1.211.452 1.677 0l7.382-7.15a1.235 1.235 0 0 0 0-1.707c-.466-.451-1.211-.451-1.677 0l-.832.806zM18.73 12.022c-.466-.452-1.211-.452-1.677 0L13.23 15.84a1.235 1.235 0 0 1-1.677 0L8.73 13.015c-.466-.452-1.211-.452-1.677 0a1.235 1.235 0 0 0 0 1.707l3.823 3.704c.466.452 1.211.452 1.677 0l5.498-5.328a1.235 1.235 0 0 0 0-1.707l.679.63z" />
+          </svg>
+        );
+      case "GeeksforGeeks":
+        return (
+          <svg viewBox="0 0 24 24" className="w-4 h-4 fill-current text-[#2F8D46]" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12.162 2c-3.111 0-5.833 1.481-7.575 3.766L8.47 8.358C9.37 7.214 10.704 6.5 12.162 6.5c2.481 0 4.5 2.019 4.5 4.5s-2.019 4.5-4.5 4.5c-1.458 0-2.793-.714-3.693-1.858L4.587 16.234C6.329 18.519 9.051 20 12.162 20c4.963 0 9-4.037 9-9s-4.037-9-9-9zm-8.83 5.485C2.474 8.766 2 10.323 2 12c0 1.677.474 3.234 1.332 4.515l3.14-2.592c-.29-.583-.472-1.229-.472-1.923 0-.694.182-1.34.472-1.923L3.332 7.485z" />
+          </svg>
+        );
+      case "Code360":
+        return (
+          <svg viewBox="0 0 24 24" className="w-4 h-4 fill-current text-[#F26E22]" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 2c5.522 0 10 4.477 10 10s-4.478 10-10 10S2 17.523 2 12 6.478 2 12 2zm5 5h-10c-.553 0-1 .447-1 1v1h12V8c0-.553-.448-1-1-1zm1 3H6c-.553 0-1 .447-1 1v2c0 2.761 2.239 5 5 5h4c2.761 0 5-2.239 5-5v-2c0-.553-.448-1-1-1zm-8.5 3c-.828 0-1.5-.672-1.5-1.5S9.172 10 10 10s1.5.672 1.5 1.5S10.828 13 10 13zm4 0c-.828 0-1.5-.672-1.5-1.5s.672-1.5 1.5-1.5 1.5.672 1.5 1.5S14.828 13 14 13z" />
+          </svg>
+        );
+      case "InterviewBit":
+        return (
+          <svg viewBox="0 0 24 24" className="w-4 h-4 fill-current text-[#00A9E0]" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 14H11V8h2v8z" />
+          </svg>
+        );
+      case "HackerRank":
+        return (
+          <svg viewBox="0 0 24 24" className="w-4 h-4 fill-current text-[#2EC866]" xmlns="http://www.w3.org/2000/svg">
+            <path d="M21.9 4.1L12 0 2.1 4.1C1.3 4.4.8 5.2.8 6.1v11.8c0 .9.5 1.7 1.3 2L12 24l9.9-4.1c.8-.3 1.3-1.1 1.3-2V6.1c0-.9-.5-1.7-1.3-2zM15 15.5h-2.1v2.1h-1.8v-2.1H9v-1.8h2.1v-2.1h1.8v2.1H15v1.8z" />
+          </svg>
+        );
+      case "Codeforces":
+        return (
+          <svg viewBox="0 0 24 24" className="w-4 h-4 fill-none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="3" y="11" width="4" height="10" fill="#3B5998" rx="0.5" />
+            <rect x="10" y="5" width="4" height="16" fill="#FF0000" rx="0.5" />
+            <rect x="17" y="8" width="4" height="13" fill="#FFC000" rx="0.5" />
+          </svg>
+        );
+      case "GitHub":
+        return (
+          <svg viewBox="0 0 24 24" className="w-4 h-4 fill-current text-white" xmlns="http://www.w3.org/2000/svg">
+            <path fillRule="evenodd" clipRule="evenodd" d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.17 6.839 9.49.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.603-3.369-1.34-3.369-1.34-.454-1.156-1.11-1.464-1.11-1.464-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.579.688.481C19.137 20.167 22 16.418 22 12c0-5.523-4.477-10-10-10z" />
+          </svg>
+        );
+      default:
+        return <Link2 className="w-4 h-4 text-zinc-400" />;
+    }
+  };
+
   // Static/Mock Platforms
   const mockPlatforms = [
     { name: "InterviewBit", badge: "Coming Soon" },
@@ -199,8 +250,8 @@ export function PlatformsWidget({ onLinkageChanged, onboardingComplete = true }:
               <div className="flex items-center justify-between gap-4">
                 <div className="flex items-center gap-2.5">
                   {/* Platform Icons (using SVG or clean letters) */}
-                  <div className="w-7 h-7 rounded-lg bg-white/5 border border-white/[0.04] flex items-center justify-center text-[10px] font-bold text-white uppercase select-none">
-                    {plat.substring(0, 2)}
+                  <div className="w-7 h-7 rounded-lg bg-white/5 border border-white/[0.04] flex items-center justify-center shrink-0 select-none">
+                    {getPlatformLogo(plat)}
                   </div>
                   <div>
                     <span className="text-xs font-bold text-white tracking-wide">{plat}</span>
@@ -241,15 +292,6 @@ export function PlatformsWidget({ onLinkageChanged, onboardingComplete = true }:
                           <span>Verify</span>
                         </div>
                       )}
-                      
-                      <button
-                        onClick={() => handleUnlink(plat)}
-                        disabled={loading}
-                        className="text-zinc-600 hover:text-rose-400 transition-colors p-1"
-                        title="Disconnect Account"
-                      >
-                        {loading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Trash2 className="w-3.5 h-3.5" />}
-                      </button>
                     </>
                   ) : (
                     !isInputActive && (
@@ -347,8 +389,8 @@ export function PlatformsWidget({ onLinkageChanged, onboardingComplete = true }:
         {mockPlatforms.map((mockPlat) => (
           <div key={mockPlat.name} className="border border-white/[0.02] bg-white/[0.005] rounded-xl p-3 flex items-center justify-between opacity-50 select-none">
             <div className="flex items-center gap-2.5">
-              <div className="w-7 h-7 rounded-lg bg-white/5 border border-white/[0.04] flex items-center justify-center text-[10px] font-bold text-zinc-500 uppercase">
-                {mockPlat.name.substring(0, 2)}
+              <div className="w-7 h-7 rounded-lg bg-white/5 border border-white/[0.04] flex items-center justify-center shrink-0">
+                {getPlatformLogo(mockPlat.name)}
               </div>
               <span className="text-xs font-bold text-zinc-400 tracking-wide">{mockPlat.name}</span>
             </div>
