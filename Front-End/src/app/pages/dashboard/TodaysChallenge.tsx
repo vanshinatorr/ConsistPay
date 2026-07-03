@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { CheckCircle, Lock, RefreshCw, AlertTriangle, ExternalLink, Link, Check, LogIn } from "lucide-react";
 
 interface TodaysChallengeProps {
+  selectedPlatform: "LeetCode" | "GeeksforGeeks" | "Code360";
+  setSelectedPlatform: (platform: "LeetCode" | "GeeksforGeeks" | "Code360") => void;
   onboardingComplete?: boolean;
   onSetupClick?: () => void;
   linkage: { username: string; isVerified: boolean; verificationToken: string } | null;
@@ -21,6 +23,8 @@ interface TodaysChallengeProps {
 }
 
 export function TodaysChallenge({
+  selectedPlatform,
+  setSelectedPlatform,
   onboardingComplete = true,
   onSetupClick,
   linkage,
@@ -90,6 +94,27 @@ export function TodaysChallenge({
               </span>
             </div>
 
+            {/* Platform Selector Pills */}
+            <div className="flex gap-2 mb-6 bg-white/[0.02] border border-white/[0.06] p-1 rounded-xl">
+              {(["LeetCode", "GeeksforGeeks", "Code360"] as const).map((plat) => (
+                <button
+                  key={plat}
+                  type="button"
+                  onClick={() => {
+                    setApiError("");
+                    setSelectedPlatform(plat);
+                  }}
+                  className={`flex-1 py-2 text-xs font-semibold rounded-lg transition-all cursor-pointer ${
+                    selectedPlatform === plat
+                      ? "bg-violet-600/20 text-violet-400 border border-violet-500/20 shadow-sm"
+                      : "text-zinc-400 hover:text-white hover:bg-white/[0.02] border border-transparent"
+                  }`}
+                >
+                  {plat}
+                </button>
+              ))}
+            </div>
+
             {/* 2. Main Setup or Verification Content */}
             {!onboardingComplete ? (
               <div className="flex-1 flex flex-col items-center justify-center text-center py-10">
@@ -112,10 +137,10 @@ export function TodaysChallenge({
               <div className="flex-1 flex flex-col justify-center py-4">
                 <div>
                   <h3 className="text-xl font-bold text-white mb-1.5 leading-tight">
-                    Connect LeetCode Account
+                    Connect {selectedPlatform} Account
                   </h3>
                   <p className="text-xs text-zinc-400 leading-normal max-w-md">
-                    To start syncing solves automatically, please link your public LeetCode profile handle below.
+                    To start syncing solves automatically, please link your public {selectedPlatform} profile handle below.
                   </p>
                 </div>
 
@@ -123,7 +148,7 @@ export function TodaysChallenge({
                   <div className="space-y-4">
                     <div>
                       <label className="block text-xs text-zinc-400 mb-2 font-medium uppercase tracking-wider">
-                        LeetCode Username
+                        {selectedPlatform} Username
                       </label>
                       <div className="relative">
                         <input
@@ -170,10 +195,10 @@ export function TodaysChallenge({
               <div className="flex-1 flex flex-col justify-center py-4">
                 <div>
                   <h3 className="text-xl font-bold text-white mb-1.5 leading-tight">
-                    Verify LeetCode Ownership
+                    Verify {selectedPlatform} Ownership
                   </h3>
                   <p className="text-xs text-zinc-400 leading-normal max-w-md">
-                    To prove account ownership, add the verification token below to your LeetCode profile bio.
+                    To prove account ownership, add the verification token below to your {selectedPlatform} profile bio.
                   </p>
                 </div>
 
@@ -188,11 +213,11 @@ export function TodaysChallenge({
                   <div className="space-y-2.5 text-xs text-zinc-400 pl-1 leading-relaxed">
                     <p className="flex gap-2">
                       <span className="text-violet-400 font-bold">1.</span>
-                      <span>Go to your LeetCode Account Profile Settings.</span>
+                      <span>Go to your {selectedPlatform} Account Profile Settings.</span>
                     </p>
                     <p className="flex gap-2">
                       <span className="text-violet-400 font-bold">2.</span>
-                      <span>Paste the token anywhere inside the <b>"About Me"</b> bio text box.</span>
+                      <span>Paste the token anywhere inside the profile bio/description text box.</span>
                     </p>
                     <p className="flex gap-2">
                       <span className="text-violet-400 font-bold">3.</span>
@@ -202,12 +227,18 @@ export function TodaysChallenge({
 
                   {/* External Profile Link Button */}
                   <a
-                    href="https://leetcode.com/profile/"
+                    href={
+                      selectedPlatform === "LeetCode"
+                        ? "https://leetcode.com/profile/"
+                        : selectedPlatform === "GeeksforGeeks"
+                        ? linkage?.username ? `https://www.geeksforgeeks.org/user/${linkage.username}/` : "https://www.geeksforgeeks.org/"
+                        : linkage?.username ? `https://www.naukri.com/code360/profile/${linkage.username}` : "https://www.naukri.com/code360/"
+                    }
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-1.5 text-xs font-semibold text-zinc-400 hover:text-white transition-colors py-1 cursor-pointer"
                   >
-                    Open LeetCode Settings <ExternalLink className="w-3 h-3" />
+                    Open {selectedPlatform} Profile <ExternalLink className="w-3 h-3" />
                   </a>
 
                   {apiError && (
@@ -267,7 +298,7 @@ export function TodaysChallenge({
                     {hasSolvedToday ? "Streak Secured!" : "Solve Pending"}
                   </h3>
                   <p className="text-xs text-zinc-400 mt-1 select-none">
-                    LeetCode handle: <b className="text-violet-400">{linkage.username}</b>
+                    {selectedPlatform} handle: <b className="text-violet-400">{linkage.username}</b>
                   </p>
                 </div>
 
@@ -288,7 +319,7 @@ export function TodaysChallenge({
                     }`}
                   >
                     <RefreshCw className={`w-3.5 h-3.5 ${syncLoading ? "animate-spin text-zinc-550" : "text-violet-400"}`} />
-                    {syncLoading ? "Syncing LeetCode..." : "Sync solves now"}
+                    {syncLoading ? `Syncing ${selectedPlatform}...` : "Sync solves now"}
                   </button>
                 </div>
 

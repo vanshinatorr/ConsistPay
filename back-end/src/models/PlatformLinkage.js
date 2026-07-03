@@ -9,7 +9,7 @@ const platformLinkageSchema = new mongoose.Schema(
     },
     platform: {
       type: String,
-      enum: ["LeetCode", "GFG", "GitHub", "Codeforces"],
+      enum: ["LeetCode", "GeeksforGeeks", "GFG", "Code360", "GitHub", "Codeforces"],
       required: true,
     },
     username: {

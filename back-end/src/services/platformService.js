@@ -2,9 +2,18 @@ const PlatformLinkage = require("../models/PlatformLinkage");
 const Submission = require("../models/Submission");
 const User = require("../models/User");
 const LeetCodeProvider = require("../providers/LeetCodeProvider");
+const GFGProvider = require("../providers/GFGProvider");
+const Code360Provider = require("../providers/Code360Provider");
 const { getLocalFallbackDetails } = require("../utils/dsaHelper");
 const { syncUserStreak } = require("../utils/streakHelper");
 const { createNotification } = require("../controllers/notificationController");
+
+function getProvider(platform) {
+  if (platform === "LeetCode") return LeetCodeProvider;
+  if (platform === "GeeksforGeeks" || platform === "GFG") return GFGProvider;
+  if (platform === "Code360") return Code360Provider;
+  throw new Error(`Platform "${platform}" is not supported.`);
+}
 
 class PlatformService {
   /**
@@ -25,18 +34,21 @@ class PlatformService {
       isVerified: true,
     });
     if (existingVerified) {
-      throw new Error(`The LeetCode username "${normalizedUsername}" is already linked and verified with another account.`);
+      throw new Error(`The ${platform} username "${normalizedUsername}" is already linked and verified with another account.`);
     }
 
     // Generate a unique 6-digit verification code to include in the bio
-    const verificationToken = `CP-LEET-${Math.floor(100000 + Math.random() * 900000)}`;
+    let prefix = "LEET";
+    if (platform === "GeeksforGeeks" || platform === "GFG") prefix = "GFG";
+    if (platform === "Code360") prefix = "CODE360";
+    const verificationToken = `CP-${prefix}-${Math.floor(100000 + Math.random() * 900000)}`;
 
     // Upsert the linkage (if an unverified record exists for this user/platform, update it)
     let linkage = await PlatformLinkage.findOne({ userId, platform });
 
     if (linkage) {
       if (linkage.isVerified) {
-        throw new Error(`You have already successfully linked and verified a LeetCode account (${linkage.username}).`);
+        throw new Error(`You have already successfully linked and verified a ${platform} account (${linkage.username}).`);
       }
       linkage.username = normalizedUsername;
       linkage.verificationToken = verificationToken;
@@ -72,12 +84,13 @@ class PlatformService {
       return { message: "Account is already linked and verified.", username: linkage.username };
     }
 
-    const userProfile = await LeetCodeProvider.fetchProfile(linkage.username);
+    const provider = getProvider(platform);
+    const userProfile = await provider.fetchProfile(linkage.username);
     const aboutMe = userProfile.profile?.aboutMe || "";
     const isMatch = aboutMe.includes(linkage.verificationToken);
 
     if (!isMatch) {
-      throw new Error(`Verification token "${linkage.verificationToken}" was not found in your LeetCode profile bio ("About Me"). Please update your bio and try again.`);
+      throw new Error(`Verification token "${linkage.verificationToken}" was not found in your ${platform} profile bio ("About Me"). Please update your bio and try again.`);
     }
 
     // Success! Update linkage state
@@ -88,7 +101,7 @@ class PlatformService {
     linkage.verifiedAt = new Date();
     await linkage.save();
 
-    // Trigger initial sync to pull historical LeetCode solves instantly
+    // Trigger initial sync to pull historical solves instantly
     try {
       await this.syncDailySolve(userId, platform);
     } catch (syncErr) {
@@ -101,7 +114,7 @@ class PlatformService {
       user.onboardingComplete = true;
       user.onboardingCompletedAt = new Date();
       await user.save();
-      console.log(`[PlatformService] Onboarding automatically completed for user ${userId} post LeetCode verification.`);
+      console.log(`[PlatformService] Onboarding automatically completed for user ${userId} post ${platform} verification.`);
     }
 
     return {
@@ -118,23 +131,25 @@ class PlatformService {
   async syncDailySolve(userId, platform, targetTimeZone = "Asia/Kolkata") {
     const linkage = await PlatformLinkage.findOne({ userId, platform, isVerified: true });
     if (!linkage) {
-      throw new Error("No verified LeetCode profile connected to this account.");
+      throw new Error(`No verified ${platform} profile connected to this account.`);
     }
 
-    // Fetch daily status from LeetCode
-    const solveStatus = await LeetCodeProvider.fetchDailySolveStatus(linkage.username, targetTimeZone);
+    const provider = getProvider(platform);
+
+    // Fetch daily status from Platform
+    const solveStatus = await provider.fetchDailySolveStatus(linkage.username, targetTimeZone);
 
     // Fetch user's historical submission calendar map
     let historicalCalendar = {};
     try {
-      historicalCalendar = await LeetCodeProvider.fetchUserCalendar(linkage.username);
+      historicalCalendar = await provider.fetchUserCalendar(linkage.username);
     } catch (calErr) {
-      console.warn("[PlatformService] Failed to load user's full submission calendar:", calErr.message);
+      console.warn(`[PlatformService] Failed to load user's full ${platform} submission calendar:`, calErr.message);
     }
 
     // Keep lifetime solved count updated in linkage
     try {
-      const userProfile = await LeetCodeProvider.fetchProfile(linkage.username);
+      const userProfile = await provider.fetchProfile(linkage.username);
       const acSubmissionNum = userProfile.submitStatsGlobal?.acSubmissionNum || [];
       const allAc = acSubmissionNum.find(a => a.difficulty === "All");
       if (allAc) {
@@ -142,7 +157,7 @@ class PlatformService {
         await linkage.save();
       }
     } catch (err) {
-      console.warn("[PlatformService] Failed to update totalSolved count during sync:", err.message);
+      console.warn(`[PlatformService] Failed to update totalSolved count during sync for ${platform}:`, err.message);
     }
 
     let userObj = await User.findById(userId);
@@ -240,16 +255,16 @@ class PlatformService {
         // Create a historical practice placeholder submission so the calendar tile lights up green!
         await Submission.create({
           userId,
-          problemName: "LeetCode Practice",
+          problemName: `${platform} Practice`,
           platform,
           date: dateStr,
           status: "completed",
-          topic: "LeetCode Practice",
+          topic: `${platform} Practice`,
           difficulty: "Easy",
           recommendation: "Keep practicing daily.",
           motivationLine: "One solve at a time.",
           accepted: true,
-          submissionId: `leetcode-hist-${ts}`,
+          submissionId: `${platform.toLowerCase()}-hist-${ts}`,
           verificationMethod: "auto",
           verificationStatus: "verified"
         });

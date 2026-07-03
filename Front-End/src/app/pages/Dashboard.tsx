@@ -58,6 +58,7 @@ interface CalendarDay {
 export function Dashboard() {
   const navigate = useNavigate();
   const [linkage, setLinkage] = useState<any>(null);
+  const [selectedPlatform, setSelectedPlatform] = useState<"LeetCode" | "GeeksforGeeks" | "Code360">("LeetCode");
   const [linkLoading, setLinkLoading] = useState(false);
   const [verifyLoading, setVerifyLoading] = useState(false);
   const [syncLoading, setSyncLoading] = useState(false);
@@ -86,6 +87,30 @@ export function Dashboard() {
 
   const API = import.meta.env.VITE_API_URL;
   const token = localStorage.getItem("token") || "";
+
+  // Dynamic linkage fetcher
+  const fetchLinkage = async (plat = selectedPlatform) => {
+    try {
+      const res = await fetch(`${API}/api/platforms/linkage?platform=${plat}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setLinkage(data.linkage);
+      } else {
+        setLinkage(null);
+      }
+    } catch (err) {
+      console.error("Error fetching platform linkage:", err);
+      setLinkage(null);
+    }
+  };
+
+  useEffect(() => {
+    if (token) {
+      fetchLinkage(selectedPlatform);
+    }
+  }, [selectedPlatform, token]);
 
   const fetchUserRank = async (myId?: string) => {
     try {
@@ -119,19 +144,7 @@ export function Dashboard() {
     }
   };
 
-  const fetchLinkage = async () => {
-    try {
-      const res = await fetch(`${API}/api/platforms/linkage?platform=LeetCode`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      if (res.ok) {
-        const data = await res.json();
-        setLinkage(data.linkage);
-      }
-    } catch (err) {
-      console.error("Error fetching platform linkage:", err);
-    }
-  };
+
 
   const fetchUserData = async () => {
     try {
@@ -337,7 +350,7 @@ export function Dashboard() {
         const res = await fetch(`${API}/api/platforms/link`, {
           method: "DELETE",
           headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-          body: JSON.stringify({ platform: "LeetCode" })
+          body: JSON.stringify({ platform: selectedPlatform })
         });
         const data = await res.json();
         if (!res.ok) {
@@ -349,14 +362,14 @@ export function Dashboard() {
         const res = await fetch(`${API}/api/platforms/link`, {
           method: "POST",
           headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-          body: JSON.stringify({ platform: "LeetCode", username })
+          body: JSON.stringify({ platform: selectedPlatform, username })
         });
         const data = await res.json();
         if (!res.ok) {
           setSubmitError(data.message || "Failed to link profile.");
           return;
         }
-        await fetchLinkage();
+        await fetchLinkage(selectedPlatform);
       }
     } catch (err) {
       setSubmitError("Network error. Please try again.");
@@ -372,7 +385,7 @@ export function Dashboard() {
       const res = await fetch(`${API}/api/platforms/verify`, {
         method: "POST",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-        body: JSON.stringify({ platform: "LeetCode" })
+        body: JSON.stringify({ platform: selectedPlatform })
       });
       const data = await res.json();
       if (!res.ok) {
@@ -380,7 +393,7 @@ export function Dashboard() {
         return;
       }
       await Promise.all([
-        fetchLinkage(),
+        fetchLinkage(selectedPlatform),
         fetchUserData()
       ]);
     } catch (err) {
@@ -398,7 +411,7 @@ export function Dashboard() {
       const res = await fetch(`${API}/api/platforms/sync`, {
         method: "POST",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-        body: JSON.stringify({ platform: "LeetCode", timezone: userTimeZone })
+        body: JSON.stringify({ platform: selectedPlatform, timezone: userTimeZone })
       });
       const data = await res.json();
       if (!res.ok) {
@@ -413,6 +426,7 @@ export function Dashboard() {
         fetchCalendarForYears(visibleYears),
         fetchTodaySubmission(),
         fetchRecentSolves(),
+        fetchLinkage(selectedPlatform),
       ]);
     } catch (err) {
       setSubmitError("Network error. Please try again.");
@@ -706,6 +720,8 @@ export function Dashboard() {
             <div className="lg:col-span-2">
               {/* ✅ UPDATED props */}
               <TodaysChallenge
+                selectedPlatform={selectedPlatform}
+                setSelectedPlatform={setSelectedPlatform}
                 linkage={linkage}
                 handleLink={handleLink}
                 handleVerify={handleVerify}

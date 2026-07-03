@@ -14,8 +14,9 @@ const linkPlatform = async (req, res) => {
       return res.status(400).json({ message: "Platform and username are required." });
     }
 
-    if (platform !== "LeetCode") {
-      return res.status(400).json({ message: `Platform "${platform}" is not supported in V1.` });
+    const allowedPlatforms = ["LeetCode", "GeeksforGeeks", "GFG", "Code360"];
+    if (!allowedPlatforms.includes(platform)) {
+      return res.status(400).json({ message: `Platform "${platform}" is not supported.` });
     }
 
     console.log(`[PlatformController] Initiating link for user: ${userId}, platform: ${platform}, username: ${username}`);
