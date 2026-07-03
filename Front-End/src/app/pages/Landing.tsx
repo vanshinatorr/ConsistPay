@@ -26,7 +26,7 @@ export function Landing() {
                 className="h-7 w-auto object-contain select-none"
               />
               <span className="text-xl font-bold tracking-tight text-white">
-                ConsistPay
+                Consist<span className="text-emerald-400">Pay</span>
               </span>
             </Link>
 

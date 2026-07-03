@@ -177,8 +177,8 @@ export function Navbar({ initials, plan = "free", avatar, isAvatarUrl }: NavbarP
                 className="h-8 w-auto object-contain select-none"
               />
 
-              <span className="hidden sm:block text-lg font-bold bg-gradient-to-r from-white to-zinc-400 bg-clip-text text-transparent">
-                ConsistPay
+              <span className="hidden sm:block text-lg font-bold text-white">
+                Consist<span className="text-emerald-400">Pay</span>
               </span>
             </Link>
 
