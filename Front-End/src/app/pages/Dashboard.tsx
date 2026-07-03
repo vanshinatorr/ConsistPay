@@ -708,10 +708,38 @@ export function Dashboard() {
           {/* Row 2: Challenge a Friend Widget */}
           <DashboardBattleWidget onRefreshRequest={fetchUserData} />
 
-          {/* Row 3: Today's Proof Challenge & Wallet */}
+          {/* Row 3: Unified Metrics Cards (Wallet, DSA Stats, Leaderboard Rank) */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <WalletCard
+              plan={userData?.plan}
+              monthlyBudget={monthlyBudget}
+              completedDays={completedDays}
+              missedDays={missedDays}
+              dailyCommitment={dailyCommitment}
+              graceCoins={graceCoins}
+              battleBalance={userData?.battleBalance ?? 0}
+              balance={userData?.balance ?? 0}
+              activeDeposit={userData?.activeDeposit ?? 0}
+              planStatus={userData?.planStatus}
+              onboardingComplete={userData?.onboardingComplete ?? true}
+              onRefreshRequest={fetchUserData}
+            />
+            <DsaStatsCard
+              stats={userData?.dsaStats}
+              onboardingComplete={userData?.onboardingComplete ?? true}
+            />
+            <LeaderboardRankCard
+              rank={userRank}
+              totalUsers={totalUsers}
+              loading={leaderboardLoading}
+              onboardingComplete={userData?.onboardingComplete ?? true}
+            />
+          </div>
+
+          {/* Row 4: Main Workspace Area (Today's Goal + Recent Solves on Left, Platforms + Awards on Right) */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch">
-            <div className="lg:col-span-2">
-              {/* ✅ UPDATED props */}
+            {/* Left Column (2/3 width) - Daily operations */}
+            <div className="lg:col-span-2 flex flex-col gap-6">
               <TodaysChallenge
                 onboardingComplete={userData?.onboardingComplete ?? true}
                 onSetupClick={() => setShowSetupModal(true)}
@@ -726,58 +754,15 @@ export function Dashboard() {
                 todaySubmissionsCount={todaySubmission?.count || 0}
                 linkedPlatforms={(userData as any)?.linkedPlatforms}
               />
+              <RecentSolves recentSolves={recentSolves} />
             </div>
+
+            {/* Right Column (1/3 width) - Integrations & Accomplishments */}
             <div className="lg:col-span-1 flex flex-col gap-6">
-              <WalletCard
-                plan={userData?.plan}
-                monthlyBudget={monthlyBudget}
-                completedDays={completedDays}
-                missedDays={missedDays}
-                dailyCommitment={dailyCommitment}
-                graceCoins={graceCoins}
-                battleBalance={userData?.battleBalance ?? 0}
-                balance={userData?.balance ?? 0}
-                activeDeposit={userData?.activeDeposit ?? 0}
-                planStatus={userData?.planStatus}
-                onboardingComplete={userData?.onboardingComplete ?? true}
-                onRefreshRequest={fetchUserData}
-              />
-              <DsaStatsCard
-                stats={userData?.dsaStats}
-                onboardingComplete={userData?.onboardingComplete ?? true}
-              />
               <PlatformsWidget
                 onLinkageChanged={fetchUserData}
                 onboardingComplete={userData?.onboardingComplete ?? true}
               />
-            </div>
-          </div>
-
-          {/* Row 4: Mobile Only Calendar */}
-          <div className="block lg:hidden">
-            <ConsistencyCalendar
-              yearMonths={yearMonths}
-              onboardingComplete={userData?.onboardingComplete ?? true}
-              dayLabels={dayLabels}
-              onPrevMonth={handlePrevMonth}
-              onNextMonth={handleNextMonth}
-              isNextDisabled={isNextDisabled}
-            />
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-6 items-stretch">
-          {/* Left Column: Rank, Awards, and Recent Solves */}
-          <div className="lg:col-span-12 flex flex-col gap-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Leaderboard Rank Card */}
-              <LeaderboardRankCard
-                rank={userRank}
-                totalUsers={totalUsers}
-                loading={leaderboardLoading}
-                onboardingComplete={userData?.onboardingComplete ?? true}
-              />
-              {/* Awards Card */}
               <AwardsCard
                 streak={userData?.streak ?? 0}
                 maxStreak={userData?.maxStreak ?? 0}
@@ -791,8 +776,18 @@ export function Dashboard() {
                 dailyCommitment={userData?.dailyCommitment ?? 5}
               />
             </div>
-            {/* Recent Solves */}
-            <RecentSolves recentSolves={recentSolves} />
+          </div>
+
+          {/* Row 5: Mobile Only Calendar */}
+          <div className="block lg:hidden">
+            <ConsistencyCalendar
+              yearMonths={yearMonths}
+              onboardingComplete={userData?.onboardingComplete ?? true}
+              dayLabels={dayLabels}
+              onPrevMonth={handlePrevMonth}
+              onNextMonth={handleNextMonth}
+              isNextDisabled={isNextDisabled}
+            />
           </div>
         </div>
 
