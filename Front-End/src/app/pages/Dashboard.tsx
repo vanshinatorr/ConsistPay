@@ -715,7 +715,10 @@ export function Dashboard() {
             </div>
           </div>
 
-          {/* Row 2: Today's Proof Challenge & Wallet */}
+          {/* Row 2: Challenge a Friend Widget */}
+          <DashboardBattleWidget onRefreshRequest={fetchUserData} />
+
+          {/* Row 3: Today's Proof Challenge & Wallet */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch">
             <div className="lg:col-span-2">
               {/* ✅ UPDATED props */}
@@ -758,7 +761,7 @@ export function Dashboard() {
             </div>
           </div>
 
-          {/* Row 3: Mobile Only Calendar */}
+          {/* Row 4: Mobile Only Calendar */}
           <div className="block lg:hidden">
             <ConsistencyCalendar
               yearMonths={yearMonths}
@@ -770,8 +773,6 @@ export function Dashboard() {
             />
           </div>
         </div>
-
-        <DashboardBattleWidget onRefreshRequest={fetchUserData} />
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-6 items-stretch">
           {/* Left Column: Rank, Awards, and Recent Solves */}
