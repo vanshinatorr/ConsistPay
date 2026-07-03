@@ -38,7 +38,7 @@ export function WalletCard({
 
       <div className="relative bg-[#0F0F13] border border-white/[0.04] rounded-2xl p-5 flex flex-col justify-between h-[249px] min-h-[249px] shadow-lg overflow-hidden">
         {/* Ambient Grid overlay */}
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808005_1px,transparent_1px),linear-gradient(to_bottom,#80808005_1px,transparent_1px)] bg-[size:14px_24px] pointer-events-none" />
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808003_1px,transparent_1px),linear-gradient(to_bottom,#80808005_1px,transparent_1px)] bg-[size:14px_24px] pointer-events-none" />
 
         {/* Header */}
         <div className="flex items-center justify-between pb-2 border-b border-white/[0.04] relative z-10">
@@ -129,7 +129,7 @@ export function WalletCard({
                   <TrendingDown className="w-2.5 h-2.5 text-red-400" /> Lost
                 </div>
                 <div className="text-sm font-bold text-red-400 mt-0.5">
-                  ₹{missedDays * dailyCommitment} <span className="text-[9px] text-zinc-550 font-normal font-sans">({missedDays}d)</span>
+                  ₹{missedDays * dailyCommitment} <span className="text-[9px] text-zinc-555 font-normal font-sans">({missedDays}d)</span>
                 </div>
               </div>
             </div>
@@ -142,7 +142,7 @@ export function WalletCard({
               </div>
               <div className="h-1 bg-white/5 rounded-full overflow-hidden">
                 <div
-                  className="h-full bg-gradient-to-r from-emerald-500 to-teal-400 rounded-full transition-all duration-500"
+                  className="h-full bg-gradient-to-r from-emerald-500 to-teal-400 rounded-full transition-all duration-550"
                   style={{
                     width: `${((completedDays + missedDays) / 30) * 100}%`,
                   }}

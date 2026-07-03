@@ -722,7 +722,7 @@ export function Dashboard() {
           <DashboardBattleWidget onRefreshRequest={fetchUserData} />
 
           {/* Row 3: Top Widgets Row (Platforms Connect, Consistency Wallet, Versus Card) */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch mb-6">
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 items-stretch mb-6">
             {/* Column 1 - Platforms Connect Widget */}
             <div className="lg:col-span-1">
               <PlatformsWidget
@@ -730,8 +730,8 @@ export function Dashboard() {
                 onboardingComplete={userData?.onboardingComplete ?? true}
               />
             </div>
-            {/* Column 2 - Consistency Wallet Card */}
-            <div className="lg:col-span-1">
+            {/* Column 2 - Consistency Wallet Card (Core feature centered and prominent) */}
+            <div className="lg:col-span-2">
               <WalletCard
                 plan={userData?.plan}
                 monthlyBudget={monthlyBudget}

@@ -171,19 +171,19 @@ export function PlatformsWidget({ onLinkageChanged, onboardingComplete = true }:
   ];
 
   return (
-    <div className={`relative rounded-2xl border border-white/[0.04] bg-[#0F0F13] p-5 overflow-hidden group hover:border-white/10 transition-all duration-300 h-[480px] min-h-[480px] flex flex-col justify-between ${!onboardingComplete ? 'opacity-40 pointer-events-none' : ''}`}>
+    <div className={`relative rounded-2xl border border-white/[0.04] bg-[#0F0F13] p-5 overflow-hidden group hover:border-white/10 transition-all duration-300 h-[249px] min-h-[249px] flex flex-col justify-between ${!onboardingComplete ? 'opacity-40 pointer-events-none' : ''}`}>
       {/* Background patterns */}
       <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.002)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.002)_1px,transparent_1px)] bg-[size:20px_20px] pointer-events-none" />
       
       {/* Header */}
-      <div className="flex items-center justify-between mb-4 relative z-10 border-b border-white/[0.04] pb-3 shrink-0">
-        <h3 className="text-sm font-bold text-zinc-400 uppercase tracking-wider flex items-center gap-2">
-          <Link2 className="w-4 h-4 text-emerald-450" />
+      <div className="flex items-center justify-between mb-3 relative z-10 border-b border-white/[0.04] pb-2 shrink-0">
+        <h3 className="text-xs font-bold text-zinc-400 uppercase tracking-wider flex items-center gap-2">
+          <Link2 className="w-4 h-4 text-emerald-455" />
           Problem Solving Stats
         </h3>
       </div>
 
-      <div className="space-y-3 relative z-10 flex-1 overflow-y-auto pr-1.5 custom-scrollbar">
+      <div className="space-y-2 relative z-10 flex-1 overflow-y-auto pr-1 custom-scrollbar max-h-[160px]">
         {/* ─── ACTIVE/FUNCTIONAL PLATFORMS ─── */}
         {(["LeetCode", "GeeksforGeeks", "Code360"] as const).map((plat) => {
           const linkage = linkages[plat];
