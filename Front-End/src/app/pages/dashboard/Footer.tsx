@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { Instagram, Linkedin } from "lucide-react";
+import { Instagram, Linkedin, MessageCircle } from "lucide-react";
 
 interface FooterProps {
   className?: string;
@@ -70,21 +70,22 @@ export function Footer({ className }: FooterProps = {}) {
           </div>
 
           {/* Support / Founders */}
-          <div>
+          <div className="flex flex-col items-start">
             <h3 className="text-xs font-bold uppercase tracking-wider text-zinc-200 mb-4">
               Support & Contact
             </h3>
-            <div className="space-y-3">
-              <a
-                href="https://wa.me/918529975095"
-                target="_blank"
-                rel="noreferrer"
-                className="flex items-center justify-between text-xs text-zinc-400 hover:text-white transition-colors py-1"
-              >
-                <span>Vansh <span className="text-zinc-600 text-[10px] ml-1">(Founder)</span></span>
-                <span className="font-mono text-zinc-550 hover:text-white">+91 85299 75095</span>
-              </a>
-            </div>
+            <p className="text-xs text-zinc-400 leading-normal mb-3 font-normal max-w-xs">
+              Have questions? Connect directly with support or chat with the founder on WhatsApp for instant assistance.
+            </p>
+            <a
+              href="https://wa.me/918529975095"
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-500/10 border border-emerald-500/20 hover:border-emerald-500/40 text-emerald-450 hover:text-emerald-400 rounded-xl text-xs font-bold transition-all duration-300 cursor-pointer shadow-md shadow-emerald-500/5 hover:scale-[1.01]"
+            >
+              <MessageCircle className="w-3.5 h-3.5" />
+              Chat on WhatsApp
+            </a>
           </div>
 
         </div>
