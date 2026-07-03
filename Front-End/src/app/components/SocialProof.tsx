@@ -30,7 +30,7 @@ export function SocialProof() {
         <div className="w-full grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-white/[0.04] py-8 border-t border-b border-white/[0.04] items-center">
           {stats.map((stat, index) => (
             <div key={index} className="flex flex-col items-center justify-center py-6 md:py-4 relative z-10 group">
-              <div className="text-5xl md:text-6xl font-black text-white tracking-tight mb-2 transition-transform duration-300 group-hover:scale-102">
+              <div className="text-5xl md:text-6xl font-black bg-gradient-to-b from-white to-zinc-300 bg-clip-text text-transparent tracking-tight mb-2 transition-transform duration-300 group-hover:scale-[1.02] select-none">
                 {stat.value}
               </div>
               <div className="text-[10px] font-bold text-zinc-500 uppercase tracking-[0.22em] text-center">
@@ -45,23 +45,32 @@ export function SocialProof() {
           <span className="text-[9px] font-bold text-zinc-500 uppercase tracking-widest mb-4">
             Security & Integration Partners
           </span>
-          <div className="flex flex-wrap justify-center gap-8 md:gap-16 opacity-30 hover:opacity-50 transition-opacity duration-300">
-            <div className="flex items-center gap-2 text-zinc-400 transition-colors cursor-default grayscale">
-              <ShieldCheck className="w-4 h-4" />
+          <div className="flex flex-wrap justify-center gap-8 md:gap-16">
+            
+            {/* Stripe Payments */}
+            <div className="flex items-center gap-2 text-zinc-500 hover:text-[#635BFF] transition-colors duration-300 cursor-default select-none group">
+              <ShieldCheck className="w-4 h-4 transition-transform duration-300 group-hover:scale-105" />
               <span className="text-xs font-semibold tracking-wide">Stripe Payments</span>
             </div>
-            <div className="flex items-center gap-2 text-zinc-400 transition-colors cursor-default grayscale">
-              <Cpu className="w-4 h-4" />
+
+            {/* OpenAI Engine */}
+            <div className="flex items-center gap-2 text-zinc-500 hover:text-emerald-500 transition-colors duration-300 cursor-default select-none group">
+              <Cpu className="w-4 h-4 transition-transform duration-300 group-hover:scale-105" />
               <span className="text-xs font-semibold tracking-wide">OpenAI Engine</span>
             </div>
-            <div className="flex items-center gap-2 text-zinc-400 transition-colors cursor-default grayscale">
-              <Lock className="w-4 h-4" />
+
+            {/* Encryption */}
+            <div className="flex items-center gap-2 text-zinc-500 hover:text-white transition-colors duration-300 cursor-default select-none group">
+              <Lock className="w-4 h-4 transition-transform duration-300 group-hover:scale-105" />
               <span className="text-xs font-semibold tracking-wide">AES-256 Encryption</span>
             </div>
-            <div className="flex items-center gap-2 text-zinc-400 transition-colors cursor-default grayscale">
-              <Server className="w-4 h-4" />
+
+            {/* AWS Cloud */}
+            <div className="flex items-center gap-2 text-zinc-500 hover:text-[#FF9900] transition-colors duration-300 cursor-default select-none group">
+              <Server className="w-4 h-4 transition-transform duration-300 group-hover:scale-105" />
               <span className="text-xs font-semibold tracking-wide">AWS Cloud Infrastructure</span>
             </div>
+
           </div>
         </div>
 
