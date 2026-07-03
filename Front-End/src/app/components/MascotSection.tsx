@@ -24,12 +24,14 @@ export function MascotSection() {
           
           {/* Left Column: Smart Narrator Mascot visual */}
           <div className="flex flex-col items-center justify-center text-center select-none">
-            <div className="relative w-64 h-64 flex items-center justify-center bg-white/[0.005] border border-white/[0.03] rounded-[2.5rem] p-6 shadow-2xl">
+            <div className="relative flex flex-col items-center justify-center">
               <img 
                 src="/logo/mascot-full.png" 
                 alt="ConsistPay Accountability Partner - Consisty" 
-                className="w-[90%] h-full object-contain relative z-10 filter drop-shadow-[0_15px_30px_rgba(255,255,255,0.03)] hover:scale-[1.02] transition-transform duration-700"
+                className="w-72 h-auto object-contain relative z-10 transition-all duration-500 hover:scale-[1.03] hover:rotate-1"
               />
+              {/* 3D Floor Shadow */}
+              <div className="w-56 h-4 bg-white/5 rounded-[100%] blur-[12px] mt-2 opacity-50 relative z-0" />
             </div>
             
             {/* Guide Bubble */}
