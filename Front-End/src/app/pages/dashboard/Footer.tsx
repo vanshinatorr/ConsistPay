@@ -84,16 +84,6 @@ export function Footer({ className }: FooterProps = {}) {
                 <span>Vansh <span className="text-zinc-600 text-[10px] ml-1">(Founder)</span></span>
                 <span className="font-mono text-zinc-550 hover:text-white">+91 85299 75095</span>
               </a>
-
-              <a
-                href="https://wa.me/918103475773"
-                target="_blank"
-                rel="noreferrer"
-                className="flex items-center justify-between text-xs text-zinc-400 hover:text-white transition-colors py-1"
-              >
-                <span>Prateek <span className="text-zinc-600 text-[10px] ml-1">(Co-Founder)</span></span>
-                <span className="font-mono text-zinc-550 hover:text-white">+91 81034 75773</span>
-              </a>
             </div>
           </div>
 
