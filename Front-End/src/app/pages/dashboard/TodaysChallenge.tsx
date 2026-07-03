@@ -144,7 +144,7 @@ export function TodaysChallenge({
                 {/* Submissions sync controller */}
                 <div className="flex flex-col items-center w-full max-w-xs space-y-3 mt-4">
                   <div className="text-xs text-zinc-400 select-none">
-                    Solves synced today: <strong className="text-white font-bold">{todaySubmissionsCount}/3</strong>
+                    Solved today: <strong className="text-white font-bold">{todaySubmissionsCount} {todaySubmissionsCount === 1 ? "question" : "questions"}</strong>
                   </div>
 
                   <button
