@@ -8,9 +8,9 @@ interface FooterProps {
 
 export function Footer({ className }: FooterProps = {}) {
   return (
-    <footer className={`${className !== undefined ? className : "mt-24"} relative border-t border-white/[0.04] bg-[#06080D] overflow-hidden`}>
-      <div className="relative max-w-6xl mx-auto px-6 py-12 md:py-16">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+    <footer className={`${className !== undefined ? className : "mt-12"} relative border-t border-white/[0.04] bg-[#06080D] overflow-hidden`}>
+      <div className="relative max-w-6xl mx-auto px-6 py-6 md:py-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           
           {/* Brand */}
           <div className="flex flex-col items-start">
@@ -91,7 +91,7 @@ export function Footer({ className }: FooterProps = {}) {
         </div>
 
         {/* Footer Bottom */}
-        <div className="mt-12 pt-6 border-t border-white/[0.04] flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="mt-6 pt-4 border-t border-white/[0.04] flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-[10px] text-zinc-650 font-normal">
             © 2026 ConsistPay. All rights reserved.
           </p>
