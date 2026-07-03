@@ -125,37 +125,29 @@ export function Landing() {
       <main className="w-full pt-20">
         
         {/* Section 1: Hero */}
-        <div className="py-16 md:py-24 border-b border-white/[0.04]">
-          <HeroNew />
-        </div>
+        <HeroNew />
 
-        {/* Section 1.5: Mascot Philosophy Banner */}
-        <div className="py-16 border-b border-white/[0.04] bg-[#0A0C10]/40">
-          <MascotSection />
-        </div>
+        {/* Section 2: Mascot Philosophy (Dark Purple background) */}
+        <MascotSection />
 
-        {/* Section 2: Why ConsistPay / Comparison */}
-        <div className="py-16 border-b border-white/[0.04]">
-          <WhyConsistPay />
-        </div>
+        {/* Section 3: Why ConsistPay / Comparison */}
+        <WhyConsistPay />
 
-        {/* Section 3: How It Works */}
-        <div className="py-16 border-b border-white/[0.04] bg-[#0A0C10]/20" id="how-it-works">
+        {/* Section 4: How It Works (Dark Purple background) */}
+        <div id="how-it-works">
           <HowItWorks />
         </div>
 
-        {/* Section 4: Features Grid */}
-        <div className="py-16 border-b border-white/[0.04]" id="features">
+        {/* Section 5: Features Grid */}
+        <div id="features">
           <MoreFeatures />
         </div>
 
-        {/* Section 4.5: Social Proof Stats */}
-        <div className="py-12 border-b border-white/[0.04] bg-[#0A0C10]/40">
-          <SocialProof />
-        </div>
+        {/* Section 6: Social Proof Stats (Dark Purple background) */}
+        <SocialProof />
 
-        {/* Section 5: Pre-Footer CTA */}
-        <div className="py-20 md:py-28 relative overflow-hidden bg-[#06080D]">
+        {/* Section 7: Pre-Footer CTA */}
+        <div className="py-20 md:py-28 relative overflow-hidden bg-[#06080D] border-b border-white/[0.04]">
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(139,92,246,0.03),transparent_60%)] pointer-events-none" />
           <div className="max-w-4xl mx-auto px-6 relative z-10 text-center">
             <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight mb-6 text-white">
@@ -164,7 +156,7 @@ export function Landing() {
             <p className="text-sm md:text-base text-zinc-400 mb-10 max-w-xl mx-auto leading-relaxed">
               Adopt Consisty, connect your platforms, set your stakes, and start building placement-ready coding habits today.
             </p>
-            <Link to="/signup" className="group inline-flex items-center gap-2 px-8 py-3.5 bg-white text-black hover:bg-zinc-100 font-semibold rounded-xl transition-all shadow-md active:scale-98">
+            <Link to="/signup" className="group inline-flex items-center gap-2 px-8 py-3.5 bg-white text-black hover:bg-zinc-100 font-semibold rounded-xl transition-all shadow-md active:scale-[0.98]">
               Start Your Journey Free
               <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
             </Link>

@@ -1,105 +1,48 @@
 import React from "react";
-import { Shield, Sparkles, RefreshCw, AlertCircle } from "lucide-react";
-import { Link } from "react-router-dom";
 
 export function MascotSection() {
   return (
-    <section className="px-6 py-20 relative overflow-hidden bg-transparent w-full">
-      {/* Subtle radial backdrop glow */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-violet-600/5 blur-[120px] rounded-full -z-10 pointer-events-none" />
+    <section className="px-6 py-24 md:py-28 relative overflow-hidden bg-[#09070F] w-full border-b border-white/[0.04]">
+      {/* Faint radial purple glow */}
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(139,92,246,0.03),transparent_65%)] pointer-events-none" />
 
-      <div className="max-w-5xl mx-auto relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.2fr] gap-16 items-center">
+      <div className="max-w-6xl mx-auto relative z-10">
+        <div className="grid grid-cols-1 lg:grid-cols-[1.2fr_1fr] gap-12 lg:gap-20 items-center">
           
-          {/* Left Column: Smart Narrator Mascot visual */}
-          <div className="flex flex-col items-center justify-center relative select-none">
-            {/* Ambient halo background */}
-            <div className="absolute w-72 h-72 bg-violet-500/5 blur-3xl rounded-full pointer-events-none" />
+          {/* Left Column: Bold, large scale typography */}
+          <div className="flex flex-col items-start text-left">
+            <span className="text-[10px] font-bold text-violet-400 uppercase tracking-widest px-3 py-1.5 rounded-lg bg-violet-950/40 border border-violet-900/30 mb-8">
+              Platform Philosophy
+            </span>
+            <h2 className="text-4xl sm:text-5xl font-extrabold text-white tracking-tight mb-8 leading-[1.15]">
+              Consistency is a System,<br />Not an Emotion.
+            </h2>
             
-            {/* Mascot Image Card */}
-            <div className="relative w-64 h-64 flex items-center justify-center group bg-white/[0.01] border border-white/[0.04] rounded-3xl p-6 shadow-inner">
-              <img 
-                src="/logo/mascot-full.png" 
-                alt="ConsistPay Accountability Partner Mascot" 
-                className="w-full h-full object-contain relative z-10 filter drop-shadow-[0_12px_24px_rgba(139,92,246,0.25)] transition-all duration-500 hover:scale-[1.02] hover:-rotate-1"
-              />
+            <div className="space-y-6 text-zinc-300 font-medium">
+              <p className="text-base sm:text-lg leading-relaxed text-zinc-400 font-normal">
+                Most habit platforms fail because they rely on motivation. But motivation is unreliable. When interview deadlines pile up or routines break, willpower dissolves.
+              </p>
+              <p className="text-base sm:text-lg leading-relaxed text-zinc-400 font-normal">
+                ConsistPay treats consistency as an engineering problem. By connecting directly to platform APIs and backing it with refundable stakes, we align your incentives so discipline becomes automatic.
+              </p>
             </div>
             
-            {/* Single-line guide bubble explaining auto-sync mechanic */}
-            <div className="mt-8 relative max-w-sm bg-[#0A0C10] border border-white/[0.06] rounded-2xl p-4 shadow-lg">
-              {/* Arrow */}
-              <div className="absolute top-[-6px] left-1/2 -translate-x-1/2 w-3 h-3 bg-[#0A0C10] border-t border-l border-white/[0.06] rotate-45" />
-              <p className="text-xs text-zinc-300 font-medium text-center relative z-10 leading-relaxed">
-                "I track your daily progress directly from LeetCode and GFG APIs. No manual uploads. No excuses. Stay consistent or fund the pool."
-              </p>
+            {/* Speach note block as editorial quote */}
+            <div className="mt-10 border-l-2 border-violet-500 pl-4 py-1 text-xs text-zinc-550 leading-relaxed max-w-lg font-normal italic">
+              "No screenshots to upload, no spreadsheets to paste. ConsistPay queries public profiles directly before midnight. You either stay consistent, or your stake funds the rewards pool." — Consisty
             </div>
           </div>
 
-          {/* Right Column: Platform Philosophy & Core Mechanics */}
-          <div>
-            <div className="mb-8">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-violet-500/10 text-violet-400 text-xs font-semibold border border-violet-500/20 mb-4">
-                <Sparkles className="w-3.5 h-3.5" /> Platform Philosophy
-              </span>
-              <h2 className="text-3xl sm:text-4xl font-bold text-white tracking-tight mb-4">
-                Accountability Trumps Willpower
-              </h2>
-              <p className="text-sm text-zinc-400 leading-relaxed mb-6 font-normal">
-                Willpower is finite; system design is permanent. ConsistPay is engineered to replace fragile motivation with bulletproof daily discipline. We connect directly to your public profiles to verify every solve automatically.
-              </p>
-            </div>
-
-            {/* Sub-principles list */}
-            <div className="space-y-6">
+          {/* Right Column: Dominant Mascot Visual Anchor */}
+          <div className="relative flex items-center justify-center lg:justify-end">
+            <div className="relative w-full max-w-sm h-[320px] sm:h-[400px] flex items-center justify-center select-none bg-white/[0.01] border border-white/[0.03] rounded-[2rem] p-6 shadow-2xl">
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(139,92,246,0.06),transparent_60%)] pointer-events-none" />
               
-              {/* Point 1 */}
-              <div className="flex gap-4">
-                <div className="w-10 h-10 rounded-xl bg-white/[0.02] border border-white/[0.06] flex items-center justify-center shrink-0">
-                  <RefreshCw className="w-5 h-5 text-violet-400" />
-                </div>
-                <div>
-                  <h4 className="text-sm font-semibold text-white mb-1">Zero-friction Auto Sync</h4>
-                  <p className="text-xs text-zinc-400 leading-relaxed font-normal">
-                    We query platform API pipelines before midnight. No screenshots to upload, no URLs to paste. Just code as you normally do, and we verify the rest.
-                  </p>
-                </div>
-              </div>
-
-              {/* Point 2 */}
-              <div className="flex gap-4">
-                <div className="w-10 h-10 rounded-xl bg-white/[0.02] border border-white/[0.06] flex items-center justify-center shrink-0">
-                  <Shield className="w-5 h-5 text-emerald-450" />
-                </div>
-                <div>
-                  <h4 className="text-sm font-semibold text-white mb-1">Stakes-backed Motivation</h4>
-                  <p className="text-xs text-zinc-400 leading-relaxed font-normal">
-                    Locking a small refundable stake uses loss-aversion psychology to make consistency your default state. You retrieve your deposit when you stay active.
-                  </p>
-                </div>
-              </div>
-
-              {/* Point 3 */}
-              <div className="flex gap-4">
-                <div className="w-10 h-10 rounded-xl bg-white/[0.02] border border-white/[0.06] flex items-center justify-center shrink-0">
-                  <AlertCircle className="w-5 h-5 text-rose-500" />
-                </div>
-                <div>
-                  <h4 className="text-sm font-semibold text-white mb-1">Community Pool Deductions</h4>
-                  <p className="text-xs text-zinc-400 leading-relaxed font-normal">
-                    Missed coding days deduct a portion of your stake, sending it to a collective pool distributed to developers who kept their streaks alive.
-                  </p>
-                </div>
-              </div>
-
-            </div>
-
-            <div className="mt-8 flex justify-start">
-              <Link 
-                to="/signup" 
-                className="px-6 py-3 bg-violet-600 hover:bg-violet-500 text-white text-xs font-semibold rounded-xl transition-all shadow-md active:scale-98"
-              >
-                Get Started
-              </Link>
+              <img 
+                src="/logo/mascot-full.png" 
+                alt="ConsistPay Smart Accountability Narrator Mascot - Consisty" 
+                className="w-full h-full object-contain relative z-10 filter drop-shadow-[0_20px_50px_rgba(139,92,246,0.35)] transition-transform duration-700 hover:scale-[1.02] hover:-rotate-1"
+              />
             </div>
           </div>
 

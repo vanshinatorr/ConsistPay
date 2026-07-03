@@ -1,27 +1,22 @@
 import React from "react";
-import { ArrowRight, Check, PlayCircle, ShieldCheck, RefreshCw, Link2, Globe } from "lucide-react";
+import { ArrowRight, Check, PlayCircle, RefreshCw, Link2, Globe, ShieldCheck } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 export function HeroNew() {
   const navigate = useNavigate();
 
   return (
-    <section className="relative px-6 py-20 md:py-0 overflow-hidden w-full">
-      <div className="max-w-7xl mx-auto relative z-10">
+    <section className="relative px-6 py-20 md:py-28 overflow-hidden w-full bg-[#06080D] border-b border-white/[0.04]">
+      <div className="max-w-6xl mx-auto relative z-10">
         <div className="grid grid-cols-1 xl:grid-cols-[1fr_1.1fr] gap-16 items-center">
           
           {/* Left: Text Content */}
           <div className="relative z-20 flex flex-col items-center text-center xl:items-start xl:text-left">
             {/* Top Badge */}
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/[0.02] border border-white/[0.06] mb-8 shadow-sm">
-              <img 
-                src="/logo/favicon-32x32.png" 
-                className="w-5 h-5 rounded-full object-contain animate-bounce" 
-                style={{ animationDuration: "3s" }} 
-                alt="Mascot Icon" 
-              />
-              <span className="text-xs text-zinc-300 font-medium tracking-wide pr-1">
-                Meet Consisty — Your AI Accountability Partner
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/[0.02] border border-white/[0.06] mb-8 shadow-sm">
+              <span className="w-1.5 h-1.5 bg-violet-500 rounded-full animate-pulse" />
+              <span className="text-xs text-zinc-400 font-medium tracking-wide">
+                Automated API Verification Engine
               </span>
             </div>
  
@@ -135,20 +130,20 @@ export function HeroNew() {
                   </div>
                 </div>
  
-                {/* Codeforces - Placeholder / Secondary */}
-                <div className="flex items-center justify-between p-4 bg-white/[0.01] border border-white/[0.02] border-dashed rounded-2xl opacity-60">
+                {/* Codeforces - Coming Soon (Disabled Style) */}
+                <div className="flex items-center justify-between p-4 bg-white/[0.01] border border-white/[0.03] border-dashed rounded-2xl opacity-40">
                   <div className="flex items-center gap-4">
-                    <div className="w-10 h-10 bg-zinc-500/10 rounded-xl flex items-center justify-center border border-zinc-500/20">
-                      <RefreshCw className="w-5 h-5 text-zinc-400" />
+                    <div className="w-10 h-10 bg-zinc-500/10 rounded-xl flex items-center justify-center border border-zinc-550/20">
+                      <RefreshCw className="w-5 h-5 text-zinc-500" />
                     </div>
                     <div>
                       <h4 className="text-sm font-semibold text-zinc-400">Codeforces Profile</h4>
-                      <p className="text-xs text-zinc-600">Not connected</p>
+                      <p className="text-xs text-zinc-650 font-normal">Integration pending</p>
                     </div>
                   </div>
-                  <button className="text-xs font-semibold text-zinc-400 hover:text-white px-3 py-1.5 rounded-lg bg-white/5 border border-white/15 transition-all">
-                    Connect
-                  </button>
+                  <span className="text-[9px] font-bold text-zinc-500 border border-zinc-800 bg-[#0E0F14] px-2 py-1 rounded-md uppercase tracking-wider">
+                    Coming Soon
+                  </span>
                 </div>
  
               </div>
@@ -163,7 +158,7 @@ export function HeroNew() {
                   </div>
                   <div>
                     <span className="text-[9px] text-zinc-500 uppercase tracking-wider block">Commitment Stake</span>
-                    <span className="text-base font-bold text-white">₹250 Locked</span>
+                    <span className="text-sm font-bold text-white">₹250 Locked</span>
                   </div>
                 </div>
  
@@ -174,7 +169,7 @@ export function HeroNew() {
                   </div>
                   <div>
                     <span className="text-[9px] text-zinc-500 uppercase tracking-wider block">Shared Pool Yield</span>
-                    <span className="text-base font-bold text-emerald-450">+₹48.50 Earned</span>
+                    <span className="text-sm font-bold text-emerald-450">+₹48.50 Earned</span>
                   </div>
                 </div>
  
@@ -191,7 +186,6 @@ export function HeroNew() {
   );
 }
 
-// Internal placeholder for compatibility with any dynamic import checks
 const CheckCircle2 = (props: React.SVGProps<SVGSVGElement>) => (
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
     <circle cx="12" cy="12" r="10" />
