@@ -687,7 +687,7 @@ export function Dashboard() {
             <div className="lg:col-span-2">
               <StatsRow
                 currentStreak={currentStreak}
-                completedDays={linkage?.isVerified ? (linkage.totalSolved || 0) : (userData?.totalProblemsSolved ?? 0)}
+                completedDays={userData?.totalProblemsSolved ?? 0}
                 consistencyScore={consistencyScore}
                 onboardingComplete={userData?.onboardingComplete ?? true}
               />
