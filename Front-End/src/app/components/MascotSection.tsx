@@ -2,11 +2,13 @@ import React, { useState } from "react";
 import { X, Check, Calculator, ShieldCheck, TrendingUp } from "lucide-react";
 
 export function MascotSection() {
-  const [dailyStake, setDailyStake] = useState(20);
+  const STAKE_VALUES = [5, 10, 15, 20, 50];
+  const [stakeIndex, setStakeIndex] = useState(3); // Defaults to ₹20 (index 3)
+  const dailyStake = STAKE_VALUES[stakeIndex];
   const [streakDays, setStreakDays] = useState(30);
 
   const principal = dailyStake * streakDays;
-  const estYield = Math.floor(principal * 0.115); // 11.5% average slacker pool yield
+  const estYield = Math.floor(principal * 0.10); // Exactly 10% average slacker pool yield
   const totalReturn = principal + estYield;
 
   const comparisons = [
@@ -60,11 +62,11 @@ export function MascotSection() {
                 </div>
                 <input 
                   type="range" 
-                  min="5" 
-                  max="100" 
-                  step="5"
-                  value={dailyStake} 
-                  onChange={(e) => setDailyStake(Number(e.target.value))}
+                  min="0" 
+                  max="4" 
+                  step="1"
+                  value={stakeIndex} 
+                  onChange={(e) => setStakeIndex(Number(e.target.value))}
                   className="w-full h-1 bg-zinc-800 rounded-lg appearance-none cursor-pointer accent-white"
                 />
               </div>
