@@ -1,173 +1,162 @@
-import { UserPlus, CreditCard, Wallet, Link2, Flame, BadgeIndianRupee } from "lucide-react";
+import React from "react";
+import { Wallet, Link2, Flame, RefreshCw, AlertTriangle, Coins } from "lucide-react";
 
 export function HowItWorks() {
   const steps = [
     {
       number: "01",
-      icon: UserPlus,
-      title: "Sign Up Free",
-      description: "Create your account in seconds. No credit card needed to get started — just your email.",
+      icon: Wallet,
+      title: "Set Your Stakes",
+      description: "Select a refundable daily stake (₹5 - ₹50) to create financial accountability.",
       color: "violet",
-      emphasis: false,
     },
     {
       number: "02",
-      icon: CreditCard,
-      title: "Pick Your Plan",
-      description: "Choose Free (₹5–₹10/day) or Pro (₹5–₹50/day) for advanced analytics & friend challenges.",
-      color: "purple",
-      emphasis: false,
+      icon: Link2,
+      title: "Link Coding Profiles",
+      description: "Connect LeetCode, GFG, or Codeforces accounts using your public username handles.",
+      color: "violet",
     },
     {
       number: "03",
-      icon: Wallet,
-      title: "Deposit & Commit",
-      description: "Make a 100% refundable monthly deposit. This is your accountability stake, not a fee.",
-      color: "blue",
-      emphasis: true, // Primary action
+      icon: Flame,
+      title: "Solve Daily Problems",
+      description: "Practice and solve coding problems directly on your connected platforms as usual.",
+      color: "violet",
     },
     {
       number: "04",
-      icon: Link2,
-      title: "Solve & Submit Daily",
-      description: "Solve one coding problem and paste the solution link before midnight.",
+      icon: RefreshCw,
+      title: "Automated API Sync",
+      description: "Our system automatically scrapes public APIs before midnight to verify your progress. No manual uploads.",
       color: "emerald",
-      emphasis: true, // Primary action
     },
     {
       number: "05",
-      icon: Flame,
+      icon: AlertTriangle,
       title: "Streak or Deduct",
-      description: "Submit on time? Streak grows. Miss a day? Daily amount is deducted. Grace coins can save you.",
-      color: "orange",
-      emphasis: false,
+      description: "Stay consistent to build your streak. Break it, and your daily stake amount is deducted.",
+      color: "rose",
     },
     {
       number: "06",
-      icon: BadgeIndianRupee,
-      title: "The Payout: Refund + Profit",
-      description: "Stay disciplined all month. Not only do you get your full deposit refunded, but you also take a cut from the pool of lazy coders who missed their daily goal.",
-      color: "amber",
-      emphasis: true, // Emotional peak
+      icon: Coins,
+      title: "Shared Pool Payout",
+      description: "Maintain your monthly streak to retrieve your full deposit plus your share of rewards funded by slacking peers.",
+      color: "emerald",
     },
   ];
 
-  const getColorTheme = (emphasis: boolean) => {
-    if (emphasis) {
-      return { bg: 'bg-violet-500/10 border border-violet-500/20', text: 'text-violet-400' };
-    }
-    return { bg: 'bg-slate-800/50 border border-white/5', text: 'text-slate-400' };
-  };
-
   return (
-    <section id="how-it-works" className="px-6 py-16 md:py-0 relative overflow-hidden bg-transparent w-full">
+    <section id="how-it-works" className="px-6 py-20 relative overflow-hidden bg-transparent w-full">
       {/* Background Glows */}
-      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-violet-600/20 blur-[150px] rounded-full pointer-events-none" />
-      <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-emerald-600/10 blur-[150px] rounded-full pointer-events-none" />
+      <div className="absolute top-1/4 left-1/4 w-[400px] h-[400px] bg-violet-600/5 blur-[120px] rounded-full pointer-events-none -z-10" />
+      <div className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] bg-emerald-600/5 blur-[120px] rounded-full pointer-events-none -z-10" />
 
       <div className="max-w-6xl mx-auto relative z-10">
-        <div className="text-center mb-4 md:mb-5 relative">
-          <h2 className="text-4xl sm:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white via-slate-200 to-slate-500 tracking-tight">
+        <div className="text-center mb-12">
+          <span className="px-3 py-1 rounded-full bg-white/[0.02] border border-white/[0.06] text-zinc-400 text-xs font-semibold mb-3 inline-block">
+            Step-by-step
+          </span>
+          <h2 className="text-3xl sm:text-4xl font-bold text-white tracking-tight mb-4">
             How ConsistPay Works
           </h2>
+          <p className="text-sm text-zinc-450 max-w-xl mx-auto font-normal">
+            A frictionless automated loop that turns daily consistency into an absolute habit.
+          </p>
         </div>
 
-        {/* BENTO BOX GRID */}
-        <div className="hidden md:grid grid-cols-1 md:grid-cols-3 gap-4 relative z-10">
+        {/* Bento Box Grid */}
+        <div className="hidden md:grid grid-cols-1 md:grid-cols-3 gap-6 relative z-10">
           
-          {/* Box 1: Sign Up (Small) */}
-          <div className="col-span-1 bg-[#13151f]/80 backdrop-blur-xl border border-white/5 rounded-[2rem] p-5 flex flex-col justify-between group hover:bg-[#1a1d27] transition-all hover:-translate-y-1">
-            <div className="flex justify-between items-start mb-3">
-              <div className="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center border border-white/10 group-hover:scale-110 transition-transform">
-                <UserPlus className="w-6 h-6 text-slate-300" />
+          {/* Step 1: Stakes */}
+          <div className="bg-[#0A0C10] border border-white/[0.04] rounded-3xl p-6 flex flex-col justify-between group hover:border-white/[0.08] transition-all hover:translate-y-[-2px]">
+            <div className="flex justify-between items-start mb-6">
+              <div className="w-10 h-10 rounded-xl bg-white/[0.02] border border-white/[0.06] flex items-center justify-center group-hover:scale-105 transition-transform">
+                <Wallet className="w-5 h-5 text-violet-400" />
               </div>
-              <span className="text-5xl font-black text-white/5">01</span>
+              <span className="text-3xl font-black text-zinc-800">01</span>
             </div>
             <div>
-              <h3 className="text-lg font-bold text-white mb-1 tracking-tight">{steps[0].title}</h3>
-              <p className="text-xs text-slate-400 font-medium leading-relaxed">{steps[0].description}</p>
+              <h3 className="text-base font-semibold text-white mb-2">{steps[0].title}</h3>
+              <p className="text-xs text-zinc-400 leading-relaxed font-normal">{steps[0].description}</p>
             </div>
           </div>
 
-          {/* Box 2: Pick Plan (Small) */}
-          <div className="col-span-1 bg-[#13151f]/80 backdrop-blur-xl border border-white/5 rounded-[2rem] p-5 flex flex-col justify-between group hover:bg-[#1a1d27] transition-all hover:-translate-y-1">
-            <div className="flex justify-between items-start mb-3">
-              <div className="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center border border-white/10 group-hover:scale-110 transition-transform">
-                <CreditCard className="w-6 h-6 text-slate-300" />
+          {/* Step 2: Profiles */}
+          <div className="bg-[#0A0C10] border border-white/[0.04] rounded-3xl p-6 flex flex-col justify-between group hover:border-white/[0.08] transition-all hover:translate-y-[-2px]">
+            <div className="flex justify-between items-start mb-6">
+              <div className="w-10 h-10 rounded-xl bg-white/[0.02] border border-white/[0.06] flex items-center justify-center group-hover:scale-105 transition-transform">
+                <Link2 className="w-5 h-5 text-violet-400" />
               </div>
-              <span className="text-5xl font-black text-white/5">02</span>
+              <span className="text-3xl font-black text-zinc-800">02</span>
             </div>
             <div>
-              <h3 className="text-lg font-bold text-white mb-1 tracking-tight">{steps[1].title}</h3>
-              <p className="text-xs text-slate-400 font-medium leading-relaxed">{steps[1].description}</p>
+              <h3 className="text-base font-semibold text-white mb-2">{steps[1].title}</h3>
+              <p className="text-xs text-zinc-400 leading-relaxed font-normal">{steps[1].description}</p>
             </div>
           </div>
 
-          {/* Box 3: Deposit (Wide, Important) */}
-          <div className="col-span-1 md:col-span-1 bg-gradient-to-br from-violet-900/30 to-[#13151f]/80 backdrop-blur-xl border border-violet-500/20 rounded-[2rem] p-5 flex flex-col justify-between group hover:border-violet-500/40 transition-all hover:-translate-y-1 relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-32 h-32 bg-violet-500/20 blur-3xl" />
-            <div className="flex justify-between items-start mb-3 relative z-10">
-              <div className="w-12 h-12 rounded-2xl bg-violet-500/20 flex items-center justify-center border border-violet-500/30 group-hover:scale-110 transition-transform shadow-[0_0_15px_rgba(139,92,246,0.3)]">
-                <Wallet className="w-6 h-6 text-violet-400" />
+          {/* Step 3: Solve Problems */}
+          <div className="bg-[#0A0C10] border border-white/[0.04] rounded-3xl p-6 flex flex-col justify-between group hover:border-white/[0.08] transition-all hover:translate-y-[-2px]">
+            <div className="flex justify-between items-start mb-6">
+              <div className="w-10 h-10 rounded-xl bg-white/[0.02] border border-white/[0.06] flex items-center justify-center group-hover:scale-105 transition-transform">
+                <Flame className="w-5 h-5 text-violet-400" />
               </div>
-              <span className="text-5xl font-black text-violet-500/10">03</span>
-            </div>
-            <div className="relative z-10">
-              <h3 className="text-lg font-bold text-white mb-1 tracking-tight">{steps[2].title}</h3>
-              <p className="text-xs text-slate-300 font-medium leading-relaxed">{steps[2].description}</p>
-            </div>
-          </div>
-
-          {/* Box 4: Solve Daily */}
-          <div className="col-span-1 md:col-span-2 bg-gradient-to-br from-blue-900/20 to-[#13151f]/80 backdrop-blur-xl border border-blue-500/20 rounded-[2rem] p-5 flex flex-col justify-between group hover:border-blue-500/40 transition-all relative overflow-hidden shadow-2xl shadow-black/50">
-            {/* Ambient code background */}
-            <div className="absolute inset-0 opacity-[0.03] pointer-events-none overflow-hidden text-[8px] font-mono leading-none break-all text-white">
-              {`function verifyProof(code) { if (!code) return false; return true; } const engine = new Engine(); engine.start(); verifyProof(code); function verifyProof(code) { if (!code) return false; return true; } const engine = new Engine(); engine.start();`}
-              {`function verifyProof(code) { if (!code) return false; return true; } const engine = new Engine(); engine.start(); verifyProof(code); function verifyProof(code) { if (!code) return false; return true; } const engine = new Engine(); engine.start();`}
-            </div>
-            
-            <div className="flex justify-between items-start mb-3 relative z-10">
-              <div className="w-12 h-12 rounded-2xl bg-blue-500/20 flex items-center justify-center border border-blue-500/30 shadow-[0_0_30px_rgba(59,130,246,0.2)] group-hover:scale-110 transition-transform">
-                <Link2 className="w-6 h-6 text-blue-400" />
-              </div>
-              <span className="text-5xl font-black text-blue-500/10">04</span>
-            </div>
-            <div className="relative z-10">
-              <h3 className="text-xl font-bold text-white mb-1 tracking-tight">{steps[3].title}</h3>
-              <p className="text-xs text-slate-400 font-medium leading-relaxed max-w-lg">{steps[3].description}</p>
-            </div>
-          </div>
-
-          {/* Box 5: Streak (Small) */}
-          <div className="col-span-1 bg-[#13151f]/80 backdrop-blur-xl border border-white/5 rounded-[2rem] p-5 flex flex-col justify-between group hover:bg-[#1a1d27] transition-all hover:-translate-y-1">
-            <div className="flex justify-between items-start mb-3">
-              <div className="w-12 h-12 rounded-2xl bg-orange-500/10 flex items-center justify-center border border-orange-500/20 group-hover:scale-110 transition-transform">
-                <Flame className="w-6 h-6 text-orange-400" />
-              </div>
-              <span className="text-5xl font-black text-white/5">05</span>
+              <span className="text-3xl font-black text-zinc-800">03</span>
             </div>
             <div>
-              <h3 className="text-lg font-bold text-white mb-1 tracking-tight">{steps[4].title}</h3>
-              <p className="text-xs text-slate-400 font-medium leading-relaxed">{steps[4].description}</p>
+              <h3 className="text-base font-semibold text-white mb-2">{steps[2].title}</h3>
+              <p className="text-xs text-zinc-400 leading-relaxed font-normal">{steps[2].description}</p>
             </div>
           </div>
 
-          {/* Box 6: Reward (Wide Footer-ish) */}
-          <div className="col-span-1 md:col-span-3 bg-gradient-to-r from-emerald-900/30 via-[#13151f] to-[#13151f] border border-emerald-500/20 rounded-[2rem] p-5 md:p-5 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 md:gap-6 group hover:border-emerald-500/40 transition-all relative overflow-hidden">
-            <div className="absolute top-1/2 left-0 w-64 h-64 bg-emerald-500/10 blur-[80px] -translate-y-1/2 rounded-full pointer-events-none" />
+          {/* Step 4: Auto Sync (Highlighted Green) */}
+          <div className="col-span-1 md:col-span-2 bg-gradient-to-br from-[#0A0C10] to-[#0D1512] border border-emerald-500/20 rounded-3xl p-6 flex flex-col justify-between group hover:border-emerald-500/35 transition-all hover:translate-y-[-2px] relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/5 blur-[80px] pointer-events-none" />
+            <div className="flex justify-between items-start mb-6">
+              <div className="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center group-hover:scale-105 transition-transform">
+                <RefreshCw className="w-5 h-5 text-emerald-450 animate-spin" style={{ animationDuration: "12s" }} />
+              </div>
+              <span className="text-3xl font-black text-emerald-500/10">04</span>
+            </div>
+            <div>
+              <h3 className="text-base font-semibold text-white mb-2">{steps[3].title}</h3>
+              <p className="text-xs text-zinc-300 leading-relaxed font-normal max-w-lg">{steps[3].description}</p>
+            </div>
+          </div>
+
+          {/* Step 5: Streak or Deduct (Highlighted Red) */}
+          <div className="bg-gradient-to-br from-[#0A0C10] to-[#150D0D] border border-rose-500/20 rounded-3xl p-6 flex flex-col justify-between group hover:border-rose-500/35 transition-all hover:translate-y-[-2px] relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-rose-500/5 blur-[80px] pointer-events-none" />
+            <div className="flex justify-between items-start mb-6">
+              <div className="w-10 h-10 rounded-xl bg-rose-500/10 border border-rose-500/20 flex items-center justify-center group-hover:scale-105 transition-transform">
+                <AlertTriangle className="w-5 h-5 text-rose-500 animate-pulse" />
+              </div>
+              <span className="text-3xl font-black text-rose-500/10">05</span>
+            </div>
+            <div>
+              <h3 className="text-base font-semibold text-white mb-2">{steps[4].title}</h3>
+              <p className="text-xs text-zinc-350 leading-relaxed font-normal">{steps[4].description}</p>
+            </div>
+          </div>
+
+          {/* Step 6: Payout (Full Width Highlighted Green/Gold style but strict emerald) */}
+          <div className="col-span-1 md:col-span-3 bg-gradient-to-r from-[#0A0C10] via-[#0A0C10] to-[#0D1512] border border-emerald-500/20 rounded-3xl p-6 flex flex-col md:flex-row md:items-center justify-between gap-6 group hover:border-emerald-500/35 transition-all hover:translate-y-[-2px] relative overflow-hidden">
+            <div className="absolute top-1/2 right-0 w-64 h-64 bg-emerald-500/5 blur-[100px] -translate-y-1/2 rounded-full pointer-events-none" />
             
             <div className="flex items-center gap-4 relative z-10 shrink-0">
-              <div className="w-12 h-12 rounded-2xl bg-emerald-500/20 flex items-center justify-center border border-emerald-500/30 shrink-0 group-hover:scale-110 transition-transform shadow-[0_0_30px_rgba(16,185,129,0.2)]">
-                <BadgeIndianRupee className="w-6 h-6 text-emerald-400" />
+              <div className="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                <Coins className="w-5 h-5 text-emerald-450" />
               </div>
               <div>
-                <span className="text-[10px] font-bold text-emerald-500 uppercase tracking-[0.15em] mb-1 block">Phase 06 — The Payout</span>
-                <h3 className="text-xl font-bold text-white tracking-tight">{steps[5].title}</h3>
+                <span className="text-[9px] font-bold text-emerald-400 uppercase tracking-widest block mb-0.5">Final Phase</span>
+                <h3 className="text-base font-semibold text-white">{steps[5].title}</h3>
               </div>
             </div>
-
-            <div className="relative z-10 md:max-w-lg shrink">
-              <p className="text-xs text-slate-300 font-medium leading-relaxed text-balance">
+ 
+            <div className="relative z-10 md:max-w-xl shrink">
+              <p className="text-xs text-zinc-350 leading-relaxed font-normal">
                 {steps[5].description}
               </p>
             </div>
@@ -175,43 +164,27 @@ export function HowItWorks() {
 
         </div>
 
-        {/* MOBILE ONLY TIMELINE */}
+        {/* Mobile View Timeline */}
         <div className="block md:hidden space-y-4 relative z-10">
-          {[
-            {
-              step: "01",
-              title: "Set Your Commitment",
-              desc: "Choose a refundable daily stake (₹5 - ₹50) to hold yourself accountable.",
-              icon: Wallet,
-              color: "text-violet-400 border-violet-500/20 bg-violet-500/10"
-            },
-            {
-              step: "02",
-              title: "Code & Sync Status",
-              desc: "Solve coding questions on LeetCode and sync your status on the dashboard before midnight.",
-              icon: Link2,
-              color: "text-blue-400 border-blue-500/20 bg-blue-500/10"
-            },
-            {
-              step: "03",
-              title: "Get Refunded + Earn",
-              desc: "Succeed to get your deposit back, plus bonus cash from those who break their streaks.",
-              icon: BadgeIndianRupee,
-              color: "text-emerald-400 border-emerald-500/20 bg-emerald-500/10"
-            }
-          ].map((item, idx) => {
+          {steps.map((item, idx) => {
             const Icon = item.icon;
+            const theme = item.color === "emerald" 
+              ? "text-emerald-450 border-emerald-500/20 bg-emerald-500/10" 
+              : item.color === "rose"
+              ? "text-rose-500 border-rose-500/20 bg-rose-500/10"
+              : "text-violet-400 border-white/[0.04] bg-white/[0.02]";
+            
             return (
-              <div key={idx} className="flex gap-4 p-5 bg-[#13151f]/80 backdrop-blur-xl border border-white/5 rounded-2xl">
-                <div className={`w-12 h-12 rounded-xl flex items-center justify-center border shrink-0 ${item.color}`}>
-                  <Icon className="w-6 h-6" />
+              <div key={idx} className="flex gap-4 p-5 bg-[#0A0C10] border border-white/[0.04] rounded-2xl">
+                <div className={`w-10 h-10 rounded-xl flex items-center justify-center border shrink-0 ${theme}`}>
+                  <Icon className="w-5 h-5" />
                 </div>
                 <div>
                   <div className="flex items-center gap-2 mb-1">
-                    <span className="text-xs font-bold text-violet-500/60 font-mono">{item.step}</span>
-                    <h4 className="text-base font-bold text-white tracking-tight">{item.title}</h4>
+                    <span className="text-xs font-semibold text-zinc-600 font-mono">{item.number}</span>
+                    <h4 className="text-sm font-semibold text-white">{item.title}</h4>
                   </div>
-                  <p className="text-xs text-slate-400 leading-relaxed font-medium">{item.desc}</p>
+                  <p className="text-xs text-zinc-400 leading-relaxed font-normal">{item.description}</p>
                 </div>
               </div>
             );

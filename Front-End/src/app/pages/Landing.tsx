@@ -1,7 +1,6 @@
+import React, { useState } from "react";
 import { Menu, X, ArrowRight } from "lucide-react";
-import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Logo } from "../components/Logo";
 import { HeroNew } from "../components/HeroNew";
 import { SocialProof } from "../components/SocialProof";
 import { MoreFeatures } from "../components/MoreFeatures";
@@ -14,50 +13,49 @@ export function Landing() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
-    <div className="text-slate-100 bg-[#06080D] relative w-full md:h-screen md:overflow-hidden">
-      {/* Ambient background glows */}
-      <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-violet-600/20 rounded-full blur-[150px] pointer-events-none -translate-y-1/2" />
-      <div className="absolute top-1/3 right-0 w-[400px] h-[400px] bg-fuchsia-600/10 rounded-full blur-[120px] pointer-events-none translate-x-1/2" />
+    <div className="text-slate-100 bg-[#06080D] relative w-full overflow-x-hidden min-h-screen font-sans">
       
-      {/* Subtle Grid Background */}
-      <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:64px_64px] pointer-events-none opacity-20" />
+      {/* Ambient background glows */}
+      <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-violet-600/10 rounded-full blur-[150px] pointer-events-none -translate-y-1/2" />
+      <div className="absolute top-1/3 right-0 w-[400px] h-[400px] bg-fuchsia-600/5 rounded-full blur-[120px] pointer-events-none translate-x-1/2" />
+      
       {/* Navigation */}
-      <nav className="fixed top-0 left-0 right-0 z-50 border-b border-white/5 bg-[#0A0C10]/60 backdrop-blur-md">
-        <div className="max-w-7xl mx-auto px-6 py-4">
+      <nav className="fixed top-0 left-0 right-0 z-50 border-b border-white/[0.04] bg-[#06080D]/80 backdrop-blur-md">
+        <div className="max-w-6xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
+            
             {/* Logo */}
             <Link to="/" className="flex items-center gap-3">
               <img
                 src="/logo/mascot-full.png"
                 alt="ConsistPay Logo"
-                className="w-10 h-10 object-contain select-none filter drop-shadow-[0_2px_8px_rgba(139,92,246,0.2)]"
+                className="w-9 h-9 object-contain select-none filter drop-shadow-[0_2px_8px_rgba(139,92,246,0.2)]"
               />
-              <span className="text-xl font-bold bg-gradient-to-r from-white to-zinc-400 bg-clip-text text-transparent">
+              <span className="text-xl font-bold tracking-tight text-white">
                 ConsistPay
               </span>
             </Link>
 
-            {/* Desktop Navigation */}
+            {/* Desktop Nav Links */}
             <div className="hidden md:flex items-center gap-8">
-              <a href="#features" className="text-sm text-zinc-400 hover:text-white transition-colors">
+              <a href="#features" className="text-xs font-semibold text-zinc-400 hover:text-white transition-colors uppercase tracking-wider">
                 Features
               </a>
-              <a href="#how-it-works" className="text-sm text-zinc-400 hover:text-white transition-colors">
+              <a href="#how-it-works" className="text-xs font-semibold text-zinc-400 hover:text-white transition-colors uppercase tracking-wider">
                 How It Works
               </a>
-              <Link to="/pricing" className="text-sm text-zinc-400 hover:text-white transition-colors">
+              <Link to="/pricing" className="text-xs font-semibold text-zinc-400 hover:text-white transition-colors uppercase tracking-wider">
                 Pricing
               </Link>
             </div>
 
             {/* CTA Buttons */}
-            <div className="hidden md:flex items-center gap-3">
-              <Link to="/login" className="px-5 py-2.5 text-sm font-medium text-slate-300 hover:text-white transition-colors">
+            <div className="hidden md:flex items-center gap-6">
+              <Link to="/login" className="text-xs font-semibold text-zinc-400 hover:text-white transition-colors uppercase tracking-wider">
                 Sign In
               </Link>
-              <Link to="/signup" className="group relative px-5 py-2.5 bg-white text-black font-semibold rounded-lg text-sm transition-all duration-300 hover:scale-105 shadow-[0_0_15px_rgba(255,255,255,0.3)]">
+              <Link to="/signup" className="px-5 py-2.5 bg-violet-650 hover:bg-violet-600 text-white font-bold rounded-xl text-xs transition-all active:scale-[0.98]">
                 Start Free
-                <div className="absolute inset-0 rounded-lg ring-2 ring-white/50 scale-100 group-hover:scale-110 opacity-0 group-hover:opacity-100 transition-all duration-300" />
               </Link>
             </div>
 
@@ -70,51 +68,48 @@ export function Landing() {
             </button>
           </div>
 
-          {/* Mobile Menu Backdrop and Drawer */}
+          {/* Mobile Dropdown Menu */}
           {mobileMenuOpen && (
             <>
               <div 
                 className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40"
                 onClick={() => setMobileMenuOpen(false)}
               />
-              <div className="md:hidden absolute top-full left-4 right-4 mt-2 bg-[#0C0E14]/95 border border-white/10 rounded-2xl p-6 shadow-[0_20px_50px_rgba(0,0,0,0.5)] backdrop-blur-xl z-50 transition-all duration-300 animate-in fade-in slide-in-from-top-5">
+              <div className="md:hidden absolute top-full left-4 right-4 mt-2 bg-[#0A0C10] border border-white/[0.06] rounded-2xl p-6 shadow-2xl backdrop-blur-xl z-50 transition-all">
                 <div className="flex flex-col gap-4">
                   <a 
                     href="#features" 
                     onClick={() => setMobileMenuOpen(false)}
-                    className="text-sm font-semibold text-zinc-300 hover:text-white transition-colors py-2 flex items-center justify-between border-b border-white/[0.04]"
+                    className="text-xs font-semibold text-zinc-300 hover:text-white py-2 flex items-center justify-between border-b border-white/[0.04]"
                   >
                     <span>Features</span>
-                    <span className="text-[10px] bg-white/5 px-2 py-0.5 rounded-full text-zinc-500">Explore</span>
                   </a>
                   <a 
                     href="#how-it-works" 
                     onClick={() => setMobileMenuOpen(false)}
-                    className="text-sm font-semibold text-zinc-300 hover:text-white transition-colors py-2 flex items-center justify-between border-b border-white/[0.04]"
+                    className="text-xs font-semibold text-zinc-300 hover:text-white py-2 flex items-center justify-between border-b border-white/[0.04]"
                   >
                     <span>How It Works</span>
-                    <span className="text-[10px] bg-white/5 px-2 py-0.5 rounded-full text-zinc-500">Guide</span>
                   </a>
                   <Link 
                     to="/pricing" 
                     onClick={() => setMobileMenuOpen(false)}
-                    className="text-sm font-semibold text-zinc-300 hover:text-white transition-colors py-2 flex items-center justify-between border-b border-white/[0.04]"
+                    className="text-xs font-semibold text-zinc-300 hover:text-white py-2 flex items-center justify-between border-b border-white/[0.04]"
                   >
                     <span>Pricing</span>
-                    <span className="text-[10px] bg-violet-500/20 text-violet-400 px-2 py-0.5 rounded-full font-bold">Pro</span>
                   </Link>
                   <div className="pt-4 flex flex-col gap-3">
                     <Link 
                       to="/login" 
                       onClick={() => setMobileMenuOpen(false)}
-                      className="w-full py-3 text-center text-sm font-semibold text-zinc-350 hover:text-white rounded-xl border border-white/5 bg-white/[0.01] active:scale-95 transition-all"
+                      className="w-full py-3 text-center text-xs font-bold text-zinc-300 hover:text-white rounded-xl border border-white/5 bg-white/[0.01] active:scale-95 transition-all"
                     >
                       Sign In
                     </Link>
                     <Link 
                       to="/signup" 
                       onClick={() => setMobileMenuOpen(false)}
-                      className="w-full py-3 text-center text-sm font-bold bg-gradient-to-r from-violet-500 to-purple-600 text-white rounded-xl active:scale-95 transition-all shadow-[0_0_15px_rgba(124,58,237,0.3)]"
+                      className="w-full py-3 text-center text-xs font-bold bg-violet-600 text-white rounded-xl active:scale-95 transition-all"
                     >
                       Start Free
                     </Link>
@@ -126,63 +121,58 @@ export function Landing() {
         </div>
       </nav>
 
-      {/* Main Content */}
-      <main className="w-full min-h-screen md:h-full md:overflow-y-auto md:snap-y md:snap-mandatory scroll-smooth">
+      {/* Main Content Layout */}
+      <main className="w-full pt-20">
+        
         {/* Section 1: Hero */}
-        <div className="md:snap-start md:snap-always md:h-screen flex flex-col justify-center pt-24 pb-8 relative overflow-hidden">
-          <div className="flex-1 flex items-center justify-center">
-            <HeroNew />
-          </div>
+        <div className="py-16 md:py-24 border-b border-white/[0.04]">
+          <HeroNew />
         </div>
 
-        {/* Section 1.5: Mascot Accountability Partner Section */}
-        <div className="md:snap-start md:snap-always md:h-screen flex flex-col justify-center relative overflow-hidden border-t border-white/5 bg-[#08090D] w-full">
-          <div className="flex-1 flex items-center justify-center">
-            <MascotSection />
-          </div>
+        {/* Section 1.5: Mascot Philosophy Banner */}
+        <div className="py-16 border-b border-white/[0.04] bg-[#0A0C10]/40">
+          <MascotSection />
         </div>
 
-        {/* Section 2: Why ConsistPay & Social Proof */}
-        <div className="hidden md:flex md:snap-start md:snap-always md:h-screen flex-col justify-between pt-20 pb-4 relative overflow-hidden border-t border-white/5 bg-[#0A0C10] w-full">
-          <div className="flex-1 flex items-center justify-center">
-            <WhyConsistPay />
-          </div>
-          <div className="w-full shrink-0">
-            <SocialProof />
-          </div>
+        {/* Section 2: Why ConsistPay / Comparison */}
+        <div className="py-16 border-b border-white/[0.04]">
+          <WhyConsistPay />
         </div>
 
         {/* Section 3: How It Works */}
-        <div className="md:snap-start md:snap-always md:h-screen flex flex-col justify-center pt-16 pb-8 relative overflow-hidden border-t border-white/5 bg-[#06080D]">
+        <div className="py-16 border-b border-white/[0.04] bg-[#0A0C10]/20" id="how-it-works">
           <HowItWorks />
         </div>
 
-        {/* Section 4: More Features */}
-        <div className="hidden md:flex md:snap-start md:snap-always md:h-screen flex-col justify-center pt-20 relative overflow-hidden border-t border-white/5 bg-[#0A0C10]">
+        {/* Section 4: Features Grid */}
+        <div className="py-16 border-b border-white/[0.04]" id="features">
           <MoreFeatures />
         </div>
 
-        {/* Section 5: Pre-Footer CTA & Footer */}
-        <div className="md:snap-start md:snap-always md:h-screen flex flex-col justify-between relative overflow-hidden border-t border-white/5 bg-[#06080D]">
-          <div className="flex-1 flex items-center justify-center pt-20">
-            <section className="py-0 relative overflow-hidden w-full hidden md:block">
-              <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-violet-900/10 via-[#06080D] to-[#06080D] opacity-100" />
-              <div className="max-w-4xl mx-auto px-6 relative z-10 text-center">
-                <h2 className="text-4xl md:text-5xl font-bold tracking-tight mb-6 text-transparent bg-clip-text bg-gradient-to-r from-white via-zinc-100 to-zinc-400">
-                  Ready to build unstoppable habits?
-                </h2>
-                <p className="text-lg text-zinc-400 mb-10 max-w-2xl mx-auto leading-relaxed">
-                  Join the developers who have committed to consistency and transformed their skills. Stop breaking promises to yourself.
-                </p>
-                <Link to="/signup" className="group relative inline-flex items-center gap-2 px-8 py-3.5 bg-white text-black hover:bg-zinc-100 font-semibold rounded-xl transition-all duration-300 shadow-lg shadow-white/5 hover:scale-[1.02]">
-                  Start Your Journey Free
-                  <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
-                </Link>
-              </div>
-            </section>
-          </div>
-          <Footer className="mt-0" />
+        {/* Section 4.5: Social Proof Stats */}
+        <div className="py-12 border-b border-white/[0.04] bg-[#0A0C10]/40">
+          <SocialProof />
         </div>
+
+        {/* Section 5: Pre-Footer CTA */}
+        <div className="py-20 md:py-28 relative overflow-hidden bg-[#06080D]">
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(139,92,246,0.03),transparent_60%)] pointer-events-none" />
+          <div className="max-w-4xl mx-auto px-6 relative z-10 text-center">
+            <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight mb-6 text-white">
+              Ready to Lock in Your Daily Discipline?
+            </h2>
+            <p className="text-sm md:text-base text-zinc-400 mb-10 max-w-xl mx-auto leading-relaxed">
+              Adopt Consisty, connect your platforms, set your stakes, and start building placement-ready coding habits today.
+            </p>
+            <Link to="/signup" className="group inline-flex items-center gap-2 px-8 py-3.5 bg-white text-black hover:bg-zinc-100 font-semibold rounded-xl transition-all shadow-md active:scale-98">
+              Start Your Journey Free
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+            </Link>
+          </div>
+        </div>
+
+        {/* Footer */}
+        <Footer className="mt-0" />
       </main>
     </div>
   );

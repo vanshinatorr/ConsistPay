@@ -1,11 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import {
-  ExternalLink,
-  Instagram,
-  Linkedin,
-} from "lucide-react";
-import { Logo } from "../../components/Logo";
+import { Instagram, Linkedin } from "lucide-react";
 
 interface FooterProps {
   className?: string;
@@ -13,42 +8,34 @@ interface FooterProps {
 
 export function Footer({ className }: FooterProps = {}) {
   return (
-    <footer className={`${className !== undefined ? className : "mt-24"} relative border-t border-white/[0.04] overflow-hidden`}>
-      {/* Subtle Background Glow */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(34,197,94,0.015),transparent_45%)] pointer-events-none" />
-
-
-      {/* Main Footer */}
-      <div className="relative max-w-6xl mx-auto px-6 py-10 md:py-8">
+    <footer className={`${className !== undefined ? className : "mt-24"} relative border-t border-white/[0.04] bg-[#06080D] overflow-hidden`}>
+      <div className="relative max-w-6xl mx-auto px-6 py-12 md:py-16">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
           
           {/* Brand */}
-          <div>
-            <Link
-              to="/dashboard"
-              className="flex items-center gap-3 mb-3"
-            >
-              <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center">
-                <Logo className="w-5 h-5 text-white" />
-              </div>
-
-              <span className="text-2xl font-semibold tracking-tight text-white">
+          <div className="flex flex-col items-start">
+            <Link to="/" className="flex items-center gap-3 mb-4">
+              <img
+                src="/logo/mascot-full.png"
+                alt="ConsistPay Logo"
+                className="w-8 h-8 object-contain select-none filter drop-shadow-[0_2px_8px_rgba(139,92,246,0.2)]"
+              />
+              <span className="text-xl font-bold tracking-tight text-white">
                 ConsistPay
               </span>
             </Link>
-
-            <p className="text-xs leading-normal text-zinc-400 max-w-sm">
-              Consistency backed by commitment. Built for developers who perform
-              better under accountability than motivation.
+            
+            <p className="text-xs leading-normal text-zinc-400 max-w-sm mb-6 font-normal">
+              Consistency backed by commitment. Built for software developers preparing for placements who perform best under strict, verified accountability.
             </p>
 
-            {/* Social Icons */}
-            <div className="flex items-center gap-4 mt-4">
+            {/* Social Links */}
+            <div className="flex items-center gap-3">
               <a
                 href="https://instagram.com/vansh_vj"
                 target="_blank"
                 rel="noreferrer"
-                className="w-10 h-10 rounded-xl border border-white/[0.04] bg-white/[0.03] flex items-center justify-center text-zinc-400 hover:text-white hover:border-white/20 hover:bg-white/[0.05] transition-all duration-300"
+                className="w-9 h-9 rounded-xl border border-white/[0.04] bg-white/[0.02] flex items-center justify-center text-zinc-450 hover:text-white hover:border-white/20 hover:bg-white/[0.05] transition-all"
               >
                 <Instagram className="w-4 h-4" />
               </a>
@@ -57,7 +44,7 @@ export function Footer({ className }: FooterProps = {}) {
                 href="https://www.linkedin.com/in/vansh-vijay/"
                 target="_blank"
                 rel="noreferrer"
-                className="w-10 h-10 rounded-xl border border-white/[0.04] bg-white/[0.03] flex items-center justify-center text-zinc-400 hover:text-white hover:border-white/20 hover:bg-white/[0.05] transition-all duration-300"
+                className="w-9 h-9 rounded-xl border border-white/[0.04] bg-white/[0.02] flex items-center justify-center text-zinc-450 hover:text-white hover:border-white/20 hover:bg-white/[0.05] transition-all"
               >
                 <Linkedin className="w-4 h-4" />
               </a>
@@ -66,73 +53,58 @@ export function Footer({ className }: FooterProps = {}) {
 
           {/* Platform Links */}
           <div>
-            <h3 className="text-xs font-semibold uppercase tracking-[0.18em] text-zinc-200 mb-3">
+            <h3 className="text-xs font-bold uppercase tracking-wider text-zinc-200 mb-4">
               Platform
             </h3>
-
-            <div className="space-y-2">
-              <Link
-                to="/faq"
-                className="block text-sm text-zinc-400 hover:text-white transition-colors"
-              >
-                FAQ
+            <div className="space-y-3">
+              <Link to="/faq" className="block text-xs text-zinc-400 hover:text-white transition-colors">
+                FAQs
               </Link>
-
-              <Link
-                to="/pricing"
-                className="block text-sm text-zinc-400 hover:text-white transition-colors"
-              >
+              <Link to="/pricing" className="block text-xs text-zinc-400 hover:text-white transition-colors">
                 Pricing
               </Link>
-
-              <Link
-                to="/battles"
-                className="block text-sm text-zinc-400 hover:text-white transition-colors"
-              >
+              <Link to="/battles" className="block text-xs text-zinc-400 hover:text-white transition-colors">
                 Battles
               </Link>
             </div>
           </div>
 
-          {/* Support */}
+          {/* Support / Founders */}
           <div>
-            <h3 className="text-xs font-semibold uppercase tracking-[0.18em] text-zinc-200 mb-3">
-              Support
+            <h3 className="text-xs font-bold uppercase tracking-wider text-zinc-200 mb-4">
+              Support & Contact
             </h3>
-
-            <div className="space-y-2">
+            <div className="space-y-3">
               <a
                 href="https://wa.me/918529975095"
                 target="_blank"
                 rel="noreferrer"
-                className="flex items-center justify-between text-sm text-zinc-400 hover:text-white transition-colors"
+                className="flex items-center justify-between text-xs text-zinc-400 hover:text-white transition-colors py-1"
               >
-                <span>Vansh <span className="text-zinc-500 text-xs ml-1">(Founder)</span></span>
-
-                <span>+91 85299 75095</span>
+                <span>Vansh <span className="text-zinc-600 text-[10px] ml-1">(Founder)</span></span>
+                <span className="font-mono text-zinc-550 hover:text-white">+91 85299 75095</span>
               </a>
 
               <a
                 href="https://wa.me/918103475773"
                 target="_blank"
                 rel="noreferrer"
-                className="flex items-center justify-between text-sm text-zinc-400 hover:text-white transition-colors"
+                className="flex items-center justify-between text-xs text-zinc-400 hover:text-white transition-colors py-1"
               >
-                <span>Prateek <span className="text-zinc-500 text-xs ml-1">(Co-Founder)</span></span>
-
-                <span>+91 81034 75773</span>
+                <span>Prateek <span className="text-zinc-600 text-[10px] ml-1">(Co-Founder)</span></span>
+                <span className="font-mono text-zinc-550 hover:text-white">+91 81034 75773</span>
               </a>
             </div>
           </div>
+
         </div>
 
-        {/* Bottom */}
-        <div className="mt-6 pt-4 border-t border-white/[0.04] flex flex-col md:flex-row items-center justify-between gap-4">
-          <p className="text-xs text-zinc-500">
+        {/* Footer Bottom */}
+        <div className="mt-12 pt-6 border-t border-white/[0.04] flex flex-col sm:flex-row items-center justify-between gap-4">
+          <p className="text-[10px] text-zinc-650 font-normal">
             © 2026 ConsistPay. All rights reserved.
           </p>
-
-          <p className="text-[11px] tracking-[0.24em] uppercase text-zinc-600">
+          <p className="text-[9px] tracking-widest uppercase text-zinc-600 font-bold">
             Commit First. Motivation Later.
           </p>
         </div>
