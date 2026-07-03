@@ -1,5 +1,5 @@
 import React from "react";
-import { CheckCircle, Lock, RefreshCw, AlertTriangle, Clock } from "lucide-react";
+import { CheckCircle, Lock, RefreshCw, AlertTriangle } from "lucide-react";
 
 interface TodaysChallengeProps {
   onboardingComplete?: boolean;
@@ -14,6 +14,7 @@ interface TodaysChallengeProps {
   timeLeft: { h: number; m: number; s: number };
   todaySubmissionsCount: number;
   linkedPlatforms?: Array<{ platform: string; username: string; isVerified: boolean }>;
+  syncLogs?: string[];
 }
 
 export function TodaysChallenge({
@@ -29,12 +30,16 @@ export function TodaysChallenge({
   timeLeft,
   todaySubmissionsCount,
   linkedPlatforms = [],
+  syncLogs = [],
 }: TodaysChallengeProps) {
   const hasSolvedToday = todaySubmissionsCount > 0;
   
   // Filter out verified active platforms
   const verifiedPlatforms = linkedPlatforms.filter((p) => p.isVerified);
   const hasVerifiedPlatform = verifiedPlatforms.length > 0;
+
+  // Check if stake is at risk (under 2 hours left and 0 solves today)
+  const isStakeAtRisk = onboardingComplete && hasVerifiedPlatform && !hasSolvedToday && timeLeft.h < 2;
 
   return (
     <div className="lg:col-span-2 flex flex-col h-full">
@@ -44,6 +49,8 @@ export function TodaysChallenge({
           className={`absolute inset-0 rounded-2xl blur-2xl opacity-40 transition-all duration-500 bg-gradient-to-br ${
             hasSolvedToday
               ? "from-emerald-500/20 to-teal-500/20"
+              : isStakeAtRisk
+              ? "from-red-500/20 to-orange-500/20"
               : hasVerifiedPlatform
               ? "from-emerald-500/10 to-teal-500/10"
               : "from-yellow-500/10 to-orange-500/10"
@@ -63,6 +70,8 @@ export function TodaysChallenge({
                 className={`flex items-center gap-2 text-[10px] uppercase font-bold tracking-wider px-3 py-1 rounded-full border select-none transition-all duration-300 ${
                   hasSolvedToday
                     ? "text-emerald-400 bg-emerald-500/10 border-emerald-500/20"
+                    : isStakeAtRisk
+                    ? "text-red-400 bg-red-500/10 border-red-500/20"
                     : hasVerifiedPlatform
                     ? "text-yellow-300 bg-yellow-500/10 border-yellow-500/20"
                     : "text-zinc-500 bg-white/[0.02] border-white/[0.06]"
@@ -71,9 +80,9 @@ export function TodaysChallenge({
                 {hasSolvedToday ? (
                   <CheckCircle className="w-3.5 h-3.5" />
                 ) : (
-                  <div className="w-1.5 h-1.5 rounded-full bg-yellow-400 animate-pulse" />
+                  <div className={`w-1.5 h-1.5 rounded-full bg-yellow-400 ${isStakeAtRisk ? "bg-red-500 animate-ping" : "animate-pulse"}`} />
                 )}
-                {hasSolvedToday ? "Protected" : hasVerifiedPlatform ? "Awaiting Sync" : "Connection Required"}
+                {hasSolvedToday ? "Protected" : isStakeAtRisk ? "Stake at Risk" : hasVerifiedPlatform ? "Awaiting Sync" : "Connection Required"}
               </span>
             </div>
 
@@ -120,14 +129,16 @@ export function TodaysChallenge({
                     className={`w-16 h-16 rounded-2xl flex items-center justify-center mb-4 transition-all duration-500 ${
                       hasSolvedToday
                         ? "bg-[#10b981] shadow-[0_0_30px_rgba(16,185,129,0.3)]"
+                        : isStakeAtRisk
+                        ? "bg-red-500/10 border border-red-500/30 text-red-500 animate-pulse shadow-[0_0_20px_rgba(239,68,68,0.2)]"
                         : "bg-white/[0.02] border border-white/[0.06] text-zinc-500"
                     }`}
                   >
-                    <CheckCircle className={`w-8 h-8 ${hasSolvedToday ? "text-white" : "text-zinc-600"}`} strokeWidth={2} />
+                    <CheckCircle className={`w-8 h-8 ${hasSolvedToday ? "text-white" : isStakeAtRisk ? "text-red-400" : "text-zinc-600"}`} strokeWidth={2} />
                   </div>
 
                   <h3 className="text-2xl font-bold text-white">
-                    {hasSolvedToday ? "Streak Secured!" : "Solve Pending"}
+                    {hasSolvedToday ? "Streak Secured!" : isStakeAtRisk ? "Streak at Risk!" : "Solve Pending"}
                   </h3>
                   
                   {/* List active connected profiles */}
@@ -162,6 +173,29 @@ export function TodaysChallenge({
                   </button>
                 </div>
 
+                {/* Developer Logs Console Terminal */}
+                {syncLogs && syncLogs.length > 0 && (
+                  <div className="w-full max-w-md bg-black/80 border border-white/[0.06] rounded-xl p-3.5 font-mono text-[9px] text-zinc-400 text-left mt-5 shadow-inner overflow-hidden select-text animate-in slide-in-from-top-2 duration-300">
+                    <div className="flex items-center justify-between border-b border-white/[0.04] pb-1.5 mb-2 text-zinc-500 select-none">
+                      <span>VERIFICATION SYSTEM CONSOLE</span>
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
+                    </div>
+                    <div className="space-y-1 max-h-[100px] overflow-y-auto custom-scrollbar scroll-smooth">
+                      {syncLogs.map((log, idx) => {
+                        let textClass = "text-zinc-400";
+                        if (log.includes("✅") || log.includes("Secured")) textClass = "text-emerald-400 font-bold";
+                        if (log.includes("❌")) textClass = "text-red-400 font-bold";
+                        if (log.includes("⚠️")) textClass = "text-yellow-400";
+                        return (
+                          <div key={idx} className={`${textClass} leading-relaxed`}>
+                            {log}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+
                 {apiError && (
                   <div className="flex items-start gap-2 bg-red-500/10 border border-red-500/20 rounded-xl px-4 py-2 mt-3 text-left w-full">
                     <AlertTriangle className="w-4 h-4 text-red-400 shrink-0 mt-0.5" />
@@ -180,21 +214,39 @@ export function TodaysChallenge({
                 <div className="space-y-2.5 w-full pt-4">
                   <p className="text-[10px] text-zinc-550 font-bold uppercase tracking-wider">Next challenge unlocks in</p>
                   <div className="flex items-center justify-center gap-3 font-mono">
-                    <div className="bg-[#0F0F13] border border-white/[0.04] w-12 h-14 rounded-xl flex flex-col items-center justify-center text-white select-none">
+                    <div className={`w-12 h-14 rounded-xl flex flex-col items-center justify-center select-none transition-all duration-550 border ${
+                      isStakeAtRisk 
+                        ? "bg-red-500/10 border-red-500/30 text-red-400 animate-pulse shadow-[0_0_15px_rgba(239,68,68,0.2)]" 
+                        : "bg-[#0F0F13] border-white/[0.04] text-white"
+                    }`}>
                       <span className="text-lg font-bold leading-none">{String(timeLeft.h).padStart(2, "0")}</span>
-                      <span className="text-[8px] text-zinc-500 block font-sans font-semibold mt-1 leading-none tracking-wider">HRS</span>
+                      <span className={`text-[8px] block font-sans font-semibold mt-1 leading-none tracking-wider ${isStakeAtRisk ? "text-red-500" : "text-zinc-500"}`}>HRS</span>
                     </div>
-                    <span className="text-zinc-700 text-base font-bold pb-1 select-none">:</span>
-                    <div className="bg-[#0F0F13] border border-white/[0.04] w-12 h-14 rounded-xl flex flex-col items-center justify-center text-white select-none">
+                    <span className={`text-base font-bold pb-1 select-none ${isStakeAtRisk ? "text-red-400" : "text-zinc-700"}`}>:</span>
+                    <div className={`w-12 h-14 rounded-xl flex flex-col items-center justify-center select-none transition-all duration-550 border ${
+                      isStakeAtRisk 
+                        ? "bg-red-500/10 border-red-500/30 text-red-400 animate-pulse shadow-[0_0_15px_rgba(239,68,68,0.2)]" 
+                        : "bg-[#0F0F13] border-white/[0.04] text-white"
+                    }`}>
                       <span className="text-lg font-bold leading-none">{String(timeLeft.m).padStart(2, "0")}</span>
-                      <span className="text-[8px] text-zinc-500 block font-sans font-semibold mt-1 leading-none tracking-wider">MIN</span>
+                      <span className={`text-[8px] block font-sans font-semibold mt-1 leading-none tracking-wider ${isStakeAtRisk ? "text-red-500" : "text-zinc-500"}`}>MIN</span>
                     </div>
-                    <span className="text-zinc-700 text-base font-bold pb-1 select-none">:</span>
-                    <div className="bg-[#0F0F13] border border-white/[0.04] w-12 h-14 rounded-xl flex flex-col items-center justify-center text-emerald-450 select-none">
+                    <span className={`text-base font-bold pb-1 select-none ${isStakeAtRisk ? "text-red-400" : "text-zinc-700"}`}>:</span>
+                    <div className={`w-12 h-14 rounded-xl flex flex-col items-center justify-center select-none transition-all duration-550 border ${
+                      isStakeAtRisk 
+                        ? "bg-red-500/10 border-red-500/30 text-red-400 animate-pulse shadow-[0_0_15px_rgba(239,68,68,0.2)]" 
+                        : "bg-[#0F0F13] border-white/[0.04] text-emerald-455"
+                    }`}>
                       <span className="text-lg font-bold leading-none">{String(timeLeft.s).padStart(2, "0")}</span>
-                      <span className="text-[8px] text-zinc-500 block font-sans font-semibold mt-1 leading-none tracking-wider">SEC</span>
+                      <span className={`text-[8px] block font-sans font-semibold mt-1 leading-none tracking-wider ${isStakeAtRisk ? "text-red-500" : "text-zinc-500"}`}>SEC</span>
                     </div>
                   </div>
+                  
+                  {isStakeAtRisk && (
+                    <p className="text-[10px] text-red-400 font-bold uppercase tracking-wider animate-pulse mt-2">
+                      ⚠️ Stake pool at risk! Verify a solve immediately.
+                    </p>
+                  )}
                 </div>
               </div>
             )}

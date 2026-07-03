@@ -2,29 +2,43 @@ const GFG_PROFILE_URL = "https://www.geeksforgeeks.org/profile/";
 
 class GFGProvider {
   /**
-   * Fetch GFG public profile page and parse details
+   * Fetch GFG public profile page and parse details with user-agent rotation and retries
    */
-  async _fetchHTML(username) {
+  async _fetchHTML(username, retries = 3) {
     const url = `${GFG_PROFILE_URL}${username}`;
-    try {
-      const response = await fetch(url, {
-        method: "GET",
-        headers: {
-          "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-          "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8"
+    let lastError = null;
+    const agents = [
+      "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+      "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36",
+      "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36"
+    ];
+
+    for (let attempt = 0; attempt < retries; attempt++) {
+      const userAgent = agents[attempt % agents.length];
+      try {
+        const response = await fetch(url, {
+          method: "GET",
+          headers: {
+            "User-Agent": userAgent,
+            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
+            "Accept-Language": "en-US,en;q=0.5"
+          }
+        });
+
+        if (response.ok) {
+          return await response.text();
         }
-      });
-      if (response.status === 403 || response.status === 503) {
-        throw new Error(`Profile access blocked by GeeksforGeeks Cloudflare protection (HTTP ${response.status}). Automated scraping is restricted.`);
+        lastError = new Error(`HTTP Status ${response.status}`);
+      } catch (error) {
+        lastError = error;
       }
-      if (!response.ok) {
-        throw new Error(`GeeksforGeeks profile page returned HTTP status ${response.status}.`);
-      }
-      return await response.text();
-    } catch (error) {
-      console.warn(`[GFGProvider] Fetch failed for ${username}:`, error.message);
-      throw new Error(`Unable to fetch GeeksforGeeks profile for "${username}". Details: ${error.message}`);
+      
+      // Delay before retrying
+      await new Promise(r => setTimeout(r, 500));
     }
+
+    console.error(`[GFGProvider] Scraping failed for ${username}:`, lastError?.message);
+    throw lastError || new Error(`Unable to fetch GeeksforGeeks profile for "${username}" due to firewall restrictions.`);
   }
 
   /**

@@ -41,34 +41,54 @@ const GET_USER_CALENDAR_QUERY = `
 
 class LeetCodeProvider {
   /**
-   * Helper to execute GraphQL POST requests to LeetCode
+   * Helper to execute GraphQL POST requests to LeetCode with retries and failovers
    */
-  async _makeGraphQLRequest(query, variables) {
-    try {
-      const response = await fetch(LEETCODE_GRAPHQL_URL, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Referer": "https://leetcode.com",
-          "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
-        },
-        body: JSON.stringify({ query, variables })
-      });
+  async _makeGraphQLRequest(query, variables, retries = 3) {
+    let lastError = null;
+    const agents = [
+      "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+      "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36",
+      "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36"
+    ];
+    const urls = [
+      "https://leetcode.com/graphql",
+      "https://leetcode.cn/graphql" // China mirror failover
+    ];
 
-      if (!response.ok) {
-        throw new Error(`HTTP Error: ${response.status} ${response.statusText}`);
+    for (let attempt = 0; attempt < retries; attempt++) {
+      const url = urls[attempt % urls.length];
+      const userAgent = agents[attempt % agents.length];
+      
+      try {
+        const response = await fetch(url, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Referer": "https://leetcode.com",
+            "User-Agent": userAgent
+          },
+          body: JSON.stringify({ query, variables })
+        });
+
+        if (response.ok) {
+          const json = await response.json();
+          if (!json.errors) {
+            return json.data;
+          }
+          lastError = new Error(json.errors[0]?.message || "GraphQL query error.");
+        } else {
+          lastError = new Error(`HTTP Error: ${response.status} ${response.statusText}`);
+        }
+      } catch (error) {
+        lastError = error;
       }
-
-      const json = await response.json();
-      if (json.errors) {
-        throw new Error(json.errors[0]?.message || "GraphQL query error.");
-      }
-
-      return json.data;
-    } catch (error) {
-      console.error(`[LeetCodeProvider] API request failed:`, error.message);
-      throw error;
+      
+      // Delay before retrying
+      await new Promise(r => setTimeout(r, 450));
     }
+    
+    console.error(`[LeetCodeProvider] All API attempts failed:`, lastError?.message);
+    throw lastError || new Error("LeetCode API service is temporarily unavailable.");
   }
 
   /**

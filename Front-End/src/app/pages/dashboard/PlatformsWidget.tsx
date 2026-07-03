@@ -5,6 +5,7 @@ interface PlatformLinkage {
   username: string;
   isVerified: boolean;
   verificationToken: string;
+  totalSolved?: number;
 }
 
 interface PlatformsWidgetProps {
@@ -204,7 +205,15 @@ export function PlatformsWidget({ onLinkageChanged, onboardingComplete = true }:
                   <div>
                     <span className="text-xs font-bold text-white tracking-wide">{plat}</span>
                     {isLinked && (
-                      <p className="text-[10px] text-zinc-500 font-mono">@{linkage.username}</p>
+                      <div className="flex flex-col gap-0.5 mt-0.5">
+                        <p className="text-[10px] text-zinc-500 font-mono">@{linkage.username}</p>
+                        {isVerified && (
+                          <div className="flex items-center gap-1.5 text-[9px] text-emerald-500 font-medium">
+                            <span className="w-1 h-1 rounded-full bg-emerald-500 animate-ping" />
+                            <span>{linkage.totalSolved || 0} solves synced</span>
+                          </div>
+                        )}
+                      </div>
                     )}
                   </div>
                 </div>

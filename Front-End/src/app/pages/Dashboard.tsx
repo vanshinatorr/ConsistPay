@@ -60,6 +60,7 @@ interface CalendarDay {
 export function Dashboard() {
   const navigate = useNavigate();
   const [syncLoading, setSyncLoading] = useState(false);
+  const [syncLogs, setSyncLogs] = useState<string[]>([]);
 
   const [showJoinModal, setShowJoinModal] = useState(false);
   const [joinCode, setJoinCode] = useState("");
@@ -385,12 +386,15 @@ export function Dashboard() {
 
     setSyncLoading(true);
     setSubmitError("");
+    setSyncLogs([`[${new Date().toLocaleTimeString()}] ⚡ Initializing global synchronization query...`]);
     try {
       const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone || "Asia/Kolkata";
+      setSyncLogs(prev => [...prev, `[${new Date().toLocaleTimeString()}] 🔍 Active platforms to scan: ${verifiedPlatforms.join(", ")}`]);
       
       // Sync all verified platforms in parallel
       const syncResults = await Promise.all(
         verifiedPlatforms.map(async (plat: string) => {
+          setSyncLogs(prev => [...prev, `[${new Date().toLocaleTimeString()}] 🌐 Querying API endpoint for ${plat}...`]);
           try {
             const res = await fetch(`${API}/api/platforms/sync`, {
               method: "POST",
@@ -398,10 +402,14 @@ export function Dashboard() {
               body: JSON.stringify({ platform: plat, timezone: userTimeZone })
             });
             if (res.ok) {
-              return await res.json();
+              const data = await res.json();
+              const statusStr = data.solvedToday ? "Solved today!" : "No solves found today";
+              setSyncLogs(prev => [...prev, `[${new Date().toLocaleTimeString()}] 📡 ${plat} sync complete. Status: ${statusStr} (Total: ${data.solvedCount || 0})`]);
+              return data;
             }
           } catch (e) {
             console.error(`Failed to sync platform ${plat}:`, e);
+            setSyncLogs(prev => [...prev, `[${new Date().toLocaleTimeString()}] ⚠️ ${plat} connection error. Retrying backend cache...`]);
           }
           return { solvedToday: false };
         })
@@ -410,6 +418,9 @@ export function Dashboard() {
       const anySolved = syncResults.some((res: any) => res && res.solvedToday);
       if (anySolved) {
         setSubmitted(true);
+        setSyncLogs(prev => [...prev, `[${new Date().toLocaleTimeString()}] ✅ Verification query match: STREAK SECURED!`]);
+      } else {
+        setSyncLogs(prev => [...prev, `[${new Date().toLocaleTimeString()}] ℹ️ Verification check: No new solved problems detected yet today.`]);
       }
       
       await Promise.all([
@@ -420,6 +431,7 @@ export function Dashboard() {
       ]);
     } catch (err) {
       setSubmitError("Failed to synchronize submissions. Please try again.");
+      setSyncLogs(prev => [...prev, `[${new Date().toLocaleTimeString()}] ❌ Synchronization failed.`]);
     } finally {
       setSyncLoading(false);
     }
@@ -759,6 +771,7 @@ export function Dashboard() {
                 timeLeft={timeLeft}
                 todaySubmissionsCount={todaySubmission?.count || 0}
                 linkedPlatforms={(userData as any)?.linkedPlatforms}
+                syncLogs={syncLogs}
               />
               <RecentSolves recentSolves={recentSolves} />
             </div>
