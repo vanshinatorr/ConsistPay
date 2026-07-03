@@ -28,9 +28,9 @@ export function HeroNew() {
           {/* Left: Text Content */}
           <div className="relative z-20 flex flex-col items-center text-center xl:items-start xl:text-left">
             {/* Top Badge */}
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#12141c] border border-white/[0.05] mb-8 shadow-sm">
-              <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
-              <span className="text-xs text-zinc-400 font-medium tracking-wide">Join early adopters building unstoppable habits</span>
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/[0.02] border border-white/[0.06] mb-8 shadow-sm">
+              <img src="/logo/favicon-32x32.png" className="w-5.5 h-5.5 rounded-full object-contain animate-bounce" style={{ animationDuration: '3s' }} alt="Mascot Icon" />
+              <span className="text-xs text-zinc-350 font-medium tracking-wide pr-1">Meet Consisty — Your AI Accountability Partner</span>
             </div>
  
             {/* Headline */}

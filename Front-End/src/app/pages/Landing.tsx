@@ -7,6 +7,7 @@ import { SocialProof } from "../components/SocialProof";
 import { MoreFeatures } from "../components/MoreFeatures";
 import { HowItWorks } from "../components/HowItWorks";
 import { WhyConsistPay } from "../components/WhyConsistPay";
+import { MascotSection } from "../components/MascotSection";
 import { Footer } from "./dashboard/Footer";
 
 export function Landing() {
@@ -131,6 +132,13 @@ export function Landing() {
         <div className="md:snap-start md:snap-always md:h-screen flex flex-col justify-center pt-24 pb-8 relative overflow-hidden">
           <div className="flex-1 flex items-center justify-center">
             <HeroNew />
+          </div>
+        </div>
+
+        {/* Section 1.5: Mascot Accountability Partner Section */}
+        <div className="md:snap-start md:snap-always md:h-screen flex flex-col justify-center relative overflow-hidden border-t border-white/5 bg-[#08090D] w-full">
+          <div className="flex-1 flex items-center justify-center">
+            <MascotSection />
           </div>
         </div>
 
