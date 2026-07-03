@@ -721,49 +721,7 @@ export function Dashboard() {
           {/* Row 2: Challenge a Friend Widget */}
           <DashboardBattleWidget onRefreshRequest={fetchUserData} />
 
-          {/* Row 3: Unified Metrics Cards (Wallet, Versus, Leaderboard & DSA Stack) */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch">
-            {/* Column 1 - Wallet Card (Plan stats) */}
-            <div className="lg:col-span-1">
-              <WalletCard
-                plan={userData?.plan}
-                monthlyBudget={monthlyBudget}
-                completedDays={completedDays}
-                missedDays={missedDays}
-                dailyCommitment={dailyCommitment}
-                graceCoins={graceCoins}
-                balance={userData?.balance ?? 0}
-                activeDeposit={userData?.activeDeposit ?? 0}
-                planStatus={userData?.planStatus}
-                onboardingComplete={userData?.onboardingComplete ?? true}
-                onRefreshRequest={fetchUserData}
-              />
-            </div>
-            {/* Column 2 - Versus Card (Stakes & duels stats) */}
-            <div className="lg:col-span-1">
-              <VersusCard
-                plan={userData?.plan}
-                battleBalance={userData?.battleBalance ?? 0}
-                onboardingComplete={userData?.onboardingComplete ?? true}
-                onRefreshRequest={fetchUserData}
-              />
-            </div>
-            {/* Column 3 - Stacked Leaderboard & DSA Solves */}
-            <div className="lg:col-span-1 flex flex-col gap-6">
-              <LeaderboardRankCard
-                rank={userRank}
-                totalUsers={totalUsers}
-                loading={leaderboardLoading}
-                onboardingComplete={userData?.onboardingComplete ?? true}
-              />
-              <DsaStatsCard
-                stats={userData?.dsaStats}
-                onboardingComplete={userData?.onboardingComplete ?? true}
-              />
-            </div>
-          </div>
-
-          {/* Row 4: Main Workspace Area (Today's Goal + Recent Solves on Left, Platforms + Awards on Right) */}
+          {/* Row 3: Main Workspace Area (Today's Goal + Recent Solves on Left, Platforms + Awards on Right) */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch">
             {/* Left Column (2/3 width) - Daily operations */}
             <div className="lg:col-span-2 flex flex-col gap-6">
@@ -802,6 +760,48 @@ export function Dashboard() {
                 totalSolved={userData?.totalSolved ?? 0}
                 totalProblemsSolved={userData?.totalProblemsSolved ?? 0}
                 dailyCommitment={userData?.dailyCommitment ?? 5}
+              />
+            </div>
+          </div>
+
+          {/* Row 4: Unified Metrics Cards (Wallet, Versus, Leaderboard & DSA Stack) */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch">
+            {/* Column 1 - Wallet Card (Plan stats) */}
+            <div className="lg:col-span-1">
+              <WalletCard
+                plan={userData?.plan}
+                monthlyBudget={monthlyBudget}
+                completedDays={completedDays}
+                missedDays={missedDays}
+                dailyCommitment={dailyCommitment}
+                graceCoins={graceCoins}
+                balance={userData?.balance ?? 0}
+                activeDeposit={userData?.activeDeposit ?? 0}
+                planStatus={userData?.planStatus}
+                onboardingComplete={userData?.onboardingComplete ?? true}
+                onRefreshRequest={fetchUserData}
+              />
+            </div>
+            {/* Column 2 - Versus Card (Stakes & duels stats) */}
+            <div className="lg:col-span-1">
+              <VersusCard
+                plan={userData?.plan}
+                battleBalance={userData?.battleBalance ?? 0}
+                onboardingComplete={userData?.onboardingComplete ?? true}
+                onRefreshRequest={fetchUserData}
+              />
+            </div>
+            {/* Column 3 - Stacked Leaderboard & DSA Solves */}
+            <div className="lg:col-span-1 flex flex-col gap-6">
+              <LeaderboardRankCard
+                rank={userRank}
+                totalUsers={totalUsers}
+                loading={leaderboardLoading}
+                onboardingComplete={userData?.onboardingComplete ?? true}
+              />
+              <DsaStatsCard
+                stats={userData?.dsaStats}
+                onboardingComplete={userData?.onboardingComplete ?? true}
               />
             </div>
           </div>
