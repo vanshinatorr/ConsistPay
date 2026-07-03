@@ -177,13 +177,14 @@ export function Auth() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0F0F13] flex relative overflow-hidden font-sans">
+    <div className="min-h-screen bg-[#0A0B10] flex relative overflow-hidden font-sans">
       <Toaster position="top-center" toastOptions={{ style: { background: '#18181B', color: '#fff', border: '1px solid rgba(255,255,255,0.1)' } }} />
       
-      {/* Subtle Premium Background */}
+      {/* Subtle Premium Background & Grid */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-emerald-500/[0.04] rounded-full blur-[120px]" />
-        <div className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-teal-500/[0.03] rounded-full blur-[120px]" />
+        <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.003)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.003)_1px,transparent_1px)] bg-[size:40px_40px] opacity-60" />
+        <div className="absolute top-[-10%] left-[-10%] w-[600px] h-[600px] bg-emerald-500/[0.08] rounded-full blur-[140px]" />
+        <div className="absolute bottom-[-10%] right-[-10%] w-[600px] h-[600px] bg-teal-500/[0.06] rounded-full blur-[140px]" />
       </div>
 
       {/* LEFT SIDE - Motivation Panel */}
@@ -246,7 +247,7 @@ export function Auth() {
       <div className="w-full lg:w-1/2 flex flex-col justify-center items-center p-6 relative z-10">
         
         {/* Ambient glow behind card */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] bg-emerald-500/[0.03] rounded-full blur-[120px] pointer-events-none" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[450px] h-[450px] bg-emerald-500/[0.06] rounded-full blur-[120px] pointer-events-none" />
 
         {/* Mobile Logo */}
         <Link to="/" className="flex lg:hidden items-center justify-center gap-3 mb-12 group cursor-pointer relative z-10">
@@ -262,7 +263,7 @@ export function Auth() {
 
         <div className="w-full max-w-[420px] relative z-10">
           {/* Auth Card */}
-          <div className="bg-[#0F0F13] border border-white/[0.04] rounded-[24px] p-8 sm:p-10 shadow-2xl relative overflow-hidden">
+          <div className="bg-[#12131A] border border-white/[0.06] rounded-[24px] p-8 sm:p-10 shadow-2xl relative overflow-hidden">
           
           {/* STEP 1: IDENTITY */}
           {step === "identity" && (
@@ -296,7 +297,7 @@ export function Auth() {
                     value={identifier}
                     onChange={(e) => setIdentifier(e.target.value)}
                     placeholder="Enter your email"
-                    className="w-full bg-[#0F0F13] border border-white/[0.04] rounded-xl px-4 py-3 text-white placeholder-zinc-600 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all"
+                    className="w-full bg-[#0A0B10] border border-white/[0.06] rounded-xl px-4 py-3 text-white placeholder-zinc-650 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all"
                     required
                   />
                 </div>
@@ -326,7 +327,7 @@ export function Auth() {
                     value={otp}
                     onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').slice(0,6))}
                     placeholder="• • • • • •"
-                    className="w-full bg-[#0F0F13] border border-white/[0.04] rounded-xl px-4 py-4 text-center text-2xl tracking-[1em] text-white placeholder-zinc-600 focus:outline-none focus:border-emerald-500 transition-all"
+                    className="w-full bg-[#0A0B10] border border-white/[0.06] rounded-xl px-4 py-4 text-center text-2xl tracking-[1em] text-white placeholder-zinc-650 focus:outline-none focus:border-emerald-500 transition-all"
                     required
                   />
                 </div>
@@ -364,7 +365,7 @@ export function Auth() {
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     placeholder="John Doe"
-                    className="w-full bg-[#0F0F13] border border-white/[0.04] rounded-xl px-4 py-3 text-white placeholder-zinc-600 focus:outline-none focus:border-emerald-500 transition-all"
+                    className="w-full bg-[#0A0B10] border border-white/[0.06] rounded-xl px-4 py-3 text-white placeholder-zinc-655 focus:outline-none focus:border-emerald-500 transition-all"
                     required
                   />
                 </div>
@@ -379,10 +380,10 @@ export function Auth() {
                       value={username}
                       onChange={(e) => setUsername(e.target.value.toLowerCase().replace(/[^a-z0-9_]/g, ''))}
                       placeholder="johndoe"
-                      className={`w-full bg-[#0F0F13] border rounded-xl pl-9 pr-10 py-3 text-white placeholder-zinc-600 focus:outline-none transition-all ${
+                      className={`w-full bg-[#0A0B10] border rounded-xl pl-9 pr-10 py-3 text-white placeholder-zinc-655 focus:outline-none transition-all ${
                         usernameAvailable === true ? "border-emerald-500/50 focus:border-emerald-500" :
                         usernameAvailable === false ? "border-red-500/50 focus:border-red-500" :
-                        "border-white/[0.04] focus:border-emerald-500"
+                        "border-white/[0.06] focus:border-emerald-500"
                       }`}
                       required
                       minLength={3}
