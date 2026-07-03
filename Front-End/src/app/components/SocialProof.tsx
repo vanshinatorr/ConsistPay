@@ -9,10 +9,9 @@ export function SocialProof() {
   ];
 
   return (
-    <section className="relative z-20 w-full overflow-hidden bg-[#09070F] py-20 md:py-24 border-b border-white/[0.04]">
+    <section className="relative z-20 w-full overflow-hidden bg-[#090A0E] py-20 md:py-24 border-b border-white/[0.04]">
       {/* Premium subtle grid texture background */}
-      <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.01)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.01)_1px,transparent_1px)] bg-[size:32px_32px] pointer-events-none opacity-40" />
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(139,92,246,0.02),transparent_75%)] pointer-events-none" />
+      <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.006)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.006)_1px,transparent_1px)] bg-[size:32px_32px] pointer-events-none opacity-40" />
 
       <div className="max-w-6xl mx-auto px-6 relative z-10 flex flex-col items-center">
         
@@ -34,7 +33,7 @@ export function SocialProof() {
               <div className="text-5xl md:text-6xl font-black text-white tracking-tight mb-2 transition-transform duration-300 group-hover:scale-102">
                 {stat.value}
               </div>
-              <div className="text-[10px] font-bold text-zinc-550 uppercase tracking-[0.22em] text-center">
+              <div className="text-[10px] font-bold text-zinc-500 uppercase tracking-[0.22em] text-center">
                 {stat.label}
               </div>
             </div>
@@ -43,7 +42,7 @@ export function SocialProof() {
         
         {/* Grayscale Infrastructure Badges */}
         <div className="mt-12 flex flex-col items-center justify-center">
-          <span className="text-[9px] font-bold text-zinc-550 uppercase tracking-widest mb-4">
+          <span className="text-[9px] font-bold text-zinc-500 uppercase tracking-widest mb-4">
             Security & Integration Partners
           </span>
           <div className="flex flex-wrap justify-center gap-8 md:gap-16 opacity-30 hover:opacity-50 transition-opacity duration-300">

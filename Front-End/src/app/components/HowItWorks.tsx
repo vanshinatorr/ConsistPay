@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Wallet, Link2, Flame, RefreshCw, CheckCircle2, Swords, Coins, ShieldCheck } from "lucide-react";
+import { Wallet, Link2, RefreshCw, CheckCircle2, Swords, Coins } from "lucide-react";
 
 export function HowItWorks() {
   const [activeTab, setActiveTab] = useState(0);
@@ -44,15 +44,12 @@ export function HowItWorks() {
   ];
 
   return (
-    <section id="how-it-works" className="px-6 py-20 md:py-24 relative overflow-hidden bg-[#06080D] w-full border-b border-white/[0.04]">
-      {/* Subtle purple radial background highlight */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-violet-600/5 blur-[120px] rounded-full pointer-events-none -z-10" />
-
+    <section id="how-it-works" className="px-6 py-20 md:py-24 relative overflow-hidden bg-[#000000] w-full border-b border-white/[0.04]">
       <div className="max-w-6xl mx-auto relative z-10">
         
         {/* Header */}
         <div className="text-center mb-16">
-          <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest px-3 py-1.5 rounded-lg bg-white/[0.02] border border-white/[0.06] mb-4 inline-block">
+          <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest px-3 py-1.5 rounded-lg bg-white/[0.02] border border-white/[0.06] mb-4 inline-block font-mono">
             Interactive Showcase
           </span>
           <h2 className="text-3xl sm:text-4xl font-bold text-white tracking-tight mb-4">
@@ -65,7 +62,7 @@ export function HowItWorks() {
 
         {/* Tab Row Selector */}
         <div className="flex justify-center border-b border-white/[0.04] mb-12 max-w-xl mx-auto">
-          <div className="flex gap-2 w-full p-1 bg-white/[0.01] border border-white/[0.03] rounded-2xl">
+          <div className="flex gap-2 w-full p-1 bg-white/[0.005] border border-white/[0.03] rounded-2xl">
             {tabs.map((t) => {
               const Icon = t.icon;
               const isActive = activeTab === t.id;
@@ -75,7 +72,7 @@ export function HowItWorks() {
                   onClick={() => setActiveTab(t.id)}
                   className={`flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-xs font-semibold uppercase tracking-wider transition-all ${
                     isActive 
-                      ? "bg-violet-600 text-white shadow-md shadow-violet-500/10" 
+                      ? "bg-white text-black shadow-md shadow-white/5" 
                       : "text-zinc-400 hover:text-white hover:bg-white/[0.02]"
                   }`}
                 >
@@ -92,7 +89,7 @@ export function HowItWorks() {
           
           {/* Left Column: Descriptions */}
           <div className="flex flex-col items-start text-left">
-            <span className="text-[9px] font-bold text-violet-400 uppercase tracking-widest block mb-2 font-mono">
+            <span className="text-[9px] font-bold text-zinc-450 uppercase tracking-widest block mb-2 font-mono">
               Phase 0{tabs[activeTab].id + 1}
             </span>
             <h3 className="text-2xl sm:text-3xl font-extrabold text-white mb-4 tracking-tight leading-tight">
@@ -106,8 +103,8 @@ export function HowItWorks() {
             <div className="space-y-4 w-full mb-4">
               {tabs[activeTab].features.map((feature, i) => (
                 <div key={i} className="flex items-center gap-3">
-                  <div className="w-5 h-5 rounded-full flex items-center justify-center border border-violet-500/20 bg-violet-500/10 shrink-0">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-violet-400" />
+                  <div className="w-5 h-5 rounded-full flex items-center justify-center border border-zinc-800 bg-white/[0.02] shrink-0">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-white" />
                   </div>
                   <span className="text-xs sm:text-sm text-zinc-200 font-semibold">{feature}</span>
                 </div>
@@ -118,18 +115,15 @@ export function HowItWorks() {
           {/* Right Column: Dynamic Visual Widget Mockup */}
           <div className="relative flex items-center justify-center">
             
-            {/* Ambient Purple backing */}
-            <div className="absolute inset-0 bg-violet-600/5 blur-[80px] rounded-full pointer-events-none" />
-
             {/* Widget Container */}
-            <div className="w-full max-w-md bg-[#0A0C10] border border-white/[0.05] rounded-[2rem] p-6 sm:p-8 shadow-2xl relative z-10 transition-all duration-300">
+            <div className="w-full max-w-md bg-[#090A0F] border border-zinc-800 rounded-[2rem] p-6 sm:p-8 shadow-2xl relative z-10 transition-all duration-300">
               
               {/* Tab 0 Widget: Commit Setup */}
               {activeTab === 0 && (
                 <div className="space-y-6">
                   <div className="flex items-center justify-between pb-4 border-b border-white/[0.04]">
-                    <span className="text-xs font-bold text-zinc-400">Lock Commitment</span>
-                    <span className="text-xs font-bold text-violet-400">Stake: ₹20/day</span>
+                    <span className="text-xs font-bold text-zinc-405">Lock Commitment</span>
+                    <span className="text-xs font-bold text-white">Stake: ₹20/day</span>
                   </div>
                   <div className="space-y-4">
                     <div className="p-4 bg-white/[0.01] border border-white/[0.03] rounded-xl flex justify-between items-center">
@@ -158,7 +152,7 @@ export function HowItWorks() {
               {activeTab === 1 && (
                 <div className="space-y-6">
                   <div className="flex items-center justify-between pb-4 border-b border-white/[0.04]">
-                    <span className="text-xs font-bold text-zinc-400">Background Sync Engine</span>
+                    <span className="text-xs font-bold text-zinc-405">Background Sync Engine</span>
                     <span className="text-xs text-emerald-400 font-semibold px-2 py-0.5 rounded bg-emerald-500/10 border border-emerald-500/20 flex items-center gap-1">
                       <span className="w-1 h-1 rounded-full bg-emerald-400 animate-ping" /> Live
                     </span>
@@ -184,28 +178,28 @@ export function HowItWorks() {
               {activeTab === 2 && (
                 <div className="space-y-6">
                   <div className="flex items-center justify-between pb-4 border-b border-white/[0.04]">
-                    <span className="text-xs font-bold text-zinc-400">Discipline Settlement</span>
+                    <span className="text-xs font-bold text-zinc-405">Discipline Settlement</span>
                     <span className="text-xs font-bold text-emerald-450">Yield Active</span>
                   </div>
                   <div className="space-y-4">
                     <div className="grid grid-cols-2 gap-4">
                       <div className="p-4 bg-white/[0.01] border border-white/[0.03] rounded-xl">
-                        <span className="text-[10px] text-zinc-500 uppercase tracking-wider block">Principal back</span>
+                        <span className="text-[10px] text-zinc-550 uppercase tracking-wider block">Principal back</span>
                         <span className="text-sm font-bold text-white">₹600.00</span>
                       </div>
                       <div className="p-4 bg-white/[0.01] border border-white/[0.03] rounded-xl">
-                        <span className="text-[10px] text-zinc-500 uppercase tracking-wider block">Community yield</span>
+                        <span className="text-[10px] text-zinc-550 uppercase tracking-wider block">Community yield</span>
                         <span className="text-sm font-bold text-emerald-450">+₹48.50</span>
                       </div>
                     </div>
-                    <div className="p-4 bg-violet-500/[0.02] border border-violet-500/20 rounded-xl flex items-center justify-between">
+                    <div className="p-4 bg-white/[0.005] border border-zinc-800 rounded-xl flex items-center justify-between">
                       <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-lg bg-violet-500/10 flex items-center justify-center">
-                          <Swords className="w-4 h-4 text-violet-400" />
+                        <div className="w-8 h-8 rounded-lg bg-white/[0.02] border border-white/[0.06] flex items-center justify-center">
+                          <Swords className="w-4 h-4 text-zinc-400" />
                         </div>
                         <div>
                           <span className="text-xs font-bold text-white">1v1 Battle Payout</span>
-                          <span className="text-[9px] text-zinc-500 block">demouser vs coder22</span>
+                          <span className="text-[9px] text-zinc-550 block">demouser vs coder22</span>
                         </div>
                       </div>
                       <span className="text-xs font-bold text-emerald-450">+₹20.00</span>
