@@ -42,217 +42,153 @@ export function TodaysChallenge({
   const isStakeAtRisk = onboardingComplete && hasVerifiedPlatform && !hasSolvedToday && timeLeft.h < 2;
 
   return (
-    <div className="lg:col-span-2 flex flex-col h-full">
-      <div className="relative flex flex-col h-full flex-1">
+    <div className="w-full">
+      <div className="relative">
         {/* Ambient Glow */}
         <div
-          className={`absolute inset-0 rounded-2xl blur-2xl opacity-40 transition-all duration-500 bg-gradient-to-br ${
+          className={`absolute inset-0 rounded-2xl blur-xl opacity-20 transition-all duration-550 bg-gradient-to-r ${
             hasSolvedToday
-              ? "from-emerald-500/20 to-teal-500/20"
-              : isStakeAtRisk
-              ? "from-red-500/20 to-orange-500/20"
-              : hasVerifiedPlatform
               ? "from-emerald-500/10 to-teal-500/10"
+              : isStakeAtRisk
+              ? "from-red-500/20 to-orange-500/20 animate-pulse"
+              : hasVerifiedPlatform
+              ? "from-yellow-500/10 to-orange-500/10"
               : "from-zinc-500/5 to-zinc-500/10"
           }`}
         />
 
-        <div className="relative bg-[#0F0F13] border border-white/[0.04] rounded-2xl p-6 overflow-hidden min-h-[460px] flex flex-col justify-between h-full flex-1">
-          <div className="flex flex-col flex-1 h-full justify-between">
-            
-            {/* Header Row */}
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-bold text-white flex items-center gap-3">
-                Today's Goal
-              </h2>
-
-              <span
-                className={`flex items-center gap-2 text-[10px] uppercase font-bold tracking-wider px-3 py-1 rounded-full border select-none transition-all duration-300 ${
-                  hasSolvedToday
-                    ? "text-emerald-400 bg-emerald-500/10 border-emerald-500/20"
-                    : isStakeAtRisk
-                    ? "text-red-400 bg-red-500/10 border-red-500/20"
-                    : hasVerifiedPlatform
-                    ? "text-yellow-300 bg-yellow-500/10 border-yellow-500/20"
-                    : "text-zinc-500 bg-white/[0.02] border-white/[0.06]"
-                }`}
-              >
-                {hasSolvedToday ? (
-                  <CheckCircle className="w-3.5 h-3.5" />
-                ) : (
-                  <div className={`w-1.5 h-1.5 rounded-full bg-yellow-400 ${isStakeAtRisk ? "bg-red-500 animate-ping" : "animate-pulse"}`} />
-                )}
-                {hasSolvedToday ? "Protected" : isStakeAtRisk ? "Stake at Risk" : hasVerifiedPlatform ? "Awaiting Sync" : "Disconnected"}
-              </span>
+        {/* Main Status Bar Container */}
+        <div className={`relative bg-[#0F0F13] border border-white/[0.04] p-4 flex flex-col md:flex-row items-center justify-between gap-4 transition-all duration-300 shadow-lg ${
+          syncLogs && syncLogs.length > 0 ? "rounded-t-2xl border-b-0" : "rounded-2xl"
+        }`}>
+          
+          {/* Left Block: Status & Tracking */}
+          <div className="flex items-center gap-3.5 w-full md:w-auto">
+            <div
+              className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-all duration-500 ${
+                hasSolvedToday
+                  ? "bg-[#10b981]/15 text-[#10b981]"
+                  : isStakeAtRisk
+                  ? "bg-red-500/10 text-red-500 animate-pulse border border-red-500/25"
+                  : "bg-white/[0.02] text-zinc-500 border border-white/[0.04]"
+              }`}
+            >
+              {hasVerifiedPlatform ? (
+                <CheckCircle className="w-5.5 h-5.5" strokeWidth={2} />
+              ) : (
+                <HelpCircle className="w-5.5 h-5.5 text-zinc-500 animate-pulse" strokeWidth={2} />
+              )}
             </div>
 
-            {/* Main Content: Actions or Placeholders */}
-            {!onboardingComplete ? (
-              /* CASE 1: ONBOARDING REQUIRED */
-              <div className="flex-1 flex flex-col items-center justify-center text-center py-8">
-                <div className="w-16 h-16 bg-white/5 border border-white/[0.04] rounded-full flex items-center justify-center mb-4">
-                  <Lock className="w-8 h-8 text-zinc-400" />
-                </div>
-                <h3 className="text-xl font-bold text-white mb-2">Setup Required</h3>
-                <p className="text-sm text-zinc-400 mb-6 max-w-sm">
-                  You need to set up your daily commitment plan before you can verify coding streaks.
-                </p>
-                <button
-                  onClick={onSetupClick}
-                  className="px-6 py-3 bg-emerald-500 hover:bg-emerald-400 text-black font-semibold rounded-xl transition-all shadow-lg shadow-emerald-500/20 cursor-pointer"
+            <div className="flex flex-col">
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-bold text-white tracking-wide">Today's Goal</span>
+                <span
+                  className={`text-[9px] uppercase font-extrabold tracking-wider px-2 py-0.5 rounded border select-none transition-all duration-300 ${
+                    hasSolvedToday
+                      ? "text-emerald-450 bg-emerald-500/5 border-emerald-500/15"
+                      : isStakeAtRisk
+                      ? "text-red-400 bg-red-500/5 border-red-500/15"
+                      : hasVerifiedPlatform
+                      ? "text-yellow-455 bg-yellow-500/5 border-yellow-500/15"
+                      : "text-zinc-500 bg-white/[0.01] border-white/[0.04]"
+                  }`}
                 >
-                  Setup Commitment Now
-                </button>
+                  {hasSolvedToday ? "Protected" : isStakeAtRisk ? "Stake At Risk" : hasVerifiedPlatform ? "Awaiting Sync" : "Disconnected"}
+                </span>
               </div>
-            ) : (
-              /* CASE 2: ACTIVE PLAYERS OR PENDING CONNECTION FLOW (UNIFIED VIEW) */
-              <div className="flex-1 flex flex-col justify-between items-center text-center py-4 w-full animate-in fade-in duration-300">
-                
-                {/* Status Indicator */}
-                <div className="flex flex-col items-center">
-                  <div
-                    className={`w-16 h-16 rounded-2xl flex items-center justify-center mb-4 transition-all duration-500 ${
-                      hasSolvedToday
-                        ? "bg-[#10b981] shadow-[0_0_30px_rgba(16,185,129,0.3)]"
-                        : isStakeAtRisk
-                        ? "bg-red-500/10 border border-red-500/30 text-red-500 animate-pulse shadow-[0_0_20px_rgba(239,68,68,0.2)]"
-                        : "bg-white/[0.02] border border-white/[0.06] text-zinc-500"
-                    }`}
-                  >
-                    {hasVerifiedPlatform ? (
-                      <CheckCircle className={`w-8 h-8 ${hasSolvedToday ? "text-white" : isStakeAtRisk ? "text-red-400" : "text-zinc-600"}`} strokeWidth={2} />
-                    ) : (
-                      <HelpCircle className="w-8 h-8 text-zinc-600 animate-pulse" strokeWidth={2} />
-                    )}
-                  </div>
-
-                  <h3 className="text-2xl font-bold text-white">
-                    {hasSolvedToday ? "Streak Secured!" : isStakeAtRisk ? "Streak at Risk!" : !hasVerifiedPlatform ? "Setup Pending" : "Solve Pending"}
-                  </h3>
-                  
-                  {/* List active connected profiles */}
-                  <div className="text-[10px] text-zinc-500 mt-2 bg-white/5 border border-white/[0.04] px-3 py-1 rounded-lg select-none">
-                    {hasVerifiedPlatform ? (
-                      <>
-                        Tracking: {verifiedPlatforms.map((p, idx) => (
-                          <span key={p.platform}>
-                            <span className="text-emerald-400 font-semibold">{p.platform}</span> (@{p.username})
-                            {idx < verifiedPlatforms.length - 1 ? ", " : ""}
-                          </span>
-                        ))}
-                      </>
-                    ) : (
-                      <span className="text-zinc-500">No profile connected (link handle on the right)</span>
-                    )}
-                  </div>
-                </div>
-
-                {/* Submissions sync controller */}
-                <div className="flex flex-col items-center w-full max-w-xs space-y-3 mt-4">
-                  <div className="text-xs text-zinc-400 select-none">
-                    Solved today: <strong className="text-white font-bold">{todaySubmissionsCount} {todaySubmissionsCount === 1 ? "question" : "questions"}</strong>
-                  </div>
-
-                  {hasVerifiedPlatform ? (
-                    <button
-                      type="button"
-                      onClick={handleSync}
-                      disabled={syncLoading}
-                      className={`w-full h-11 border rounded-xl font-bold text-xs transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer ${
-                        syncLoading
-                          ? "bg-white/[0.02] border-white/[0.06] text-zinc-650"
-                          : "bg-white/[0.02] hover:bg-white/[0.06] border-white/[0.06] hover:border-white/[0.12] text-white active:scale-98"
-                      }`}
-                    >
-                      <RefreshCw className={`w-3.5 h-3.5 ${syncLoading ? "animate-spin text-zinc-550" : "text-emerald-400"}`} />
-                      {syncLoading ? "Syncing solves..." : "Sync solves now"}
-                    </button>
-                  ) : (
-                    <div className="w-full py-3 bg-white/[0.01] border border-white/[0.04] text-zinc-500 rounded-xl font-bold text-xs select-none cursor-not-allowed">
-                      Connect Profile in Sidebar to Sync
-                    </div>
-                  )}
-                </div>
-
-                {/* Developer Logs Console Terminal */}
-                {syncLogs && syncLogs.length > 0 && (
-                  <div className="w-full max-w-md bg-black/80 border border-white/[0.06] rounded-xl p-3.5 font-mono text-[9px] text-zinc-400 text-left mt-5 shadow-inner overflow-hidden select-text animate-in slide-in-from-top-2 duration-300">
-                    <div className="flex items-center justify-between border-b border-white/[0.04] pb-1.5 mb-2 text-zinc-500 select-none">
-                      <span>VERIFICATION SYSTEM CONSOLE</span>
-                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
-                    </div>
-                    <div className="space-y-1 max-h-[100px] overflow-y-auto custom-scrollbar scroll-smooth">
-                      {syncLogs.map((log, idx) => {
-                        let textClass = "text-zinc-400";
-                        if (log.includes("✅") || log.includes("Secured")) textClass = "text-emerald-400 font-bold";
-                        if (log.includes("❌")) textClass = "text-red-400 font-bold";
-                        if (log.includes("⚠️")) textClass = "text-yellow-400";
-                        return (
-                          <div key={idx} className={`${textClass} leading-relaxed`}>
-                            {log}
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </div>
+              <div className="text-[10px] text-zinc-500 mt-1 max-w-[250px] truncate">
+                {hasVerifiedPlatform ? (
+                  <span>
+                    Tracking: {verifiedPlatforms.map((p) => p.platform).join(", ")}
+                  </span>
+                ) : (
+                  <span className="text-zinc-550">No profile connected (link on the right)</span>
                 )}
+              </div>
+            </div>
+          </div>
 
-                {apiError && (
-                  <div className="flex items-start gap-2 bg-red-500/10 border border-red-500/20 rounded-xl px-4 py-2 mt-3 text-left w-full">
-                    <AlertTriangle className="w-4 h-4 text-red-400 shrink-0 mt-0.5" />
-                    <p className="text-[11px] text-red-300 leading-normal">{apiError}</p>
-                  </div>
-                )}
+          {/* Center Block: Motivational Quote (Hidden on mobile) */}
+          <div className="hidden lg:block text-center flex-1 max-w-[280px] px-4 truncate select-none">
+            <p className="text-[11px] text-zinc-400 italic font-medium leading-relaxed">
+              "{todayLine || "Solve a problem today to update consistency."}"
+            </p>
+          </div>
 
-                {/* Motivation Line */}
-                <div className="w-full bg-white/[0.01] border-y border-white/[0.04] py-3.5 mt-4 select-none">
-                  <p className="text-xs text-zinc-400 italic max-w-sm mx-auto leading-relaxed px-4">
-                    "{todayLine || "Solve a problem today to update consistency."}"
-                  </p>
+          {/* Right Block: Timer & Action Trigger */}
+          <div className="flex items-center justify-between md:justify-end gap-5 w-full md:w-auto shrink-0 border-t border-white/[0.04] md:border-t-0 pt-3 md:pt-0">
+            {/* Timer Dials */}
+            <div className="flex items-center gap-2 font-mono text-zinc-100">
+              <span className="text-[9px] text-zinc-500 font-sans font-bold tracking-wider mr-1 uppercase">Closes in</span>
+              <div className={`px-2 py-1 rounded bg-[#0A0B10] border border-white/[0.04] text-xs font-bold ${isStakeAtRisk ? "text-red-400 border-red-500/20 animate-pulse" : ""}`}>
+                {String(timeLeft.h).padStart(2, "0")}h
+              </div>
+              <span className="text-zinc-700 text-xs font-bold">:</span>
+              <div className={`px-2 py-1 rounded bg-[#0A0B10] border border-white/[0.04] text-xs font-bold ${isStakeAtRisk ? "text-red-400 animate-pulse" : ""}`}>
+                {String(timeLeft.m).padStart(2, "0")}m
+              </div>
+              <span className="text-zinc-700 text-xs font-bold">:</span>
+              <div className={`px-2 py-1 rounded bg-[#0A0B10] border border-white/[0.04] text-xs font-bold ${isStakeAtRisk ? "text-red-400 animate-pulse" : "text-emerald-450"}`}>
+                {String(timeLeft.s).padStart(2, "0")}s
+              </div>
+            </div>
+
+            {/* Sync Action Trigger */}
+            <div className="shrink-0">
+              {hasVerifiedPlatform ? (
+                <button
+                  type="button"
+                  onClick={handleSync}
+                  disabled={syncLoading}
+                  className={`h-9 px-4 rounded-xl font-bold text-xs transition-all duration-300 flex items-center gap-1.5 cursor-pointer border ${
+                    syncLoading
+                      ? "bg-white/[0.02] border-white/[0.04] text-zinc-600"
+                      : "bg-white text-black hover:bg-zinc-200 border-white active:scale-98"
+                  }`}
+                >
+                  <RefreshCw className={`w-3.5 h-3.5 ${syncLoading ? "animate-spin text-zinc-500" : "text-emerald-500"}`} />
+                  {syncLoading ? "Syncing..." : "Sync solves"}
+                </button>
+              ) : (
+                <div className="h-9 px-4.5 bg-white/[0.02] border border-white/[0.04] text-zinc-500 rounded-xl font-bold text-[10px] flex items-center justify-center select-none cursor-not-allowed">
+                  Link Profile to Sync
                 </div>
+              )}
+            </div>
+          </div>
 
-                {/* Timer Countdown */}
-                <div className="space-y-2.5 w-full pt-4">
-                  <p className="text-[10px] text-zinc-550 font-bold uppercase tracking-wider">Next challenge unlocks in</p>
-                  <div className="flex items-center justify-center gap-3 font-mono">
-                    <div className={`w-12 h-14 rounded-xl flex flex-col items-center justify-center select-none transition-all duration-550 border ${
-                      isStakeAtRisk 
-                        ? "bg-red-500/10 border-red-500/30 text-red-400 animate-pulse shadow-[0_0_15px_rgba(239,68,68,0.2)]" 
-                        : "bg-[#0F0F13] border-white/[0.04] text-white"
-                    }`}>
-                      <span className="text-lg font-bold leading-none">{String(timeLeft.h).padStart(2, "0")}</span>
-                      <span className={`text-[8px] block font-sans font-semibold mt-1 leading-none tracking-wider ${isStakeAtRisk ? "text-red-500" : "text-zinc-500"}`}>HRS</span>
-                    </div>
-                    <span className={`text-base font-bold pb-1 select-none ${isStakeAtRisk ? "text-red-400" : "text-zinc-700"}`}>:</span>
-                    <div className={`w-12 h-14 rounded-xl flex flex-col items-center justify-center select-none transition-all duration-550 border ${
-                      isStakeAtRisk 
-                        ? "bg-red-500/10 border-red-500/30 text-red-400 animate-pulse shadow-[0_0_15px_rgba(239,68,68,0.2)]" 
-                        : "bg-[#0F0F13] border-white/[0.04] text-white"
-                    }`}>
-                      <span className="text-lg font-bold leading-none">{String(timeLeft.m).padStart(2, "0")}</span>
-                      <span className={`text-[8px] block font-sans font-semibold mt-1 leading-none tracking-wider ${isStakeAtRisk ? "text-red-500" : "text-zinc-500"}`}>MIN</span>
-                    </div>
-                    <span className={`text-base font-bold pb-1 select-none ${isStakeAtRisk ? "text-red-400" : "text-zinc-700"}`}>:</span>
-                    <div className={`w-12 h-14 rounded-xl flex flex-col items-center justify-center select-none transition-all duration-550 border ${
-                      isStakeAtRisk 
-                        ? "bg-red-500/10 border-red-500/30 text-red-400 animate-pulse shadow-[0_0_15px_rgba(239,68,68,0.2)]" 
-                        : "bg-[#0F0F13] border-white/[0.04] text-emerald-455"
-                    }`}>
-                      <span className="text-lg font-bold leading-none">{String(timeLeft.s).padStart(2, "0")}</span>
-                      <span className={`text-[8px] block font-sans font-semibold mt-1 leading-none tracking-wider ${isStakeAtRisk ? "text-red-500" : "text-zinc-500"}`}>SEC</span>
-                    </div>
+        </div>
+
+        {/* Collapsible Slide-Out Console Terminal Drawer */}
+        {syncLogs && syncLogs.length > 0 && (
+          <div className="relative z-10 w-full bg-black/85 border border-white/[0.04] rounded-b-2xl p-4 font-mono text-[9px] text-zinc-450 text-left shadow-inner overflow-hidden select-text animate-in slide-in-from-top-1 duration-300">
+            <div className="flex items-center justify-between border-b border-white/[0.04] pb-1.5 mb-2 text-zinc-500 select-none">
+              <span>SYSTEM VERIFICATION DRAWER</span>
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-555 animate-ping" />
+            </div>
+            <div className="space-y-1 max-h-[80px] overflow-y-auto custom-scrollbar scroll-smooth">
+              {syncLogs.map((log, idx) => {
+                let textClass = "text-zinc-400";
+                if (log.includes("✅") || log.includes("Secured")) textClass = "text-emerald-450 font-bold";
+                if (log.includes("❌")) textClass = "text-red-400 font-bold";
+                if (log.includes("⚠️")) textClass = "text-yellow-450";
+                return (
+                  <div key={idx} className={`${textClass} leading-relaxed`}>
+                    {log}
                   </div>
-                  
-                  {isStakeAtRisk && (
-                    <p className="text-[10px] text-red-400 font-bold uppercase tracking-wider animate-pulse mt-2">
-                      ⚠️ Stake pool at risk! Verify a solve immediately.
-                    </p>
-                  )}
-                </div>
+                );
+              })}
+            </div>
+            {apiError && (
+              <div className="flex items-start gap-2 bg-red-500/10 border border-red-500/20 rounded-lg px-3 py-1.5 mt-2">
+                <AlertTriangle className="w-3.5 h-3.5 text-red-400 shrink-0 mt-0.5" />
+                <p className="text-[10px] text-red-300 leading-normal">{apiError}</p>
               </div>
             )}
           </div>
-        </div>
+        )}
+
       </div>
     </div>
   );

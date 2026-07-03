@@ -721,25 +721,29 @@ export function Dashboard() {
           {/* Row 2: Challenge a Friend Widget */}
           <DashboardBattleWidget onRefreshRequest={fetchUserData} />
 
-          {/* Row 3: Main Workspace Area (Today's Goal + Recent Solves on Left, Platforms + Awards on Right) */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch">
+          {/* Row 3: Today's Goal Sync Bar (Sleek Horizontal Stripe) */}
+          <div className="mb-6">
+            <TodaysChallenge
+              onboardingComplete={userData?.onboardingComplete ?? true}
+              onSetupClick={() => setShowSetupModal(true)}
+              handleSync={handleSync}
+              syncLoading={syncLoading}
+              apiError={submitError}
+              setApiError={setSubmitError}
+              currentStreak={currentStreak}
+              dailyCommitment={dailyCommitment}
+              todayLine={todayLine}
+              timeLeft={timeLeft}
+              todaySubmissionsCount={todaySubmission?.count || 0}
+              linkedPlatforms={(userData as any)?.linkedPlatforms}
+              syncLogs={syncLogs}
+            />
+          </div>
+
+          {/* Row 4: Main Workspace Area (Recent Solves on Left, Platforms + Awards on Right) */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch mb-6">
             {/* Left Column (2/3 width) - Daily operations */}
             <div className="lg:col-span-2 flex flex-col gap-6">
-              <TodaysChallenge
-                onboardingComplete={userData?.onboardingComplete ?? true}
-                onSetupClick={() => setShowSetupModal(true)}
-                handleSync={handleSync}
-                syncLoading={syncLoading}
-                apiError={submitError}
-                setApiError={setSubmitError}
-                currentStreak={currentStreak}
-                dailyCommitment={dailyCommitment}
-                todayLine={todayLine}
-                timeLeft={timeLeft}
-                todaySubmissionsCount={todaySubmission?.count || 0}
-                linkedPlatforms={(userData as any)?.linkedPlatforms}
-                syncLogs={syncLogs}
-              />
               <RecentSolves recentSolves={recentSolves} />
             </div>
 
@@ -764,7 +768,7 @@ export function Dashboard() {
             </div>
           </div>
 
-          {/* Row 4: Unified Metrics Cards (Wallet, Versus, Leaderboard & DSA Stack) */}
+          {/* Row 5: Unified Metrics Cards (Wallet, Versus, Leaderboard & DSA Stack) */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch">
             {/* Column 1 - Wallet Card (Plan stats) */}
             <div className="lg:col-span-1">
