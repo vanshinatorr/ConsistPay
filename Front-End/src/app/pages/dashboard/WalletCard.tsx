@@ -36,9 +36,9 @@ export function WalletCard({
       {/* Background Glow */}
       <div className="absolute inset-0 rounded-2xl blur-xl opacity-30 bg-gradient-to-br from-yellow-500/15 to-orange-500/15" />
 
-      <div className="relative bg-[#0F0F13] border border-white/[0.04] rounded-2xl p-5 flex flex-col justify-between h-[249px] min-h-[249px] shadow-lg overflow-hidden">
+      <div className="relative bg-[#0F0F13] border border-white/[0.04] rounded-2xl p-5 flex flex-col justify-between h-[522px] min-h-[522px] shadow-lg overflow-hidden">
         {/* Ambient Grid overlay */}
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808003_1px,transparent_1px),linear-gradient(to_bottom,#80808005_1px,transparent_1px)] bg-[size:14px_24px] pointer-events-none" />
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808005_1px,transparent_1px),linear-gradient(to_bottom,#80808005_1px,transparent_1px)] bg-[size:14px_24px] pointer-events-none" />
 
         {/* Header */}
         <div className="flex items-center justify-between pb-2 border-b border-white/[0.04] relative z-10">

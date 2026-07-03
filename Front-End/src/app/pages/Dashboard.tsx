@@ -721,7 +721,7 @@ export function Dashboard() {
           {/* Row 2: Challenge a Friend Widget */}
           <DashboardBattleWidget onRefreshRequest={fetchUserData} />
 
-          {/* Row 3: Top Widgets Row (Platforms Connect, Consistency Wallet, Versus Card) */}
+          {/* Row 3: Top Widgets Row (Platforms Connect, Consistency Wallet, Versus Card + DSA Solves Stack) */}
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 items-stretch mb-6">
             {/* Column 1 - Platforms Connect Widget */}
             <div className="lg:col-span-1">
@@ -746,13 +746,17 @@ export function Dashboard() {
                 onRefreshRequest={fetchUserData}
               />
             </div>
-            {/* Column 3 - Versus Card (Stakes & duels stats) */}
-            <div className="lg:col-span-1">
+            {/* Column 3 - Versus Card & DSA Solves Card Stack */}
+            <div className="lg:col-span-1 flex flex-col gap-6">
               <VersusCard
                 plan={userData?.plan}
                 battleBalance={userData?.battleBalance ?? 0}
                 onboardingComplete={userData?.onboardingComplete ?? true}
                 onRefreshRequest={fetchUserData}
+              />
+              <DsaStatsCard
+                stats={userData?.dsaStats}
+                onboardingComplete={userData?.onboardingComplete ?? true}
               />
             </div>
           </div>
@@ -789,10 +793,6 @@ export function Dashboard() {
                 rank={userRank}
                 totalUsers={totalUsers}
                 loading={leaderboardLoading}
-                onboardingComplete={userData?.onboardingComplete ?? true}
-              />
-              <DsaStatsCard
-                stats={userData?.dsaStats}
                 onboardingComplete={userData?.onboardingComplete ?? true}
               />
               <AwardsCard

@@ -171,7 +171,7 @@ export function PlatformsWidget({ onLinkageChanged, onboardingComplete = true }:
   ];
 
   return (
-    <div className={`relative rounded-2xl border border-white/[0.04] bg-[#0F0F13] p-5 overflow-hidden group hover:border-white/10 transition-all duration-300 h-[249px] min-h-[249px] flex flex-col justify-between ${!onboardingComplete ? 'opacity-40 pointer-events-none' : ''}`}>
+    <div className={`relative rounded-2xl border border-white/[0.04] bg-[#0F0F13] p-5 overflow-hidden group hover:border-white/10 transition-all duration-300 h-[522px] min-h-[522px] flex flex-col justify-between ${!onboardingComplete ? 'opacity-40 pointer-events-none' : ''}`}>
       {/* Background patterns */}
       <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.002)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.002)_1px,transparent_1px)] bg-[size:20px_20px] pointer-events-none" />
       
@@ -183,7 +183,7 @@ export function PlatformsWidget({ onLinkageChanged, onboardingComplete = true }:
         </h3>
       </div>
 
-      <div className="space-y-2 relative z-10 flex-1 overflow-y-auto pr-1 custom-scrollbar max-h-[160px]">
+      <div className="space-y-3 relative z-10 flex-1 overflow-y-auto pr-1 custom-scrollbar max-h-[430px]">
         {/* ─── ACTIVE/FUNCTIONAL PLATFORMS ─── */}
         {(["LeetCode", "GeeksforGeeks", "Code360"] as const).map((plat) => {
           const linkage = linkages[plat];
