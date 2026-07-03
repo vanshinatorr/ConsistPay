@@ -768,21 +768,25 @@ export function Dashboard() {
             </div>
           </div>
 
-          {/* Row 5: Lower Workspace Area (Recent Solves on Left, Analytics Stack on Right) */}
+          {/* Row 5: Lower Workspace Area (Recent Solves, Leaderboard, and Achievements side-by-side in 1 line) */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch">
-            {/* Column 1 - Daily operations / Recent Solves (takes 2/3 width) */}
-            <div className="lg:col-span-2">
+            {/* Column 1 - Recent Solves */}
+            <div className="lg:col-span-1">
               <RecentSolves recentSolves={recentSolves} />
             </div>
 
-            {/* Column 2 - Stacked Analytics Cards (takes 1/3 width) */}
-            <div className="lg:col-span-1 flex flex-col gap-6">
+            {/* Column 2 - Leaderboard Rank */}
+            <div className="lg:col-span-1">
               <LeaderboardRankCard
                 rank={userRank}
                 totalUsers={totalUsers}
                 loading={leaderboardLoading}
                 onboardingComplete={userData?.onboardingComplete ?? true}
               />
+            </div>
+
+            {/* Column 3 - Achievements Awards */}
+            <div className="lg:col-span-1">
               <AwardsCard
                 streak={userData?.streak ?? 0}
                 maxStreak={userData?.maxStreak ?? 0}

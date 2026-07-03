@@ -52,8 +52,8 @@ export function RecentSolves({ recentSolves }: RecentSolvesProps) {
         <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-violet-500/5 to-transparent rounded-2xl blur-xl opacity-50" />
         
         {/* Main Dashboard Widget */}
-        <div className="relative bg-[#0F0F13] border border-white/[0.04] rounded-2xl p-5 h-full flex flex-col justify-between">
-          <div className="flex items-center justify-between mb-4">
+        <div className="relative bg-[#0F0F13] border border-white/[0.04] rounded-2xl p-5 h-[249px] min-h-[249px] flex flex-col justify-between">
+          <div className="flex items-center justify-between mb-2">
             <div className="flex items-center gap-2">
               <div className="w-8 h-8 rounded-lg bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400">
                 <Code2 className="w-4 h-4" />
