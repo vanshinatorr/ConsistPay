@@ -132,6 +132,20 @@ export function TodaysChallenge({
                   Setup Commitment Now
                 </button>
               </div>
+            ) : selectedPlatform === "Code360" ? (
+              // CODE360 DISABLED BANNER
+              <div className="flex-1 flex flex-col items-center justify-center text-center py-8 px-4">
+                <div className="w-14 h-14 bg-yellow-500/10 rounded-full flex items-center justify-center mb-4 border border-yellow-500/20">
+                  <AlertTriangle className="w-6 h-6 text-yellow-400" />
+                </div>
+                <h3 className="text-lg font-bold text-white mb-2">Code360 Integration Paused</h3>
+                <p className="text-xs text-zinc-400 mb-4 max-w-sm leading-relaxed">
+                  Code360 (Coding Ninjas) renders profile pages entirely on the client side (SPA) and restricts automated third-party data retrieval.
+                </p>
+                <p className="text-[11px] text-zinc-550 max-w-xs leading-normal">
+                  To protect data integrity, automatic syncing for Code360 is currently paused. Please use <span className="text-violet-400 font-semibold">LeetCode</span> or <span className="text-violet-400 font-semibold">GeeksforGeeks</span> for your active streaks.
+                </p>
+              </div>
             ) : !linkage ? (
               // CASE 1: UNLINKED STATE
               <div className="flex-1 flex flex-col justify-center py-4">
