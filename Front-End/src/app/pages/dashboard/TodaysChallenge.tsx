@@ -1,5 +1,5 @@
 import React from "react";
-import { CheckCircle, Lock, RefreshCw, AlertTriangle } from "lucide-react";
+import { CheckCircle, Lock, RefreshCw, AlertTriangle, HelpCircle } from "lucide-react";
 
 interface TodaysChallengeProps {
   onboardingComplete?: boolean;
@@ -53,7 +53,7 @@ export function TodaysChallenge({
               ? "from-red-500/20 to-orange-500/20"
               : hasVerifiedPlatform
               ? "from-emerald-500/10 to-teal-500/10"
-              : "from-yellow-500/10 to-orange-500/10"
+              : "from-zinc-500/5 to-zinc-500/10"
           }`}
         />
 
@@ -82,7 +82,7 @@ export function TodaysChallenge({
                 ) : (
                   <div className={`w-1.5 h-1.5 rounded-full bg-yellow-400 ${isStakeAtRisk ? "bg-red-500 animate-ping" : "animate-pulse"}`} />
                 )}
-                {hasSolvedToday ? "Protected" : isStakeAtRisk ? "Stake at Risk" : hasVerifiedPlatform ? "Awaiting Sync" : "Connection Required"}
+                {hasSolvedToday ? "Protected" : isStakeAtRisk ? "Stake at Risk" : hasVerifiedPlatform ? "Awaiting Sync" : "Disconnected"}
               </span>
             </div>
 
@@ -104,23 +104,8 @@ export function TodaysChallenge({
                   Setup Commitment Now
                 </button>
               </div>
-            ) : !hasVerifiedPlatform ? (
-              /* CASE 2: PLATFORM CONNECTION REQUIRED */
-              <div className="flex-1 flex flex-col items-center justify-center text-center py-8 px-4 animate-in fade-in duration-300">
-                <div className="w-14 h-14 bg-yellow-500/10 rounded-full flex items-center justify-center mb-4 border border-yellow-500/20">
-                  <AlertTriangle className="w-6 h-6 text-yellow-400 animate-pulse" />
-                </div>
-                <h3 className="text-lg font-bold text-white mb-2">Profile Connection Required</h3>
-                <p className="text-xs text-zinc-400 mb-4 max-w-sm leading-relaxed">
-                  To automatically sync solves and protect your daily stake, please link and verify a username (LeetCode, GFG, or Code360) in the <b>Problem Solving Stats</b> sidebar widget on the right.
-                </p>
-                <div className="text-[10px] text-zinc-500 flex items-center gap-1.5 mt-2 bg-white/5 border border-white/[0.04] px-3 py-1.5 rounded-lg select-none">
-                  <span>Profile Status:</span>
-                  <span className="font-bold text-yellow-400 uppercase tracking-widest">Not Connected</span>
-                </div>
-              </div>
             ) : (
-              /* CASE 3: ACTIVE PLAYERS FLOW */
+              /* CASE 2: ACTIVE PLAYERS OR PENDING CONNECTION FLOW (UNIFIED VIEW) */
               <div className="flex-1 flex flex-col justify-between items-center text-center py-4 w-full animate-in fade-in duration-300">
                 
                 {/* Status Indicator */}
@@ -134,21 +119,31 @@ export function TodaysChallenge({
                         : "bg-white/[0.02] border border-white/[0.06] text-zinc-500"
                     }`}
                   >
-                    <CheckCircle className={`w-8 h-8 ${hasSolvedToday ? "text-white" : isStakeAtRisk ? "text-red-400" : "text-zinc-600"}`} strokeWidth={2} />
+                    {hasVerifiedPlatform ? (
+                      <CheckCircle className={`w-8 h-8 ${hasSolvedToday ? "text-white" : isStakeAtRisk ? "text-red-400" : "text-zinc-600"}`} strokeWidth={2} />
+                    ) : (
+                      <HelpCircle className="w-8 h-8 text-zinc-600 animate-pulse" strokeWidth={2} />
+                    )}
                   </div>
 
                   <h3 className="text-2xl font-bold text-white">
-                    {hasSolvedToday ? "Streak Secured!" : isStakeAtRisk ? "Streak at Risk!" : "Solve Pending"}
+                    {hasSolvedToday ? "Streak Secured!" : isStakeAtRisk ? "Streak at Risk!" : !hasVerifiedPlatform ? "Setup Pending" : "Solve Pending"}
                   </h3>
                   
                   {/* List active connected profiles */}
                   <div className="text-[10px] text-zinc-500 mt-2 bg-white/5 border border-white/[0.04] px-3 py-1 rounded-lg select-none">
-                    Tracking: {verifiedPlatforms.map((p, idx) => (
-                      <span key={p.platform}>
-                        <span className="text-emerald-400 font-semibold">{p.platform}</span> (@{p.username})
-                        {idx < verifiedPlatforms.length - 1 ? ", " : ""}
-                      </span>
-                    ))}
+                    {hasVerifiedPlatform ? (
+                      <>
+                        Tracking: {verifiedPlatforms.map((p, idx) => (
+                          <span key={p.platform}>
+                            <span className="text-emerald-400 font-semibold">{p.platform}</span> (@{p.username})
+                            {idx < verifiedPlatforms.length - 1 ? ", " : ""}
+                          </span>
+                        ))}
+                      </>
+                    ) : (
+                      <span className="text-zinc-500">No profile connected (link handle on the right)</span>
+                    )}
                   </div>
                 </div>
 
@@ -158,19 +153,25 @@ export function TodaysChallenge({
                     Solved today: <strong className="text-white font-bold">{todaySubmissionsCount} {todaySubmissionsCount === 1 ? "question" : "questions"}</strong>
                   </div>
 
-                  <button
-                    type="button"
-                    onClick={handleSync}
-                    disabled={syncLoading}
-                    className={`w-full h-11 border rounded-xl font-bold text-xs transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer ${
-                      syncLoading
-                        ? "bg-white/[0.02] border-white/[0.06] text-zinc-650"
-                        : "bg-white/[0.02] hover:bg-white/[0.06] border-white/[0.06] hover:border-white/[0.12] text-white active:scale-98"
-                    }`}
-                  >
-                    <RefreshCw className={`w-3.5 h-3.5 ${syncLoading ? "animate-spin text-zinc-550" : "text-emerald-400"}`} />
-                    {syncLoading ? "Syncing solves..." : "Sync solves now"}
-                  </button>
+                  {hasVerifiedPlatform ? (
+                    <button
+                      type="button"
+                      onClick={handleSync}
+                      disabled={syncLoading}
+                      className={`w-full h-11 border rounded-xl font-bold text-xs transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer ${
+                        syncLoading
+                          ? "bg-white/[0.02] border-white/[0.06] text-zinc-650"
+                          : "bg-white/[0.02] hover:bg-white/[0.06] border-white/[0.06] hover:border-white/[0.12] text-white active:scale-98"
+                      }`}
+                    >
+                      <RefreshCw className={`w-3.5 h-3.5 ${syncLoading ? "animate-spin text-zinc-550" : "text-emerald-400"}`} />
+                      {syncLoading ? "Syncing solves..." : "Sync solves now"}
+                    </button>
+                  ) : (
+                    <div className="w-full py-3 bg-white/[0.01] border border-white/[0.04] text-zinc-500 rounded-xl font-bold text-xs select-none cursor-not-allowed">
+                      Connect Profile in Sidebar to Sync
+                    </div>
+                  )}
                 </div>
 
                 {/* Developer Logs Console Terminal */}
