@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { CheckCircle, Lock, RefreshCw, AlertTriangle, ExternalLink, Link, Check, LogIn } from "lucide-react";
+import { CheckCircle, Lock, RefreshCw, AlertTriangle, ExternalLink, Link, Check, LogIn, Clock } from "lucide-react";
 
 interface TodaysChallengeProps {
   selectedPlatform: "LeetCode" | "GeeksforGeeks" | "Code360";
@@ -135,15 +135,15 @@ export function TodaysChallenge({
             ) : selectedPlatform === "Code360" ? (
               // CODE360 DISABLED BANNER
               <div className="flex-1 flex flex-col items-center justify-center text-center py-8 px-4">
-                <div className="w-14 h-14 bg-yellow-500/10 rounded-full flex items-center justify-center mb-4 border border-yellow-500/20">
-                  <AlertTriangle className="w-6 h-6 text-yellow-400" />
+                <div className="w-14 h-14 bg-violet-500/10 rounded-full flex items-center justify-center mb-4 border border-violet-500/20">
+                  <Clock className="w-6 h-6 text-violet-400" />
                 </div>
-                <h3 className="text-lg font-bold text-white mb-2">Code360 Integration Paused</h3>
+                <h3 className="text-lg font-bold text-white mb-2">Code360 Coming Soon</h3>
                 <p className="text-xs text-zinc-400 mb-4 max-w-sm leading-relaxed">
-                  Code360 (Coding Ninjas) renders profile pages entirely on the client side (SPA) and restricts automated third-party data retrieval.
+                  We are developing a manual verification flow with screenshot proof submission for Code360 to support secure streak tracking.
                 </p>
                 <p className="text-[11px] text-zinc-550 max-w-xs leading-normal">
-                  To protect data integrity, automatic syncing for Code360 is currently paused. Please use <span className="text-violet-400 font-semibold">LeetCode</span> or <span className="text-violet-400 font-semibold">GeeksforGeeks</span> for your active streaks.
+                  Until then, please use <span className="text-violet-400 font-semibold">LeetCode</span> or <span className="text-violet-400 font-semibold">GeeksforGeeks</span> to sync your daily coding streaks.
                 </p>
               </div>
             ) : !linkage ? (
