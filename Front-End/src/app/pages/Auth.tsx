@@ -177,35 +177,39 @@ export function Auth() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0F0F13] flex relative overflow-hidden font-sans">
+    <div className="min-h-screen bg-[#000000] flex relative overflow-hidden font-sans">
       <Toaster position="top-center" toastOptions={{ style: { background: '#18181B', color: '#fff', border: '1px solid rgba(255,255,255,0.1)' } }} />
       
       {/* Subtle Premium Background */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-violet-600/10 rounded-full blur-[100px]" />
+        <div className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-emerald-500/[0.02] rounded-full blur-[100px]" />
         <div className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-emerald-500/5 rounded-full blur-[100px]" />
       </div>
 
       {/* LEFT SIDE - Motivation Panel */}
       <div className="hidden lg:flex lg:w-1/2 flex-col justify-center px-16 xl:px-24 relative z-10 border-r border-white/[0.04]">
         <Link to="/" className="flex items-center gap-3 mb-24 w-fit group">
-          <div className="w-10 h-10 bg-white/5 border border-white/[0.04] rounded-xl flex items-center justify-center group-hover:bg-white/10 transition-colors">
-            <Code2 className="w-5 h-5 text-white" />
-          </div>
-          <span className="text-xl font-semibold text-white tracking-tight">ConsistPay</span>
+          <img
+            src="/logo/brand-logo.png"
+            alt="ConsistPay Logo"
+            className="h-8 w-auto object-contain select-none"
+          />
+          <span className="text-xl font-semibold text-white tracking-tight">
+            Consist<span className="text-emerald-400">Pay</span>
+          </span>
         </Link>
         
         <div>
           <h1 className="text-[3.5rem] xl:text-[4rem] font-bold text-white leading-[1.05] mb-8 tracking-tighter">
             CGPA can't, but <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-violet-300 to-indigo-300 inline-block pb-2 -mb-2">One DSA question daily</span> <br />
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-400 inline-block pb-2 -mb-2">One DSA question daily</span> <br />
             takes you to good placements.
           </h1>
         </div>
         
         <div className="space-y-4 mb-16">
           <div className="flex items-center gap-3">
-            <CheckCircle2 className="w-5 h-5 text-violet-400/80" />
+            <CheckCircle2 className="w-5 h-5 text-emerald-400/80" />
             <span className="text-[15px] font-medium text-zinc-400">Put your money where your mouth is.</span>
           </div>
           <div className="flex items-center gap-3">
@@ -213,7 +217,7 @@ export function Auth() {
             <span className="text-[15px] font-medium text-zinc-400">Build streaks & challenge friends.</span>
           </div>
           <div className="flex items-center gap-3">
-            <CheckCircle2 className="w-5 h-5 text-indigo-400/80" />
+            <CheckCircle2 className="w-5 h-5 text-emerald-450/80" />
             <span className="text-[15px] font-medium text-zinc-400">Force yourself to become a top-tier engineer.</span>
           </div>
         </div>
@@ -242,7 +246,7 @@ export function Auth() {
       <div className="w-full lg:w-1/2 flex flex-col justify-center items-center p-6 relative z-10">
         
         {/* Ambient glow behind card */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] bg-violet-600/10 rounded-full blur-[100px] pointer-events-none" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] bg-emerald-500/[0.02] rounded-full blur-[100px] pointer-events-none" />
 
         {/* Mobile Logo */}
         <Link to="/" className="flex lg:hidden items-center justify-center gap-3 mb-12 group cursor-pointer relative z-10">
@@ -292,14 +296,14 @@ export function Auth() {
                     value={identifier}
                     onChange={(e) => setIdentifier(e.target.value)}
                     placeholder="Enter your email"
-                    className="w-full bg-[#0F0F13] border border-white/[0.04] rounded-xl px-4 py-3 text-white placeholder-zinc-600 focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 transition-all"
+                    className="w-full bg-[#0F0F13] border border-white/[0.04] rounded-xl px-4 py-3 text-white placeholder-zinc-600 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all"
                     required
                   />
                 </div>
                 <button
                   type="submit"
                   disabled={loading || !identifier}
-                  className="w-full flex items-center justify-center gap-2 bg-violet-600 text-white font-bold rounded-xl px-4 py-3 hover:bg-violet-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-violet-600/20"
+                  className="w-full flex items-center justify-center gap-2 bg-emerald-500 hover:bg-emerald-400 text-black font-bold rounded-xl px-4 py-3 transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-emerald-500/10"
                 >
                   {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : "Continue with Code"}
                 </button>
@@ -322,14 +326,14 @@ export function Auth() {
                     value={otp}
                     onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').slice(0,6))}
                     placeholder="• • • • • •"
-                    className="w-full bg-[#0F0F13] border border-white/[0.04] rounded-xl px-4 py-4 text-center text-2xl tracking-[1em] text-white placeholder-zinc-600 focus:outline-none focus:border-violet-500 transition-all"
+                    className="w-full bg-[#0F0F13] border border-white/[0.04] rounded-xl px-4 py-4 text-center text-2xl tracking-[1em] text-white placeholder-zinc-600 focus:outline-none focus:border-emerald-500 transition-all"
                     required
                   />
                 </div>
                 <button
                   type="submit"
                   disabled={loading || otp.length < 6}
-                  className="w-full flex items-center justify-center gap-2 bg-violet-600 text-white font-bold rounded-xl px-4 py-3 hover:bg-violet-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-violet-600/20 mt-4"
+                  className="w-full flex items-center justify-center gap-2 bg-emerald-500 hover:bg-emerald-400 text-black font-bold rounded-xl px-4 py-3 transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-emerald-500/10 mt-4"
                 >
                   {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : "Verify Code"}
                 </button>
@@ -378,7 +382,7 @@ export function Auth() {
                       className={`w-full bg-[#0F0F13] border rounded-xl pl-9 pr-10 py-3 text-white placeholder-zinc-600 focus:outline-none transition-all ${
                         usernameAvailable === true ? "border-emerald-500/50 focus:border-emerald-500" :
                         usernameAvailable === false ? "border-red-500/50 focus:border-red-500" :
-                        "border-white/[0.04] focus:border-violet-500"
+                        "border-white/[0.04] focus:border-emerald-500"
                       }`}
                       required
                       minLength={3}
@@ -399,7 +403,7 @@ export function Auth() {
                 <button
                   type="submit"
                   disabled={loading || !name || !username || usernameAvailable === false}
-                  className="w-full flex items-center justify-center gap-2 bg-violet-600 text-white font-bold rounded-xl px-4 py-3 mt-4 hover:bg-violet-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-violet-600/20"
+                  className="w-full flex items-center justify-center gap-2 bg-emerald-500 hover:bg-emerald-400 text-black font-bold rounded-xl px-4 py-3 mt-4 transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-emerald-500/10"
                 >
                   {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : (
                     <>Finish Setup <ArrowRight className="w-4 h-4" /></>
