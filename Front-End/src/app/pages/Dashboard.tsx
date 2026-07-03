@@ -3,7 +3,6 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Navbar } from "./dashboard/Navbar";
 import { StatsRow } from "./dashboard/StatsRow";
-import { TodaysChallenge } from "./dashboard/TodaysChallenge";
 import { WalletCard } from "./dashboard/WalletCard";
 import { VersusCard } from "./dashboard/VersusCard";
 import { DsaStatsCard } from "./dashboard/DsaStatsCard";
@@ -730,7 +729,7 @@ export function Dashboard() {
                 onboardingComplete={userData?.onboardingComplete ?? true}
               />
             </div>
-            {/* Column 2 - Consistency Wallet Card (Core feature centered and prominent) */}
+            {/* Column 2 - Consistency Wallet Card (Core feature centered and prominent with direct Sync & Timer tools) */}
             <div className="lg:col-span-2">
               <WalletCard
                 plan={userData?.plan}
@@ -744,6 +743,14 @@ export function Dashboard() {
                 planStatus={userData?.planStatus}
                 onboardingComplete={userData?.onboardingComplete ?? true}
                 onRefreshRequest={fetchUserData}
+                handleSync={handleSync}
+                syncLoading={syncLoading}
+                apiError={submitError}
+                setApiError={setSubmitError}
+                timeLeft={timeLeft}
+                todaySubmissionsCount={todaySubmission?.count || 0}
+                linkedPlatforms={(userData as any)?.linkedPlatforms}
+                syncLogs={syncLogs}
               />
             </div>
             {/* Column 3 - Versus Card & DSA Solves Card Stack */}
@@ -759,25 +766,6 @@ export function Dashboard() {
                 onboardingComplete={userData?.onboardingComplete ?? true}
               />
             </div>
-          </div>
-
-          {/* Row 4: Today's Goal Sync Bar (Sleek Horizontal Stripe) */}
-          <div className="mb-6">
-            <TodaysChallenge
-              onboardingComplete={userData?.onboardingComplete ?? true}
-              onSetupClick={() => setShowSetupModal(true)}
-              handleSync={handleSync}
-              syncLoading={syncLoading}
-              apiError={submitError}
-              setApiError={setSubmitError}
-              currentStreak={currentStreak}
-              dailyCommitment={dailyCommitment}
-              todayLine={todayLine}
-              timeLeft={timeLeft}
-              todaySubmissionsCount={todaySubmission?.count || 0}
-              linkedPlatforms={(userData as any)?.linkedPlatforms}
-              syncLogs={syncLogs}
-            />
           </div>
 
           {/* Row 5: Lower Workspace Area (Recent Solves on Left, Analytics Stack on Right) */}
