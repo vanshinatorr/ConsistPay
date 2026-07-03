@@ -106,7 +106,7 @@ export function Landing() {
       </nav>
 
       {/* Main Content Layout */}
-      <main className="w-full pt-16">
+      <main className="w-full pt-[60px]">
         
         {/* Section 1: Hero */}
         <HeroNew />

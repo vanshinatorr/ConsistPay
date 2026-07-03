@@ -6,7 +6,7 @@ export function HeroNew() {
   const navigate = useNavigate();
 
   return (
-    <section className="relative px-6 pt-12 pb-20 md:pt-16 md:pb-28 overflow-hidden w-full bg-[#000000] border-b border-white/[0.04]">
+    <section className="relative px-6 pt-6 pb-20 md:pt-8 md:pb-28 overflow-hidden w-full bg-[#000000] border-b border-white/[0.04]">
       {/* Subtle backing glow for the mockup card to add 3D depth */}
       <div className="absolute right-0 top-1/4 w-[40rem] h-[40rem] bg-emerald-500/[0.02] rounded-full blur-[140px] pointer-events-none z-0" />
       
