@@ -259,15 +259,7 @@ export function PlatformsWidget({ onLinkageChanged, onboardingComplete = true }:
                   <div>
                     <span className="text-xs font-bold text-white tracking-wide">{plat}</span>
                     {isLinked && (
-                      <div className="flex flex-col gap-0.5 mt-0.5">
-                        <p className="text-[10px] text-zinc-500 font-mono">@{linkage.username}</p>
-                        {isVerified && (
-                          <div className="flex items-center gap-1 text-[9px] text-emerald-500 font-bold uppercase tracking-wider mt-0.5">
-                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                            <span>Synced</span>
-                          </div>
-                        )}
-                      </div>
+                      <p className="text-[10px] text-zinc-500 font-mono mt-0.5">@{linkage.username}</p>
                     )}
                   </div>
                 </div>
