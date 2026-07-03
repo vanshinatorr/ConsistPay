@@ -3,9 +3,7 @@ import { Menu, X, ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { HeroNew } from "../components/HeroNew";
 import { SocialProof } from "../components/SocialProof";
-import { MoreFeatures } from "../components/MoreFeatures";
 import { HowItWorks } from "../components/HowItWorks";
-import { WhyConsistPay } from "../components/WhyConsistPay";
 import { MascotSection } from "../components/MascotSection";
 import { Footer } from "./dashboard/Footer";
 
@@ -38,9 +36,6 @@ export function Landing() {
 
             {/* Desktop Nav Links */}
             <div className="hidden md:flex items-center gap-8">
-              <a href="#features" className="text-xs font-semibold text-zinc-400 hover:text-white transition-colors uppercase tracking-wider">
-                Features
-              </a>
               <a href="#how-it-works" className="text-xs font-semibold text-zinc-400 hover:text-white transition-colors uppercase tracking-wider">
                 How It Works
               </a>
@@ -77,13 +72,6 @@ export function Landing() {
               />
               <div className="md:hidden absolute top-full left-4 right-4 mt-2 bg-[#0A0C10] border border-white/[0.06] rounded-2xl p-6 shadow-2xl backdrop-blur-xl z-50 transition-all">
                 <div className="flex flex-col gap-4">
-                  <a 
-                    href="#features" 
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="text-xs font-semibold text-zinc-300 hover:text-white py-2 flex items-center justify-between border-b border-white/[0.04]"
-                  >
-                    <span>Features</span>
-                  </a>
                   <a 
                     href="#how-it-works" 
                     onClick={() => setMobileMenuOpen(false)}
@@ -124,29 +112,21 @@ export function Landing() {
       {/* Main Content Layout */}
       <main className="w-full pt-20">
         
-        {/* Section 1: Hero */}
+        {/* Section 1: Hero (Pure Black bg) */}
         <HeroNew />
 
-        {/* Section 2: Mascot Philosophy (Dark Purple background) */}
+        {/* Section 2: Mascot Philosophy & Contrast (Dark Purple bg) */}
         <MascotSection />
 
-        {/* Section 3: Why ConsistPay / Comparison */}
-        <WhyConsistPay />
-
-        {/* Section 4: How It Works (Dark Purple background) */}
+        {/* Section 3: Interactive Product Showcase (Pure Black bg) */}
         <div id="how-it-works">
           <HowItWorks />
         </div>
 
-        {/* Section 5: Features Grid */}
-        <div id="features">
-          <MoreFeatures />
-        </div>
-
-        {/* Section 6: Social Proof Stats (Dark Purple background) */}
+        {/* Section 4: Verified Proof Stats (Dark Purple bg) */}
         <SocialProof />
 
-        {/* Section 7: Pre-Footer CTA */}
+        {/* Section 5: Pre-Footer CTA (Pure Black bg) */}
         <div className="py-20 md:py-28 relative overflow-hidden bg-[#06080D] border-b border-white/[0.04]">
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(139,92,246,0.03),transparent_60%)] pointer-events-none" />
           <div className="max-w-4xl mx-auto px-6 relative z-10 text-center">
