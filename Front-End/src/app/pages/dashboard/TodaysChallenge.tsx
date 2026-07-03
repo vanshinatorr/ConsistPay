@@ -146,150 +146,19 @@ export function TodaysChallenge({
                   Until then, please use <span className="text-violet-400 font-semibold">LeetCode</span> or <span className="text-violet-400 font-semibold">GeeksforGeeks</span> to sync your daily coding streaks.
                 </p>
               </div>
-            ) : !linkage ? (
-              // CASE 1: UNLINKED STATE
-              <div className="flex-1 flex flex-col justify-center py-4">
-                <div>
-                  <h3 className="text-xl font-bold text-white mb-1.5 leading-tight">
-                    Connect {selectedPlatform} Account
-                  </h3>
-                  <p className="text-xs text-zinc-400 leading-normal max-w-md">
-                    To start syncing solves automatically, please link your public {selectedPlatform} profile handle below.
-                  </p>
+            ) : (!linkage || !linkage.isVerified) ? (
+              // CASE 2: CONNECTION REQUIRED STATE
+              <div className="flex-1 flex flex-col items-center justify-center text-center py-8 px-4 animate-in fade-in slide-in-from-bottom-2 duration-300">
+                <div className="w-14 h-14 bg-yellow-500/10 rounded-full flex items-center justify-center mb-4 border border-yellow-500/20">
+                  <AlertTriangle className="w-6 h-6 text-yellow-400 animate-pulse" />
                 </div>
-
-                <form onSubmit={handleLinkSubmit} className="flex flex-col mt-6">
-                  <div className="space-y-4">
-                    <div>
-                      <label className="block text-xs text-zinc-400 mb-2 font-medium uppercase tracking-wider">
-                        {selectedPlatform} Username
-                      </label>
-                      <div className="relative">
-                        <input
-                          type="text"
-                          required
-                          placeholder="e.g. vanshvijay"
-                          value={usernameInput}
-                          onChange={(e) => setUsernameInput(e.target.value)}
-                          className="w-full h-12 px-4 bg-white/[0.01] border border-white/[0.06] text-white placeholder:text-zinc-650 focus:border-violet-500/50 focus:outline-none rounded-xl text-sm"
-                        />
-                      </div>
-                    </div>
-
-                    {apiError && (
-                      <div className="flex items-start gap-2 bg-red-500/10 border border-red-500/20 rounded-xl px-4 py-3">
-                        <AlertTriangle className="w-4 h-4 text-red-400 shrink-0 mt-0.5" />
-                        <p className="text-xs text-red-300 leading-relaxed">{apiError}</p>
-                      </div>
-                    )}
-                  </div>
-
-                  <button
-                    type="submit"
-                    disabled={linkLoading || !usernameInput.trim()}
-                    className={`w-full h-12 rounded-xl font-semibold transition-all duration-300 flex items-center justify-center gap-2 mt-6 ${
-                      usernameInput.trim() && !linkLoading
-                        ? "bg-violet-600 hover:bg-violet-500 text-white shadow-lg shadow-violet-500/20 cursor-pointer"
-                        : "bg-white/[0.02] border border-white/[0.04] text-zinc-500 cursor-not-allowed"
-                    }`}
-                  >
-                    {linkLoading ? (
-                      <div className="w-5 h-5 border-2 border-zinc-500 border-t-transparent rounded-full animate-spin" />
-                    ) : (
-                      <>
-                        <Link className="w-4 h-4" />
-                        Connect Username
-                      </>
-                    )}
-                  </button>
-                </form>
-              </div>
-            ) : !linkage.isVerified ? (
-              // CASE 2: LINKED BUT UNVERIFIED STATE
-              <div className="flex-1 flex flex-col justify-center py-4">
-                <div>
-                  <h3 className="text-xl font-bold text-white mb-1.5 leading-tight">
-                    Verify {selectedPlatform} Ownership
-                  </h3>
-                  <p className="text-xs text-zinc-400 leading-normal max-w-md">
-                    To prove account ownership, add the verification token below to your {selectedPlatform} profile bio.
-                  </p>
-                </div>
-
-                <div className="mt-5 space-y-4">
-                  {/* Token Box */}
-                  <div className="bg-white/[0.02] border border-white/[0.06] rounded-xl p-4 flex flex-col items-center justify-center text-center">
-                    <span className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider mb-1 select-none">Your Verification Token</span>
-                    <code className="text-lg font-mono font-bold text-violet-400 select-all tracking-wide">{linkage.verificationToken}</code>
-                  </div>
-
-                  {/* Verification Guide Steps */}
-                  <div className="space-y-2.5 text-xs text-zinc-400 pl-1 leading-relaxed">
-                    <p className="flex gap-2">
-                      <span className="text-violet-400 font-bold">1.</span>
-                      <span>Go to your {selectedPlatform} Account Profile Settings.</span>
-                    </p>
-                    <p className="flex gap-2">
-                      <span className="text-violet-400 font-bold">2.</span>
-                      <span>Paste the token anywhere inside the profile bio/description text box.</span>
-                    </p>
-                    <p className="flex gap-2">
-                      <span className="text-violet-400 font-bold">3.</span>
-                      <span>Save changes and click <b>Verify Account</b> below.</span>
-                    </p>
-                  </div>
-
-                  {/* External Profile Link Button */}
-                  <a
-                    href={
-                      selectedPlatform === "LeetCode"
-                        ? "https://leetcode.com/profile/"
-                        : selectedPlatform === "GeeksforGeeks"
-                        ? linkage?.username ? `https://www.geeksforgeeks.org/user/${linkage.username}/` : "https://www.geeksforgeeks.org/"
-                        : linkage?.username ? `https://www.naukri.com/code360/profile/${linkage.username}` : "https://www.naukri.com/code360/"
-                    }
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1.5 text-xs font-semibold text-zinc-400 hover:text-white transition-colors py-1 cursor-pointer"
-                  >
-                    Open {selectedPlatform} Profile <ExternalLink className="w-3 h-3" />
-                  </a>
-
-                  {apiError && (
-                    <div className="flex items-start gap-2 bg-red-500/10 border border-red-500/20 rounded-xl px-4 py-3">
-                      <AlertTriangle className="w-4 h-4 text-red-400 shrink-0 mt-0.5" />
-                      <p className="text-xs text-red-300 leading-relaxed">{apiError}</p>
-                    </div>
-                  )}
-
-                  <div className="flex gap-3 mt-4">
-                    {/* Reset/Change handle */}
-                    <button
-                      type="button"
-                      disabled={verifyLoading}
-                      onClick={() => handleLink("")}
-                      className="px-4 h-12 border border-white/[0.08] hover:bg-white/[0.04] text-zinc-400 hover:text-white font-medium rounded-xl transition-all text-xs cursor-pointer shrink-0"
-                    >
-                      Change Username
-                    </button>
-
-                    {/* Verify button */}
-                    <button
-                      type="button"
-                      onClick={handleVerify}
-                      disabled={verifyLoading}
-                      className="flex-1 h-12 bg-violet-600 hover:bg-violet-500 text-white font-semibold rounded-xl shadow-lg shadow-violet-500/20 transition-all flex items-center justify-center gap-2 cursor-pointer"
-                    >
-                      {verifyLoading ? (
-                        <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                      ) : (
-                        <>
-                          <Check className="w-4 h-4" />
-                          Verify Account
-                        </>
-                      )}
-                    </button>
-                  </div>
+                <h3 className="text-lg font-bold text-white mb-2">Profile Connection Required</h3>
+                <p className="text-xs text-zinc-400 mb-4 max-w-sm leading-relaxed">
+                  To automatically sync solves and protect your daily stake, please link and verify your <span className="text-emerald-400 font-semibold">{selectedPlatform}</span> username in the <b>Problem Solving Stats</b> sidebar widget on the right.
+                </p>
+                <div className="text-[10px] text-zinc-500 flex items-center gap-1.5 mt-2 bg-white/5 border border-white/[0.04] px-3 py-1.5 rounded-lg select-none">
+                  <span>Profile Status:</span>
+                  <span className="font-bold text-yellow-400 uppercase tracking-widest">Not Verified</span>
                 </div>
               </div>
             ) : (

@@ -6,6 +6,7 @@ import { StatsRow } from "./dashboard/StatsRow";
 import { TodaysChallenge } from "./dashboard/TodaysChallenge";
 import { WalletCard } from "./dashboard/WalletCard";
 import { DsaStatsCard } from "./dashboard/DsaStatsCard";
+import { PlatformsWidget } from "./dashboard/PlatformsWidget";
 import { ConsistencyCalendar } from "./dashboard/ConsistencyCalendar";
 import { DashboardBattleWidget } from "./dashboard/DashboardBattleWidget";
 import { RecentSolves } from "./dashboard/RecentSolves";
@@ -761,6 +762,10 @@ export function Dashboard() {
               />
               <DsaStatsCard
                 stats={userData?.dsaStats}
+                onboardingComplete={userData?.onboardingComplete ?? true}
+              />
+              <PlatformsWidget
+                onLinkageChanged={fetchUserData}
                 onboardingComplete={userData?.onboardingComplete ?? true}
               />
             </div>
