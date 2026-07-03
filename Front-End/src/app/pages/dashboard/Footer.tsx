@@ -16,9 +16,9 @@ export function Footer({ className }: FooterProps = {}) {
           <div className="flex flex-col items-start">
             <Link to="/" className="flex items-center gap-3 mb-4">
               <img
-                src="/logo/mascot-full.png"
+                src="/logo/brand-logo.png"
                 alt="ConsistPay Logo"
-                className="w-8 h-8 object-contain select-none filter drop-shadow-[0_2px_8px_rgba(139,92,246,0.2)]"
+                className="h-6 w-auto object-contain select-none"
               />
               <span className="text-xl font-bold tracking-tight text-white">
                 ConsistPay

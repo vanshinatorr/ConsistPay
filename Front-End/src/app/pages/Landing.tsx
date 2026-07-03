@@ -21,9 +21,9 @@ export function Landing() {
             {/* Logo */}
             <Link to="/" className="flex items-center gap-3">
               <img
-                src="/logo/mascot-full.png"
+                src="/logo/brand-logo.png"
                 alt="ConsistPay Logo"
-                className="w-9 h-9 object-contain select-none"
+                className="h-7 w-auto object-contain select-none"
               />
               <span className="text-xl font-bold tracking-tight text-white">
                 ConsistPay

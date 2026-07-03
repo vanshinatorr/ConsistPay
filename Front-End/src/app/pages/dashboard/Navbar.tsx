@@ -172,9 +172,9 @@ export function Navbar({ initials, plan = "free", avatar, isAvatarUrl }: NavbarP
               className="flex items-center gap-3 shrink-0"
             >
               <img
-                src="/logo/mascot-full.png"
+                src="/logo/brand-logo.png"
                 alt="ConsistPay Logo"
-                className="w-10 h-10 object-contain select-none filter drop-shadow-[0_2px_8px_rgba(139,92,246,0.2)]"
+                className="h-8 w-auto object-contain select-none"
               />
 
               <span className="hidden sm:block text-lg font-bold bg-gradient-to-r from-white to-zinc-400 bg-clip-text text-transparent">
