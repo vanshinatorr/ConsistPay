@@ -59,10 +59,6 @@ interface CalendarDay {
 
 export function Dashboard() {
   const navigate = useNavigate();
-  const [linkage, setLinkage] = useState<any>(null);
-  const [selectedPlatform, setSelectedPlatform] = useState<"LeetCode" | "GeeksforGeeks" | "Code360">("LeetCode");
-  const [linkLoading, setLinkLoading] = useState(false);
-  const [verifyLoading, setVerifyLoading] = useState(false);
   const [syncLoading, setSyncLoading] = useState(false);
 
   const [showJoinModal, setShowJoinModal] = useState(false);
@@ -89,30 +85,6 @@ export function Dashboard() {
 
   const API = import.meta.env.VITE_API_URL;
   const token = localStorage.getItem("token") || "";
-
-  // Dynamic linkage fetcher
-  const fetchLinkage = async (plat = selectedPlatform) => {
-    try {
-      const res = await fetch(`${API}/api/platforms/linkage?platform=${plat}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      if (res.ok) {
-        const data = await res.json();
-        setLinkage(data.linkage);
-      } else {
-        setLinkage(null);
-      }
-    } catch (err) {
-      console.error("Error fetching platform linkage:", err);
-      setLinkage(null);
-    }
-  };
-
-  useEffect(() => {
-    if (token) {
-      fetchLinkage(selectedPlatform);
-    }
-  }, [selectedPlatform, token]);
 
   const fetchUserRank = async (myId?: string) => {
     try {
@@ -299,7 +271,6 @@ export function Dashboard() {
           fetchCalendarForYears(initialYears),
           fetchTodaySubmission(),
           fetchRecentSolves(),
-          fetchLinkage(),
         ]);
       } catch (err) {
         console.error("Dashboard initial fetch failed:", err);
@@ -406,32 +377,49 @@ export function Dashboard() {
   };
 
   const handleSync = async () => {
+    const verifiedPlatforms = (userData as any)?.linkedPlatforms?.filter((p: any) => p.isVerified).map((p: any) => p.platform) || [];
+    if (verifiedPlatforms.length === 0) {
+      setSubmitError("No verified coding profiles connected. Please connect LeetCode or GeeksforGeeks on the right sidebar first!");
+      return;
+    }
+
     setSyncLoading(true);
     setSubmitError("");
     try {
       const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone || "Asia/Kolkata";
-      const res = await fetch(`${API}/api/platforms/sync`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-        body: JSON.stringify({ platform: selectedPlatform, timezone: userTimeZone })
-      });
-      const data = await res.json();
-      if (!res.ok) {
-        setSubmitError(data.message || "Failed to sync solves.");
-        return;
-      }
-      if (data.solvedToday) {
+      
+      // Sync all verified platforms in parallel
+      const syncResults = await Promise.all(
+        verifiedPlatforms.map(async (plat: string) => {
+          try {
+            const res = await fetch(`${API}/api/platforms/sync`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+              body: JSON.stringify({ platform: plat, timezone: userTimeZone })
+            });
+            if (res.ok) {
+              return await res.json();
+            }
+          } catch (e) {
+            console.error(`Failed to sync platform ${plat}:`, e);
+          }
+          return { solvedToday: false };
+        })
+      );
+      
+      const anySolved = syncResults.some((res: any) => res && res.solvedToday);
+      if (anySolved) {
         setSubmitted(true);
       }
+      
       await Promise.all([
         fetchUserData(),
         fetchCalendarForYears(visibleYears),
         fetchTodaySubmission(),
         fetchRecentSolves(),
-        fetchLinkage(selectedPlatform),
       ]);
     } catch (err) {
-      setSubmitError("Network error. Please try again.");
+      setSubmitError("Failed to synchronize submissions. Please try again.");
     } finally {
       setSyncLoading(false);
     }
@@ -725,14 +713,9 @@ export function Dashboard() {
             <div className="lg:col-span-2">
               {/* ✅ UPDATED props */}
               <TodaysChallenge
-                selectedPlatform={selectedPlatform}
-                setSelectedPlatform={setSelectedPlatform}
-                linkage={linkage}
-                handleLink={handleLink}
-                handleVerify={handleVerify}
+                onboardingComplete={userData?.onboardingComplete ?? true}
+                onSetupClick={() => setShowSetupModal(true)}
                 handleSync={handleSync}
-                linkLoading={linkLoading}
-                verifyLoading={verifyLoading}
                 syncLoading={syncLoading}
                 apiError={submitError}
                 setApiError={setSubmitError}
@@ -740,9 +723,8 @@ export function Dashboard() {
                 dailyCommitment={dailyCommitment}
                 todayLine={todayLine}
                 timeLeft={timeLeft}
-                onboardingComplete={userData?.onboardingComplete ?? true}
-                onSetupClick={() => setShowSetupModal(true)}
                 todaySubmissionsCount={todaySubmission?.count || 0}
+                linkedPlatforms={(userData as any)?.linkedPlatforms}
               />
             </div>
             <div className="lg:col-span-1 flex flex-col gap-6">

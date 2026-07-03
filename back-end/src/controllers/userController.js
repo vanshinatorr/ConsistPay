@@ -205,6 +205,16 @@ const getMe = async (req, res) => {
       difficulty: "Hard" 
     });
 
+    // Query connected platforms linkages
+    const PlatformLinkage = require("../models/PlatformLinkage");
+    const linkages = await PlatformLinkage.find({ userId: req.user._id });
+    const linkedPlatforms = linkages.map(l => ({
+      platform: l.platform,
+      username: l.username,
+      isVerified: l.isVerified,
+      verificationToken: l.verificationToken
+    }));
+
     // Check dynamic achievements and write notifications if earned
     await checkAndNotifyBadges(user, totalSolved, totalMissed, totalProblemsSolved);
 
@@ -270,6 +280,7 @@ const getMe = async (req, res) => {
       totalSolved, // Unique days solved
       totalProblemsSolved, // Raw count of completed submissions
       totalMissed,
+      linkedPlatforms,
       dsaStats: {
         easy: easyCount,
         medium: mediumCount,
