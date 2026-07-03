@@ -1,25 +1,29 @@
-const GFG_PROFILE_URL = "https://www.geeksforgeeks.org/user/";
+const GFG_PROFILE_URL = "https://www.geeksforgeeks.org/profile/";
 
 class GFGProvider {
   /**
-   * Helper to fetch GFG public profile page and parse details
+   * Fetch GFG public profile page and parse details
    */
   async _fetchHTML(username) {
+    const url = `${GFG_PROFILE_URL}${username}`;
     try {
-      const response = await fetch(`${GFG_PROFILE_URL}${username}/`, {
+      const response = await fetch(url, {
         method: "GET",
         headers: {
           "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
           "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8"
         }
       });
+      if (response.status === 403 || response.status === 503) {
+        throw new Error(`Profile access blocked by GeeksforGeeks Cloudflare protection (HTTP ${response.status}). Automated scraping is restricted.`);
+      }
       if (!response.ok) {
-        throw new Error(`HTTP Error: ${response.status}`);
+        throw new Error(`GeeksforGeeks profile page returned HTTP status ${response.status}.`);
       }
       return await response.text();
     } catch (error) {
-      console.warn(`[GFGProvider] Failed to fetch live profile for ${username}:`, error.message);
-      return null;
+      console.warn(`[GFGProvider] Fetch failed for ${username}:`, error.message);
+      throw new Error(`Unable to fetch GeeksforGeeks profile for "${username}". Details: ${error.message}`);
     }
   }
 
@@ -29,114 +33,90 @@ class GFGProvider {
   async fetchProfile(username) {
     const html = await this._fetchHTML(username);
     
-    // Live Parsing
-    if (html) {
-      // 1. Try to extract total solved problems count
-      // Often looks like: "Problems Solved: <b>150</b>" or class "score_card_value"
-      let solvedCount = 0;
-      const solvedMatch = html.match(/Problems Solved:[\s\S]*?(\d+)/i) || html.match(/score_card_value">(\d+)/i);
-      if (solvedMatch) {
-        solvedCount = parseInt(solvedMatch[1]);
-      }
-
-      // 2. Try to extract bio / description
-      let aboutMe = "";
-      const bioMatch = html.match(/class="profile_description">([\s\S]*?)<\/div>/i) || html.match(/class="user-details-desc">([\s\S]*?)<\/div>/i);
-      if (bioMatch) {
-        aboutMe = bioMatch[1].replace(/<[^>]*>/g, "").trim();
-      }
-
-      return {
-        username,
-        profile: {
-          realName: username,
-          aboutMe
-        },
-        submitStatsGlobal: {
-          acSubmissionNum: [
-            { difficulty: "All", count: solvedCount }
-          ]
-        }
-      };
+    // Extract total solved problems count from Next.js hydration payload
+    const solvedMatch = html.match(/\\"total_problems_solved\\":\s*(\d+)/) || html.match(/"total_problems_solved":\s*(\d+)/);
+    if (!solvedMatch) {
+      throw new Error("Could not parse 'total_problems_solved' count from your GeeksforGeeks profile page. The page structure might have changed.");
     }
+    const solvedCount = parseInt(solvedMatch[1]);
 
-    // Cloudflare Fallback Mode: return simulated profile
-    console.log(`[GFGProvider] Using Cloudflare fallback for ${username}`);
-    
-    // We get the linkage record to inspect the required token so verification works
-    const PlatformLinkage = require("../models/PlatformLinkage");
-    const linkage = await PlatformLinkage.findOne({ username, platform: "GeeksforGeeks" });
-    const token = linkage ? linkage.verificationToken : "CP-GFG-DUMMY";
+    // Extract bio / description from Next.js hydration payload
+    const bioMatch = html.match(/\\"bio\\":\s*\\"([^\\"]*)\\"/) || html.match(/"bio":\s*"([^"]*)"/);
+    const aboutMe = bioMatch ? bioMatch[1] : "";
 
     return {
       username,
       profile: {
         realName: username,
-        aboutMe: `I am consistency coding. Verification code: ${token}`
+        aboutMe
       },
       submitStatsGlobal: {
         acSubmissionNum: [
-          { difficulty: "All", count: 85 }
+          { difficulty: "All", count: solvedCount }
         ]
       }
     };
   }
 
   /**
-   * Fetch solved problems on the current date relative to the user's timezone
+   * Fetch solved problems on the current date relative to the user's timezone.
+   * Compares current live solved count against previously recorded solved count.
    */
   async fetchDailySolveStatus(username, targetTimeZone = "Asia/Kolkata", mockDate = null) {
     const profile = await this.fetchProfile(username);
-    const solvedCount = profile.submitStatsGlobal.acSubmissionNum[0].count;
+    const newSolvedCount = profile.submitStatsGlobal.acSubmissionNum[0].count;
+
+    // Retrieve old solved count to determine if they solved any new problems
+    const PlatformLinkage = require("../models/PlatformLinkage");
+    const linkage = await PlatformLinkage.findOne({ username, platform: "GeeksforGeeks", isVerified: true });
+    const oldSolvedCount = linkage ? linkage.totalSolved : 0;
 
     const now = mockDate ? new Date(mockDate) : new Date();
     const todayStr = this._getLocalDateString(now, targetTimeZone);
 
-    // Create a mock active problem list (1 solve today) to ensure the user gets streak credit
-    const problems = [
-      {
-        title: "Minimum Spanning Tree",
-        slug: "minimum-spanning-tree",
-        submissionId: `gfg-solve-${todayStr}-${username}`,
-        timestamp: Math.floor(now.getTime() / 1000)
-      }
-    ];
+    if (newSolvedCount > oldSolvedCount) {
+      const diff = newSolvedCount - oldSolvedCount;
+      const problems = [
+        {
+          title: "GeeksforGeeks Practice Solve",
+          slug: "gfg-practice-solve",
+          submissionId: `gfg-solve-${todayStr}-${newSolvedCount}`,
+          timestamp: Math.floor(now.getTime() / 1000)
+        }
+      ];
 
-    // Generate recent submissions list (past 5 days) to populate history calendar
-    const allSubmissions = [];
-    for (let i = 0; i < 5; i++) {
-      const pastDate = new Date(now.getTime() - i * 24 * 60 * 60 * 1000);
-      const pastDateStr = this._getLocalDateString(pastDate, targetTimeZone);
-      allSubmissions.push({
-        submissionId: `gfg-hist-${pastDateStr}-${username}`,
-        title: i === 0 ? "Minimum Spanning Tree" : (i === 1 ? "Detect Cycle in Graph" : "Kruskal Algorithm"),
-        slug: "gfg-dsa-problem",
-        timestamp: Math.floor(pastDate.getTime() / 1000),
-        dateStr: pastDateStr
-      });
+      const allSubmissions = [
+        {
+          submissionId: `gfg-solve-${todayStr}-${newSolvedCount}`,
+          title: "GeeksforGeeks Practice Solve",
+          slug: "gfg-practice-solve",
+          timestamp: Math.floor(now.getTime() / 1000),
+          dateStr: todayStr
+        }
+      ];
+
+      return {
+        solvedToday: true,
+        solvedCount: diff,
+        problems,
+        allSubmissions
+      };
     }
 
     return {
-      solvedToday: true,
-      solvedCount: 1,
-      problems,
-      allSubmissions
+      solvedToday: false,
+      solvedCount: 0,
+      problems: [],
+      allSubmissions: []
     };
   }
 
   /**
-   * Fetch user's historical submission calendar map (Unix timestamps -> counts)
+   * Fetch user's historical submission calendar map
    */
   async fetchUserCalendar(username) {
-    // Generate active timestamps for the past 12 days to populate their calendar grid beautifully
-    const calendar = {};
-    const now = new Date();
-    for (let i = 0; i < 12; i++) {
-      const date = new Date(now.getFullYear(), now.getMonth(), now.getDate() - i * 2);
-      const timestamp = Math.floor(date.getTime() / 1000);
-      calendar[timestamp] = 1;
-    }
-    return calendar;
+    // Return empty calendar since GFG does not publish submission calendars publicly
+    return {};
   }
 
   /**
