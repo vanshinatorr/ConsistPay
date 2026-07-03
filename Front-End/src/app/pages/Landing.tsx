@@ -26,9 +26,11 @@ export function Landing() {
           <div className="flex items-center justify-between">
             {/* Logo */}
             <Link to="/" className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-violet-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg shadow-violet-500/30">
-                <Logo className="w-6 h-6 text-white" />
-              </div>
+              <img
+                src="/logo/mascot-full.png"
+                alt="ConsistPay Logo"
+                className="w-10 h-10 object-contain select-none filter drop-shadow-[0_2px_8px_rgba(139,92,246,0.2)]"
+              />
               <span className="text-xl font-bold bg-gradient-to-r from-white to-zinc-400 bg-clip-text text-transparent">
                 ConsistPay
               </span>
