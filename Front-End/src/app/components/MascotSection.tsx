@@ -28,10 +28,10 @@ export function MascotSection() {
               <img 
                 src="/logo/mascot-full.png" 
                 alt="ConsistPay Accountability Partner - Consisty" 
-                className="w-64 sm:w-72 md:w-[22rem] h-auto object-contain relative z-10 transition-all duration-500 hover:scale-[1.03] hover:rotate-1"
+                className="w-72 sm:w-80 md:w-[24rem] h-auto object-contain relative z-10 transition-all duration-500 hover:scale-[1.03] hover:rotate-1"
               />
               {/* 3D Floor Shadow */}
-              <div className="w-48 sm:w-56 h-4 bg-white/5 rounded-[100%] blur-[12px] mt-2 opacity-50 relative z-0" />
+              <div className="w-56 sm:w-64 h-4 bg-white/5 rounded-[100%] blur-[12px] mt-2 opacity-50 relative z-0" />
             </div>
           </div>
 
