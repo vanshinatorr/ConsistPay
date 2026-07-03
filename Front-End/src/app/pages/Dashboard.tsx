@@ -721,7 +721,36 @@ export function Dashboard() {
           {/* Row 2: Challenge a Friend Widget */}
           <DashboardBattleWidget onRefreshRequest={fetchUserData} />
 
-          {/* Row 3: Today's Goal Sync Bar (Sleek Horizontal Stripe) */}
+          {/* Row 3: Wallets Metrics Row (Consistency Wallet on Left, Versus Card on Right) */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch mb-6">
+            {/* Column 1 & 2 - Wallet Card (Plan stats) */}
+            <div className="lg:col-span-2">
+              <WalletCard
+                plan={userData?.plan}
+                monthlyBudget={monthlyBudget}
+                completedDays={completedDays}
+                missedDays={missedDays}
+                dailyCommitment={dailyCommitment}
+                graceCoins={graceCoins}
+                balance={userData?.balance ?? 0}
+                activeDeposit={userData?.activeDeposit ?? 0}
+                planStatus={userData?.planStatus}
+                onboardingComplete={userData?.onboardingComplete ?? true}
+                onRefreshRequest={fetchUserData}
+              />
+            </div>
+            {/* Column 3 - Versus Card (Stakes & duels stats) */}
+            <div className="lg:col-span-1">
+              <VersusCard
+                plan={userData?.plan}
+                battleBalance={userData?.battleBalance ?? 0}
+                onboardingComplete={userData?.onboardingComplete ?? true}
+                onRefreshRequest={fetchUserData}
+              />
+            </div>
+          </div>
+
+          {/* Row 4: Today's Goal Sync Bar (Sleek Horizontal Stripe) */}
           <div className="mb-6">
             <TodaysChallenge
               onboardingComplete={userData?.onboardingComplete ?? true}
@@ -740,14 +769,14 @@ export function Dashboard() {
             />
           </div>
 
-          {/* Row 4: Main Workspace Area (Recent Solves on Left, Platforms + Awards on Right) */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch mb-6">
-            {/* Left Column (2/3 width) - Daily operations */}
-            <div className="lg:col-span-2 flex flex-col gap-6">
+          {/* Row 5: Lower Workspace Area (Recent Solves, Sidebar Integrations, Analytics Stack) */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch">
+            {/* Column 1 - Daily operations / Recent Solves */}
+            <div className="lg:col-span-1">
               <RecentSolves recentSolves={recentSolves} />
             </div>
 
-            {/* Right Column (1/3 width) - Integrations & Accomplishments */}
+            {/* Column 2 - Sidebar Integrations & Accomplishments */}
             <div className="lg:col-span-1 flex flex-col gap-6">
               <PlatformsWidget
                 onLinkageChanged={fetchUserData}
@@ -766,35 +795,7 @@ export function Dashboard() {
                 dailyCommitment={userData?.dailyCommitment ?? 5}
               />
             </div>
-          </div>
 
-          {/* Row 5: Unified Metrics Cards (Wallet, Versus, Leaderboard & DSA Stack) */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch">
-            {/* Column 1 - Wallet Card (Plan stats) */}
-            <div className="lg:col-span-1">
-              <WalletCard
-                plan={userData?.plan}
-                monthlyBudget={monthlyBudget}
-                completedDays={completedDays}
-                missedDays={missedDays}
-                dailyCommitment={dailyCommitment}
-                graceCoins={graceCoins}
-                balance={userData?.balance ?? 0}
-                activeDeposit={userData?.activeDeposit ?? 0}
-                planStatus={userData?.planStatus}
-                onboardingComplete={userData?.onboardingComplete ?? true}
-                onRefreshRequest={fetchUserData}
-              />
-            </div>
-            {/* Column 2 - Versus Card (Stakes & duels stats) */}
-            <div className="lg:col-span-1">
-              <VersusCard
-                plan={userData?.plan}
-                battleBalance={userData?.battleBalance ?? 0}
-                onboardingComplete={userData?.onboardingComplete ?? true}
-                onRefreshRequest={fetchUserData}
-              />
-            </div>
             {/* Column 3 - Stacked Leaderboard & DSA Solves */}
             <div className="lg:col-span-1 flex flex-col gap-6">
               <LeaderboardRankCard
@@ -810,7 +811,7 @@ export function Dashboard() {
             </div>
           </div>
 
-          {/* Row 5: Mobile Only Calendar */}
+          {/* Row 6: Mobile Only Calendar */}
           <div className="block lg:hidden">
             <ConsistencyCalendar
               yearMonths={yearMonths}
