@@ -141,9 +141,39 @@ export function Dashboard() {
 
   const getGreeting = () => {
     const hour = new Date().getHours();
-    if (hour < 12) return "Good Morning";
-    if (hour < 17) return "Good Afternoon";
-    return "Good Evening";
+    let timeGreeting = "Hey";
+    if (hour < 12) timeGreeting = "Rise & grind";
+    else if (hour < 17) timeGreeting = "Good afternoon";
+    else timeGreeting = "Good evening";
+
+    const slangs = [
+      "let's secure the bag 💰",
+      "no cap, time to cook 🧑‍🍳",
+      "keep the green grid lit 🟢",
+      "don't lose your lunch money 💸",
+      "W coding session awaits 🏆",
+      "absolute unit of a coder 🧠",
+      "main character energy today ✨",
+      "big brain moves active 💡",
+      "sheesh, let's ship it 🚀",
+      "we stay grinding 📈",
+      "protect your stake today 🛡️",
+      "back at it again ⚡",
+      "streak checks out 🔥",
+      "grindset mode active 🎯",
+      "code first, talk later 👾",
+      "let's lock it in 🔒",
+      "high key cooking 🍳",
+      "stacking code & cash 💵",
+      "zero misses allowed 🚫",
+      "stay consistent, stay winning 👑"
+    ];
+
+    // Seeded index based on current hour + date so it remains stable but updates throughout the day
+    const seed = new Date().getHours() + new Date().getDate();
+    const currentSlang = slangs[seed % slangs.length];
+
+    return `${timeGreeting}, ${getFirstName()} — ${currentSlang}`;
   };
 
   const getFirstName = () => {
@@ -698,7 +728,7 @@ export function Dashboard() {
         }`}>
           <div>
             <h1 className="text-3xl font-bold tracking-tight text-white">
-              👋 {getGreeting()}, {getFirstName()}
+              👋 {getGreeting()}
             </h1>
             <p className="text-sm text-zinc-400 mt-1.5 leading-relaxed">
               {todaySubmission?.count > 0 
