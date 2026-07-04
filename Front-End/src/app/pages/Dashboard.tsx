@@ -1,5 +1,6 @@
 import { AlertTriangle, BarChart3, Flame, TrendingDown, Target } from "lucide-react";
 import { useState, useEffect } from "react";
+import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import { Navbar } from "./dashboard/Navbar";
 import { StatsRow } from "./dashboard/StatsRow";
@@ -106,6 +107,36 @@ export function Dashboard() {
     };
     window.addEventListener("open-withdraw-modal", handleOpenWithdraw);
     return () => window.removeEventListener("open-withdraw-modal", handleOpenWithdraw);
+  }, []);
+
+  // Timer countdown until midnight today (Kolkata / IST timezone matches backend)
+  useEffect(() => {
+    const updateCountdown = () => {
+      const now = new Date();
+      
+      // Get current date/time in Kolkata timezone
+      const kolkataTimeStr = now.toLocaleString("en-US", { timeZone: "Asia/Kolkata" });
+      const kolkataNow = new Date(kolkataTimeStr);
+      
+      // Midnight today in Kolkata timezone
+      const kolkataMidnight = new Date(kolkataTimeStr);
+      kolkataMidnight.setHours(24, 0, 0, 0); // Next midnight in Kolkata
+      
+      const diffMs = kolkataMidnight.getTime() - kolkataNow.getTime();
+      if (diffMs > 0) {
+        const totalSecs = Math.floor(diffMs / 1000);
+        const h = Math.floor(totalSecs / 3600);
+        const m = Math.floor((totalSecs % 3600) / 60);
+        const s = totalSecs % 60;
+        setTimeLeft({ h, m, s });
+      } else {
+        setTimeLeft({ h: 0, m: 0, s: 0 });
+      }
+    };
+
+    updateCountdown();
+    const interval = setInterval(updateCountdown, 1000);
+    return () => clearInterval(interval);
   }, []);
 
   const getGreeting = () => {
@@ -453,11 +484,19 @@ export function Dashboard() {
       );
       
       const anySolved = syncResults.some((res: any) => res && res.solvedToday);
+      const totalNewSolves = syncResults.reduce((acc: number, res: any) => acc + (res?.newSolvesCount || 0), 0);
+
       if (anySolved) {
         setSubmitted(true);
         setSyncLogs(prev => [...prev, `[${new Date().toLocaleTimeString()}] ✅ Verification query match: STREAK SECURED!`]);
       } else {
         setSyncLogs(prev => [...prev, `[${new Date().toLocaleTimeString()}] ℹ️ Verification check: No new solved problems detected yet today.`]);
+      }
+
+      if (totalNewSolves > 0) {
+        toast.success(`Successfully synced! Verified ${totalNewSolves} new solved problem(s).`);
+      } else {
+        toast.info("Your profiles are already up to date. No new solved problems detected.");
       }
       
       await Promise.all([
@@ -469,6 +508,7 @@ export function Dashboard() {
     } catch (err) {
       setSubmitError("Failed to synchronize submissions. Please try again.");
       setSyncLogs(prev => [...prev, `[${new Date().toLocaleTimeString()}] ❌ Synchronization failed.`]);
+      toast.error("Failed to sync solves. Please check your network connection.");
     } finally {
       setSyncLoading(false);
     }
