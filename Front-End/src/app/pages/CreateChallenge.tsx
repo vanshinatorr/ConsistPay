@@ -198,16 +198,16 @@ export function CreateChallenge() {
   const isAvatarUrl = userAvatar?.startsWith("http");
 
   return (
-    <div className="min-h-screen bg-[#0F0F13] text-white selection:bg-violet-500/30 overflow-x-hidden font-sans">
+    <div className="min-h-screen bg-zinc-50 dark:bg-[#0F0F13] text-zinc-800 dark:text-white selection:bg-violet-500/30 overflow-x-hidden font-sans">
       {/* Dynamic Background */}
       <div className="fixed inset-0 pointer-events-none">
-        <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] rounded-full bg-violet-600/10 blur-[120px]" />
-        <div className="absolute bottom-[-20%] right-[-10%] w-[50%] h-[50%] rounded-full bg-fuchsia-600/10 blur-[120px]" />
-        <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 mix-blend-overlay" />
+        <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] rounded-full bg-violet-600/10 blur-[120px] dark:opacity-100 opacity-30" />
+        <div className="absolute bottom-[-20%] right-[-10%] w-[50%] h-[50%] rounded-full bg-fuchsia-600/10 blur-[120px] dark:opacity-100 opacity-30" />
+        <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.03] dark:opacity-20 mix-blend-overlay" />
       </div>
 
       {/* Navbar */}
-      <nav className="sticky top-0 z-50 border-b border-white/[0.04] bg-[#0F0F13]/80 backdrop-blur-xl">
+      <nav className="sticky top-0 z-50 border-b border-zinc-200 dark:border-white/[0.04] bg-white/80 dark:bg-[#0F0F13]/80 backdrop-blur-xl">
         <div className={`mx-auto px-4 sm:px-6 lg:px-8 py-4 transition-all duration-500 ${screen === 'hub' ? 'max-w-6xl' : 'max-w-3xl'}`}>
           <div className="flex items-center justify-between">
             <button 
@@ -218,7 +218,7 @@ export function CreateChallenge() {
                   navigate("/dashboard");
                 }
               }}
-              className="flex items-center gap-2 text-zinc-400 hover:text-white transition-colors"
+              className="flex items-center gap-2 text-zinc-500 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-white transition-colors"
             >
               <ArrowLeft className="w-5 h-5" />
               <span className="text-sm">Back {screen === 'duration' ? 'to Hub' : 'to Dashboard'}</span>
@@ -229,13 +229,13 @@ export function CreateChallenge() {
                 alt="ConsistPay Logo"
                 className="h-8 w-auto object-contain select-none"
               />
-              <span className="text-lg font-bold text-white">
-                Consist<span className="text-emerald-400">Pay</span>
+              <span className="text-lg font-bold text-zinc-800 dark:text-white">
+                Consist<span className="text-emerald-500 dark:text-emerald-400">Pay</span>
               </span>
             </div>
             <div className="w-24 flex justify-end">
               {screen !== 'hub' && screen !== 'waiting' && screen !== 'cancelled' && (
-                <span className="text-xs bg-white/5 border border-white/10 px-2 py-1 rounded-md text-zinc-400">Step {screen === 'duration' ? 1 : screen === 'stake' ? 2 : screen === 'confirm' ? 3 : 4}/4</span>
+                <span className="text-xs bg-zinc-100 dark:bg-white/5 border border-zinc-200 dark:border-white/10 px-2 py-1 rounded-md text-zinc-500 dark:text-zinc-400">Step {screen === 'duration' ? 1 : screen === 'stake' ? 2 : screen === 'confirm' ? 3 : 4}/4</span>
               )}
             </div>
           </div>
@@ -244,16 +244,16 @@ export function CreateChallenge() {
 
       {/* Main */}
       <main className={`relative mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12 transition-all duration-500 ${screen === 'hub' ? 'max-w-6xl' : 'max-w-3xl'}`}>
-        <div className="bg-[#0A0A0C]/90 backdrop-blur-3xl border border-white/10 rounded-[2rem] overflow-hidden shadow-2xl relative">
+        <div className="bg-white dark:bg-[#0A0A0C]/90 backdrop-blur-3xl border border-zinc-200 dark:border-white/10 rounded-[2rem] overflow-hidden shadow-2xl relative">
           
           {/* Progress Bar Header */}
           {screen !== 'hub' && screen !== 'waiting' && screen !== 'cancelled' && (
-            <div className="bg-white/[0.02] border-b border-white/5 px-8 py-6">
+            <div className="bg-zinc-50 dark:bg-white/[0.02] border-b border-zinc-200 dark:border-white/5 px-8 py-6">
                <div className="flex items-center justify-between mb-4">
-                 <h2 className="text-xl font-bold text-white">Create Challenge</h2>
+                 <h2 className="text-xl font-bold text-zinc-800 dark:text-white">Create Challenge</h2>
                  <span className="text-sm text-zinc-500 font-medium">Step {screen === 'duration' ? 1 : screen === 'stake' ? 2 : screen === 'confirm' ? 3 : 4} of 4</span>
                </div>
-               <div className="w-full bg-white/5 h-2 rounded-full overflow-hidden">
+               <div className="w-full bg-zinc-150 dark:bg-white/5 h-2 rounded-full overflow-hidden">
                  <div className="h-full bg-gradient-to-r from-violet-500 to-fuchsia-500 rounded-full transition-all duration-500" style={{ width: `${((screen === 'duration' ? 1 : screen === 'stake' ? 2 : screen === 'confirm' ? 3 : 4) / 4) * 100}%` }} />
                </div>
             </div>
@@ -267,13 +267,13 @@ export function CreateChallenge() {
                 {/* Left Side: Info */}
                 <div className="flex-1 space-y-6">
                   <div>
-                    <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight mb-4 text-white">
+                    <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight mb-4 text-zinc-800 dark:text-white">
                       Compete. Stay Consistent.<br/>
-                      <span className="bg-gradient-to-r from-violet-400 to-emerald-400 bg-clip-text text-transparent">
+                      <span className="bg-gradient-to-r from-violet-605 to-emerald-500 dark:from-violet-400 dark:to-emerald-400 bg-clip-text text-transparent">
                         Win Together.
                       </span>
                     </h1>
-                    <p className="text-zinc-400 text-sm sm:text-base leading-relaxed">
+                    <p className="text-zinc-500 dark:text-zinc-400 text-sm sm:text-base leading-relaxed">
                       Challenge friends in coding consistency duels. Stay accountable together, protect streaks, and compete for rewards.
                     </p>
                   </div>
@@ -281,45 +281,45 @@ export function CreateChallenge() {
                   {/* Bullet points */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     {[
-                      { icon: CheckCircle, text: "AI verified submissions", color: "text-emerald-400", bg: "bg-emerald-500/10", border: "border-emerald-500/20" },
-                      { icon: Target, text: "Shared daily deadlines", color: "text-blue-400", bg: "bg-blue-500/10", border: "border-blue-500/20" },
-                      { icon: Trophy, text: "Winner takes all", color: "text-yellow-400", bg: "bg-yellow-500/10", border: "border-yellow-500/20" },
-                      { icon: Zap, text: "Real-time tracking", color: "text-violet-400", bg: "bg-violet-500/10", border: "border-violet-500/20" }
+                      { icon: CheckCircle, text: "AI verified submissions", color: "text-emerald-500 dark:text-emerald-400", bg: "bg-emerald-500/5 dark:bg-emerald-500/10", border: "border-emerald-500/10 dark:border-emerald-500/20" },
+                      { icon: Target, text: "Shared daily deadlines", color: "text-blue-500 dark:text-blue-400", bg: "bg-blue-500/5 dark:bg-blue-500/10", border: "border-blue-500/10 dark:border-blue-500/20" },
+                      { icon: Trophy, text: "Winner takes all", color: "text-yellow-600 dark:text-yellow-400", bg: "bg-yellow-500/5 dark:bg-yellow-500/10", border: "border-yellow-500/10 dark:border-yellow-500/20" },
+                      { icon: Zap, text: "Real-time tracking", color: "text-violet-605 dark:text-violet-400", bg: "bg-violet-500/5 dark:bg-violet-500/10", border: "border-violet-500/10 dark:border-violet-500/20" }
                     ].map((f, idx) => (
                       <div key={idx} className="flex items-center gap-3">
                         <div className={`w-8 h-8 rounded-lg ${f.bg} ${f.border} border flex items-center justify-center shrink-0`}>
                           <f.icon className={`w-4 h-4 ${f.color}`} />
                         </div>
-                        <span className="text-sm font-medium text-zinc-300">{f.text}</span>
+                        <span className="text-sm font-medium text-zinc-600 dark:text-zinc-300">{f.text}</span>
                       </div>
                     ))}
                   </div>
 
                   {/* Example Scenario Grid Preview */}
-                  <div className="relative rounded-2xl border border-white/10 bg-white/[0.01] p-5 overflow-hidden shadow-[inset_0_0_20px_rgba(255,255,255,0.01)] hidden sm:block">
+                  <div className="relative rounded-2xl border border-zinc-200 dark:border-white/10 bg-zinc-50 dark:bg-white/[0.01] p-5 overflow-hidden shadow-inner hidden sm:block">
                     <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-violet-500 via-purple-500 to-emerald-500 opacity-60" />
                     <div className="flex justify-between items-end mb-6">
                       <div>
-                        <div className="text-[10px] font-bold text-violet-400 uppercase tracking-widest mb-1 flex items-center gap-1.5">
-                          <span className="w-1.5 h-1.5 rounded-full bg-violet-400 animate-pulse"></span> Live Challenge Duel
+                        <div className="text-[10px] font-bold text-violet-600 dark:text-violet-400 uppercase tracking-widest mb-1 flex items-center gap-1.5">
+                          <span className="w-1.5 h-1.5 rounded-full bg-violet-500 dark:bg-violet-400 animate-pulse"></span> Live Challenge Duel
                         </div>
-                        <div className="text-sm font-semibold text-white">30 Day Challenge War</div>
+                        <div className="text-sm font-semibold text-zinc-800 dark:text-white">30 Day Challenge War</div>
                       </div>
                       <div className="text-right">
-                        <div className="text-[10px] text-zinc-500 uppercase tracking-widest mb-0.5">Total Pool</div>
-                        <div className="text-base font-black text-emerald-400">₹1,000</div>
+                        <div className="text-[10px] text-zinc-550 dark:text-zinc-500 uppercase tracking-widest mb-0.5">Total Pool</div>
+                        <div className="text-base font-black text-emerald-500 dark:text-emerald-400">₹1,000</div>
                       </div>
                     </div>
 
                     <div className="flex items-center justify-between gap-5">
-                      <div className="flex-1 bg-black/40 border border-white/5 rounded-xl p-3 flex flex-col items-center">
-                        <span className="text-xs font-bold text-white mb-1">Vansh (You)</span>
-                        <span className="text-[11px] text-violet-300">14 Days Completed</span>
+                      <div className="flex-1 bg-zinc-100 dark:bg-black/40 border border-zinc-200 dark:border-white/5 rounded-xl p-3 flex flex-col items-center">
+                        <span className="text-xs font-bold text-zinc-850 dark:text-white mb-1">Vansh (You)</span>
+                        <span className="text-[11px] text-violet-600 dark:text-violet-300">14 Days Completed</span>
                       </div>
-                      <span className="text-xs font-black text-zinc-600 italic">VS</span>
-                      <div className="flex-1 bg-black/40 border border-white/5 rounded-xl p-3 flex flex-col items-center">
-                        <span className="text-xs font-bold text-white mb-1">Suhu</span>
-                        <span className="text-[11px] text-emerald-300">12 Days Completed</span>
+                      <span className="text-xs font-black text-zinc-400 dark:text-zinc-600 italic">VS</span>
+                      <div className="flex-1 bg-zinc-100 dark:bg-black/40 border border-zinc-200 dark:border-white/5 rounded-xl p-3 flex flex-col items-center">
+                        <span className="text-xs font-bold text-zinc-850 dark:text-white mb-1">Suhu</span>
+                        <span className="text-[11px] text-emerald-600 dark:text-emerald-300">12 Days Completed</span>
                       </div>
                     </div>
                   </div>
@@ -331,34 +331,34 @@ export function CreateChallenge() {
                   {/* Create Challenge Card */}
                   <div 
                     onClick={() => setScreen("duration")}
-                    className="group bg-white/5 border border-white/10 hover:border-violet-500/30 hover:bg-white/[0.07] rounded-3xl p-6 transition-all duration-300 cursor-pointer relative overflow-hidden"
+                    className="group bg-zinc-50 dark:bg-white/5 border border-zinc-250 dark:border-white/10 hover:border-violet-500/30 hover:bg-zinc-100 dark:hover:bg-white/[0.07] rounded-3xl p-6 transition-all duration-300 cursor-pointer relative overflow-hidden shadow-sm hover:shadow"
                   >
                     <div className="absolute inset-0 bg-gradient-to-br from-violet-500/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity" />
                     <div className="relative z-10">
                       <div className="flex items-center justify-between mb-4">
                         <div className="w-10 h-10 bg-violet-500/10 border border-violet-500/20 rounded-xl flex items-center justify-center">
-                          <Swords className="w-5 h-5 text-violet-400" />
+                          <Swords className="w-5 h-5 text-violet-500 dark:text-violet-400" />
                         </div>
-                        <div className="w-7 h-7 rounded-full bg-white/5 border border-white/10 flex items-center justify-center group-hover:bg-violet-500 group-hover:border-violet-400 transition-all">
-                          <ArrowLeft className="w-3.5 h-3.5 text-zinc-400 group-hover:text-white transition-colors rotate-180" />
+                        <div className="w-7 h-7 rounded-full bg-zinc-200 dark:bg-white/5 border border-zinc-300 dark:border-white/10 flex items-center justify-center group-hover:bg-violet-500 group-hover:border-violet-400 transition-all">
+                          <ArrowLeft className="w-3.5 h-3.5 text-zinc-500 group-hover:text-white transition-colors rotate-180" />
                         </div>
                       </div>
-                      <h3 className="text-lg font-bold text-white mb-1">Create Challenge</h3>
-                      <p className="text-xs text-zinc-400">
+                      <h3 className="text-lg font-bold text-zinc-800 dark:text-white mb-1">Create Challenge</h3>
+                      <p className="text-xs text-zinc-500 dark:text-zinc-400">
                         Set stakes and duration. Generate a secret code to invite a friend instantly.
                       </p>
                     </div>
                   </div>
 
                   {/* Join Challenge Card */}
-                  <div className="group bg-white/5 border border-white/10 hover:border-emerald-500/30 hover:bg-white/[0.07] rounded-3xl p-6 transition-all duration-300 relative overflow-hidden">
+                  <div className="group bg-zinc-50 dark:bg-white/5 border border-zinc-250 dark:border-white/10 hover:border-emerald-500/30 hover:bg-zinc-100 dark:hover:bg-white/[0.07] rounded-3xl p-6 transition-all duration-300 relative overflow-hidden shadow-sm hover:shadow">
                     <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 to-teal-500/5 opacity-0 group-hover:opacity-100 transition-opacity" />
                     <div className="relative z-10">
                       <div className="w-10 h-10 bg-emerald-500/10 border border-emerald-500/20 rounded-xl flex items-center justify-center mb-4">
-                        <Users className="w-5 h-5 text-emerald-400" />
+                        <Users className="w-5 h-5 text-emerald-500 dark:text-emerald-400" />
                       </div>
-                      <h3 className="text-lg font-bold text-white mb-1">Join Challenge</h3>
-                      <p className="text-xs text-zinc-400 mb-4">
+                      <h3 className="text-lg font-bold text-zinc-800 dark:text-white mb-1">Join Challenge</h3>
+                      <p className="text-xs text-zinc-550 dark:text-zinc-400 mb-4">
                         Have an invite code? Enter it below to preview details and join the battle.
                       </p>
 
@@ -377,11 +377,11 @@ export function CreateChallenge() {
                           name="joinCode"
                           required
                           placeholder="e.g. CP-X7K2M"
-                          className="flex-1 px-4 py-2.5 bg-black/40 border border-white/10 rounded-xl text-xs text-white placeholder-zinc-600 focus:outline-none focus:border-emerald-500/50 transition-colors uppercase font-mono tracking-wider"
+                          className="flex-1 px-4 py-2.5 bg-zinc-100 dark:bg-black/40 border border-zinc-200 dark:border-white/10 rounded-xl text-xs text-zinc-800 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-600 focus:outline-none focus:border-emerald-500/50 transition-colors uppercase font-mono tracking-wider"
                         />
                         <button
                           type="submit"
-                          className="px-4 py-2.5 rounded-xl font-bold bg-emerald-600 hover:bg-emerald-500 text-white transition-all text-xs animate-pulse hover:animate-none"
+                          className="px-4 py-2.5 rounded-xl font-bold bg-emerald-600 hover:bg-emerald-500 text-white transition-all text-xs animate-pulse hover:animate-none cursor-pointer"
                         >
                           Join
                         </button>
@@ -389,21 +389,17 @@ export function CreateChallenge() {
                     </div>
                   </div>
 
-                </div>
-              </div>
-            )}
-
-            {/* ───────────── SCREEN 1: DURATION ───────────── */}
+                {/* ───────────── SCREEN 1: DURATION ───────────── */}
             {screen === "duration" && (
               <div className="animate-in fade-in slide-in-from-right-4 duration-500">
                 <div className="mb-10 text-center sm:text-left">
-                  <div className="inline-flex items-center gap-2 text-violet-400 font-bold tracking-wide uppercase text-xs mb-3">
+                  <div className="inline-flex items-center gap-2 text-violet-650 dark:text-violet-400 font-bold tracking-wide uppercase text-xs mb-3">
                     <Target className="w-4 h-4" /> Rules of Engagement
                   </div>
-                  <h1 className="text-3xl sm:text-4xl font-extrabold mb-3 text-white">
+                  <h1 className="text-3xl sm:text-4xl font-extrabold mb-3 text-zinc-800 dark:text-white">
                     How long is the challenge?
                   </h1>
-                  <p className="text-zinc-400 text-base max-w-md mx-auto sm:mx-0">
+                  <p className="text-zinc-500 dark:text-zinc-400 text-base max-w-md mx-auto sm:mx-0">
                     Select your consistency contract. Both players must submit daily proof or risk losing their stake.
                   </p>
                 </div>
@@ -413,10 +409,10 @@ export function CreateChallenge() {
                     <button
                       key={days}
                       onClick={() => setSelectedDuration(days as 7 | 15 | 30)}
-                      className={`relative group p-6 rounded-2xl border transition-all duration-300 text-left overflow-hidden
+                      className={`relative group p-6 rounded-2xl border transition-all duration-300 text-left overflow-hidden cursor-pointer
                         ${selectedDuration === days
-                          ? "border-violet-500/50 bg-violet-500/10 shadow-[0_0_30px_rgba(139,92,246,0.15)] scale-[1.02]"
-                          : "border-white/10 bg-white/[0.02] hover:border-white/20 hover:bg-white/[0.04]"
+                          ? "border-violet-500 bg-violet-500/10 shadow-[0_0_30px_rgba(139,92,246,0.05)] dark:shadow-[0_0_30px_rgba(139,92,246,0.15)] scale-[1.02]"
+                          : "border-zinc-200 dark:border-white/10 bg-zinc-50 dark:bg-white/[0.02] hover:border-zinc-300 dark:hover:border-white/20 hover:bg-zinc-100 dark:hover:bg-white/[0.04]"
                         }`}
                     >
                       {selectedDuration === days && (
@@ -426,9 +422,9 @@ export function CreateChallenge() {
                          <div className={`text-3xl font-black bg-gradient-to-r ${color} bg-clip-text text-transparent`}>
                           {label}
                         </div>
-                        {selectedDuration === days && <CheckCircle className="w-5 h-5 text-violet-400" />}
+                        {selectedDuration === days && <CheckCircle className="w-5 h-5 text-violet-500 dark:text-violet-400" />}
                       </div>
-                      <div className="text-sm text-zinc-400 font-medium relative z-10">{desc}</div>
+                      <div className="text-sm text-zinc-500 dark:text-zinc-400 font-medium relative z-10">{desc}</div>
                     </button>
                   ))}
                 </div>
@@ -437,10 +433,10 @@ export function CreateChallenge() {
                   <button
                     disabled={!selectedDuration}
                     onClick={() => setScreen("stake")}
-                    className={`px-8 py-4 rounded-xl font-bold text-base transition-all duration-300 flex items-center gap-3 w-full sm:w-auto justify-center
+                    className={`px-8 py-4 rounded-xl font-bold text-base transition-all duration-300 flex items-center gap-3 w-full sm:w-auto justify-center cursor-pointer
                       ${selectedDuration
-                        ? "bg-white text-black hover:bg-zinc-200 hover:scale-[1.02]"
-                        : "bg-white/5 border border-white/10 text-zinc-600 cursor-not-allowed"
+                        ? "bg-zinc-800 dark:bg-white text-white dark:text-black hover:bg-zinc-700 dark:hover:bg-zinc-200 hover:scale-[1.02]"
+                        : "bg-zinc-100 dark:bg-white/5 border border-zinc-200 dark:border-white/10 text-zinc-400 dark:text-zinc-600 cursor-not-allowed"
                       }`}
                   >
                     Next Step <ArrowLeft className="w-4 h-4 rotate-180" />
@@ -453,28 +449,28 @@ export function CreateChallenge() {
             {screen === "stake" && (
               <div className="animate-in fade-in slide-in-from-right-4 duration-500">
                 <div className="mb-10 text-center sm:text-left">
-                  <div className="inline-flex items-center gap-2 text-emerald-400 font-bold tracking-wide uppercase text-xs mb-3">
+                  <div className="inline-flex items-center gap-2 text-emerald-600 dark:text-emerald-400 font-bold tracking-wide uppercase text-xs mb-3">
                     <Coins className="w-4 h-4" /> Skin in the Game
                   </div>
-                  <h1 className="text-3xl sm:text-4xl font-extrabold mb-3 text-white">
+                  <h1 className="text-3xl sm:text-4xl font-extrabold mb-3 text-zinc-800 dark:text-white">
                     Set the Stakes
                   </h1>
-                  <p className="text-zinc-400 text-base max-w-md mx-auto sm:mx-0">
+                  <p className="text-zinc-500 dark:text-zinc-400 text-base max-w-md mx-auto sm:mx-0">
                     Higher stakes equal higher commitment. The winner takes the entire combined pool.
                   </p>
                 </div>
 
-                <div className="bg-white/[0.02] border border-white/5 rounded-3xl p-6 sm:p-8 mb-8">
+                <div className="bg-zinc-50 dark:bg-white/[0.02] border border-zinc-200 dark:border-white/5 rounded-3xl p-6 sm:p-8 mb-8">
                   {/* Quick Select */}
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
                     {[100, 200, 500, 1000].map((amt) => (
                       <button
                         key={amt}
                         onClick={() => setStakeAmount(String(amt))}
-                        className={`py-3.5 rounded-xl text-lg font-bold border transition-all duration-300
+                        className={`py-3.5 rounded-xl text-lg font-bold border transition-all duration-300 cursor-pointer
                           ${stakeAmount === String(amt)
-                            ? "bg-emerald-500/20 border-emerald-500/40 text-emerald-400 shadow-[0_0_20px_rgba(16,185,129,0.15)] scale-105"
-                            : "bg-white/5 border-white/10 text-zinc-300 hover:bg-white/10"
+                            ? "bg-emerald-500/10 dark:bg-emerald-500/20 border-emerald-500/30 dark:border-emerald-500/40 text-emerald-600 dark:text-emerald-400 shadow-sm scale-105"
+                            : "bg-zinc-100 dark:bg-white/5 border-zinc-200 dark:border-white/10 text-zinc-600 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-white/10"
                           }`}
                       >
                         ₹{amt}
@@ -494,38 +490,38 @@ export function CreateChallenge() {
                       placeholder="Custom amount"
                       value={stakeAmount}
                       onChange={(e) => setStakeAmount(e.target.value)}
-                      className="w-full pl-14 pr-6 py-5 bg-black/50 border border-white/10 rounded-2xl text-3xl font-bold text-white placeholder:text-zinc-700 focus:outline-none focus:border-emerald-500/50 focus:ring-2 focus:ring-emerald-500/20 transition-all text-center sm:text-left"
+                      className="w-full pl-14 pr-6 py-5 bg-zinc-100 dark:bg-black/50 border border-zinc-200 dark:border-white/10 rounded-2xl text-3xl font-bold text-zinc-800 dark:text-white placeholder:text-zinc-400 dark:placeholder:text-zinc-700 focus:outline-none focus:border-emerald-500/50 focus:ring-2 focus:ring-emerald-500/20 transition-all text-center sm:text-left"
                     />
                   </div>
                   {stake > 0 && (stake < 100 || stake > 1000) && (
-                    <p className="text-sm text-rose-400 mt-3 flex items-center justify-center sm:justify-start gap-2">
+                    <p className="text-sm text-rose-500 dark:text-rose-400 mt-3 flex items-center justify-center sm:justify-start gap-2">
                       <Target className="w-4 h-4"/> Amount must be between ₹100 and ₹1000
                     </p>
                   )}
 
                   {/* Dynamic Prize Pool Preview */}
                   {stake >= 100 && stake <= 1000 && (
-                    <div className="mt-6 p-5 rounded-2xl bg-gradient-to-r from-emerald-500/10 to-teal-500/10 border border-emerald-500/20 flex justify-between items-center animate-in fade-in zoom-in-95">
-                       <span className="text-emerald-200/80 font-semibold text-lg">Winner Takes:</span>
-                       <span className="text-3xl font-black text-emerald-400">₹{stake * 2}</span>
-                    </div>
+                    <div className="mt-6 p-5 rounded-2xl bg-gradient-to-r from-emerald-500/5 to-teal-500/5 dark:from-emerald-500/10 dark:to-teal-500/10 border border-emerald-200 dark:border-emerald-500/20 flex justify-between items-center animate-in fade-in zoom-in-95">
+                       <span className="text-emerald-700 dark:text-emerald-200/80 font-semibold text-lg">Winner Takes:</span>
+                       <span className="text-3xl font-black text-emerald-600 dark:text-emerald-400">₹{stake * 2}</span>
+                     </div>
                   )}
                 </div>
 
                 <div className="flex flex-col-reverse sm:flex-row items-center justify-between mt-12 gap-4">
                   <button
                     onClick={() => setScreen("duration")}
-                    className="w-full sm:w-auto px-6 py-4 rounded-xl font-medium text-zinc-400 hover:text-white transition-colors flex items-center justify-center gap-2"
+                    className="w-full sm:w-auto px-6 py-4 rounded-xl font-medium text-zinc-500 dark:text-zinc-400 hover:text-zinc-800 dark:hover:text-white transition-colors flex items-center justify-center gap-2 cursor-pointer"
                   >
                     <ArrowLeft className="w-4 h-4" /> Back
                   </button>
                   <button
                     disabled={!stake || stake < 100 || stake > 1000}
                     onClick={() => setScreen("confirm")}
-                    className={`w-full sm:w-auto px-8 py-4 rounded-xl font-bold text-base transition-all duration-300 flex items-center justify-center gap-3
+                    className={`w-full sm:w-auto px-8 py-4 rounded-xl font-bold text-base transition-all duration-300 flex items-center justify-center gap-3 cursor-pointer
                       ${stake && stake >= 100 && stake <= 1000
-                        ? "bg-white text-black hover:bg-zinc-200 hover:scale-[1.02]"
-                        : "bg-white/5 border border-white/10 text-zinc-600 cursor-not-allowed"
+                        ? "bg-zinc-800 dark:bg-white text-white dark:text-black hover:bg-zinc-700 dark:hover:bg-zinc-200 hover:scale-[1.02]"
+                        : "bg-zinc-100 dark:bg-white/5 border border-zinc-200 dark:border-white/10 text-zinc-400 dark:text-zinc-600 cursor-not-allowed"
                       }`}
                   >
                     Review Details <ArrowLeft className="w-4 h-4 rotate-180" />
@@ -538,62 +534,62 @@ export function CreateChallenge() {
             {screen === "confirm" && (
               <div className="animate-in fade-in slide-in-from-right-4 duration-500">
                 <div className="text-center mb-8">
-                  <div className="inline-flex items-center gap-2 text-violet-400 font-bold tracking-wide uppercase text-xs mb-3">
+                  <div className="inline-flex items-center gap-2 text-violet-650 dark:text-violet-400 font-bold tracking-wide uppercase text-xs mb-3">
                     <CheckCircle className="w-4 h-4" /> Final Step
                   </div>
-                  <h1 className="text-3xl sm:text-4xl font-extrabold mb-2 text-white">Review & Lock</h1>
-                  <p className="text-zinc-400 text-sm">Confirm your commitment to start the challenge.</p>
+                  <h1 className="text-3xl sm:text-4xl font-extrabold mb-2 text-zinc-800 dark:text-white">Review & Lock</h1>
+                  <p className="text-zinc-500 dark:text-zinc-400 text-sm">Confirm your commitment to start the challenge.</p>
                 </div>
 
-                <div className="bg-[#121214] border border-white/5 rounded-3xl overflow-hidden mb-6 shadow-2xl max-w-md mx-auto">
+                <div className="bg-white dark:bg-[#121214] border border-zinc-200 dark:border-white/5 rounded-3xl overflow-hidden mb-6 shadow-2xl max-w-md mx-auto">
                   {/* VS Head */}
                   <div className="p-6 bg-gradient-to-b from-violet-500/5 to-transparent flex items-center justify-center gap-6 sm:gap-16">
                      <div className="flex flex-col items-center gap-3">
-                        <div className="w-16 h-16 bg-[#0D0D10] border border-violet-500/30 rounded-2xl flex items-center justify-center shadow-lg shadow-violet-500/20 rotate-3 overflow-hidden">
+                        <div className="w-16 h-16 bg-zinc-50 dark:bg-[#0D0D10] border border-violet-200 dark:border-violet-500/30 rounded-2xl flex items-center justify-center shadow-lg shadow-violet-500/10 rotate-3 overflow-hidden">
                           {isAvatarUrl ? (
                             <img src={userAvatar!} alt="You" className="w-full h-full object-cover scale-110" />
                           ) : (
-                            <span className="text-xl font-bold text-violet-400">{initials}</span>
+                            <span className="text-xl font-bold text-violet-500 dark:text-violet-400">{initials}</span>
                           )}
                         </div>
                         <div className="text-center">
-                          <span className="block text-xs font-bold text-violet-300 tracking-wider">YOU</span>
+                          <span className="block text-xs font-bold text-violet-605 dark:text-violet-300 tracking-wider">YOU</span>
                           <span className="block text-[10px] font-medium text-zinc-500 uppercase">₹{stake} Stake</span>
                         </div>
                      </div>
                       
                      <div className="relative flex items-center justify-center shrink-0">
                        <div className="absolute inset-0 bg-violet-500/20 blur-xl rounded-full" />
-                       <div className="text-sm font-black text-white italic flex items-center justify-center w-10 h-10 rounded-full bg-white/5 border border-white/10 relative z-10">
+                       <div className="text-sm font-black text-zinc-850 dark:text-white italic flex items-center justify-center w-10 h-10 rounded-full bg-zinc-100 dark:bg-white/5 border border-zinc-200 dark:border-white/10 relative z-10">
                          VS
                        </div>
                      </div>
 
                      <div className="flex flex-col items-center gap-3">
-                        <div className="w-16 h-16 bg-zinc-900 border-2 border-dashed border-zinc-700 rounded-2xl flex items-center justify-center -rotate-3">
-                          <span className="text-2xl font-black text-zinc-700">?</span>
+                        <div className="w-16 h-16 bg-zinc-50 dark:bg-zinc-900 border-2 border-dashed border-zinc-250 dark:border-zinc-700 rounded-2xl flex items-center justify-center -rotate-3">
+                          <span className="text-2xl font-black text-zinc-405 dark:text-zinc-700">?</span>
                         </div>
                         <div className="text-center">
-                          <span className="block text-xs font-bold text-zinc-400 tracking-wider">FRIEND</span>
-                          <span className="block text-[10px] font-medium text-zinc-600 uppercase">₹{stake} Stake</span>
+                          <span className="block text-xs font-bold text-zinc-500 dark:text-zinc-400 tracking-wider">FRIEND</span>
+                          <span className="block text-[10px] font-medium text-zinc-500 dark:text-zinc-600 uppercase">₹{stake} Stake</span>
                         </div>
                      </div>
                   </div>
 
                   {/* Details - Receipt style */}
-                  <div className="px-6 py-5 bg-black/20">
+                  <div className="px-6 py-5 bg-zinc-50/50 dark:bg-black/20">
                     <div className="space-y-4 mb-5">
                       <div className="flex justify-between items-center text-sm">
                         <span className="text-zinc-500">Duration</span>
-                        <span className="font-semibold text-zinc-300">{selectedDuration} Days</span>
+                        <span className="font-semibold text-zinc-700 dark:text-zinc-300">{selectedDuration} Days</span>
                       </div>
                       <div className="flex justify-between items-center text-sm">
                         <span className="text-zinc-500">Your Stake</span>
-                        <span className="font-semibold text-zinc-300">₹{stake}</span>
+                        <span className="font-semibold text-zinc-700 dark:text-zinc-300">₹{stake}</span>
                       </div>
                       <div className="flex justify-between items-center text-sm">
                         <span className="text-zinc-500">Platform Entry Fee</span>
-                        <span className="font-semibold text-zinc-300">₹{ENTRY_FEE}</span>
+                        <span className="font-semibold text-zinc-700 dark:text-zinc-300">₹{ENTRY_FEE}</span>
                       </div>
                     </div>
                     
