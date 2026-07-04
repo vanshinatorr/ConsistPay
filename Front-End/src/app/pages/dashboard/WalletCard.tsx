@@ -107,25 +107,24 @@ export function WalletCard({
             {plan?.toLowerCase() === "pro" ? "Pro Plan" : "Free Plan"}
           </span>
         </div>
-
-        {/* ─── 2-COLUMN MAIN CONTENT GRID ─── */}
+            {/* ─── 2-COLUMN MAIN CONTENT GRID ─── */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 flex-1 mt-4 relative z-10 overflow-hidden">
           
           {/* ════ LEFT COLUMN: STAKES & CASH WALLET ════ */}
           <div className="flex flex-col justify-between h-full">
             
             {/* 1. Withdrawable Balance Card */}
-            <div className="bg-[#12131A] border border-white/[0.04] rounded-xl p-4 flex items-center justify-between hover:border-white/[0.08] transition-all duration-200">
+            <div className="bg-[#12131A] border border-white/[0.04] rounded-xl p-4 flex items-center justify-between hover:border-white/[0.08] transition-all duration-200 shadow-md">
               <div>
                 <span className="text-[10px] text-emerald-400 font-bold uppercase tracking-wider block">
                   Withdrawable Balance
                 </span>
                 <span className="text-3xl font-black font-mono text-white mt-1 block">
-                  <span className="text-zinc-600 text-xl font-normal mr-0.5">₹</span>
+                  <span className="text-zinc-500 text-xl font-normal mr-0.5">₹</span>
                   {onboardingComplete ? Math.round(balance) : "0"}
                 </span>
-                <span className="text-[9px] text-zinc-500 block mt-1 leading-normal">
-                  Funds secured from completed coding commitments.
+                <span className="text-[9.5px] text-zinc-400 block mt-1.5 leading-normal">
+                  Funds secured from completed commitments.
                 </span>
               </div>
               {onboardingComplete && balance > 0 ? (
@@ -136,59 +135,41 @@ export function WalletCard({
                   Withdraw
                 </button>
               ) : (
-                <span className="text-[9px] text-zinc-500 font-bold bg-white/[0.03] border border-white/[0.06] px-2.5 py-1 rounded-md select-none">
+                <span className="text-[9px] text-zinc-500 font-bold bg-white/[0.03] border border-white/[0.06] px-2.5 py-1.5 rounded-md select-none">
                   Empty Wallet
                 </span>
               )}
             </div>
 
             {/* 2. Active Deposit Pool (Locked) Card */}
-            <div className="bg-[#12131A] border border-white/[0.04] rounded-xl p-4 mt-1 flex-1 flex flex-col justify-center hover:border-white/[0.08] transition-all duration-200">
-              <span className="text-[10px] text-zinc-500 uppercase tracking-wider font-bold block">
+            <div className="bg-[#12131A] border border-white/[0.04] rounded-xl p-4 mt-2.5 flex-1 flex flex-col justify-center hover:border-white/[0.08] transition-all duration-200 shadow-md">
+              <span className="text-[10px] text-zinc-400 uppercase tracking-wider font-bold block">
                 Active Deposit Pool (Locked)
               </span>
               <span className="text-2xl font-black font-mono text-white mt-1 block">
-                <span className="text-zinc-600 text-lg font-normal mr-0.5">₹</span>
+                <span className="text-zinc-500 text-lg font-normal mr-0.5">₹</span>
                 {onboardingComplete ? Math.round(activeDeposit) : "0"}
               </span>
-              <span className="text-[9px] text-zinc-500 block mt-1">
+              <span className="text-[9.5px] text-zinc-400 block mt-1">
                 ₹{dailyCommitment}/day commitment • 30-day plan
               </span>
             </div>
 
-            {/* 3. Secured & Lost Side-by-Side Cards */}
-            <div className="grid grid-cols-2 gap-3 mt-3">
-              {/* Secured Box */}
-              <div className="bg-emerald-500/[0.02] border border-emerald-500/10 rounded-xl p-3 flex flex-col justify-between hover:border-emerald-500/20 transition-all duration-200">
-                <div className="flex items-center gap-1.5">
-                  <Lock className="w-3.5 h-3.5 text-emerald-400" />
-                  <span className="text-[9.5px] text-emerald-500 font-bold uppercase tracking-wider block">
-                    Secured
-                  </span>
-                </div>
-                <span className="text-xl font-bold font-mono text-emerald-400 mt-2">
-                  +₹{completedDays * dailyCommitment}
-                </span>
-                <span className="text-[9px] text-zinc-500 mt-0.5">
-                  {completedDays} day{completedDays !== 1 ? "s" : ""}
+            {/* 3. Month-end Payout Preview Card (Gold theme) */}
+            <div className="bg-amber-500/[0.02] border border-amber-500/15 rounded-xl p-4 mt-2.5 flex-1 flex flex-col justify-center hover:border-amber-500/25 transition-all duration-200 shadow-md">
+              <div className="flex items-center gap-1.5 text-amber-400">
+                <Coins className="w-4.5 h-4.5" />
+                <span className="text-[10px] font-bold uppercase tracking-wider block">
+                  Month-end Payout Preview
                 </span>
               </div>
-
-              {/* Lost Box */}
-              <div className="bg-red-500/[0.02] border border-red-500/10 rounded-xl p-3 flex flex-col justify-between hover:border-red-500/20 transition-all duration-200">
-                <div className="flex items-center gap-1.5">
-                  <TrendingDown className="w-3.5 h-3.5 text-rose-400" />
-                  <span className="text-[9.5px] text-rose-500 font-bold uppercase tracking-wider block">
-                    Lost
-                  </span>
-                </div>
-                <span className="text-xl font-bold font-mono text-rose-400 mt-2">
-                  -₹{missedDays * dailyCommitment}
-                </span>
-                <span className="text-[9px] text-zinc-500 mt-0.5">
-                  {missedDays} day{missedDays !== 1 ? "s" : ""}
-                </span>
-              </div>
+              <span className="text-2xl font-black font-mono text-amber-450 mt-1 block">
+                <span className="text-amber-600/70 text-lg font-normal mr-0.5">₹</span>
+                {completedDays * dailyCommitment}
+              </span>
+              <span className="text-[9.5px] text-zinc-400 block mt-1">
+                {Math.max(30 - (completedDays + missedDays), 0)} days left — keep submitting!
+              </span>
             </div>
 
           </div>
@@ -199,7 +180,7 @@ export function WalletCard({
             {/* Daily Safety Alert Banner */}
             <div className={`border rounded-xl p-3 text-center flex flex-col items-center justify-center transition-all duration-300 ${
               hasSolvedToday
-                ? "bg-emerald-500/[0.02] border-emerald-500/10 text-emerald-455"
+                ? "bg-emerald-500/[0.02] border-emerald-500/10 text-emerald-400"
                 : isStakeAtRisk
                 ? "bg-red-500/[0.03] border-red-500/20 text-red-400 animate-pulse"
                 : hasVerifiedPlatform
@@ -212,26 +193,26 @@ export function WalletCard({
                     <div className="w-4.5 h-4.5 rounded-full bg-emerald-500/10 flex items-center justify-center">
                       <Check className="w-3 h-3 text-emerald-400" />
                     </div>
-                    <span className="text-xs font-extrabold tracking-wide">Streak Protected for Today!</span>
+                    <span className="text-xs font-extrabold tracking-wide text-emerald-400">Streak Protected for Today!</span>
                   </>
                 ) : isStakeAtRisk ? (
                   <>
                     <AlertTriangle className="w-4.5 h-4.5 text-red-500 animate-bounce" />
-                    <span className="text-xs font-extrabold tracking-wide">Action Required: Stake At Risk!</span>
+                    <span className="text-xs font-extrabold tracking-wide text-red-400">Action Required: Stake At Risk!</span>
                   </>
                 ) : hasVerifiedPlatform ? (
                   <>
                     <span className="w-1.5 h-1.5 rounded-full bg-yellow-500 animate-ping" />
-                    <span className="text-xs font-extrabold tracking-wide">Awaiting Daily Coding Sync</span>
+                    <span className="text-xs font-extrabold tracking-wide text-yellow-450">Awaiting Daily Coding Sync</span>
                   </>
                 ) : (
                   <>
-                    <HelpCircle className="w-4.5 h-4.5 text-zinc-500" />
-                    <span className="text-xs font-bold tracking-wide">No Profile Connected</span>
+                    <HelpCircle className="w-4.5 h-4.5 text-zinc-400" />
+                    <span className="text-xs font-bold tracking-wide text-zinc-400">No Profile Connected</span>
                   </>
                 )}
               </div>
-              <p className="text-[10px] text-zinc-500 mt-1 leading-normal">
+              <p className="text-[10px] text-zinc-400 mt-1 leading-normal">
                 {hasSolvedToday 
                   ? "Daily solution verified on LeetCode/GFG. Locked stake is secure."
                   : isStakeAtRisk
@@ -243,9 +224,44 @@ export function WalletCard({
               </p>
             </div>
 
+            {/* Secured & Lost Side-by-Side Cards (Green & Red Theme) */}
+            <div className="grid grid-cols-2 gap-3 mt-2.5">
+              {/* Secured Box */}
+              <div className="bg-emerald-950/20 border border-emerald-500/20 rounded-xl p-3 flex flex-col justify-between hover:border-emerald-500/35 transition-all duration-200 shadow-sm">
+                <div className="flex items-center gap-1.5">
+                  <Lock className="w-3.5 h-3.5 text-emerald-400" />
+                  <span className="text-[9.5px] text-emerald-400 font-bold uppercase tracking-wider block">
+                    Secured
+                  </span>
+                </div>
+                <span className="text-xl font-bold font-mono text-emerald-400 mt-2">
+                  +₹{completedDays * dailyCommitment}
+                </span>
+                <span className="text-[9.5px] text-zinc-400 mt-0.5">
+                  {completedDays} day{completedDays !== 1 ? "s" : ""}
+                </span>
+              </div>
+
+              {/* Lost Box */}
+              <div className="bg-rose-955/20 border border-rose-500/20 rounded-xl p-3 flex flex-col justify-between hover:border-rose-500/35 transition-all duration-200 shadow-sm">
+                <div className="flex items-center gap-1.5">
+                  <TrendingDown className="w-3.5 h-3.5 text-rose-400" />
+                  <span className="text-[9.5px] text-rose-400 font-bold uppercase tracking-wider block">
+                    Lost
+                  </span>
+                </div>
+                <span className="text-xl font-bold font-mono text-rose-450 mt-2">
+                  -₹{missedDays * dailyCommitment}
+                </span>
+                <span className="text-[9.5px] text-zinc-400 mt-0.5">
+                  {missedDays} day{missedDays !== 1 ? "s" : ""}
+                </span>
+              </div>
+            </div>
+
             {/* Accountability Console (Timer & Sync Control) */}
-            <div className="mt-3 bg-[#12131A] border border-white/[0.04] rounded-xl p-4 flex flex-col gap-3">
-              <div className="flex items-center justify-between text-[9px] text-zinc-500 font-bold uppercase tracking-wider">
+            <div className="mt-2.5 bg-[#12131A] border border-white/[0.04] rounded-xl p-3.5 flex flex-col gap-2.5 shadow-md">
+              <div className="flex items-center justify-between text-[9px] text-zinc-450 font-bold uppercase tracking-wider">
                 <span>Streak Timer</span>
                 <span>Verification trigger</span>
               </div>
@@ -263,7 +279,7 @@ export function WalletCard({
                     </div>
                   </div>
                 ) : (
-                  <span className="text-xs text-zinc-650">--:--</span>
+                  <span className="text-xs text-zinc-600">--:--</span>
                 )}
 
                 {/* Sync Solves Button */}
@@ -274,28 +290,28 @@ export function WalletCard({
                         type="button"
                         onClick={handleSync}
                         disabled={syncLoading || hasSolvedToday}
-                        className={`h-9.5 px-4.5 rounded-xl font-black text-xs transition-all duration-300 flex items-center gap-1.5 cursor-pointer border ${
+                        className={`h-9 px-4 rounded-lg font-black text-xs transition-all duration-300 flex items-center gap-1.5 cursor-pointer border ${
                           hasSolvedToday
-                            ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-455 cursor-default"
+                            ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-400 cursor-default"
                             : syncLoading
-                            ? "bg-white/[0.02] border-white/[0.04] text-zinc-600 cursor-not-allowed"
+                            ? "bg-white/[0.02] border-white/[0.04] text-zinc-650 cursor-not-allowed"
                             : "bg-white text-black hover:bg-zinc-200 border-white active:scale-95 shadow-md shadow-white/5 hover:scale-[1.01]"
                         }`}
                       >
                         {hasSolvedToday ? (
                           <>
-                            <Check className="w-3.5 h-3.5 text-emerald-455" />
+                            <Check className="w-3.5 h-3.5 text-emerald-400" />
                             Synced & Protected
                           </>
                         ) : (
                           <>
-                            <RefreshCw className={`w-3.5 h-3.5 ${syncLoading ? "animate-spin text-zinc-550" : "text-emerald-500"}`} />
+                            <RefreshCw className={`w-3.5 h-3.5 ${syncLoading ? "animate-spin text-zinc-500" : "text-emerald-500"}`} />
                             {syncLoading ? "Verifying..." : "Sync Solves"}
                           </>
                         )}
                       </button>
                     ) : (
-                      <div className="h-9.5 px-3.5 bg-white/[0.02] border border-white/[0.04] text-zinc-500 rounded-xl font-bold text-[10px] flex items-center justify-center select-none cursor-not-allowed">
+                      <div className="h-9 px-3 bg-white/[0.02] border border-white/[0.04] text-zinc-500 rounded-lg font-bold text-[10px] flex items-center justify-center select-none cursor-not-allowed">
                         Link Profile first
                       </div>
                     )}
@@ -305,7 +321,7 @@ export function WalletCard({
 
               {/* Console log outputs */}
               {syncLogs && syncLogs.length > 0 && (
-                <div className="border border-white/[0.04] bg-black/40 rounded-lg p-2 font-mono text-[8px] text-zinc-500 leading-normal max-h-[40px] overflow-y-auto custom-scrollbar">
+                <div className="border border-white/[0.04] bg-black/40 rounded-lg p-2 font-mono text-[8px] text-zinc-450 leading-normal max-h-[40px] overflow-y-auto custom-scrollbar">
                   {syncLogs.slice(-2).map((log, idx) => {
                     let textClass = "text-zinc-500";
                     if (log.includes("✅") || log.includes("Secured")) textClass = "text-emerald-400 font-bold";
@@ -321,7 +337,7 @@ export function WalletCard({
               )}
 
               {apiError && (
-                <p className="text-[10px] text-red-450 font-medium leading-normal font-sans flex items-start gap-1">
+                <p className="text-[10px] text-red-400 font-medium leading-normal font-sans flex items-start gap-1">
                   <AlertTriangle className="w-3.5 h-3.5 shrink-0 mt-0.5" />
                   <span>{apiError}</span>
                 </p>
@@ -332,7 +348,7 @@ export function WalletCard({
             <div className="flex flex-col gap-2 mt-auto pt-3 border-t border-white/[0.04]">
               {/* Backup Shields (Lives) Row */}
               <div className="flex items-center justify-between text-xs px-0.5">
-                <span className="text-[9px] text-zinc-500 font-bold uppercase tracking-wider">
+                <span className="text-[9px] text-zinc-400 font-bold uppercase tracking-wider">
                   Backup Shields
                 </span>
                 <div className="flex items-center gap-2">
@@ -345,7 +361,7 @@ export function WalletCard({
 
               {/* 30-Day Plan Target progress slider */}
               <div className="mt-1.5">
-                <div className="flex justify-between text-[9px] text-zinc-550 mb-1 font-bold uppercase tracking-wider">
+                <div className="flex justify-between text-[9px] text-zinc-400 mb-1 font-bold uppercase tracking-wider">
                   <span>Streak Target Progress</span>
                   <span>Day {completedDays + missedDays} / 30</span>
                 </div>
