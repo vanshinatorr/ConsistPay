@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link2, CheckCircle2, AlertCircle, ExternalLink, XCircle, Trash2, ArrowRight, Loader2 } from 'lucide-react';
+import { Link2, CheckCircle2, AlertCircle, ExternalLink, XCircle, Trash2, ArrowRight, Loader2, Plus } from 'lucide-react';
 
 interface PlatformLinkage {
   username: string;
@@ -18,6 +18,8 @@ export function PlatformsWidget({ onLinkageChanged, onboardingComplete = true }:
   const [usernamesInput, setUsernamesInput] = useState<Record<string, string>>({});
   const [activeLinkInput, setActiveLinkInput] = useState<string | null>(null);
   const [errorMap, setErrorMap] = useState<Record<string, string>>({});
+  const [showAddMenu, setShowAddMenu] = useState(false);
+  const [selectedAddPlatform, setSelectedAddPlatform] = useState<string | null>(null);
   
   // Real linkages state
   const [linkages, setLinkages] = useState<Record<string, PlatformLinkage | null>>({
@@ -83,6 +85,8 @@ export function PlatformsWidget({ onLinkageChanged, onboardingComplete = true }:
       }
 
       setActiveLinkInput(null);
+      setSelectedAddPlatform(null);
+      setShowAddMenu(false);
       setUsernamesInput((prev) => ({ ...prev, [platform]: "" }));
       await fetchAllLinkages();
       if (onLinkageChanged) onLinkageChanged();
@@ -224,6 +228,14 @@ export function PlatformsWidget({ onLinkageChanged, onboardingComplete = true }:
     { name: "GitHub", badge: "Coming Soon" }
   ];
 
+  const linkedPlatformsList = (["LeetCode", "GeeksforGeeks", "Code360"] as const).filter(
+    (plat) => !!linkages[plat]
+  );
+
+  const unconnectedPlatforms = (["LeetCode", "GeeksforGeeks", "Code360"] as const).filter(
+    (plat) => !linkages[plat]
+  );
+
   return (
     <div className={`relative rounded-2xl border border-white/[0.04] bg-[#0F0F13] p-5 overflow-hidden group hover:border-white/10 transition-all duration-300 h-[522px] min-h-[522px] flex flex-col justify-between ${!onboardingComplete ? 'opacity-40 pointer-events-none' : ''}`}>
       {/* Background patterns */}
@@ -237,161 +249,227 @@ export function PlatformsWidget({ onLinkageChanged, onboardingComplete = true }:
         </h3>
       </div>
 
-      <div className="space-y-2 relative z-10 flex-1 overflow-hidden">
-        {/* ─── ACTIVE/FUNCTIONAL PLATFORMS ─── */}
-        {(["LeetCode", "GeeksforGeeks", "Code360"] as const).map((plat) => {
-          const linkage = linkages[plat];
-          const isLinked = !!linkage;
-          const isVerified = linkage?.isVerified ?? false;
-          const loading = loadingMap[plat] || false;
-          const error = errorMap[plat] || "";
-          const isInputActive = activeLinkInput === plat;
+      <div className="space-y-2.5 relative z-10 flex-1 overflow-hidden flex flex-col justify-between">
+        
+        <div className="flex-1 overflow-y-auto custom-scrollbar space-y-2 relative z-10">
+          {/* ─── ACTIVE/FUNCTIONAL PLATFORMS (Only Connected ones show) ─── */}
+          {linkedPlatformsList.length > 0 ? (
+            linkedPlatformsList.map((plat) => {
+              const linkage = linkages[plat];
+              if (!linkage) return null;
+              const isVerified = linkage.isVerified;
+              const loading = loadingMap[plat] || false;
+              const error = errorMap[plat] || "";
 
-          return (
-            <div key={plat} className="border border-white/[0.03] bg-white/[0.01] rounded-xl p-2.5 transition-all duration-200">
-              {/* Row Header */}
-              <div className="flex items-center justify-between gap-2.5">
-                <div className="flex items-center gap-2">
-                  {/* Platform Icons */}
-                  <div className="w-7 h-7 rounded-lg bg-white/5 border border-white/[0.04] flex items-center justify-center shrink-0 select-none">
-                    {getPlatformLogo(plat)}
-                  </div>
-                  <div>
-                    <span className="text-xs font-bold text-white tracking-wide">{plat}</span>
-                    {isLinked && (
-                      <p className="text-[10px] text-zinc-500 font-mono mt-0.5">@{linkage.username}</p>
-                    )}
-                  </div>
-                </div>
+              return (
+                <div key={plat} className="border border-white/[0.03] bg-white/[0.01] rounded-xl p-2.5 transition-all duration-205 shadow-sm">
+                  {/* Row Header */}
+                  <div className="flex items-center justify-between gap-2">
+                    <div className="flex items-center gap-2.5">
+                      {/* Platform Icons */}
+                      <div className="w-6.5 h-6.5 rounded-lg bg-white/5 border border-white/[0.04] flex items-center justify-center shrink-0 select-none">
+                        {getPlatformLogo(plat)}
+                      </div>
+                      <span className="text-xs font-bold text-zinc-200 tracking-wide">{plat}</span>
+                    </div>
 
-                {/* Status Indicator / Actions */}
-                <div className="flex items-center gap-1.5">
-                  {isLinked ? (
-                    <>
+                    {/* Status Indicator / Actions */}
+                    <div className="flex items-center gap-1.5">
                       {isVerified ? (
                         <>
-                          <CheckCircle2 className="w-4 h-4 text-emerald-500" title="Verified Profile" />
+                          <CheckCircle2 className="w-4 h-4 text-emerald-500 fill-emerald-500/10" title="Verified Profile" />
                           <a
                             href={getProfileUrl(plat, linkage.username)}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-zinc-550 hover:text-white transition-colors p-1"
+                            className="text-zinc-500 hover:text-white transition-colors p-0.5"
                             title="Open Profile"
                           >
                             <ExternalLink className="w-3.5 h-3.5" />
                           </a>
                         </>
                       ) : (
-                        <div className="flex items-center gap-1 bg-yellow-500/10 border border-yellow-500/20 px-1.5 py-0.5 rounded text-[8px] font-bold text-yellow-400 select-none animate-pulse">
+                        <button
+                          onClick={() => {
+                            setActiveLinkInput(plat);
+                            setErrorMap(prev => ({ ...prev, [plat]: "" }));
+                          }}
+                          className="flex items-center gap-1 bg-yellow-500/10 border border-yellow-500/20 px-2 py-0.5 rounded text-[8px] font-bold text-yellow-400 select-none animate-pulse hover:bg-yellow-500/20 transition-all cursor-pointer"
+                        >
                           <AlertCircle className="w-2.5 h-2.5" />
                           <span>Verify</span>
-                        </div>
+                        </button>
                       )}
-                    </>
-                  ) : (
-                    !isInputActive && (
-                      <button
-                        onClick={() => {
-                          setActiveLinkInput(plat);
-                          setErrorMap(prev => ({ ...prev, [plat]: "" }));
-                        }}
-                        className="text-[9px] font-bold text-zinc-300 hover:text-white bg-white/5 hover:bg-white/10 px-2 py-1 rounded-md border border-white/[0.04] transition-colors"
-                      >
-                        Connect
-                      </button>
-                    )
+                    </div>
+                  </div>
+
+                  {/* Error messages */}
+                  {error && (
+                    <p className="text-[9px] text-rose-455 bg-rose-500/5 border border-rose-500/10 rounded-lg px-2.5 py-1 mt-1.5 leading-normal">
+                      {error}
+                    </p>
+                  )}
+
+                  {/* Expand Verification Steps (Linked but Unverified) */}
+                  {(!isVerified || activeLinkInput === plat) && (
+                    <div className="mt-2 pt-2 border-t border-white/[0.03] space-y-1.5">
+                      <div className="bg-[#0A0B10] border border-white/[0.06] rounded-md py-1.5 px-2 flex items-center justify-between">
+                        <span className="text-[8px] text-zinc-500 font-bold uppercase tracking-wider">Verification Token:</span>
+                        <code className="text-[10px] font-mono font-bold text-emerald-400 select-all">{linkage.verificationToken}</code>
+                      </div>
+                      <p className="text-[9px] text-zinc-400 leading-normal pl-0.5">
+                        Add this token into your <b>{plat} bio</b>, then verify:
+                      </p>
+                      
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() => handleVerify(plat)}
+                          disabled={loading}
+                          className="flex-1 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/25 py-1.5 rounded-lg text-[9px] font-bold transition-colors flex items-center justify-center gap-1 cursor-pointer"
+                        >
+                          {loading ? (
+                            <Loader2 className="w-3 h-3 animate-spin" />
+                          ) : (
+                            <>Verify Bio Ownership</>
+                          )}
+                        </button>
+                        <button
+                          onClick={() => handleUnlink(plat)}
+                          disabled={loading}
+                          className="px-2.5 bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/20 rounded-lg text-[10px] transition-all flex items-center justify-center cursor-pointer"
+                          title="Remove Platform"
+                        >
+                          Disconnect
+                        </button>
+                      </div>
+                    </div>
                   )}
                 </div>
-              </div>
+              );
+            })
+          ) : (
+            <div className="h-[120px] border border-dashed border-white/[0.06] rounded-xl flex flex-col items-center justify-center text-center p-4">
+              <Link2 className="w-6 h-6 text-zinc-650 mb-1.5" />
+              <p className="text-[10px] text-zinc-400 font-bold">No Active Profiles Linked</p>
+              <p className="text-[9px] text-zinc-500 mt-0.5 max-w-[160px]">Click Add Platform below to connect your DSA profile.</p>
+            </div>
+          )}
 
-              {/* Error messages */}
-              {error && (
-                <p className="text-[9px] text-rose-450 bg-rose-500/5 border border-rose-500/10 rounded-lg px-2 py-1 mt-1.5 leading-normal">
-                  {error}
-                </p>
-              )}
-
-              {/* Expand Link input box */}
-              {isInputActive && (
-                <form 
-                  onSubmit={(e) => {
-                    e.preventDefault();
-                    handleLinkSubmit(plat);
-                  }}
-                  className="mt-2 pt-2 border-t border-white/[0.03] space-y-1.5"
+          {/* ─── ADD PLATFORM DROPDOWN/SELECT HUB ─── */}
+          {unconnectedPlatforms.length > 0 && (
+            <div className="mt-3 relative z-20">
+              {!showAddMenu ? (
+                <button
+                  onClick={() => setShowAddMenu(true)}
+                  className="w-full py-2 bg-[#12131A] hover:bg-[#161722] border border-white/[0.04] hover:border-white/10 text-amber-550 hover:text-amber-400 font-bold text-xs rounded-xl transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-sm active:scale-95"
                 >
-                  <label className="block text-[8px] font-bold text-zinc-500 uppercase tracking-widest">
-                    Enter {plat} Username:
-                  </label>
-                  <div className="flex gap-1.5">
-                    <input
-                      type="text"
-                      required
-                      placeholder="Username"
-                      value={usernamesInput[plat] || ""}
-                      onChange={(e) => setUsernamesInput((prev) => ({ ...prev, [plat]: e.target.value }))}
-                      className="flex-1 bg-[#0A0B10] border border-white/[0.06] rounded-md px-2 py-1 text-xs text-white placeholder-zinc-700 focus:outline-none focus:border-emerald-500"
-                    />
-                    <button
-                      type="submit"
-                      disabled={loading}
-                      className="bg-emerald-500 hover:bg-emerald-400 text-black font-bold px-2 rounded-md text-[10px] flex items-center justify-center shrink-0"
+                  <Plus className="w-3.5 h-3.5 text-amber-500" />
+                  <span>Add Platform</span>
+                </button>
+              ) : (
+                <div className="bg-[#12131A] border border-white/[0.04] rounded-xl p-3.5 space-y-3 shadow-xl">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[9px] text-zinc-400 font-bold uppercase tracking-wider">Select Platform</span>
+                    <button 
+                      onClick={() => { setShowAddMenu(false); setSelectedAddPlatform(null); }} 
+                      className="text-zinc-500 hover:text-zinc-350 text-xs transition-colors cursor-pointer"
                     >
-                      {loading ? <Loader2 className="w-3 h-3 animate-spin" /> : "Link"}
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setActiveLinkInput(null)}
-                      className="border border-white/[0.06] hover:bg-white/5 text-zinc-400 px-2 rounded-md text-[10px]"
-                    >
-                      X
+                      Cancel
                     </button>
                   </div>
-                </form>
-              )}
 
-              {/* Expand Verification Steps (Linked but Unverified) */}
-              {isLinked && !isVerified && (
-                <div className="mt-2 pt-2 border-t border-white/[0.03] space-y-1.5">
-                  <div className="bg-[#0A0B10] border border-white/[0.06] rounded-md py-1 px-2 flex items-center justify-between">
-                    <span className="text-[8px] text-zinc-500 font-bold uppercase tracking-wider">Verification Token:</span>
-                    <code className="text-[10px] font-mono font-bold text-emerald-400 select-all">{linkage.verificationToken}</code>
-                  </div>
-                  <p className="text-[9px] text-zinc-450 leading-normal pl-0.5">
-                    Add this token into your <b>{plat} bio</b>, then verify:
-                  </p>
-                  
-                  <button
-                    onClick={() => handleVerify(plat)}
-                    disabled={loading}
-                    className="w-full bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/25 py-1 rounded-md text-[10px] font-bold transition-colors flex items-center justify-center gap-1"
-                  >
-                    {loading ? (
-                      <Loader2 className="w-3 h-3 animate-spin" />
-                    ) : (
-                      <>Verify Bio Ownership</>
-                    )}
-                  </button>
+                  {!selectedAddPlatform ? (
+                    <div className="grid grid-cols-1 gap-1.5">
+                      {unconnectedPlatforms.map((plat) => (
+                        <button
+                          key={plat}
+                          onClick={() => setSelectedAddPlatform(plat)}
+                          className="flex items-center gap-2.5 p-2 rounded-lg bg-white/[0.02] hover:bg-white/[0.05] border border-white/[0.04] transition-all text-xs text-zinc-200 font-bold text-left cursor-pointer"
+                        >
+                          <div className="w-5.5 h-5.5 rounded bg-white/5 border border-white/[0.04] flex items-center justify-center shrink-0">
+                            {getPlatformLogo(plat)}
+                          </div>
+                          <span>{plat}</span>
+                        </button>
+                      ))}
+                    </div>
+                  ) : (
+                    <form
+                      onSubmit={(e) => {
+                        e.preventDefault();
+                        handleLinkSubmit(selectedAddPlatform);
+                      }}
+                      className="space-y-2.5"
+                    >
+                      <div className="flex items-center gap-2">
+                        <div className="w-5.5 h-5.5 rounded bg-white/5 border border-white/[0.04] flex items-center justify-center shrink-0">
+                          {getPlatformLogo(selectedAddPlatform)}
+                        </div>
+                        <span className="text-xs font-bold text-zinc-200">{selectedAddPlatform} Username</span>
+                      </div>
+                      <div className="flex gap-2">
+                        <input
+                          type="text"
+                          required
+                          placeholder="Username"
+                          value={usernamesInput[selectedAddPlatform] || ""}
+                          onChange={(e) => setUsernamesInput((prev) => ({ ...prev, [selectedAddPlatform]: e.target.value }))}
+                          className="flex-1 bg-[#0A0B10] border border-white/[0.06] rounded-lg px-2.5 py-1.5 text-xs text-white placeholder-zinc-700 focus:outline-none focus:border-emerald-500 focus:ring-0"
+                        />
+                        <button
+                          type="submit"
+                          disabled={loadingMap[selectedAddPlatform]}
+                          className="bg-emerald-500 hover:bg-emerald-450 text-black font-extrabold px-3.5 rounded-lg text-xs flex items-center justify-center transition-all cursor-pointer active:scale-95 shrink-0"
+                        >
+                          {loadingMap[selectedAddPlatform] ? "..." : "Link"}
+                        </button>
+                      </div>
+                      {errorMap[selectedAddPlatform] && (
+                        <p className="text-[9px] text-rose-455 bg-rose-500/5 border border-rose-500/10 rounded-lg px-2.5 py-1 mt-1 leading-normal">
+                          {errorMap[selectedAddPlatform]}
+                        </p>
+                      )}
+                    </form>
+                  )}
                 </div>
               )}
             </div>
-          );
-        })}
+          )}
+        </div>
+
+        {/* ─── DEVELOPMENT STATS SECTION ─── */}
+        <div className="mt-2 pt-2.5 border-t border-white/[0.04] shrink-0">
+          <h4 className="text-[9px] font-bold text-zinc-500 uppercase tracking-widest block mb-2 px-0.5">
+            Development Stats
+          </h4>
+          <div className="flex items-center justify-between py-1.5 px-2 opacity-50 bg-white/[0.005] border border-white/[0.02] rounded-lg shadow-sm">
+            <div className="flex items-center gap-2">
+              <div className="w-5.5 h-5.5 rounded bg-white/5 border border-white/[0.04] flex items-center justify-center shrink-0">
+                {getPlatformLogo("GitHub")}
+              </div>
+              <span className="text-[10.5px] font-bold text-zinc-350 tracking-wide">GitHub</span>
+            </div>
+            <span className="text-[7.5px] font-black tracking-widest text-zinc-500 uppercase bg-white/[0.02] border border-white/[0.04] px-1.5 py-0.5 rounded">
+              Coming Soon
+            </span>
+          </div>
+        </div>
 
         {/* ─── MOCK PLATFORMS (COMING SOON) ─── */}
-        <div className="mt-1 pt-1.5 border-t border-white/[0.04]">
-          <span className="text-[8px] font-bold text-zinc-550 uppercase tracking-widest block mb-1.5 px-0.5">Coming Soon</span>
-          <div className="grid grid-cols-2 gap-1.5">
-            {mockPlatforms.map((mockPlat) => (
-              <div key={mockPlat.name} className="border border-white/[0.02] bg-white/[0.005] rounded-lg p-1.5 flex items-center gap-1.5 opacity-40 select-none">
-                <div className="w-5.5 h-5.5 rounded bg-white/5 border border-white/[0.04] flex items-center justify-center shrink-0 scale-90">
+        <div className="mt-2 pt-2.5 border-t border-white/[0.04] shrink-0">
+          <h4 className="text-[9px] font-bold text-zinc-500 uppercase tracking-widest block mb-2 px-0.5">Coming Soon</h4>
+          <div className="grid grid-cols-3 gap-1.5">
+            {mockPlatforms.filter(p => p.name !== "GitHub").map((mockPlat) => (
+              <div key={mockPlat.name} className="border border-white/[0.02] bg-white/[0.005] rounded-lg p-1.5 flex items-center justify-center gap-1.5 opacity-40 select-none">
+                <div className="w-5 h-5 rounded bg-white/5 border border-white/[0.04] flex items-center justify-center shrink-0 scale-90">
                   {getPlatformLogo(mockPlat.name)}
                 </div>
-                <span className="text-[9px] font-bold text-zinc-400 tracking-wide">{mockPlat.name}</span>
+                <span className="text-[8.5px] font-bold text-zinc-400 tracking-wide truncate">{mockPlat.name}</span>
               </div>
             ))}
           </div>
         </div>
+
       </div>
     </div>
   );
