@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Swords, ArrowRight, Zap, Target, Plus, Clock, Copy, CheckCircle, Trash2 } from 'lucide-react';
+import { ArrowRight, Zap, Target, Plus, Clock, Copy, CheckCircle, Trash2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 interface DashboardBattleWidgetProps {
@@ -195,7 +195,12 @@ export function DashboardBattleWidget({ onRefreshRequest }: DashboardBattleWidge
         <div>
           <div className="flex justify-between items-end mb-3 px-1">
             <h2 className="text-lg font-bold text-white flex items-center gap-2">
-              <Swords className="w-5 h-5 text-zinc-400" />
+              <svg className="w-5 h-5 text-zinc-550" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="8" cy="8" r="3.5" />
+                <path d="M2.5 20.5c0-3.5 3-4.5 5.5-4.5s5.5 1 5.5 4.5" />
+                <circle cx="16" cy="9" r="3" />
+                <path d="M11 20.5c0-3 2.5-4 5-4s5 1 5 4" />
+              </svg>
               Active Challenges
             </h2>
             <button 
@@ -304,7 +309,12 @@ export function DashboardBattleWidget({ onRefreshRequest }: DashboardBattleWidge
 
             <div className="relative z-10 flex items-center gap-5 w-full md:w-auto">
               <div className="w-10 h-10 bg-gradient-to-br from-violet-500 to-fuchsia-600 rounded-xl flex items-center justify-center shrink-0 shadow-lg shadow-violet-500/20 border border-white/[0.04]">
-                <Swords className="w-5 h-5 text-white" />
+                <svg className="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" xmlns="http://www.w3.org/2000/svg">
+                  <circle cx="8" cy="8" r="3.5" />
+                  <path d="M2.5 20.5c0-3.5 3-4.5 5.5-4.5s5.5 1 5.5 4.5" />
+                  <circle cx="16" cy="9" r="3" />
+                  <path d="M11 20.5c0-3 2.5-4 5-4s5 1 5 4" />
+                </svg>
               </div>
               
               <div>
