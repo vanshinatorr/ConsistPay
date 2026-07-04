@@ -42,7 +42,8 @@ export function RootLayout() {
         if (token && cachedUserStr && (path === "/" || path === "/login" || path === "/signup" || path === "/auth")) {
           try {
             const cachedUser = JSON.parse(cachedUserStr);
-            if (cachedUser.onboardingComplete === false) {
+            const userHasPlanOrDeposit = cachedUser.onboardingComplete === true || (cachedUser.activeDeposit || 0) > 0 || cachedUser.plan === "pro";
+            if (!userHasPlanOrDeposit) {
               navigate("/onboarding");
               setLoading(false);
               return;
@@ -73,17 +74,18 @@ export function RootLayout() {
           try {
             const data = JSON.parse(cachedUserStr);
             const isLandingOrAuthPage = path === "/" || path === "/login" || path === "/signup" || path === "/auth";
+            const userHasPlanOrDeposit = data.onboardingComplete === true || (data.activeDeposit || 0) > 0 || data.plan === "pro";
 
             if (isLandingOrAuthPage) {
-              if (data.onboardingComplete === false) {
+              if (!userHasPlanOrDeposit) {
                 navigate("/onboarding");
               } else {
                 navigate("/dashboard");
               }
             } else {
-              if (data.onboardingComplete === true && path === "/onboarding") {
+              if (userHasPlanOrDeposit && path === "/onboarding") {
                 navigate("/dashboard");
-              } else if (data.onboardingComplete === false && path !== "/onboarding" && path !== "/payment") {
+              } else if (!userHasPlanOrDeposit && path !== "/onboarding" && path !== "/payment") {
                 navigate("/onboarding");
               }
             }
@@ -108,17 +110,18 @@ export function RootLayout() {
           localStorage.setItem("consistpay_user_data", JSON.stringify(data));
 
           const isLandingOrAuthPage = path === "/" || path === "/login" || path === "/signup" || path === "/auth";
+          const userHasPlanOrDeposit = data.onboardingComplete === true || (data.activeDeposit || 0) > 0 || data.plan === "pro";
 
           if (isLandingOrAuthPage) {
-            if (data.onboardingComplete === false) {
+            if (!userHasPlanOrDeposit) {
               navigate("/onboarding");
             } else {
               navigate("/dashboard");
             }
           } else {
-            if (data.onboardingComplete === true && path === "/onboarding") {
+            if (userHasPlanOrDeposit && path === "/onboarding") {
               navigate("/dashboard");
-            } else if (data.onboardingComplete === false && path !== "/onboarding" && path !== "/payment") {
+            } else if (!userHasPlanOrDeposit && path !== "/onboarding" && path !== "/payment") {
               navigate("/onboarding");
             }
           }

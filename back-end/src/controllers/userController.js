@@ -252,7 +252,14 @@ const getMe = async (req, res) => {
         await user.save();
       }
     }
-    
+
+    // Auto-fix onboardingComplete flag if user has active deposit or pro plan
+    if (!user.onboardingComplete && ((user.activeDeposit || 0) > 0 || user.plan === "pro")) {
+      user.onboardingComplete = true;
+      user.onboardingCompletedAt = user.onboardingCompletedAt || new Date();
+      await user.save();
+    }
+
     res.status(200).json({
       _id: user._id,
       name: user.name,
