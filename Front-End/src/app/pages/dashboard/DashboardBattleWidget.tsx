@@ -307,6 +307,49 @@ export function DashboardBattleWidget({ onRefreshRequest }: DashboardBattleWidge
             <div className="absolute -left-20 -top-20 w-52 h-52 bg-violet-500/10 rounded-full blur-[80px] pointer-events-none" />
             <div className="absolute right-0 top-0 bottom-0 w-[2px] bg-gradient-to-b from-violet-500/30 to-fuchsia-500/30" />
 
+            {/* Monoline Tortoise & Hare Background Illustration */}
+            <div className="absolute right-[22%] md:right-[26%] lg:right-[30%] top-1/2 -translate-y-1/2 pointer-events-none select-none opacity-[0.04] group-hover:opacity-[0.10] transition-opacity duration-500 hidden sm:block">
+              <svg width="150" height="72" viewBox="0 0 150 72" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" xmlns="http://www.w3.org/2000/svg" className="text-white">
+                {/* 🐢 TORTOISE (Left) */}
+                <g transform="translate(4, 20)">
+                  {/* Outer Shell */}
+                  <path d="M 6,24 C 6,10 18,6 34,6 C 50,6 62,10 62,24 Z" />
+                  {/* Inner Shell Patterns (Monoline plates) */}
+                  <path d="M 17,24 C 17,16 23,12 34,12 C 45,12 51,16 51,24" />
+                  <path d="M 12,20 C 14,14 19,10 23,8" />
+                  <path d="M 56,20 C 54,14 49,10 45,8" />
+                  {/* Bottom rim */}
+                  <path d="M 6,24 L 62,24" />
+                  {/* Head & Neck */}
+                  <path d="M 62,20 C 65,18 70,16 75,17.5 C 80,19 82.5,23.5 80.5,26.5 C 78.5,29.5 73.5,30 67,27.5 L 62,24" />
+                  {/* Front Foot */}
+                  <path d="M 52,24 C 50,28 49,32 53,34 C 57,35 60,33.5 60,29" />
+                  {/* Back Foot */}
+                  <path d="M 16,24 C 14,28 13,32 17,34 C 21,35 24,33.5 24,29" />
+                  {/* Little center foot/feet/tail */}
+                  <path d="M 34,24 C 33,28 32,32 35,34 C 38,34.5 40,33 40,29" />
+                  <path d="M 6,21 C 3,21.5 2,23 3.5,24" />
+                </g>
+
+                {/* 🐇 HARE (Right) */}
+                <g transform="translate(86, 8)">
+                  {/* Leaping ears */}
+                  <path d="M 22,12 C 16,7 10,7 8.5,10 C 7,13 13,16 20,17.5" />
+                  <path d="M 18,9.5 C 13,5 7,5 5.5,8 C 4,11 10,13.5 16,15" />
+                  {/* Head & Nose */}
+                  <path d="M 20,17.5 C 24,19.5 28,21.5 32,24.5 C 34.5,26.5 34.5,29 32.5,30.5 C 29.5,32 25,27.5 22,25.5" />
+                  {/* Body arch */}
+                  <path d="M 22,25.5 C 17,25.5 12,22 8,24 C 5.5,25.5 6,29.5 7,33.5" />
+                  {/* Folded Leaping Back Foot */}
+                  <path d="M 8,24 C 5,25 2,30 3,34 C 4,37 7,37 9.5,32.5 C 12,27.5 12.5,25.5 13,24" />
+                  {/* Extended Leaping Front Foot */}
+                  <path d="M 22,25.5 C 25,29 28,36 26.5,40 C 25.5,42.5 23,41.5 22,39 C 21,36.5 18,31 17,29.5" />
+                  {/* Small tail */}
+                  <path d="M 3.5,26.5 C 2,27 2,29.5 3.5,30.5" />
+                </g>
+              </svg>
+            </div>
+
             <div className="relative z-10 flex items-center gap-5 w-full md:w-auto">
               <div className="w-10 h-10 bg-gradient-to-br from-violet-500 to-fuchsia-600 rounded-xl flex items-center justify-center shrink-0 shadow-lg shadow-violet-500/20 border border-white/[0.04]">
                 <svg className="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" xmlns="http://www.w3.org/2000/svg">
