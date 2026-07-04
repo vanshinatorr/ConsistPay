@@ -33,6 +33,18 @@ const platformLinkageSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+    easySolved: {
+      type: Number,
+      default: 0,
+    },
+    mediumSolved: {
+      type: Number,
+      default: 0,
+    },
+    hardSolved: {
+      type: Number,
+      default: 0,
+    },
   },
   { timestamps: true }
 );

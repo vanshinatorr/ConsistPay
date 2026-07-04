@@ -96,7 +96,15 @@ class PlatformService {
     // Success! Update linkage state
     const acSubmissionNum = userProfile.submitStatsGlobal?.acSubmissionNum || [];
     const allAc = acSubmissionNum.find(a => a.difficulty === "All");
+    const easyAc = acSubmissionNum.find(a => a.difficulty === "Easy");
+    const mediumAc = acSubmissionNum.find(a => a.difficulty === "Medium");
+    const hardAc = acSubmissionNum.find(a => a.difficulty === "Hard");
+
     linkage.totalSolved = allAc ? allAc.count : 0;
+    linkage.easySolved = easyAc ? easyAc.count : (platform === "GeeksforGeeks" || platform === "GFG" ? (allAc ? allAc.count : 0) : 0);
+    linkage.mediumSolved = mediumAc ? mediumAc.count : 0;
+    linkage.hardSolved = hardAc ? hardAc.count : 0;
+
     linkage.isVerified = true;
     linkage.verifiedAt = new Date();
     await linkage.save();
@@ -151,11 +159,20 @@ class PlatformService {
     try {
       const userProfile = await provider.fetchProfile(linkage.username);
       const acSubmissionNum = userProfile.submitStatsGlobal?.acSubmissionNum || [];
+      
       const allAc = acSubmissionNum.find(a => a.difficulty === "All");
+      const easyAc = acSubmissionNum.find(a => a.difficulty === "Easy");
+      const mediumAc = acSubmissionNum.find(a => a.difficulty === "Medium");
+      const hardAc = acSubmissionNum.find(a => a.difficulty === "Hard");
+
       if (allAc) {
         linkage.totalSolved = allAc.count;
-        await linkage.save();
       }
+      linkage.easySolved = easyAc ? easyAc.count : (platform === "GeeksforGeeks" || platform === "GFG" ? (allAc ? allAc.count : 0) : 0);
+      linkage.mediumSolved = mediumAc ? mediumAc.count : 0;
+      linkage.hardSolved = hardAc ? hardAc.count : 0;
+
+      await linkage.save();
     } catch (err) {
       console.warn(`[PlatformService] Failed to update totalSolved count during sync for ${platform}:`, err.message);
     }

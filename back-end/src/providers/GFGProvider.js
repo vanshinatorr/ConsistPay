@@ -90,24 +90,31 @@ class GFGProvider {
 
     if (newSolvedCount > oldSolvedCount) {
       const diff = newSolvedCount - oldSolvedCount;
-      const problems = [
-        {
-          title: "GeeksforGeeks Practice Solve",
-          slug: "gfg-practice-solve",
-          submissionId: `gfg-solve-${todayStr}-${newSolvedCount}`,
-          timestamp: Math.floor(now.getTime() / 1000)
-        }
-      ];
+      const problems = [];
+      const allSubmissions = [];
 
-      const allSubmissions = [
-        {
-          submissionId: `gfg-solve-${todayStr}-${newSolvedCount}`,
+      // Generate submissions for the last 'diff' days (counting back from today)
+      for (let i = 0; i < diff; i++) {
+        const dateObj = new Date(now.getTime() - i * 24 * 60 * 60 * 1000);
+        const dateStr = this._getLocalDateString(dateObj, targetTimeZone);
+        
+        const subId = `gfg-solve-${dateStr}-${newSolvedCount - i}`;
+        const problemObj = {
           title: "GeeksforGeeks Practice Solve",
           slug: "gfg-practice-solve",
-          timestamp: Math.floor(now.getTime() / 1000),
-          dateStr: todayStr
+          submissionId: subId,
+          timestamp: Math.floor(dateObj.getTime() / 1000)
+        };
+
+        if (i === 0) {
+          problems.push(problemObj);
         }
-      ];
+        
+        allSubmissions.push({
+          ...problemObj,
+          dateStr
+        });
+      }
 
       return {
         solvedToday: true,

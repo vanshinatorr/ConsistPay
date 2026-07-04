@@ -117,7 +117,7 @@ class LeetCodeProvider {
    * Fetch solved problems on the current date relative to the user's timezone
    */
   async fetchDailySolveStatus(username, targetTimeZone = "Asia/Kolkata", mockDate = null) {
-    const data = await this._makeGraphQLRequest(RECENT_AC_SUBMISSIONS_QUERY, { username, limit: 20 });
+    const data = await this._makeGraphQLRequest(RECENT_AC_SUBMISSIONS_QUERY, { username, limit: 100 });
     const submissions = data.recentAcSubmissionList || [];
 
     const now = mockDate ? new Date(mockDate) : new Date();

@@ -184,30 +184,25 @@ const getMe = async (req, res) => {
     const uniqueDaysResult = await Submission.distinct("date", solvedQuery);
     const totalSolved = uniqueDaysResult.length;
     
-    // Total count of completed solutions (up to 3 per day)
-    const totalProblemsSolved = await Submission.countDocuments({ userId: req.user._id, status: "completed" });
-    const totalMissed = await Submission.countDocuments(missedQuery);
-
-    // Aggregate solved questions by difficulty (defaulting blank or missing values to "Easy")
-    const easyCount = await Submission.countDocuments({ 
-      userId: req.user._id, 
-      status: "completed", 
-      difficulty: { $in: ["Easy", "", null] } 
-    });
-    const mediumCount = await Submission.countDocuments({ 
-      userId: req.user._id, 
-      status: "completed", 
-      difficulty: "Medium" 
-    });
-    const hardCount = await Submission.countDocuments({ 
-      userId: req.user._id, 
-      status: "completed", 
-      difficulty: "Hard" 
-    });
-
-    // Query connected platforms linkages
     const PlatformLinkage = require("../models/PlatformLinkage");
     const linkages = await PlatformLinkage.find({ userId: req.user._id });
+    
+    let easyCount = 0;
+    let mediumCount = 0;
+    let hardCount = 0;
+    let totalProblemsSolved = 0;
+
+    linkages.forEach(l => {
+      if (l.isVerified) {
+        easyCount += (l.easySolved || 0);
+        mediumCount += (l.mediumSolved || 0);
+        hardCount += (l.hardSolved || 0);
+        totalProblemsSolved += (l.totalSolved || 0);
+      }
+    });
+
+    const totalMissed = await Submission.countDocuments(missedQuery);
+
     const linkedPlatforms = linkages.map(l => ({
       platform: l.platform,
       username: l.username,
