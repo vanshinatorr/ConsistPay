@@ -37,12 +37,19 @@ export function AdminDashboard() {
   
   // Theme state (persisted in localStorage!)
   const [theme, setTheme] = useState<"dark" | "light">(() => {
-    return (localStorage.getItem("admin_theme") as "dark" | "light") || "dark";
+    return (localStorage.getItem("admin_theme") || localStorage.getItem("app_theme") as "dark" | "light") || "dark";
   });
 
-  // Persist theme choice
+  // Persist theme choice and update document class
   useEffect(() => {
     localStorage.setItem("admin_theme", theme);
+    if (theme === "dark") {
+      document.documentElement.classList.add("dark");
+      document.documentElement.classList.remove("light");
+    } else {
+      document.documentElement.classList.add("light");
+      document.documentElement.classList.remove("dark");
+    }
   }, [theme]);
   
   // Authorization states
