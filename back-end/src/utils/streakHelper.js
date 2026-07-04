@@ -50,112 +50,152 @@ const syncUserStreak = async (userOrId) => {
     try {
       const todayStr = new Date().toLocaleDateString("en-CA", { timeZone: "Asia/Kolkata" }); // YYYY-MM-DD
       
-      // Find the user's last submission (either completed or missed)
-      const lastSubmission = await Submission.findOne({
-        userId: user._id,
-        status: { $in: ["completed", "missed"] }
-      }).sort({ date: -1 });
-
+      // Determine start date for consistency checks (from onboarding completion or user registration)
       let startDateStr = "";
-      
-      if (!lastSubmission) {
-        // If no submissions exist, check from onboarding completion / registration
-        if (user.onboardingComplete && user.onboardingCompletedAt) {
-          startDateStr = new Date(user.onboardingCompletedAt).toLocaleDateString("en-CA", { timeZone: "Asia/Kolkata" });
-        } else if (user.onboardingComplete && user.createdAt) {
-          startDateStr = new Date(user.createdAt).toLocaleDateString("en-CA", { timeZone: "Asia/Kolkata" });
-        } else {
-          // Not onboarding complete, don't calculate missed days yet
-          if (user.streak !== 0) {
-            user.streak = 0;
-            await user.save();
-          }
-          return user;
-        }
+      if (user.onboardingComplete && user.onboardingCompletedAt) {
+        startDateStr = new Date(user.onboardingCompletedAt).toLocaleDateString("en-CA", { timeZone: "Asia/Kolkata" });
+      } else if (user.onboardingComplete && user.createdAt) {
+        startDateStr = new Date(user.createdAt).toLocaleDateString("en-CA", { timeZone: "Asia/Kolkata" });
       } else {
-        startDateStr = lastSubmission.date;
-      }
-
-      const date1 = new Date(startDateStr + "T00:00:00Z");
-      const date2 = new Date(todayStr + "T00:00:00Z");
-      const diffMs = date2.getTime() - date1.getTime();
-      const diffDays = Math.round(diffMs / (1000 * 60 * 60 * 24));
-
-      if (diffDays <= 1) {
-        // Streak is intact (submitted today or yesterday)
+        // Onboarding is not completed yet, reset streak and wait
+        if (user.streak !== 0) {
+          user.streak = 0;
+          await user.save();
+        }
         return user;
       }
 
-      // They missed some days!
-      const missedDays = diffDays - 1;
+      // Fetch all submissions for the user to evaluate in-memory (O(1) checks per day)
+      const submissions = await Submission.find({ userId: user._id });
+      const submissionsMap = new Map();
 
-      // Create missed submission records for all missing dates
-      const dateCursor = new Date(date1.getTime() + (1000 * 60 * 60 * 24));
-      while (dateCursor.getTime() < date2.getTime()) {
+      submissions.forEach((sub) => {
+        const existing = submissionsMap.get(sub.date);
+        // Prioritize completed submissions on the same date
+        if (!existing || (existing.status !== "completed" && sub.status === "completed")) {
+          submissionsMap.set(sub.date, sub);
+        }
+      });
+
+      const startCursor = new Date(startDateStr + "T00:00:00Z");
+      const endCursor = new Date(todayStr + "T00:00:00Z");
+
+      let currentStreak = 0;
+      let graceCoins = user.graceCoins || 0;
+      let activeDeposit = user.activeDeposit || 0;
+      let balance = user.balance || 0;
+      let unprotectedMisses = user.currentCycleUnprotectedMisses || 0;
+      let maxStreak = user.maxStreak || 0;
+      let earnedGraceCoinThisStreak = false;
+
+      // Iterate day-by-day from registration/onboarding start until today
+      const dateCursor = new Date(startCursor.getTime());
+      while (dateCursor.getTime() <= endCursor.getTime()) {
         const cursorStr = dateCursor.toISOString().substring(0, 10);
-        const exists = await Submission.findOne({ userId: user._id, date: cursorStr });
-        if (!exists) {
-          await Submission.create({
-            userId: user._id,
-            problemName: "No Submission",
-            platform: "Unknown",
-            date: cursorStr,
-            status: "missed",
-            accepted: false,
-            isFallback: true
-          });
-          console.log(`Created missed submission record for user ${user._id} on ${cursorStr}`);
+        const sub = submissionsMap.get(cursorStr);
+        const hasActivePlan = user.planExpiresAt && new Date(cursorStr + "T00:00:00Z") <= new Date(user.planExpiresAt);
 
-          // Plan commitment deduction logic from activeDeposit
-          if (user.planExpiresAt) {
-            const cursorDate = new Date(cursorStr + "T00:00:00Z");
-            const expiryDate = new Date(user.planExpiresAt);
-            cursorDate.setHours(0, 0, 0, 0);
-            expiryDate.setHours(0, 0, 0, 0);
+        if (sub && sub.status === "completed") {
+          // Solved successfully on this day!
+          currentStreak += 1;
+          if (currentStreak > maxStreak) {
+            maxStreak = currentStreak;
+          }
 
-            if (cursorDate <= expiryDate && user.activeDeposit > 0) {
-              const deduction = Math.min(user.activeDeposit, user.dailyCommitment || 0);
-              user.activeDeposit -= deduction;
-              console.log(`Deducted ₹${deduction} from user ${user._id} activeDeposit for missed day ${cursorStr}. Remaining activeDeposit: ₹${user.activeDeposit}`);
+          // Process payout if they had an active plan and it wasn't paid out yet
+          if (hasActivePlan && !sub.payoutProcessed) {
+            const payoutAmount = Math.min(activeDeposit, user.dailyCommitment || 0);
+            if (payoutAmount > 0) {
+              activeDeposit -= payoutAmount;
+              balance += payoutAmount;
+              sub.payoutProcessed = true;
+              await sub.save();
+              console.log(`[StreakHelper] Payout of ₹${payoutAmount} credited retroactively for date ${cursorStr}`);
+            }
+          }
+        } else {
+          // Missed this day
+          let missedSub = sub;
+          if (!missedSub) {
+            missedSub = await Submission.create({
+              userId: user._id,
+              problemName: "No Submission",
+              platform: "Unknown",
+              date: cursorStr,
+              status: "missed",
+              accepted: false,
+              isFallback: true,
+              deductionProcessed: false
+            });
+            submissionsMap.set(cursorStr, missedSub);
+          }
+
+          // Process stake deduction if they had an active plan on this date and it wasn't processed yet
+          if (hasActivePlan && !missedSub.deductionProcessed) {
+            const deduction = Math.min(activeDeposit, user.dailyCommitment || 0);
+            if (deduction > 0) {
+              activeDeposit -= deduction;
+              missedSub.deductionProcessed = true;
+              await missedSub.save();
+              console.log(`[StreakHelper] Stake deduction of ₹${deduction} executed retroactively for missed date ${cursorStr}`);
+            }
+          }
+
+          // Streak breaking / grace coin logic (apply only to completed past days)
+          if (cursorStr !== todayStr) {
+            if (currentStreak > 0) {
+              if (graceCoins > 0) {
+                graceCoins -= 1;
+                // Streak is protected!
+              } else {
+                currentStreak = 0;
+                unprotectedMisses += 1;
+              }
+            } else {
+              if (graceCoins > 0) {
+                graceCoins -= 1;
+              } else {
+                unprotectedMisses += 1;
+              }
             }
           }
         }
+
+        // Increment cursor by 1 day
         dateCursor.setDate(dateCursor.getDate() + 1);
       }
 
-      let streakNotificationTitle = "";
-      let streakNotificationMessage = "";
-
-      if (user.streak > 0) {
-        if (user.graceCoins >= missedDays) {
-          // Protected by Grace Coins
-          user.graceCoins -= missedDays;
-          // Streak stays intact!
-          streakNotificationTitle = "Streak Protected! 🛡️";
-          streakNotificationMessage = `You missed ${missedDays} ${missedDays === 1 ? "day" : "days"}, but your streak was protected by consuming ${missedDays} Grace ${missedDays === 1 ? "Coin" : "Coins"}.`;
-        } else {
-          // Streak broken
-          user.streak = 0;
-          // Deduct as many grace coins as possible to try to cover, then set to 0
-          user.graceCoins = Math.max(0, user.graceCoins - missedDays);
-          user.currentCycleUnprotectedMisses = (user.currentCycleUnprotectedMisses || 0) + 1;
-          streakNotificationTitle = "Streak Broken 💔";
-          streakNotificationMessage = `You missed ${missedDays} ${missedDays === 1 ? "day" : "days"} and did not have enough Grace Coins. Your consistency streak has reset.`;
-        }
-      } else {
-        // Streak was already 0
-        if (missedDays > user.graceCoins) {
-          user.currentCycleUnprotectedMisses = (user.currentCycleUnprotectedMisses || 0) + 1;
-          user.graceCoins = Math.max(0, user.graceCoins - missedDays);
-        } else {
-          user.graceCoins -= missedDays;
-        }
+      // Check if user hit new streak intervals to reward grace coins (only for today)
+      // Check 15-day streak increments (Pro plan, max once per calendar month)
+      const currentMonthStr = todayStr.substring(0, 7);
+      if (currentStreak % 15 === 0 && currentStreak > 0 && user.plan === "pro" && user.lastGraceCoinEarnedMonth !== currentMonthStr) {
+        graceCoins += 1;
+        user.lastGraceCoinEarnedMonth = currentMonthStr;
+        await createNotification(
+          user._id,
+          "Grace Coin Unlocked! 🪙",
+          `Congratulations on hitting a ${currentStreak}-day streak! You've earned 1 Grace Coin.`,
+          "streak"
+        );
       }
 
-      await user.save();
-
-      if (streakNotificationTitle) {
-        await createNotification(user._id, streakNotificationTitle, streakNotificationMessage, "streak");
+      // Save changes if there's any state delta
+      if (
+        user.streak !== currentStreak ||
+        user.graceCoins !== graceCoins ||
+        user.activeDeposit !== activeDeposit ||
+        user.balance !== balance ||
+        user.currentCycleUnprotectedMisses !== unprotectedMisses ||
+        user.maxStreak !== maxStreak
+      ) {
+        user.streak = currentStreak;
+        user.graceCoins = graceCoins;
+        user.activeDeposit = activeDeposit;
+        user.balance = balance;
+        user.currentCycleUnprotectedMisses = unprotectedMisses;
+        user.maxStreak = maxStreak;
+        await user.save();
+        console.log(`[StreakHelper] Recalculated state for user ${user._id}: streak=${currentStreak}, balance=₹${balance}, activeDeposit=₹${activeDeposit}`);
       }
 
       return user;

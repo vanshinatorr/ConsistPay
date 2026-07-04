@@ -65,6 +65,14 @@ const submissionSchema = new mongoose.Schema(
       enum: ["verified", "pending", "failed"],
       default: "verified",
     },
+    payoutProcessed: {
+      type: Boolean,
+      default: false,
+    },
+    deductionProcessed: {
+      type: Boolean,
+      default: false,
+    },
   },
   { timestamps: true }
 );

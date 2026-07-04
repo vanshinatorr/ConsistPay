@@ -184,10 +184,7 @@ class PlatformService {
 
     const todayStr = new Date().toLocaleDateString("en-CA", { timeZone: "Asia/Kolkata" }); // Format: YYYY-MM-DD
 
-    // 1. Sync user streaks to process missed days up to yesterday
-    userObj = await syncUserStreak(userObj);
-
-    // 2. Count existing completed submissions today
+    // 1. Count existing completed submissions today
     const preSyncCount = await Submission.countDocuments({
       userId,
       date: todayStr,
@@ -271,49 +268,13 @@ class PlatformService {
       }
     }
 
-    // 4. Handle streak logic if they solved a problem today and it was their first sync today
+    // 4. Run the retroactive streak and payout engine
+    userObj = await syncUserStreak(userObj);
+
     const postSyncCount = preSyncCount + newSolvesRecorded;
 
     if (postSyncCount > 0 && isFirstSubmissionToday) {
-      // Secure streak increment
-      if (userObj.streak > 0) {
-        userObj.streak += 1;
-      } else {
-        userObj.streak = 1;
-      }
-
-      if (userObj.streak > (userObj.maxStreak || 0)) {
-        userObj.maxStreak = userObj.streak;
-      }
-
-      // Check 15-day streak increments (Pro users only, max once per calendar month)
-      const currentMonthStr = todayStr.substring(0, 7); // "YYYY-MM"
-      if (userObj.streak % 15 === 0 && userObj.plan === "pro" && userObj.lastGraceCoinEarnedMonth !== currentMonthStr) {
-        userObj.graceCoins = (userObj.graceCoins || 0) + 1;
-        userObj.lastGraceCoinEarnedMonth = currentMonthStr;
-        console.log(`[PlatformService] Grace coin unlocked: ${userObj.streak}-day streak in ${currentMonthStr}.`);
-        
-        await createNotification(
-          userId,
-          "Grace Coin Unlocked! 🪙",
-          `Congratulations on hitting a ${userObj.streak}-day streak! You've earned 1 Grace Coin.`,
-          "streak"
-        );
-      }
-
-      // Secure deposit payout if user has an active plan
       const hasActivePlan = userObj.planExpiresAt && new Date() <= new Date(userObj.planExpiresAt);
-      if (hasActivePlan) {
-        if (userObj.activeDeposit >= (userObj.dailyCommitment || 0)) {
-          userObj.activeDeposit -= (userObj.dailyCommitment || 0);
-          userObj.balance += (userObj.dailyCommitment || 0);
-          console.log(`[PlatformService] Paid reward of ₹${userObj.dailyCommitment} from activeDeposit.`);
-        }
-      }
-
-      await userObj.save();
-
-      // Trigger completion notification
       await createNotification(
         userId,
         "Submission Synced! 🚀",
