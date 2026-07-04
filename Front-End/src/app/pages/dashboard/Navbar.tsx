@@ -165,7 +165,7 @@ export function Navbar({ initials, plan = "free", avatar, isAvatarUrl }: NavbarP
   return (
     <>
       <nav className="sticky top-0 z-50 border-b border-white/[0.04] bg-[#0F0F13]/80 backdrop-blur-xl">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2">
           <div className="flex items-center justify-between">
             <Link
               to="/dashboard"
@@ -192,7 +192,7 @@ export function Navbar({ initials, plan = "free", avatar, isAvatarUrl }: NavbarP
                     <Link
                       key={path}
                       to={path}
-                      className={`relative px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                      className={`relative px-4 py-1.5 rounded-lg text-sm font-medium transition-all duration-200 ${
                         isActive
                           ? "text-violet-300"
                           : "text-zinc-400 hover:text-white hover:bg-white/5"
@@ -210,7 +210,7 @@ export function Navbar({ initials, plan = "free", avatar, isAvatarUrl }: NavbarP
                   <Link
                     key={path}
                     to={path}
-                    className={`relative px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                    className={`relative px-4 py-1.5 rounded-lg text-sm font-medium transition-all duration-200 ${
                       isActive
                         ? "text-violet-300"
                         : "text-zinc-400 hover:text-white hover:bg-white/5"
@@ -231,7 +231,7 @@ export function Navbar({ initials, plan = "free", avatar, isAvatarUrl }: NavbarP
               {/* Theme Toggle Button */}
               <button
                 onClick={toggleTheme}
-                className="relative p-2.5 rounded-xl border transition-all duration-200 cursor-pointer bg-white/5 border-white/[0.04] text-zinc-300 hover:bg-white/10"
+                className="relative p-2 rounded-xl border transition-all duration-200 cursor-pointer bg-white/5 border-white/[0.04] text-zinc-300 hover:bg-white/10"
                 title={theme === "dark" ? "Switch to Light Mode" : "Switch to Dark Mode"}
               >
                 {theme === "dark" ? (
@@ -248,7 +248,7 @@ export function Navbar({ initials, plan = "free", avatar, isAvatarUrl }: NavbarP
                     setShowNotifs(!showNotifs);
                     if (!showNotifs) fetchNotifications(); // fetch when opened
                   }}
-                  className={`relative p-2.5 rounded-xl border transition-all duration-200 cursor-pointer ${
+                  className={`relative p-2 rounded-xl border transition-all duration-200 cursor-pointer ${
                     showNotifs 
                       ? "bg-violet-500/20 border-violet-500/40 text-violet-300 shadow-[0_0_15px_rgba(139,92,246,0.15)]" 
                       : "bg-white/5 border border-white/[0.04] text-zinc-300 hover:bg-white/10"
@@ -367,7 +367,7 @@ export function Navbar({ initials, plan = "free", avatar, isAvatarUrl }: NavbarP
 
               <Link
                 to="/profile"
-                className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold text-sm ${isAvatarUrl ? 'bg-white/5 border border-white/[0.04]' : 'bg-gradient-to-br from-emerald-400 to-emerald-600'}`}
+                className={`w-9 h-9 rounded-full flex items-center justify-center font-semibold text-[13px] ${isAvatarUrl ? 'bg-white/5 border border-white/[0.04]' : 'bg-gradient-to-br from-emerald-400 to-emerald-600'}`}
               >
                 {isAvatarUrl ? (
                   <img src={avatar} alt="Avatar" className="w-full h-full object-cover rounded-full" />
