@@ -77,7 +77,7 @@ export function PlatformsWidget({ onLinkageChanged, onboardingComplete = true }:
         );
       case "GeeksforGeeks":
         return (
-          <svg viewBox="0 0 24 24" className="w-4 h-4 fill-current text-[#2F8D46]" xmlns="http://www.w3.org/2000/svg">
+          <svg viewBox="0 0 24 24" className="w-4.5 h-4.5 fill-current text-[#2F8D46]" xmlns="http://www.w3.org/2000/svg">
             <path d="M21.45 14.315c-.143.28-.334.532-.565.745a3.691 3.691 0 0 1-1.104.695 4.51 4.51 0 0 1-3.116-.016 3.79 3.79 0 0 1-2.135-2.078 3.571 3.571 0 0 1-.13-.353h7.418a4.26 4.26 0 0 1-.368 1.008zm-11.99-.654a3.793 3.793 0 0 1-2.134 2.078 4.51 4.51 0 0 1-3.117.016 3.7 3.7 0 0 1-1.104-.695 2.652 2.652 0 0 1-.564-.745 4.221 4.221 0 0 1-.368-1.006H9.59c-.038.12-.08.238-.13.352zm14.501-1.758a3.849 3.849 0 0 0-.082-.475l-9.634-.008a3.932 3.932 0 0 1 1.143-2.348c.363-.35.79-.625 1.26-.809a3.97 3.97 0 0 1 4.484.957l1.521-1.49a5.7 5.7 0 0 0-1.922-1.357 6.283 6.283 0 0 0-2.544-.49 6.35 6.35 0 0 0-2.405.457 6.007 6.007 0 0 0-1.963 1.276 6.142 6.142 0 0 0-1.325 1.94 5.862 5.862 0 0 0-.466 1.864h-.063a5.857 5.857 0 0 0-.467-1.865 6.13 6.13 0 0 0-1.325-1.939A6 6 0 0 0 8.21 6.34a6.698 6.698 0 0 0-4.949.031A5.708 5.708 0 0 0 1.34 7.73l1.52 1.49a4.166 4.166 0 0 1 4.484-.958c.47.184.898.46 1.26.81.368.36.66.792.859 1.268.146.344.242.708.285 1.08l-9.635.008A4.714 4.714 0 0 0 0 12.457a6.493 6.493 0 0 0 .345 2.127 4.927 4.927 0 0 0 1.08 1.783c.528.56 1.17 1 1.88 1.293a6.454 6.454 0 0 0 2.504.457c.824.005 1.64-.15 2.404-.457a5.986 5.986 0 0 0 1.964-1.277 6.116 6.116 0 0 0 1.686-3.076h.273a6.13 6.13 0 0 0 1.686 3.077 5.99 5.99 0 0 0 1.964 1.276 6.345 6.345 0 0 0 2.405.457 6.45 6.45 0 0 0 2.502-.457 5.42 5.42 0 0 0 1.882-1.293 4.928 4.928 0 0 0 1.08-1.783A6.52 6.52 0 0 0 24 12.457a4.757 4.757 0 0 0-.039-.554z" />
           </svg>
         );
@@ -138,7 +138,7 @@ export function PlatformsWidget({ onLinkageChanged, onboardingComplete = true }:
   );
 
   return (
-    <div className={`relative rounded-2xl border border-white/[0.04] bg-[#0F0F13] p-4 overflow-hidden group hover:border-white/10 transition-all duration-300 h-[522px] min-h-[522px] flex flex-col justify-between select-none ${!onboardingComplete ? 'opacity-40 pointer-events-none' : ''}`}>
+    <div className={`relative rounded-2xl border border-white/[0.04] bg-[#0F0F13] px-3 py-4 overflow-hidden group hover:border-white/10 transition-all duration-300 h-[522px] min-h-[522px] flex flex-col justify-between select-none ${!onboardingComplete ? 'opacity-40 pointer-events-none' : ''}`}>
       {/* Background patterns */}
       <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.002)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.002)_1px,transparent_1px)] bg-[size:20px_20px] pointer-events-none" />
       
@@ -165,19 +165,19 @@ export function PlatformsWidget({ onLinkageChanged, onboardingComplete = true }:
                 const isVerified = linkage.isVerified;
 
                 return (
-                  <div key={plat} className="flex items-center justify-between py-2 border-b border-white/[0.02] flex-nowrap whitespace-nowrap overflow-hidden">
-                    <div className="flex items-center gap-2 min-w-0">
+                  <div key={plat} className="flex items-center justify-between py-2 border-b border-white/[0.02] flex-nowrap w-full min-w-0">
+                    <div className="flex items-center gap-1.5 min-w-0 flex-1">
                       {/* Platform Logo */}
                       <div className="w-5.5 h-5.5 rounded bg-white/5 border border-white/[0.04] flex items-center justify-center shrink-0">
                         {getPlatformLogo(plat)}
                       </div>
-                      <span className="text-[11px] font-bold text-zinc-250 tracking-wide truncate">{plat}</span>
+                      <span className="text-[11px] font-bold text-zinc-250 tracking-wide truncate flex-1 min-w-0">{plat}</span>
                     </div>
 
                     {/* Status Action indicators */}
-                    <div className="flex items-center gap-1.5 shrink-0 ml-2">
+                    <div className="flex items-center gap-1 shrink-0 ml-1.5">
                       {isVerified ? (
-                        <div className="flex items-center gap-1.5">
+                        <div className="flex items-center gap-1 shrink-0">
                           {/* Premium Verified Seal Badge */}
                           <div className="flex items-center justify-center w-4 h-4 bg-emerald-500/10 border border-emerald-500/30 rounded-full shrink-0 shadow-sm" title="Verified Connect">
                             <svg viewBox="0 0 24 24" className="w-2.5 h-2.5 text-emerald-400 fill-current" xmlns="http://www.w3.org/2000/svg">
@@ -188,7 +188,7 @@ export function PlatformsWidget({ onLinkageChanged, onboardingComplete = true }:
                             href={getProfileUrl(plat, linkage.username)}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-zinc-550 hover:text-zinc-300 transition-colors p-0.5"
+                            className="text-zinc-550 hover:text-zinc-300 transition-colors p-0.5 shrink-0"
                           >
                             <ExternalLink className="w-3 h-3" />
                           </a>
@@ -196,7 +196,7 @@ export function PlatformsWidget({ onLinkageChanged, onboardingComplete = true }:
                       ) : (
                         <button
                           onClick={() => navigate("/settings?tab=platforms")}
-                          className="flex items-center gap-1 bg-yellow-500/10 border border-yellow-500/20 px-2 py-0.5 rounded-full text-[8px] font-extrabold text-yellow-400 select-none hover:bg-yellow-500/20 transition-all cursor-pointer whitespace-nowrap active:scale-95"
+                          className="flex items-center gap-1 bg-yellow-500/10 border border-yellow-500/20 px-2 py-0.5 rounded-full text-[8px] font-extrabold text-yellow-400 select-none hover:bg-yellow-500/20 transition-all cursor-pointer whitespace-nowrap active:scale-95 shrink-0"
                         >
                           <AlertCircle className="w-2 h-2" />
                           <span>Verify</span>
@@ -218,7 +218,7 @@ export function PlatformsWidget({ onLinkageChanged, onboardingComplete = true }:
           {unconnectedPlatforms.length > 0 && (
             <button
               onClick={() => navigate("/settings?tab=platforms")}
-              className="w-full py-1.5 border border-dashed border-white/[0.06] hover:border-amber-500/30 hover:bg-white/[0.01] text-amber-500 hover:text-amber-400 font-bold text-[10px] rounded-xl transition-all flex items-center justify-center gap-1.5 cursor-pointer active:scale-95 mt-0.5"
+              className="w-full py-1.5 border border-dashed border-white/[0.06] hover:border-amber-500/30 hover:bg-white/[0.01] text-amber-550 hover:text-amber-400 font-bold text-[10px] rounded-xl transition-all flex items-center justify-center gap-1.5 cursor-pointer active:scale-95 mt-0.5"
             >
               <Plus className="w-3 h-3 text-amber-500" />
               <span>Add Platform</span>
