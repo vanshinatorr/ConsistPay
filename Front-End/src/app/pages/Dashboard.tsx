@@ -93,8 +93,6 @@ export function Dashboard() {
     const handleScroll = () => {
       if (window.scrollY > 40) {
         setHideWelcome(true);
-      } else {
-        setHideWelcome(false);
       }
     };
     window.addEventListener("scroll", handleScroll);
