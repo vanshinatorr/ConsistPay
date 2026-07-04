@@ -208,7 +208,7 @@ export function WalletCard({
                 ) : hasVerifiedPlatform ? (
                   <>
                     <span className="w-1.5 h-1.5 rounded-full bg-yellow-500 animate-ping" />
-                    <span className="text-xs font-bold tracking-wider text-yellow-450">Awaiting Daily Coding Sync</span>
+                    <span className="text-xs font-bold tracking-wider text-yellow-450">Daily Solve Pending</span>
                   </>
                 ) : (
                   <>
