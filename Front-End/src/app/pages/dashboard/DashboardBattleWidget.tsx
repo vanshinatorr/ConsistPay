@@ -308,11 +308,11 @@ export function DashboardBattleWidget({ onRefreshRequest }: DashboardBattleWidge
             <div className="absolute right-0 top-0 bottom-0 w-[2px] bg-gradient-to-b from-violet-500/30 to-fuchsia-500/30" />
 
             {/* Monoline Tortoise & Hare Background Illustration */}
-            <div className="absolute right-[20%] md:right-[24%] lg:right-[28%] top-1/2 -translate-y-1/2 pointer-events-none select-none transition-opacity duration-500 hidden sm:block w-[160px] h-[80px] overflow-hidden">
+            <div className="absolute right-[20%] md:right-[24%] lg:right-[28%] top-1/2 -translate-y-1/2 pointer-events-none select-none hidden sm:block w-[160px] h-[80px] overflow-hidden">
               <img 
                 src="/logo/tortoise-hare.png" 
                 alt="Tortoise and Hare Illustration" 
-                className="w-full h-full object-contain opacity-55 group-hover:opacity-85 transition-opacity duration-500" 
+                className="w-full h-full object-contain opacity-30 select-none pointer-events-none" 
               />
             </div>
 
