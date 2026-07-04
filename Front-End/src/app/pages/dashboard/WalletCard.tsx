@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Wallet, Lock, Coins, Shield, TrendingDown, RefreshCw, Check, AlertTriangle, ArrowUpRight, HelpCircle } from "lucide-react";
+import { Wallet, Lock, Coins, Shield, TrendingDown, RefreshCw, Check, AlertTriangle, ArrowUpRight, HelpCircle, CheckCircle2 } from "lucide-react";
 import { WithdrawModal } from "../../components/WithdrawModal";
 
 interface WalletCardProps {
@@ -114,87 +114,83 @@ export function WalletCard({
           {/* ════ LEFT COLUMN: STAKES & CASH WALLET ════ */}
           <div className="flex flex-col justify-between h-full">
             
-            {/* Withdrawable Cash */}
-            <div className="p-1">
-              <span className="text-[10px] text-zinc-500 uppercase tracking-wider font-bold block">
-                Withdrawable Cash
-              </span>
-              <div className="flex items-baseline justify-between mt-1">
-                <span className="text-3xl font-black font-mono text-white tracking-tight">
+            {/* 1. Withdrawable Balance Card */}
+            <div className="bg-[#12131A] border border-white/[0.04] rounded-xl p-4 flex items-center justify-between hover:border-white/[0.08] transition-all duration-200">
+              <div>
+                <span className="text-[10px] text-emerald-400 font-bold uppercase tracking-wider block">
+                  Withdrawable Balance
+                </span>
+                <span className="text-3xl font-black font-mono text-white mt-1 block">
                   <span className="text-zinc-600 text-xl font-normal mr-0.5">₹</span>
                   {onboardingComplete ? Math.round(balance) : "0"}
                 </span>
-                {onboardingComplete && balance > 0 ? (
-                  <button
-                    onClick={() => setShowWithdrawModal(true)}
-                    className="px-3.5 py-1.5 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-450 hover:to-teal-450 text-black text-xs font-bold rounded-lg transition-all active:scale-95 shadow-md shadow-emerald-500/10 cursor-pointer"
-                  >
-                    Withdraw
-                  </button>
-                ) : (
-                  <span className="text-[9px] text-zinc-500 font-bold bg-white/[0.03] border border-white/[0.06] px-2.5 py-1 rounded-md select-none">
-                    Empty Wallet
-                  </span>
-                )}
-              </div>
-            </div>
-
-            {/* Unified Stakes & Payouts Ledger */}
-            <div className="mt-4 pt-4 border-t border-white/[0.04] flex-1 flex flex-col justify-between">
-              <div>
-                <span className="text-[9px] text-zinc-500 font-bold uppercase tracking-wider block mb-3.5">
-                  Stakes Ledger
+                <span className="text-[9px] text-zinc-500 block mt-1 leading-normal">
+                  Funds secured from completed coding commitments.
                 </span>
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between text-xs">
-                    <span className="text-zinc-500 font-medium">Locked Principal:</span>
-                    <span className="font-bold font-mono text-zinc-200">
-                      ₹{onboardingComplete ? Math.round(activeDeposit) : "0"}
-                    </span>
-                  </div>
-                  <div className="flex items-center justify-between text-xs">
-                    <span className="text-zinc-500 font-medium">Daily Risk Stake:</span>
-                    <span className="font-bold font-mono text-zinc-200">
-                      ₹{dailyCommitment} / day
-                    </span>
-                  </div>
-                  <div className="flex items-center justify-between text-xs">
-                    <span className="text-zinc-500 font-medium">Secured Yield (So Far):</span>
-                    <span className="font-bold font-mono text-emerald-400">
-                      +₹{completedDays * dailyCommitment}
-                    </span>
-                  </div>
-                  <div className="flex items-center justify-between text-xs">
-                    <span className="text-zinc-500 font-medium">Lost Stake:</span>
-                    <span className="font-bold font-mono text-rose-450">
-                      -₹{missedDays * dailyCommitment}
-                    </span>
-                  </div>
-                </div>
               </div>
-
-              {/* Status note */}
-              <div className="text-[9.5px] text-zinc-500 leading-relaxed mt-4 pt-2.5 border-t border-white/[0.03]">
-                {planStatus === "active" ? (
-                  <span>Streak earning active. You earn <b className="text-emerald-400">₹{dailyCommitment}</b> for each coding day.</span>
-                ) : (
-                  <span className="text-rose-450 font-bold">Stakes expired. Renew to resume streak earning.</span>
-                )}
-              </div>
+              {onboardingComplete && balance > 0 ? (
+                <button
+                  onClick={() => setShowWithdrawModal(true)}
+                  className="px-4 py-2 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-450 hover:to-teal-450 text-black text-xs font-bold rounded-lg transition-all active:scale-95 shadow-md shadow-emerald-500/10 cursor-pointer"
+                >
+                  Withdraw
+                </button>
+              ) : (
+                <span className="text-[9px] text-zinc-500 font-bold bg-white/[0.03] border border-white/[0.06] px-2.5 py-1 rounded-md select-none">
+                  Empty Wallet
+                </span>
+              )}
             </div>
 
-            {/* Streak Shields (Grace Coins Indicator) */}
-            <div className="flex items-center justify-between text-xs pt-3 mt-auto border-t border-white/[0.03]">
-              <span className="text-[9px] text-zinc-500 font-bold uppercase tracking-wider">
-                Backup Shields
+            {/* 2. Active Deposit Pool (Locked) Card */}
+            <div className="bg-[#12131A] border border-white/[0.04] rounded-xl p-4 mt-1 flex-1 flex flex-col justify-center hover:border-white/[0.08] transition-all duration-200">
+              <span className="text-[10px] text-zinc-500 uppercase tracking-wider font-bold block">
+                Active Deposit Pool (Locked)
               </span>
-              <div className="flex items-center gap-2">
-                {renderShields()}
-                <span className="font-bold font-mono text-zinc-400 text-[10px]">
-                  {onboardingComplete ? graceCoins : "0"}/3 active
+              <span className="text-2xl font-black font-mono text-white mt-1 block">
+                <span className="text-zinc-600 text-lg font-normal mr-0.5">₹</span>
+                {onboardingComplete ? Math.round(activeDeposit) : "0"}
+              </span>
+              <span className="text-[9px] text-zinc-500 block mt-1">
+                ₹{dailyCommitment}/day commitment • 30-day plan
+              </span>
+            </div>
+
+            {/* 3. Secured & Lost Side-by-Side Cards */}
+            <div className="grid grid-cols-2 gap-3 mt-3">
+              {/* Secured Box */}
+              <div className="bg-emerald-500/[0.02] border border-emerald-500/10 rounded-xl p-3 flex flex-col justify-between hover:border-emerald-500/20 transition-all duration-200">
+                <div className="flex items-center gap-1.5">
+                  <Lock className="w-3.5 h-3.5 text-emerald-400" />
+                  <span className="text-[9.5px] text-emerald-500 font-bold uppercase tracking-wider block">
+                    Secured
+                  </span>
+                </div>
+                <span className="text-xl font-bold font-mono text-emerald-400 mt-2">
+                  +₹{completedDays * dailyCommitment}
+                </span>
+                <span className="text-[9px] text-zinc-500 mt-0.5">
+                  {completedDays} day{completedDays !== 1 ? "s" : ""}
+                </span>
+              </div>
+
+              {/* Lost Box */}
+              <div className="bg-red-500/[0.02] border border-red-500/10 rounded-xl p-3 flex flex-col justify-between hover:border-red-500/20 transition-all duration-200">
+                <div className="flex items-center gap-1.5">
+                  <TrendingDown className="w-3.5 h-3.5 text-rose-400" />
+                  <span className="text-[9.5px] text-rose-500 font-bold uppercase tracking-wider block">
+                    Lost
+                  </span>
+                </div>
+                <span className="text-xl font-bold font-mono text-rose-400 mt-2">
+                  -₹{missedDays * dailyCommitment}
+                </span>
+                <span className="text-[9px] text-zinc-500 mt-0.5">
+                  {missedDays} day{missedDays !== 1 ? "s" : ""}
                 </span>
               </div>
             </div>
+
           </div>
 
           {/* ════ RIGHT COLUMN: VERIFICATION HUB & STREAKS ════ */}
@@ -248,7 +244,7 @@ export function WalletCard({
             </div>
 
             {/* Accountability Console (Timer & Sync Control) */}
-            <div className="mt-4 pt-4 border-t border-white/[0.04] flex flex-col gap-3">
+            <div className="mt-3 bg-[#12131A] border border-white/[0.04] rounded-xl p-4 flex flex-col gap-3">
               <div className="flex items-center justify-between text-[9px] text-zinc-500 font-bold uppercase tracking-wider">
                 <span>Streak Timer</span>
                 <span>Verification trigger</span>
@@ -280,7 +276,7 @@ export function WalletCard({
                         disabled={syncLoading || hasSolvedToday}
                         className={`h-9.5 px-4.5 rounded-xl font-black text-xs transition-all duration-300 flex items-center gap-1.5 cursor-pointer border ${
                           hasSolvedToday
-                            ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-450 cursor-default"
+                            ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-455 cursor-default"
                             : syncLoading
                             ? "bg-white/[0.02] border-white/[0.04] text-zinc-600 cursor-not-allowed"
                             : "bg-white text-black hover:bg-zinc-200 border-white active:scale-95 shadow-md shadow-white/5 hover:scale-[1.01]"
@@ -332,19 +328,35 @@ export function WalletCard({
               )}
             </div>
 
-            {/* 30-Day Plan Target progress slider */}
-            <div className="mt-auto pt-4 border-t border-white/[0.04]">
-              <div className="flex justify-between text-[9px] text-zinc-550 mb-1.5 font-bold uppercase tracking-wider">
-                <span>Streak Target Progress</span>
-                <span>Day {completedDays + missedDays} / 30</span>
+            {/* Streak Shields & Progress bar */}
+            <div className="flex flex-col gap-2 mt-auto pt-3 border-t border-white/[0.04]">
+              {/* Backup Shields (Lives) Row */}
+              <div className="flex items-center justify-between text-xs px-0.5">
+                <span className="text-[9px] text-zinc-500 font-bold uppercase tracking-wider">
+                  Backup Shields
+                </span>
+                <div className="flex items-center gap-2">
+                  {renderShields()}
+                  <span className="font-bold font-mono text-zinc-400 text-[10px]">
+                    {onboardingComplete ? graceCoins : "0"}/3 active
+                  </span>
+                </div>
               </div>
-              <div className="h-2 bg-white/5 rounded-full overflow-hidden">
-                <div
-                  className="h-full bg-gradient-to-r from-emerald-500 to-teal-400 rounded-full transition-all duration-550"
-                  style={{
-                    width: `${Math.min(((completedDays + missedDays) / 30) * 100, 100)}%`,
-                  }}
-                />
+
+              {/* 30-Day Plan Target progress slider */}
+              <div className="mt-1.5">
+                <div className="flex justify-between text-[9px] text-zinc-550 mb-1 font-bold uppercase tracking-wider">
+                  <span>Streak Target Progress</span>
+                  <span>Day {completedDays + missedDays} / 30</span>
+                </div>
+                <div className="h-1.5 bg-white/5 rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-gradient-to-r from-emerald-500 to-teal-400 rounded-full transition-all duration-550"
+                    style={{
+                      width: `${Math.min(((completedDays + missedDays) / 30) * 100, 100)}%`,
+                    }}
+                  />
+                </div>
               </div>
             </div>
 
