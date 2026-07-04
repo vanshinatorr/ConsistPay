@@ -1,12 +1,22 @@
-import { Code2, ArrowLeft, User, Lock, CreditCard, Bell, Shield, ChevronRight, Check, LogOut, Loader2 } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
+import { Code2, ArrowLeft, User, Lock, CreditCard, Bell, Shield, ChevronRight, Check, LogOut, Loader2, Link2 } from "lucide-react";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { useState, useEffect } from "react";
+import { PlatformsManager } from "../components/PlatformsManager";
 
-type Section = "account" | "commitment" | "security" | "notifications" | "plan";
+type Section = "account" | "commitment" | "platforms" | "security" | "notifications" | "plan";
 
 export function Settings() {
   const navigate = useNavigate();
-  const [activeSection, setActiveSection] = useState<Section>("account");
+  const [searchParams] = useSearchParams();
+  const tabParam = searchParams.get("tab") as Section | null;
+  const [activeSection, setActiveSection] = useState<Section>(tabParam || "account");
+
+  useEffect(() => {
+    const tab = searchParams.get("tab") as Section;
+    if (tab) {
+      setActiveSection(tab);
+    }
+  }, [searchParams]);
   const [saved, setSaved] = useState(false);
   const [loading, setLoading] = useState(true);
   const [saveLoading, setSaveLoading] = useState(false);
@@ -161,6 +171,7 @@ export function Settings() {
   const sections = [
     { key: "account", label: "Account", icon: User },
     { key: "commitment", label: "Commitment", icon: CreditCard },
+    { key: "platforms", label: "Connected Platforms", icon: Link2 },
     { key: "notifications", label: "Notifications", icon: Bell },
     { key: "security", label: "Security", icon: Lock },
     { key: "plan", label: "Plan & Billing", icon: Shield },
@@ -397,6 +408,16 @@ export function Settings() {
                       <span className="font-semibold">₹{dailyCommitment * 30}</span>
                     </div>
                   </div>
+                </div>
+              </div>
+            )}
+
+            {/* ── CONNECTED PLATFORMS ── */}
+            {activeSection === "platforms" && (
+              <div className="relative">
+                <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/10 to-teal-500/10 rounded-2xl blur-xl opacity-60" />
+                <div className="relative bg-white/5 backdrop-blur-xl border border-white/[0.04] rounded-2xl p-6">
+                  <PlatformsManager />
                 </div>
               </div>
             )}

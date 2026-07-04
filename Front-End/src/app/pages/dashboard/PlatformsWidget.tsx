@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Link2, CheckCircle2, AlertCircle, ExternalLink, XCircle, Trash2, ArrowRight, Loader2, Plus } from 'lucide-react';
+import { Link2, CheckCircle2, AlertCircle, ExternalLink, Plus } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 interface PlatformLinkage {
   username: string;
@@ -14,14 +15,7 @@ interface PlatformsWidgetProps {
 }
 
 export function PlatformsWidget({ onLinkageChanged, onboardingComplete = true }: PlatformsWidgetProps) {
-  const [loadingMap, setLoadingMap] = useState<Record<string, boolean>>({});
-  const [usernamesInput, setUsernamesInput] = useState<Record<string, string>>({});
-  const [activeLinkInput, setActiveLinkInput] = useState<string | null>(null);
-  const [errorMap, setErrorMap] = useState<Record<string, string>>({});
-  const [showAddMenu, setShowAddMenu] = useState(false);
-  const [selectedAddPlatform, setSelectedAddPlatform] = useState<string | null>(null);
-  
-  // Real linkages state
+  const navigate = useNavigate();
   const [linkages, setLinkages] = useState<Record<string, PlatformLinkage | null>>({
     LeetCode: null,
     GeeksforGeeks: null,
@@ -31,7 +25,6 @@ export function PlatformsWidget({ onLinkageChanged, onboardingComplete = true }:
   const API_URL = import.meta.env.VITE_API_URL;
   const token = localStorage.getItem("token") || "";
 
-  // Fetch all linkage details in parallel
   const fetchAllLinkages = async () => {
     const platforms = ["LeetCode", "GeeksforGeeks", "Code360"];
     try {
@@ -63,95 +56,6 @@ export function PlatformsWidget({ onLinkageChanged, onboardingComplete = true }:
       fetchAllLinkages();
     }
   }, [token]);
-
-  const handleLinkSubmit = async (platform: string) => {
-    const username = usernamesInput[platform]?.trim();
-    if (!username) return;
-
-    setLoadingMap((prev) => ({ ...prev, [platform]: true }));
-    setErrorMap((prev) => ({ ...prev, [platform]: "" }));
-
-    try {
-      const res = await fetch(`${API_URL}/api/platforms/link`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-        body: JSON.stringify({ platform, username })
-      });
-      
-      const data = await res.json();
-      if (!res.ok) {
-        setErrorMap((prev) => ({ ...prev, [platform]: data.message || "Failed to link profile." }));
-        return;
-      }
-
-      setActiveLinkInput(null);
-      setSelectedAddPlatform(null);
-      setShowAddMenu(false);
-      setUsernamesInput((prev) => ({ ...prev, [platform]: "" }));
-      await fetchAllLinkages();
-      if (onLinkageChanged) onLinkageChanged();
-    } catch (err) {
-      setErrorMap((prev) => ({ ...prev, [platform]: "Network error. Please try again." }));
-    } finally {
-      setLoadingMap((prev) => ({ ...prev, [platform]: false }));
-    }
-  };
-
-  const handleVerify = async (platform: string) => {
-    setLoadingMap((prev) => ({ ...prev, [platform]: true }));
-    setErrorMap((prev) => ({ ...prev, [platform]: "" }));
-
-    try {
-      const res = await fetch(`${API_URL}/api/platforms/verify`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-        body: JSON.stringify({ platform })
-      });
-      
-      const data = await res.json();
-      if (!res.ok) {
-        setErrorMap((prev) => ({ ...prev, [platform]: data.message || "Verification failed. Check token location." }));
-        return;
-      }
-
-      await fetchAllLinkages();
-      if (onLinkageChanged) onLinkageChanged();
-    } catch (err) {
-      setErrorMap((prev) => ({ ...prev, [platform]: "Network error. Please try again." }));
-    } finally {
-      setLoadingMap((prev) => ({ ...prev, [platform]: false }));
-    }
-  };
-
-  const handleUnlink = async (platform: string) => {
-    if (!window.confirm(`Are you sure you want to disconnect your ${platform} profile? Your daily progress tracking for this platform will be paused.`)) {
-      return;
-    }
-
-    setLoadingMap((prev) => ({ ...prev, [platform]: true }));
-    setErrorMap((prev) => ({ ...prev, [platform]: "" }));
-
-    try {
-      const res = await fetch(`${API_URL}/api/platforms/link`, {
-        method: "DELETE",
-        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-        body: JSON.stringify({ platform })
-      });
-      
-      const data = await res.json();
-      if (!res.ok) {
-        setErrorMap((prev) => ({ ...prev, [platform]: data.message || "Failed to disconnect linkage." }));
-        return;
-      }
-
-      await fetchAllLinkages();
-      if (onLinkageChanged) onLinkageChanged();
-    } catch (err) {
-      setErrorMap((prev) => ({ ...prev, [platform]: "Network error. Please try again." }));
-    } finally {
-      setLoadingMap((prev) => ({ ...prev, [platform]: false }));
-    }
-  };
 
   const getProfileUrl = (platform: string, username: string) => {
     switch (platform) {
@@ -258,8 +162,6 @@ export function PlatformsWidget({ onLinkageChanged, onboardingComplete = true }:
               const linkage = linkages[plat];
               if (!linkage) return null;
               const isVerified = linkage.isVerified;
-              const loading = loadingMap[plat] || false;
-              const error = errorMap[plat] || "";
 
               return (
                 <div key={plat} className="border border-white/[0.03] bg-white/[0.01] rounded-xl p-2.5 transition-all duration-205 shadow-sm">
@@ -290,11 +192,8 @@ export function PlatformsWidget({ onLinkageChanged, onboardingComplete = true }:
                         </>
                       ) : (
                         <button
-                          onClick={() => {
-                            setActiveLinkInput(plat);
-                            setErrorMap(prev => ({ ...prev, [plat]: "" }));
-                          }}
-                          className="flex items-center gap-1 bg-yellow-500/10 border border-yellow-500/20 px-2 py-0.5 rounded text-[8px] font-bold text-yellow-400 select-none animate-pulse hover:bg-yellow-500/20 transition-all cursor-pointer"
+                          onClick={() => navigate("/settings?tab=platforms")}
+                          className="flex items-center gap-1 bg-yellow-500/10 border border-yellow-500/20 px-2 py-0.5 rounded text-[8px] font-bold text-yellow-400 select-none animate-pulse hover:bg-yellow-500/20 transition-all cursor-pointer animate-pulse"
                         >
                           <AlertCircle className="w-2.5 h-2.5" />
                           <span>Verify</span>
@@ -302,48 +201,6 @@ export function PlatformsWidget({ onLinkageChanged, onboardingComplete = true }:
                       )}
                     </div>
                   </div>
-
-                  {/* Error messages */}
-                  {error && (
-                    <p className="text-[9px] text-rose-455 bg-rose-500/5 border border-rose-500/10 rounded-lg px-2.5 py-1 mt-1.5 leading-normal">
-                      {error}
-                    </p>
-                  )}
-
-                  {/* Expand Verification Steps (Linked but Unverified) */}
-                  {(!isVerified || activeLinkInput === plat) && (
-                    <div className="mt-2 pt-2 border-t border-white/[0.03] space-y-1.5">
-                      <div className="bg-[#0A0B10] border border-white/[0.06] rounded-md py-1.5 px-2 flex items-center justify-between">
-                        <span className="text-[8px] text-zinc-500 font-bold uppercase tracking-wider">Verification Token:</span>
-                        <code className="text-[10px] font-mono font-bold text-emerald-400 select-all">{linkage.verificationToken}</code>
-                      </div>
-                      <p className="text-[9px] text-zinc-400 leading-normal pl-0.5">
-                        Add this token into your <b>{plat} bio</b>, then verify:
-                      </p>
-                      
-                      <div className="flex gap-2">
-                        <button
-                          onClick={() => handleVerify(plat)}
-                          disabled={loading}
-                          className="flex-1 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/25 py-1.5 rounded-lg text-[9px] font-bold transition-colors flex items-center justify-center gap-1 cursor-pointer"
-                        >
-                          {loading ? (
-                            <Loader2 className="w-3 h-3 animate-spin" />
-                          ) : (
-                            <>Verify Bio Ownership</>
-                          )}
-                        </button>
-                        <button
-                          onClick={() => handleUnlink(plat)}
-                          disabled={loading}
-                          className="px-2.5 bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/20 rounded-lg text-[10px] transition-all flex items-center justify-center cursor-pointer"
-                          title="Remove Platform"
-                        >
-                          Disconnect
-                        </button>
-                      </div>
-                    </div>
-                  )}
                 </div>
               );
             })
@@ -355,84 +212,16 @@ export function PlatformsWidget({ onLinkageChanged, onboardingComplete = true }:
             </div>
           )}
 
-          {/* ─── ADD PLATFORM DROPDOWN/SELECT HUB ─── */}
+          {/* ─── ADD PLATFORM REDIRECT ACTION ─── */}
           {unconnectedPlatforms.length > 0 && (
-            <div className="mt-3 relative z-20">
-              {!showAddMenu ? (
-                <button
-                  onClick={() => setShowAddMenu(true)}
-                  className="w-full py-2 bg-[#12131A] hover:bg-[#161722] border border-white/[0.04] hover:border-white/10 text-amber-550 hover:text-amber-400 font-bold text-xs rounded-xl transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-sm active:scale-95"
-                >
-                  <Plus className="w-3.5 h-3.5 text-amber-500" />
-                  <span>Add Platform</span>
-                </button>
-              ) : (
-                <div className="bg-[#12131A] border border-white/[0.04] rounded-xl p-3.5 space-y-3 shadow-xl">
-                  <div className="flex items-center justify-between">
-                    <span className="text-[9px] text-zinc-400 font-bold uppercase tracking-wider">Select Platform</span>
-                    <button 
-                      onClick={() => { setShowAddMenu(false); setSelectedAddPlatform(null); }} 
-                      className="text-zinc-500 hover:text-zinc-350 text-xs transition-colors cursor-pointer"
-                    >
-                      Cancel
-                    </button>
-                  </div>
-
-                  {!selectedAddPlatform ? (
-                    <div className="grid grid-cols-1 gap-1.5">
-                      {unconnectedPlatforms.map((plat) => (
-                        <button
-                          key={plat}
-                          onClick={() => setSelectedAddPlatform(plat)}
-                          className="flex items-center gap-2.5 p-2 rounded-lg bg-white/[0.02] hover:bg-white/[0.05] border border-white/[0.04] transition-all text-xs text-zinc-200 font-bold text-left cursor-pointer"
-                        >
-                          <div className="w-5.5 h-5.5 rounded bg-white/5 border border-white/[0.04] flex items-center justify-center shrink-0">
-                            {getPlatformLogo(plat)}
-                          </div>
-                          <span>{plat}</span>
-                        </button>
-                      ))}
-                    </div>
-                  ) : (
-                    <form
-                      onSubmit={(e) => {
-                        e.preventDefault();
-                        handleLinkSubmit(selectedAddPlatform);
-                      }}
-                      className="space-y-2.5"
-                    >
-                      <div className="flex items-center gap-2">
-                        <div className="w-5.5 h-5.5 rounded bg-white/5 border border-white/[0.04] flex items-center justify-center shrink-0">
-                          {getPlatformLogo(selectedAddPlatform)}
-                        </div>
-                        <span className="text-xs font-bold text-zinc-200">{selectedAddPlatform} Username</span>
-                      </div>
-                      <div className="flex gap-2">
-                        <input
-                          type="text"
-                          required
-                          placeholder="Username"
-                          value={usernamesInput[selectedAddPlatform] || ""}
-                          onChange={(e) => setUsernamesInput((prev) => ({ ...prev, [selectedAddPlatform]: e.target.value }))}
-                          className="flex-1 bg-[#0A0B10] border border-white/[0.06] rounded-lg px-2.5 py-1.5 text-xs text-white placeholder-zinc-700 focus:outline-none focus:border-emerald-500 focus:ring-0"
-                        />
-                        <button
-                          type="submit"
-                          disabled={loadingMap[selectedAddPlatform]}
-                          className="bg-emerald-500 hover:bg-emerald-450 text-black font-extrabold px-3.5 rounded-lg text-xs flex items-center justify-center transition-all cursor-pointer active:scale-95 shrink-0"
-                        >
-                          {loadingMap[selectedAddPlatform] ? "..." : "Link"}
-                        </button>
-                      </div>
-                      {errorMap[selectedAddPlatform] && (
-                        <p className="text-[9px] text-rose-455 bg-rose-500/5 border border-rose-500/10 rounded-lg px-2.5 py-1 mt-1 leading-normal">
-                          {errorMap[selectedAddPlatform]}
-                        </p>
-                      )}
-                    </form>
-                  )}
-                </div>
-              )}
+            <div className="mt-3">
+              <button
+                onClick={() => navigate("/settings?tab=platforms")}
+                className="w-full py-2 bg-[#12131A] hover:bg-[#161722] border border-white/[0.04] hover:border-white/10 text-amber-555 hover:text-amber-400 font-bold text-xs rounded-xl transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-sm active:scale-95"
+              >
+                <Plus className="w-3.5 h-3.5 text-amber-500" />
+                <span>Add Platform</span>
+              </button>
             </div>
           )}
         </div>
@@ -447,9 +236,9 @@ export function PlatformsWidget({ onLinkageChanged, onboardingComplete = true }:
               <div className="w-5.5 h-5.5 rounded bg-white/5 border border-white/[0.04] flex items-center justify-center shrink-0">
                 {getPlatformLogo("GitHub")}
               </div>
-              <span className="text-[10.5px] font-bold text-zinc-350 tracking-wide">GitHub</span>
+              <span className="text-[10.5px] font-bold text-zinc-355 tracking-wide">GitHub</span>
             </div>
-            <span className="text-[7.5px] font-black tracking-widest text-zinc-500 uppercase bg-white/[0.02] border border-white/[0.04] px-1.5 py-0.5 rounded">
+            <span className="text-[7.5px] font-black tracking-widest text-zinc-550 uppercase bg-white/[0.02] border border-white/[0.04] px-1.5 py-0.5 rounded">
               Coming Soon
             </span>
           </div>
@@ -457,7 +246,7 @@ export function PlatformsWidget({ onLinkageChanged, onboardingComplete = true }:
 
         {/* ─── MOCK PLATFORMS (COMING SOON) ─── */}
         <div className="mt-2 pt-2.5 border-t border-white/[0.04] shrink-0">
-          <h4 className="text-[9px] font-bold text-zinc-500 uppercase tracking-widest block mb-2 px-0.5">Coming Soon</h4>
+          <h4 className="text-[9px] font-bold text-zinc-550 uppercase tracking-widest block mb-2 px-0.5">Coming Soon</h4>
           <div className="grid grid-cols-3 gap-1.5">
             {mockPlatforms.filter(p => p.name !== "GitHub").map((mockPlat) => (
               <div key={mockPlat.name} className="border border-white/[0.02] bg-white/[0.005] rounded-lg p-1.5 flex items-center justify-center gap-1.5 opacity-40 select-none">
