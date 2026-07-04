@@ -84,6 +84,19 @@ export function Dashboard() {
   const [devMenuOpen, setDevMenuOpen] = useState(false);
   const [devResetLoading, setDevResetLoading] = useState(false);
 
+  const getGreeting = () => {
+    const hour = new Date().getHours();
+    if (hour < 12) return "Good Morning";
+    if (hour < 17) return "Good Afternoon";
+    return "Good Evening";
+  };
+
+  const getFirstName = () => {
+    if (!userData?.name) return "Geek";
+    const namePart = userData.name.trim().split(/\s+/)[0];
+    return namePart.charAt(0).toUpperCase() + namePart.slice(1).toLowerCase();
+  };
+
   const API = import.meta.env.VITE_API_URL;
   const token = localStorage.getItem("token") || "";
 
@@ -617,11 +630,8 @@ export function Dashboard() {
         <div className="mb-8 relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-white/[0.04] pb-6">
           <div>
             <h1 className="text-3xl font-bold tracking-tight text-white">
-              Welcome back, {userData?.name || "Geek"} 👋
+              {getGreeting()}, {getFirstName()} 👋
             </h1>
-            <p className="text-sm text-zinc-400 mt-1">
-              Here is your consistency story for today.
-            </p>
           </div>
 
           {/* Today's Goal Card inside Welcome Hero */}
