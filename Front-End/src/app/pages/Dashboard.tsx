@@ -87,7 +87,19 @@ export function Dashboard() {
   const [totalUsers, setTotalUsers] = useState<number>(0);
   const [devMenuOpen, setDevMenuOpen] = useState(false);
   const [devResetLoading, setDevResetLoading] = useState(false);
+  const [hideWelcome, setHideWelcome] = useState(false);
 
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 40) {
+        setHideWelcome(true);
+      } else {
+        setHideWelcome(false);
+      }
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   useEffect(() => {
     const handleOpenWithdraw = (e: any) => {
@@ -711,7 +723,11 @@ export function Dashboard() {
       <main className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
         {/* Welcome & Today's Goal Hero Section */}
-        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-white/[0.04] pb-6 mb-8">
+        <div className={`relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-white/[0.04] overflow-hidden transition-all duration-550 ease-in-out ${
+          hideWelcome 
+            ? "max-h-0 opacity-0 pb-0 mb-0 border-transparent pointer-events-none" 
+            : "max-h-[180px] opacity-100 pb-6 mb-8"
+        }`}>
           <div>
             <h1 className="text-3xl font-bold tracking-tight text-white">
               👋 {getGreeting()}
