@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Wallet, Lock, Coins, Shield, TrendingDown, RefreshCw, Check, AlertTriangle, ArrowUpRight, HelpCircle, CheckCircle2 } from "lucide-react";
-import { WithdrawModal } from "../../components/WithdrawModal";
+// WithdrawModal rendered globally at Dashboard level
 import { useNavigate } from "react-router-dom";
 
 interface WalletCardProps {
@@ -131,7 +131,10 @@ export function WalletCard({
               </div>
               {onboardingComplete && balance > 0 ? (
                 <button
-                  onClick={() => setShowWithdrawModal(true)}
+                  onClick={() => {
+                    const event = new CustomEvent("open-withdraw-modal", { detail: { walletType: "consistency" } });
+                    window.dispatchEvent(event);
+                  }}
                   className="px-4 py-2 bg-white hover:bg-zinc-200 text-black text-xs font-bold rounded-lg transition-all active:scale-95 shadow-md shadow-white/5 cursor-pointer"
                 >
                   Withdraw
@@ -384,15 +387,7 @@ export function WalletCard({
         </div>
       </div>
 
-      {showWithdrawModal && (
-        <WithdrawModal
-          isOpen={showWithdrawModal}
-          onClose={() => setShowWithdrawModal(false)}
-          availableBalance={balance}
-          walletType="consistency"
-          onSuccess={onRefreshRequest}
-        />
-      )}
+      {/* WithdrawModal rendered globally at Dashboard level */}
     </div>
   );
 }

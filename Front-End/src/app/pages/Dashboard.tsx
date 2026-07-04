@@ -15,6 +15,7 @@ import { AwardsCard } from "./dashboard/AwardsCard";
 import { JoinModal } from "./dashboard/JoinModal";
 import { Footer } from "./dashboard/Footer";
 import { CommitmentModal } from "../components/CommitmentModal";
+import { WithdrawModal } from "../components/WithdrawModal";
 import { Check } from "lucide-react";
 
 const motivationalLines = [
@@ -77,6 +78,8 @@ export function Dashboard() {
   const [aiLoading, setAiLoading] = useState(false);
   const [showSetupModal, setShowSetupModal] = useState(false);
   const [activeMobileTab, setActiveMobileTab] = useState<"today" | "analytics" | "activity">("today");
+  const [showWithdrawModal, setShowWithdrawModal] = useState(false);
+  const [withdrawWalletType, setWithdrawWalletType] = useState<"consistency" | "battle">("consistency");
 
   const [leaderboardLoading, setLeaderboardLoading] = useState(true);
   const [userRank, setUserRank] = useState<number>(1);
@@ -93,6 +96,16 @@ export function Dashboard() {
     };
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  useEffect(() => {
+    const handleOpenWithdraw = (e: any) => {
+      const type = e.detail?.walletType || "consistency";
+      setWithdrawWalletType(type);
+      setShowWithdrawModal(true);
+    };
+    window.addEventListener("open-withdraw-modal", handleOpenWithdraw);
+    return () => window.removeEventListener("open-withdraw-modal", handleOpenWithdraw);
   }, []);
 
   const getGreeting = () => {
@@ -884,6 +897,16 @@ export function Dashboard() {
           }}
           currentBalance={userData?.balance ?? 0}
         />
+        {showWithdrawModal && userData && (
+          <WithdrawModal
+            isOpen={showWithdrawModal}
+            onClose={() => setShowWithdrawModal(false)}
+            consistencyBalance={userData.balance}
+            battleBalance={userData.battleBalance}
+            walletType={withdrawWalletType}
+            onSuccess={fetchUserData}
+          />
+        )}
 
         <Footer
           faqs={faqs}

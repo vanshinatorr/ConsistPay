@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { Swords, Lock, Info, Plus, Coins, Sparkles } from "lucide-react";
 import TopupModal from "../../components/battle/TopupModal";
 import VersusInfoModal from "../../components/battle/VersusInfoModal";
-import { WithdrawModal } from "../../components/WithdrawModal";
+// WithdrawModal rendered globally at Dashboard level
 
 interface VersusCardProps {
   plan?: string;
@@ -139,7 +139,10 @@ export function VersusCard({
               </button>
               {battleBalance > 0 && (
                 <button 
-                  onClick={() => setShowWithdrawModal(true)}
+                  onClick={() => {
+                    const event = new CustomEvent("open-withdraw-modal", { detail: { walletType: "battle" } });
+                    window.dispatchEvent(event);
+                  }}
                   className="px-3 py-2 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-455 border border-emerald-500/20 transition-all rounded-xl text-xs font-semibold flex items-center justify-center gap-1"
                 >
                   <Coins className="w-3.5 h-3.5 text-emerald-450" /> Claim
@@ -163,15 +166,7 @@ export function VersusCard({
         />
       )}
 
-      {showWithdrawModal && (
-        <WithdrawModal
-          isOpen={showWithdrawModal}
-          onClose={() => setShowWithdrawModal(false)}
-          availableBalance={battleBalance}
-          walletType="battle"
-          onSuccess={onRefreshRequest}
-        />
-      )}
+      {/* WithdrawModal rendered globally at Dashboard level */}
     </div>
   );
 }
