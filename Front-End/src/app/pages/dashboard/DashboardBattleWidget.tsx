@@ -301,7 +301,7 @@ export function DashboardBattleWidget({ onRefreshRequest }: DashboardBattleWidge
       ) : (
         /* Empty State */
         !pendingChallenge && (
-          <div className="relative rounded-2xl border border-white/[0.03] bg-gradient-to-r from-violet-950/10 via-[#0C0D15]/90 to-[#0C0D15]/90 p-4 md:py-3.5 md:px-5 overflow-hidden flex flex-col md:flex-row items-center justify-between gap-4 group shadow-xl">
+          <div className="relative rounded-2xl border border-zinc-200 dark:border-white/[0.03] bg-gradient-to-r from-violet-950/5 via-white to-white dark:from-violet-950/10 dark:via-[#0C0D15]/90 dark:to-[#0C0D15]/90 p-4 md:py-3.5 md:px-5 overflow-hidden flex flex-col md:flex-row items-center justify-between gap-4 group shadow-md dark:shadow-xl">
             {/* Decorative background grid and glow */}
             <div className="absolute inset-0 bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:14px_24px] pointer-events-none" />
             <div className="absolute -left-20 -top-20 w-52 h-52 bg-violet-500/10 rounded-full blur-[80px] pointer-events-none" />
@@ -312,7 +312,7 @@ export function DashboardBattleWidget({ onRefreshRequest }: DashboardBattleWidge
               <img 
                 src="/logo/tortoise-hare.png" 
                 alt="Tortoise and Hare Illustration" 
-                className="w-full h-full object-contain opacity-30 select-none pointer-events-none" 
+                className="w-full h-full object-contain opacity-35 dark:opacity-30 select-none pointer-events-none" 
               />
             </div>
 
@@ -328,12 +328,12 @@ export function DashboardBattleWidget({ onRefreshRequest }: DashboardBattleWidge
               
               <div>
                 <div className="flex items-center gap-2 mb-0.5">
-                  <h3 className="text-lg font-bold text-white tracking-tight">
+                  <h3 className="text-lg font-bold text-zinc-800 dark:text-white tracking-tight">
                     Challenge a Friend
                   </h3>
-                  <span className="px-2 py-0.5 rounded-full text-[8.5px] font-extrabold bg-violet-500/20 text-violet-300 border border-violet-500/30 tracking-widest uppercase select-none">New</span>
+                  <span className="px-2 py-0.5 rounded-full text-[8.5px] font-extrabold bg-violet-500/20 text-violet-600 dark:text-violet-300 border border-violet-500/30 tracking-widest uppercase select-none">New</span>
                 </div>
-                <p className="text-xs text-zinc-450 leading-normal">
+                <p className="text-xs text-zinc-500 dark:text-zinc-450 leading-normal">
                   Commit to daily coding side-by-side. Winner takes the stakes.
                 </p>
               </div>
@@ -342,7 +342,7 @@ export function DashboardBattleWidget({ onRefreshRequest }: DashboardBattleWidge
             <div className="relative z-10 w-full md:w-auto shrink-0 flex items-center justify-end gap-4 mt-4 md:mt-0">
               <button 
                 onClick={() => navigate('/create-challenge')}
-                className="w-full md:w-auto px-5 py-2.5 rounded-xl font-bold bg-white text-black hover:bg-zinc-200 transition-all flex items-center justify-center gap-2 hover:scale-[1.02] shadow-xl text-sm"
+                className="w-full md:w-auto px-5 py-2.5 rounded-xl font-bold bg-zinc-800 dark:bg-white text-white dark:text-black hover:bg-zinc-700 dark:hover:bg-zinc-200 transition-all flex items-center justify-center gap-2 hover:scale-[1.02] shadow-xl text-sm cursor-pointer"
               >
                 Create Challenge
                 <ArrowRight className="w-4 h-4" />

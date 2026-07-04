@@ -81,18 +81,18 @@ export function RecentSolves({ recentSolves }: RecentSolvesProps) {
         <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-violet-500/5 to-transparent rounded-2xl blur-xl opacity-50" />
         
         {/* Main Dashboard Widget */}
-        <div className="relative bg-[#0C0D15]/90 border border-white/[0.03] rounded-2xl p-5 h-[249px] min-h-[249px] flex flex-col justify-between shadow-[0_8px_30px_rgba(0,0,0,0.3)] hover:border-white/[0.07] transition-all duration-300">
+        <div className="relative bg-white dark:bg-[#0C0D15]/90 border border-zinc-200 dark:border-white/[0.03] rounded-2xl p-5 h-[249px] min-h-[249px] flex flex-col justify-between shadow-[0_8px_30px_rgba(0,0,0,0.02)] dark:shadow-[0_8px_30px_rgba(0,0,0,0.3)] hover:border-zinc-300 dark:hover:border-white/[0.07] transition-all duration-300">
           <div className="flex items-center justify-between mb-2">
             <div className="flex items-center gap-2">
               <div className="w-8 h-8 rounded-lg bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400">
                 <Code2 className="w-4 h-4" />
               </div>
-              <h2 className="text-base font-bold text-white">Recent Solves</h2>
+              <h2 className="text-base font-bold text-zinc-800 dark:text-white">Recent Solves</h2>
             </div>
             {recentSolves.length > 0 && (
               <button
                 onClick={() => setShowModal(true)}
-                className="text-[11px] font-bold text-zinc-400 hover:text-white transition-colors bg-white/5 border border-white/[0.04] hover:bg-white/10 px-3 py-1.5 rounded-lg flex items-center gap-1 cursor-pointer"
+                className="text-[11px] font-bold text-zinc-650 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors bg-zinc-100 dark:bg-white/5 border border-zinc-200 dark:border-white/[0.04] hover:bg-zinc-200 dark:hover:bg-white/10 px-3 py-1.5 rounded-lg flex items-center gap-1 cursor-pointer"
               >
                 <History className="w-3.5 h-3.5" />
                 View History
@@ -106,11 +106,11 @@ export function RecentSolves({ recentSolves }: RecentSolvesProps) {
               recentSolves.slice(0, 3).map((solve, idx) => (
                 <div 
                   key={idx} 
-                  className="flex items-center justify-between p-3 bg-white/[0.01] rounded-xl border border-white/[0.03] hover:border-white/10 hover:bg-white/[0.02] transition-all duration-200 group"
+                  className="flex items-center justify-between p-3 bg-zinc-50 dark:bg-white/[0.01] rounded-xl border border-zinc-200 dark:border-white/[0.03] hover:border-zinc-300 dark:hover:border-white/10 hover:bg-zinc-100/50 dark:hover:bg-white/[0.02] transition-all duration-200 group"
                 >
                   <div className="flex items-center gap-3 min-w-0">
                     {getPlatformLogo(solve.platform)}
-                    <span className="font-bold text-sm text-zinc-200 truncate group-hover:text-white transition-colors max-w-[140px] sm:max-w-xs md:max-w-sm">
+                    <span className="font-bold text-sm text-zinc-700 dark:text-zinc-200 truncate group-hover:text-zinc-950 dark:group-hover:text-white transition-colors max-w-[140px] sm:max-w-xs md:max-w-sm">
                       {solve.name}
                     </span>
                   </div>
