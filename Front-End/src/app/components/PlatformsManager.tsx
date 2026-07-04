@@ -195,67 +195,40 @@ export function PlatformsManager() {
           return (
             <div
               key={plat}
-              className="bg-[#12131C]/60 backdrop-blur-xl border border-white/[0.04] rounded-2xl p-6 hover:border-white/[0.08] transition-all duration-300 shadow-lg relative overflow-hidden"
+              className="bg-[#0B0C10] border border-white/[0.04] rounded-2xl p-6 transition-all duration-300 shadow-md relative overflow-hidden text-left"
             >
-              {/* Radial gradient background highlight */}
-              <div className="absolute top-0 right-0 w-44 h-44 bg-white/[0.005] rounded-full blur-2xl pointer-events-none" />
-
               {/* Row Header */}
-              <div className="flex items-center justify-between flex-wrap gap-4 relative z-10">
+              <div className="flex items-center justify-between flex-wrap gap-4 relative z-10 pb-5 border-b border-white/[0.04]">
                 <div className="flex items-center gap-3.5">
                   <div className="w-10 h-10 rounded-xl bg-white/5 border border-white/[0.04] flex items-center justify-center shrink-0 shadow-inner select-none">
                     {getPlatformLogo(plat)}
                   </div>
                   <div>
                     <h3 className="text-sm font-bold text-white tracking-wide">{plat}</h3>
-                    {isLinked && (
-                      <p className="text-[11px] text-zinc-450 font-mono mt-0.5">
-                        Linked handle: <span className="text-emerald-400 font-bold">@{linkage.username}</span>
-                      </p>
-                    )}
+                    <p className="text-[11px] text-zinc-550 mt-0.5">
+                      {isVerified 
+                        ? `Connected as @${linkage?.username}`
+                        : isLinked 
+                        ? `Linking handle @${linkage?.username}`
+                        : "Account integration pending"
+                      }
+                    </p>
                   </div>
                 </div>
 
                 <div className="flex items-center gap-3">
-                  {isLinked ? (
-                    <>
-                      {isVerified ? (
-                        <div className="flex items-center gap-1.5 bg-emerald-500/10 border border-emerald-500/20 px-3 py-1 rounded-full text-[10px] font-bold text-emerald-450 select-none shadow-sm hover:scale-[1.02] transition-transform">
-                          <CheckCircle2 className="w-3.5 h-3.5" />
-                          <span>Connected</span>
-                        </div>
-                      ) : (
-                        <div className="flex items-center gap-1.5 bg-amber-500/10 border border-amber-500/20 px-3 py-1 rounded-full text-[10px] font-bold text-amber-450 select-none shadow-sm animate-pulse">
-                          <AlertCircle className="w-3.5 h-3.5" />
-                          <span>Awaiting Verification</span>
-                        </div>
-                      )}
-
-                      {/* Open profile link */}
-                      {isVerified && (
-                        <a
-                          href={getProfileUrl(plat, linkage.username)}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="p-2 bg-white/5 border border-white/[0.04] hover:bg-white/10 text-zinc-400 hover:text-white rounded-xl transition-all shadow-inner cursor-pointer"
-                          title="View Profile"
-                        >
-                          <ExternalLink className="w-4 h-4" />
-                        </a>
-                      )}
-
-                      {/* Unlink trash */}
-                      <button
-                        onClick={() => handleUnlink(plat)}
-                        disabled={loading}
-                        className="p-2 bg-red-500/5 hover:bg-red-500/15 border border-red-500/10 hover:border-red-500/25 text-red-400 rounded-xl transition-all cursor-pointer active:scale-95"
-                        title="Disconnect Profile"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
-                    </>
+                  {isVerified ? (
+                    <div className="flex items-center gap-1.5 bg-emerald-500/10 border border-emerald-500/20 px-3 py-1 rounded-full text-[10px] font-bold text-emerald-400 select-none shadow-sm">
+                      <CheckCircle2 className="w-3.5 h-3.5" />
+                      <span>Connected</span>
+                    </div>
+                  ) : isLinked ? (
+                    <div className="flex items-center gap-1.5 bg-amber-500/10 border border-amber-500/20 px-3 py-1 rounded-full text-[10px] font-bold text-amber-400 select-none shadow-sm">
+                      <AlertCircle className="w-3.5 h-3.5" />
+                      <span>Verification Pending</span>
+                    </div>
                   ) : (
-                    <div className="bg-white/5 border border-white/[0.04] text-zinc-550 text-[10px] font-bold px-3 py-1 rounded-full select-none shadow-inner">
+                    <div className="bg-white/5 border border-white/[0.04] text-zinc-500 text-[10px] font-bold px-3 py-1 rounded-full select-none shadow-inner">
                       Not Connected
                     </div>
                   )}
@@ -264,140 +237,193 @@ export function PlatformsManager() {
 
               {/* Error Alert Box */}
               {error && (
-                <div className="text-xs text-rose-400 bg-rose-500/5 border border-rose-500/10 rounded-xl px-3.5 py-2.5 mt-4 leading-relaxed relative z-10">
+                <div className="text-xs text-red-400 bg-red-500/5 border border-red-500/10 rounded-xl px-3.5 py-2.5 mt-4 leading-relaxed relative z-10">
                   {error}
                 </div>
               )}
 
-              {/* Action Forms & Guided Timeline Step sections */}
-              {!isLinked ? (
-                /* Link Form */
-                <form
-                  onSubmit={(e) => {
-                    e.preventDefault();
-                    handleLinkSubmit(plat);
-                  }}
-                  className="mt-5 pt-5 border-t border-white/[0.04] space-y-3 relative z-10"
-                >
-                  <label className="block text-[9px] font-extrabold text-zinc-500 uppercase tracking-widest px-0.5">
-                    Enter {plat} Handle / Username:
-                  </label>
-                  <div className="flex gap-2.5 max-w-md">
-                    <div className="flex-1 relative">
-                      <span className="absolute left-3 top-2.5 text-zinc-600 font-mono text-sm select-none">@</span>
-                      <input
-                        type="text"
-                        required
-                        placeholder={`e.g. ${plat === "LeetCode" ? "leetcode_coder" : "gfg_geek"}`}
-                        value={usernamesInput[plat] || ""}
-                        onChange={(e) => setUsernamesInput((prev) => ({ ...prev, [plat]: e.target.value }))}
-                        className="w-full bg-[#0A0B10] border border-white/[0.06] hover:border-white/12 focus:border-emerald-500 rounded-xl pl-7 pr-3 py-2 text-xs text-white placeholder-zinc-700 focus:outline-none transition-all shadow-inner font-medium"
-                      />
-                    </div>
-                    <button
-                      type="submit"
-                      disabled={loading}
-                      className="bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-450 hover:to-teal-450 text-black font-extrabold px-5 rounded-xl text-xs flex items-center justify-center shrink-0 active:scale-[0.97] transition-all cursor-pointer shadow-md shadow-emerald-500/5 hover:scale-[1.01]"
-                    >
-                      {loading ? <Loader2 className="w-4 h-4 animate-spin text-black" /> : "Link Profile"}
-                    </button>
+              {/* 3-Step Wizard Timeline */}
+              <div className="mt-6 space-y-6 relative z-10 pl-6 border-l border-white/[0.06] ml-3.5 text-left">
+                
+                {/* Step 1: Link Handle */}
+                <div className="relative">
+                  {isLinked ? (
+                    <span className="absolute -left-[32.5px] top-0.5 flex items-center justify-center w-5 h-5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-[9px] text-emerald-400 font-bold shadow-inner">
+                      ✓
+                    </span>
+                  ) : (
+                    <span className="absolute -left-[32.5px] top-0.5 flex items-center justify-center w-5 h-5 rounded-full bg-white/5 border border-white/[0.06] text-[9.5px] font-bold text-zinc-400 shadow-inner">
+                      1
+                    </span>
+                  )}
+                  <div>
+                    <h4 className="text-xs font-bold text-zinc-200">Connect Username / Handle</h4>
+                    <p className="text-[11px] text-zinc-450 mt-0.5 leading-relaxed">
+                      Provide your public coding profile username to generate a secure validation token.
+                    </p>
+                    
+                    {!isLinked ? (
+                      <form
+                        onSubmit={(e) => {
+                          e.preventDefault();
+                          handleLinkSubmit(plat);
+                        }}
+                        className="mt-3 flex gap-2.5 max-w-md"
+                      >
+                        <div className="flex-1 relative">
+                          <span className="absolute left-3 top-2.5 text-zinc-600 font-mono text-sm select-none">@</span>
+                          <input
+                            type="text"
+                            required
+                            placeholder={`e.g. ${plat === "LeetCode" ? "leetcode_coder" : "gfg_geek"}`}
+                            value={usernamesInput[plat] || ""}
+                            onChange={(e) => setUsernamesInput((prev) => ({ ...prev, [plat]: e.target.value }))}
+                            className="w-full bg-[#0A0B10] border border-white/[0.06] focus:border-emerald-500 rounded-xl pl-7 pr-3 py-2 text-xs text-white placeholder-zinc-700 focus:outline-none transition-all shadow-inner font-medium"
+                          />
+                        </div>
+                        <button
+                          type="submit"
+                          disabled={loading}
+                          className="bg-white hover:bg-zinc-200 text-black font-bold px-4 rounded-xl text-xs flex items-center justify-center shrink-0 active:scale-[0.98] transition-all cursor-pointer border border-white"
+                        >
+                          {loading ? <Loader2 className="w-4 h-4 animate-spin text-black" /> : "Link Profile"}
+                        </button>
+                      </form>
+                    ) : (
+                      <div className="mt-3 flex items-center justify-between bg-white/[0.02] border border-white/[0.04] rounded-xl px-4 py-2.5 max-w-md">
+                        <div className="text-xs text-zinc-300 font-medium">
+                          Handle: <span className="text-emerald-400 font-bold">@{linkage.username}</span>
+                        </div>
+                        <button
+                          onClick={() => handleUnlink(plat)}
+                          disabled={loading}
+                          className="text-[10px] font-bold text-red-400 hover:text-red-300 transition-colors cursor-pointer flex items-center gap-1 active:scale-95"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                          <span>Disconnect</span>
+                        </button>
+                      </div>
+                    )}
                   </div>
-                </form>
-              ) : (
-                !isVerified && (
-                  /* Guided Ownership Timeline Wizard */
-                  <div className="mt-5 pt-5 border-t border-white/[0.04] space-y-5 relative z-10">
-                    <div className="flex items-center gap-2 text-zinc-350 text-xs font-bold uppercase tracking-wider pl-0.5">
-                      <Key className="w-4 h-4 text-emerald-450 shrink-0" />
-                      <span>Ownership Verification Steps:</span>
-                    </div>
+                </div>
 
-                    <div className="relative pl-6 border-l border-white/[0.06] space-y-6 ml-3">
-                      {/* Step 1 */}
-                      <div className="relative">
-                        <span className="absolute -left-[31px] top-0.5 flex items-center justify-center w-5 h-5 rounded-full bg-[#161720] border border-white/[0.08] text-[9.5px] font-extrabold text-zinc-400 shadow-inner">
-                          1
-                        </span>
-                        <div>
-                          <h4 className="text-xs font-bold text-zinc-200">Copy Verification Token</h4>
-                          <p className="text-[11px] text-zinc-450 mt-0.5 leading-relaxed mb-2.5">
-                            This unique token secures ownership of your coding profile. Click the card below to copy it.
-                          </p>
-                          <div
-                            onClick={() => copyToClipboard(plat, linkage.verificationToken)}
-                            className="bg-[#0A0B10] border border-white/[0.06] hover:border-emerald-500/25 hover:bg-emerald-500/[0.01] rounded-xl p-3 flex items-center justify-between shadow-inner cursor-pointer transition-all group/token max-w-md active:scale-[0.99]"
-                          >
-                            <div>
-                              <span className="text-[8px] text-zinc-550 font-bold uppercase tracking-wider block">Bio Token</span>
-                              <code className="text-xs font-mono font-bold text-emerald-400 mt-0.5 block select-all">{linkage.verificationToken}</code>
-                            </div>
-                            <span className="text-[9px] text-zinc-500 font-bold uppercase group-hover/token:text-emerald-400 transition-colors flex items-center gap-1.5 select-none shrink-0">
-                              {copiedMap[plat] ? (
-                                <>
-                                  <Check className="w-3.5 h-3.5 text-emerald-450" />
-                                  <span className="text-emerald-400 font-black">Copied!</span>
-                                </>
-                              ) : (
-                                <>
-                                  <Copy className="w-3.5 h-3.5 text-zinc-650" />
-                                  <span>Copy Token</span>
-                                </>
-                              )}
-                            </span>
+                {/* Step 2: Verification Token */}
+                <div className="relative">
+                  {isVerified ? (
+                    <span className="absolute -left-[32.5px] top-0.5 flex items-center justify-center w-5 h-5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-[9px] text-emerald-400 font-bold shadow-inner">
+                      ✓
+                    </span>
+                  ) : (
+                    <span className="absolute -left-[32.5px] top-0.5 flex items-center justify-center w-5 h-5 rounded-full bg-white/5 border border-white/[0.06] text-[9.5px] font-bold text-zinc-400 shadow-inner">
+                      2
+                    </span>
+                  )}
+                  <div>
+                    <h4 className="text-xs font-bold text-zinc-200">Paste Token in Profile Bio</h4>
+                    <p className="text-[11px] text-zinc-450 mt-0.5 leading-relaxed">
+                      Copy the generated token below and paste it anywhere in your <b>{plat} profile bio / "About Me"</b> section.
+                    </p>
+
+                    {!isLinked ? (
+                      /* Locked State */
+                      <div className="mt-3 bg-white/[0.01] border border-dashed border-white/[0.04] rounded-xl p-3 flex items-center gap-2.5 max-w-md text-zinc-650">
+                        <Key className="w-4 h-4 text-zinc-650 shrink-0" />
+                        <span className="text-[10px] font-bold uppercase tracking-wider">Token locked until Step 1 is complete</span>
+                      </div>
+                    ) : isVerified ? (
+                      /* Verified State */
+                      <div className="mt-3 bg-emerald-500/5 border border-emerald-500/10 rounded-xl px-4 py-2.5 max-w-md text-xs text-emerald-400 font-medium">
+                        Verification token validated successfully.
+                      </div>
+                    ) : (
+                      /* Active Verification Steps */
+                      <div className="mt-3 space-y-3 max-w-md">
+                        <div
+                          onClick={() => copyToClipboard(plat, linkage.verificationToken)}
+                          className="bg-[#0A0B10] border border-white/[0.06] hover:border-emerald-500/25 hover:bg-emerald-500/[0.01] rounded-xl p-3 flex items-center justify-between shadow-inner cursor-pointer transition-all group/token active:scale-[0.99]"
+                        >
+                          <div>
+                            <span className="text-[8px] text-zinc-550 font-bold uppercase tracking-wider block">Bio Token</span>
+                            <code className="text-xs font-mono font-bold text-emerald-400 mt-0.5 block select-all">{linkage.verificationToken}</code>
                           </div>
-                        </div>
-                      </div>
-
-                      {/* Step 2 */}
-                      <div className="relative">
-                        <span className="absolute -left-[31px] top-0.5 flex items-center justify-center w-5 h-5 rounded-full bg-[#161720] border border-white/[0.08] text-[9.5px] font-extrabold text-zinc-400 shadow-inner">
-                          2
-                        </span>
-                        <div>
-                          <h4 className="text-xs font-bold text-zinc-200">Update Profile Bio</h4>
-                          <p className="text-[11px] text-zinc-450 mt-0.5 leading-relaxed">
-                            Paste this copied token into your <b>{plat} account bio / description settings</b>.
-                          </p>
-                          <a
-                            href={plat === "LeetCode" ? "https://leetcode.com/profile/" : `https://www.geeksforgeeks.org/user/${linkage.username}/`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="inline-flex items-center gap-1.5 mt-2.5 px-3 py-1.5 bg-white/5 border border-white/[0.04] hover:bg-white/10 hover:border-white/10 rounded-lg text-[10px] font-bold text-zinc-300 transition-all select-none active:scale-95 cursor-pointer shadow-sm"
-                          >
-                            <ExternalLink className="w-3 h-3 text-zinc-450" />
-                            <span>Go to {plat} Settings</span>
-                          </a>
-                        </div>
-                      </div>
-
-                      {/* Step 3 */}
-                      <div className="relative">
-                        <span className="absolute -left-[31px] top-0.5 flex items-center justify-center w-5 h-5 rounded-full bg-[#161720] border border-white/[0.08] text-[9.5px] font-extrabold text-zinc-400 shadow-inner">
-                          3
-                        </span>
-                        <div>
-                          <h4 className="text-xs font-bold text-zinc-200">Verify Profile Connection</h4>
-                          <p className="text-[11px] text-zinc-450 mt-0.5 leading-relaxed">
-                            Our automated validator will scan your {plat} bio. Once updated, click verify to sync.
-                          </p>
-                          <button
-                            onClick={() => handleVerify(plat)}
-                            disabled={loading}
-                            className="w-full max-w-xs mt-3.5 bg-emerald-500 hover:bg-emerald-450 text-black font-extrabold py-2.5 rounded-xl text-xs transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-[0.98] shadow-md shadow-emerald-500/10 hover:scale-[1.01]"
-                          >
-                            {loading ? (
-                              <Loader2 className="w-4 h-4 animate-spin text-black" />
+                          <span className="text-[9px] text-zinc-500 font-bold uppercase group-hover/token:text-emerald-400 transition-colors flex items-center gap-1.5 select-none shrink-0">
+                            {copiedMap[plat] ? (
+                              <>
+                                <Check className="w-3.5 h-3.5 text-emerald-450" />
+                                <span className="text-emerald-400 font-black">Copied!</span>
+                              </>
                             ) : (
-                              <>Verify Profile Ownership</>
+                              <>
+                                <Copy className="w-3.5 h-3.5 text-zinc-650" />
+                                <span>Copy</span>
+                              </>
                             )}
-                          </button>
+                          </span>
                         </div>
+                        
+                        <a
+                          href={plat === "LeetCode" ? "https://leetcode.com/profile/" : `https://www.geeksforgeeks.org/user/${linkage.username}/`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white/5 border border-white/[0.04] hover:bg-white/10 rounded-lg text-[10px] font-bold text-zinc-300 transition-all select-none cursor-pointer"
+                        >
+                          <ExternalLink className="w-3 h-3 text-zinc-500" />
+                          <span>Go to {plat} Settings</span>
+                        </a>
                       </div>
-
-                    </div>
+                    )}
                   </div>
-                )
-              )}
+                </div>
+
+                {/* Step 3: Run Check */}
+                <div className="relative">
+                  {isVerified ? (
+                    <span className="absolute -left-[32.5px] top-0.5 flex items-center justify-center w-5 h-5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-[9px] text-emerald-400 font-bold shadow-inner">
+                      ✓
+                    </span>
+                  ) : (
+                    <span className="absolute -left-[32.5px] top-0.5 flex items-center justify-center w-5 h-5 rounded-full bg-white/5 border border-white/[0.06] text-[9.5px] font-bold text-zinc-400 shadow-inner">
+                      3
+                    </span>
+                  )}
+                  <div>
+                    <h4 className="text-xs font-bold text-zinc-200">Verify Profile Ownership</h4>
+                    <p className="text-[11px] text-zinc-450 mt-0.5 leading-relaxed">
+                      Confirm you have updated your bio. Our validator will scan your profile and connect consistency payouts.
+                    </p>
+
+                    {!isLinked ? (
+                      /* Disabled Verification Button */
+                      <button
+                        disabled
+                        className="w-full max-w-xs mt-3 bg-white/[0.02] border border-white/[0.04] text-zinc-600 font-bold py-2.5 rounded-xl text-xs cursor-not-allowed select-none"
+                      >
+                        Verify Connection
+                      </button>
+                    ) : isVerified ? (
+                      /* Completed Verification Status */
+                      <div className="mt-3 flex items-center gap-2 max-w-md text-xs font-medium text-emerald-400">
+                        <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+                        <span>Integration active. Daily solutions will sync automatically!</span>
+                      </div>
+                    ) : (
+                      /* Active Verification Trigger */
+                      <button
+                        onClick={() => handleVerify(plat)}
+                        disabled={loading}
+                        className="w-full max-w-xs mt-3 bg-emerald-500 hover:bg-emerald-400 text-black font-bold py-2.5 rounded-xl text-xs transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-[0.98] border border-emerald-500"
+                      >
+                        {loading ? (
+                          <Loader2 className="w-4 h-4 animate-spin text-black" />
+                        ) : (
+                          <>Verify Profile Connection</>
+                        )}
+                      </button>
+                    )}
+                  </div>
+                </div>
+
+              </div>
             </div>
           );
         })}
