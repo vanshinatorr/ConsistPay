@@ -288,29 +288,13 @@ export function WalletCard({
                 )}
               </div>
 
-              {/* Console Logs / Error Outputs inside banner */}
-              {(apiError || (syncLogs && syncLogs.length > 0)) && (
+              {/* Error Outputs inside banner */}
+              {apiError && (
                 <div className="w-full mt-2.5 pt-2.5 border-t border-white/[0.03] text-left">
-                  {apiError ? (
-                    <p className="text-[9.5px] text-red-400 font-medium leading-normal flex items-start gap-1">
-                      <AlertTriangle className="w-3.5 h-3.5 shrink-0 mt-0.5" />
-                      <span>{apiError}</span>
-                    </p>
-                  ) : (
-                    <div className="bg-black/35 rounded-lg p-2 font-mono text-[7.5px] text-zinc-450 leading-normal max-h-[36px] overflow-hidden">
-                      {syncLogs.slice(-1).map((log, idx) => {
-                        let textClass = "text-zinc-500";
-                        if (log.includes("✅") || log.includes("Secured")) textClass = "text-emerald-400 font-bold";
-                        if (log.includes("❌")) textClass = "text-red-400 font-bold";
-                        return (
-                          <div key={idx} className={`${textClass} truncate`}>
-                            <span className="text-zinc-700 mr-1">&gt;</span>
-                            {log}
-                          </div>
-                        );
-                      })}
-                    </div>
-                  )}
+                  <p className="text-[9.5px] text-red-400 font-medium leading-normal flex items-start gap-1">
+                    <AlertTriangle className="w-3.5 h-3.5 shrink-0 mt-0.5" />
+                    <span>{apiError}</span>
+                  </p>
                 </div>
               )}
             </div>

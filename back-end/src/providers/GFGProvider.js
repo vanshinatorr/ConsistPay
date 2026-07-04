@@ -120,7 +120,8 @@ class GFGProvider {
         solvedToday: true,
         solvedCount: diff,
         problems,
-        allSubmissions
+        allSubmissions,
+        profile
       };
     }
 
@@ -128,7 +129,8 @@ class GFGProvider {
       solvedToday: false,
       solvedCount: 0,
       problems: [],
-      allSubmissions: []
+      allSubmissions: [],
+      profile
     };
   }
 

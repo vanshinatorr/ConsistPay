@@ -144,37 +144,56 @@ class PlatformService {
 
     const provider = getProvider(platform);
 
-    // Fetch daily status from Platform
-    const solveStatus = await provider.fetchDailySolveStatus(linkage.username, targetTimeZone);
-
-    // Fetch user's historical submission calendar map
+    let solveStatus = { solvedToday: false, solvedCount: 0, problems: [], allSubmissions: [] };
     let historicalCalendar = {};
-    try {
-      historicalCalendar = await provider.fetchUserCalendar(linkage.username);
-    } catch (calErr) {
-      console.warn(`[PlatformService] Failed to load user's full ${platform} submission calendar:`, calErr.message);
+    let userProfile = null;
+
+    if (platform === "GeeksforGeeks" || platform === "GFG") {
+      // GFG Provider fetches profile inside fetchDailySolveStatus and returns it to avoid scraping twice!
+      solveStatus = await provider.fetchDailySolveStatus(linkage.username, targetTimeZone);
+      userProfile = solveStatus.profile;
+    } else {
+      // LeetCode: fetch all in parallel (massive speedup)
+      const results = await Promise.all([
+        provider.fetchDailySolveStatus(linkage.username, targetTimeZone).catch(err => {
+          console.error("LeetCode fetchDailySolveStatus failed:", err);
+          return { solvedToday: false, solvedCount: 0, problems: [], allSubmissions: [] };
+        }),
+        provider.fetchUserCalendar(linkage.username).catch(err => {
+          console.error("LeetCode fetchUserCalendar failed:", err);
+          return {};
+        }),
+        provider.fetchProfile(linkage.username).catch(err => {
+          console.error("LeetCode fetchProfile failed:", err);
+          return null;
+        })
+      ]);
+      solveStatus = results[0];
+      historicalCalendar = results[1];
+      userProfile = results[2];
     }
 
     // Keep lifetime solved count updated in linkage
-    try {
-      const userProfile = await provider.fetchProfile(linkage.username);
-      const acSubmissionNum = userProfile.submitStatsGlobal?.acSubmissionNum || [];
-      
-      const allAc = acSubmissionNum.find(a => a.difficulty === "All");
-      const easyAc = acSubmissionNum.find(a => a.difficulty === "Easy");
-      const mediumAc = acSubmissionNum.find(a => a.difficulty === "Medium");
-      const hardAc = acSubmissionNum.find(a => a.difficulty === "Hard");
+    if (userProfile) {
+      try {
+        const acSubmissionNum = userProfile.submitStatsGlobal?.acSubmissionNum || [];
+        
+        const allAc = acSubmissionNum.find(a => a.difficulty === "All");
+        const easyAc = acSubmissionNum.find(a => a.difficulty === "Easy");
+        const mediumAc = acSubmissionNum.find(a => a.difficulty === "Medium");
+        const hardAc = acSubmissionNum.find(a => a.difficulty === "Hard");
 
-      if (allAc) {
-        linkage.totalSolved = allAc.count;
+        if (allAc) {
+          linkage.totalSolved = allAc.count;
+        }
+        linkage.easySolved = easyAc ? easyAc.count : (platform === "GeeksforGeeks" || platform === "GFG" ? (allAc ? allAc.count : 0) : 0);
+        linkage.mediumSolved = mediumAc ? mediumAc.count : 0;
+        linkage.hardSolved = hardAc ? hardAc.count : 0;
+
+        await linkage.save();
+      } catch (err) {
+        console.warn(`[PlatformService] Failed to update totalSolved count during sync for ${platform}:`, err.message);
       }
-      linkage.easySolved = easyAc ? easyAc.count : (platform === "GeeksforGeeks" || platform === "GFG" ? (allAc ? allAc.count : 0) : 0);
-      linkage.mediumSolved = mediumAc ? mediumAc.count : 0;
-      linkage.hardSolved = hardAc ? hardAc.count : 0;
-
-      await linkage.save();
-    } catch (err) {
-      console.warn(`[PlatformService] Failed to update totalSolved count during sync for ${platform}:`, err.message);
     }
 
     let userObj = await User.findById(userId);
