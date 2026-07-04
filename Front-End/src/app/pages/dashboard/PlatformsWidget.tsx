@@ -74,7 +74,7 @@ export function PlatformsWidget({ onLinkageChanged, onboardingComplete = true }:
     switch (platform) {
       case "LeetCode":
         return (
-          <svg viewBox="0 0 24 24" className="w-4.5 h-4.5 fill-current text-[#FFA116]" xmlns="http://www.w3.org/2000/svg">
+          <svg viewBox="0 0 24 24" className="w-4 h-4 fill-current text-[#FFA116]" xmlns="http://www.w3.org/2000/svg">
             <path d="M13.483 0a1.374 1.374 0 0 0-.961.438L7.116 6.226l-3.854 4.126a5.266 5.266 0 0 0-1.209 2.104 5.35 5.35 0 0 0-.125.513 5.527 5.527 0 0 0 .062 2.362 5.83 5.83 0 0 0 .349 1.017 5.938 5.938 0 0 0 1.271 1.818l4.277 4.193.039.038c2.248 2.165 5.852 2.133 8.063-.074l2.396-2.392c.54-.54.54-1.414.003-1.955a1.378 1.378 0 0 0-1.951-.003l-2.396 2.392a3.021 3.021 0 0 1-4.205.038l-.02-.019-4.276-4.193c-.652-.64-.972-1.469-.948-2.263a2.68 2.68 0 0 1 .066-.523 2.545 2.545 0 0 1 .619-1.164L9.13 8.114c1.058-1.134 3.204-1.27 4.43-.278l3.501 2.831c.593.48 1.461.387 1.94-.207a1.384 1.384 0 0 0-.207-1.943l-3.5-2.831c-.8-.647-1.766-1.045-2.774-1.202l2.015-2.158A1.384 1.384 0 0 0 13.483 0zm-2.866 12.815a1.38 1.38 0 0 0-1.38 1.382 1.38 1.38 0 0 0 1.38 1.382H20.79a1.38 1.38 0 0 0 1.38-1.382 1.38 1.38 0 0 0-1.38-1.382z" />
           </svg>
         );
@@ -86,7 +86,7 @@ export function PlatformsWidget({ onLinkageChanged, onboardingComplete = true }:
         );
       case "Code360":
         return (
-          <svg viewBox="15 50 200 365" className="w-4.5 h-4.5" xmlns="http://www.w3.org/2000/svg">
+          <svg viewBox="15 50 200 365" className="w-4 h-4" xmlns="http://www.w3.org/2000/svg">
             <path fill="#DD6620" d="M148.767,320.924v82.624c0,3.306-2.898,5.133-8.64,5.541v3.556h62.861v-3.556c-5.641-0.407-8.488-2.235-8.488-5.541v-82.624c0-17.177-3.659-31.1-10.924-41.824c-7.318-10.721-17.175-18.394-29.677-23.068c-12.5-4.678-26.983-7.014-43.497-7.014c-16.566,0-31.1,2.336-43.6,7.014c-12.5,4.674-22.36,12.347-29.677,23.068c-7.266,10.724-10.925,24.647-10.925,41.824v39.214h45.736v-39.214c0-11.384,3.251-19.769,9.805-25.155c6.557-5.338,16.11-8.032,28.61-8.032C135.96,287.737,148.767,298.819,148.767,320.924L148.767,320.924z"/>
             <path fill-rule="evenodd" clip-rule="evenodd" fill="#678E7C" d="M71.391,123.168l35.492,6.383C106.884,129.552,78.627,154.595,71.391,123.168L71.391,123.168z"/>
             <path fill-rule="evenodd" clip-rule="evenodd" fill="#678E7C" d="M163.228,123.168l-35.489,6.383C127.739,129.552,155.992,154.595,163.228,123.168L163.228,123.168z"/>
@@ -124,7 +124,6 @@ export function PlatformsWidget({ onLinkageChanged, onboardingComplete = true }:
     }
   };
 
-  // Static/Mock Platforms
   const mockPlatforms = [
     { name: "InterviewBit", badge: "Coming Soon" },
     { name: "HackerRank", badge: "Coming Soon" },
@@ -146,46 +145,47 @@ export function PlatformsWidget({ onLinkageChanged, onboardingComplete = true }:
       <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.002)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.002)_1px,transparent_1px)] bg-[size:20px_20px] pointer-events-none" />
       
       {/* Header */}
-      <div className="flex items-center justify-between mb-3 relative z-10 border-b border-white/[0.04] pb-2 shrink-0">
+      <div className="flex items-center justify-between mb-3.5 relative z-10 border-b border-white/[0.04] pb-2.5 shrink-0">
         <h3 className="text-xs font-bold text-zinc-400 uppercase tracking-wider flex items-center gap-2">
-          <Link2 className="w-4 h-4 text-emerald-455" />
+          <Link2 className="w-4 h-4 text-emerald-450" />
           Problem Solving Stats
         </h3>
       </div>
 
-      <div className="space-y-2.5 relative z-10 flex-1 overflow-hidden flex flex-col justify-between">
+      {/* Main Container */}
+      <div className="relative z-10 flex-1 flex flex-col justify-between overflow-hidden">
         
-        <div className="flex-1 overflow-y-auto custom-scrollbar space-y-2 relative z-10">
-          {/* ─── ACTIVE/FUNCTIONAL PLATFORMS (Only Connected ones show) ─── */}
-          {linkedPlatformsList.length > 0 ? (
-            linkedPlatformsList.map((plat) => {
-              const linkage = linkages[plat];
-              if (!linkage) return null;
-              const isVerified = linkage.isVerified;
+        {/* Scroll-free layout content */}
+        <div className="flex-1 flex flex-col gap-3">
+          
+          {/* Active linked platforms list */}
+          <div className="space-y-1">
+            {linkedPlatformsList.length > 0 ? (
+              linkedPlatformsList.map((plat) => {
+                const linkage = linkages[plat];
+                if (!linkage) return null;
+                const isVerified = linkage.isVerified;
 
-              return (
-                <div key={plat} className="border border-white/[0.03] bg-white/[0.01] rounded-xl p-2.5 transition-all duration-205 shadow-sm">
-                  {/* Row Header */}
-                  <div className="flex items-center justify-between gap-2">
-                    <div className="flex items-center gap-2.5">
-                      {/* Platform Icons */}
+                return (
+                  <div key={plat} className="flex items-center justify-between py-2.5 border-b border-white/[0.03] transition-all duration-150">
+                    <div className="flex items-center gap-3">
+                      {/* Platform Logo */}
                       <div className="w-6.5 h-6.5 rounded-lg bg-white/5 border border-white/[0.04] flex items-center justify-center shrink-0 select-none">
                         {getPlatformLogo(plat)}
                       </div>
                       <span className="text-xs font-bold text-zinc-200 tracking-wide">{plat}</span>
                     </div>
 
-                    {/* Status Indicator / Actions */}
-                    <div className="flex items-center gap-1.5">
+                    {/* Status Action indicators */}
+                    <div className="flex items-center gap-2">
                       {isVerified ? (
                         <>
-                          <CheckCircle2 className="w-4 h-4 text-emerald-500 fill-emerald-500/10" title="Verified Profile" />
+                          <CheckCircle2 className="w-4 h-4 text-emerald-500 fill-emerald-500/10" />
                           <a
                             href={getProfileUrl(plat, linkage.username)}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-zinc-500 hover:text-white transition-colors p-0.5"
-                            title="Open Profile"
+                            className="text-zinc-550 hover:text-white transition-colors p-0.5"
                           >
                             <ExternalLink className="w-3.5 h-3.5" />
                           </a>
@@ -193,7 +193,7 @@ export function PlatformsWidget({ onLinkageChanged, onboardingComplete = true }:
                       ) : (
                         <button
                           onClick={() => navigate("/settings?tab=platforms")}
-                          className="flex items-center gap-1 bg-yellow-500/10 border border-yellow-500/20 px-2 py-0.5 rounded text-[8px] font-bold text-yellow-400 select-none animate-pulse hover:bg-yellow-500/20 transition-all cursor-pointer animate-pulse"
+                          className="flex items-center gap-1.5 bg-yellow-500/10 border border-yellow-500/20 px-2 py-0.5 rounded text-[8px] font-bold text-yellow-400 select-none hover:bg-yellow-500/20 transition-all cursor-pointer animate-pulse"
                         >
                           <AlertCircle className="w-2.5 h-2.5" />
                           <span>Verify</span>
@@ -201,59 +201,64 @@ export function PlatformsWidget({ onLinkageChanged, onboardingComplete = true }:
                       )}
                     </div>
                   </div>
-                </div>
-              );
-            })
-          ) : (
-            <div className="h-[120px] border border-dashed border-white/[0.06] rounded-xl flex flex-col items-center justify-center text-center p-4">
-              <Link2 className="w-6 h-6 text-zinc-650 mb-1.5" />
-              <p className="text-[10px] text-zinc-400 font-bold">No Active Profiles Linked</p>
-              <p className="text-[9px] text-zinc-500 mt-0.5 max-w-[160px]">Click Add Platform below to connect your DSA profile.</p>
-            </div>
+                );
+              })
+            ) : (
+              <div className="py-6 border border-dashed border-white/[0.06] rounded-xl flex flex-col items-center justify-center text-center px-4">
+                <Link2 className="w-5 h-5 text-zinc-650 mb-1.5" />
+                <p className="text-[10px] text-zinc-450 font-bold">No Profiles Connected</p>
+              </div>
+            )}
+          </div>
+
+          {/* Add Platform dashed button */}
+          {unconnectedPlatforms.length > 0 && (
+            <button
+              onClick={() => navigate("/settings?tab=platforms")}
+              className="w-full py-2 border border-dashed border-white/[0.08] hover:border-amber-500/20 hover:bg-white/[0.01] text-amber-550 hover:text-amber-400 font-bold text-xs rounded-xl transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-sm active:scale-95 mt-1"
+            >
+              <Plus className="w-3.5 h-3.5 text-amber-500" />
+              <span>Add Platform</span>
+            </button>
           )}
 
-          {/* ─── ADD PLATFORM REDIRECT ACTION ─── */}
-          {unconnectedPlatforms.length > 0 && (
-            <div className="mt-3">
-              <button
-                onClick={() => navigate("/settings?tab=platforms")}
-                className="w-full py-2 bg-[#12131A] hover:bg-[#161722] border border-white/[0.04] hover:border-white/10 text-amber-555 hover:text-amber-400 font-bold text-xs rounded-xl transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-sm active:scale-95"
-              >
-                <Plus className="w-3.5 h-3.5 text-amber-500" />
-                <span>Add Platform</span>
-              </button>
-            </div>
-          )}
         </div>
 
         {/* ─── DEVELOPMENT STATS SECTION ─── */}
-        <div className="mt-2 pt-2.5 border-t border-white/[0.04] shrink-0">
+        <div className="mt-3 pt-3 border-t border-white/[0.04] shrink-0">
           <h4 className="text-[9px] font-bold text-zinc-500 uppercase tracking-widest block mb-2 px-0.5">
             Development Stats
           </h4>
-          <div className="flex items-center justify-between py-1.5 px-2 opacity-50 bg-white/[0.005] border border-white/[0.02] rounded-lg shadow-sm">
-            <div className="flex items-center gap-2">
-              <div className="w-5.5 h-5.5 rounded bg-white/5 border border-white/[0.04] flex items-center justify-center shrink-0">
+          <div className="flex items-center justify-between py-2 px-0.5 opacity-55">
+            <div className="flex items-center gap-3">
+              <div className="w-6 h-6 rounded bg-white/5 border border-white/[0.04] flex items-center justify-center shrink-0">
                 {getPlatformLogo("GitHub")}
               </div>
-              <span className="text-[10.5px] font-bold text-zinc-355 tracking-wide">GitHub</span>
+              <span className="text-[11px] font-bold text-zinc-350 tracking-wide">GitHub</span>
             </div>
-            <span className="text-[7.5px] font-black tracking-widest text-zinc-550 uppercase bg-white/[0.02] border border-white/[0.04] px-1.5 py-0.5 rounded">
+            <span className="text-[7.5px] font-black tracking-widest text-zinc-550 bg-white/[0.03] border border-white/[0.06] px-1.5 py-0.5 rounded uppercase">
               Coming Soon
             </span>
           </div>
         </div>
 
-        {/* ─── MOCK PLATFORMS (COMING SOON) ─── */}
-        <div className="mt-2 pt-2.5 border-t border-white/[0.04] shrink-0">
-          <h4 className="text-[9px] font-bold text-zinc-550 uppercase tracking-widest block mb-2 px-0.5">Coming Soon</h4>
-          <div className="grid grid-cols-3 gap-1.5">
+        {/* ─── COMING SOON LIST (InterviewBit, HackerRank, Codeforces stacked vertically) ─── */}
+        <div className="mt-3 pt-3 border-t border-white/[0.04] shrink-0">
+          <h4 className="text-[9px] font-bold text-zinc-500 uppercase tracking-widest block mb-2 px-0.5">
+            Coming Soon
+          </h4>
+          <div className="space-y-1">
             {mockPlatforms.filter(p => p.name !== "GitHub").map((mockPlat) => (
-              <div key={mockPlat.name} className="border border-white/[0.02] bg-white/[0.005] rounded-lg p-1.5 flex items-center justify-center gap-1.5 opacity-40 select-none">
-                <div className="w-5 h-5 rounded bg-white/5 border border-white/[0.04] flex items-center justify-center shrink-0 scale-90">
-                  {getPlatformLogo(mockPlat.name)}
+              <div key={mockPlat.name} className="flex items-center justify-between py-1.5 px-0.5 opacity-40 select-none">
+                <div className="flex items-center gap-3">
+                  <div className="w-5.5 h-5.5 rounded bg-white/5 border border-white/[0.04] flex items-center justify-center shrink-0">
+                    {getPlatformLogo(mockPlat.name)}
+                  </div>
+                  <span className="text-[10px] font-bold text-zinc-350 tracking-wide">{mockPlat.name}</span>
                 </div>
-                <span className="text-[8.5px] font-bold text-zinc-400 tracking-wide truncate">{mockPlat.name}</span>
+                <span className="text-[7.5px] font-black tracking-widest text-zinc-550 bg-white/[0.03] border border-white/[0.06] px-1.5 py-0.5 rounded uppercase">
+                  Coming Soon
+                </span>
               </div>
             ))}
           </div>
