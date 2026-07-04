@@ -296,26 +296,26 @@ export function DashboardBattleWidget({ onRefreshRequest }: DashboardBattleWidge
       ) : (
         /* Empty State */
         !pendingChallenge && (
-          <div className="relative rounded-2xl border border-white/[0.04] bg-gradient-to-r from-violet-950/10 via-[#0F0F13]/90 to-[#0F0F13]/90 p-4 md:p-5 overflow-hidden flex flex-col md:flex-row items-center justify-between gap-4 group shadow-xl">
+          <div className="relative rounded-2xl border border-white/[0.03] bg-gradient-to-r from-violet-950/10 via-[#0C0D15]/90 to-[#0C0D15]/90 p-4 md:py-3.5 md:px-5 overflow-hidden flex flex-col md:flex-row items-center justify-between gap-4 group shadow-xl">
             {/* Decorative background grid and glow */}
             <div className="absolute inset-0 bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:14px_24px] pointer-events-none" />
             <div className="absolute -left-20 -top-20 w-52 h-52 bg-violet-500/10 rounded-full blur-[80px] pointer-events-none" />
             <div className="absolute right-0 top-0 bottom-0 w-[2px] bg-gradient-to-b from-violet-500/30 to-fuchsia-500/30" />
 
             <div className="relative z-10 flex items-center gap-5 w-full md:w-auto">
-              <div className="w-11 h-11 bg-gradient-to-br from-violet-500 to-fuchsia-600 rounded-xl flex items-center justify-center shrink-0 shadow-lg shadow-violet-500/20 border border-white/[0.04]">
+              <div className="w-10 h-10 bg-gradient-to-br from-violet-500 to-fuchsia-600 rounded-xl flex items-center justify-center shrink-0 shadow-lg shadow-violet-500/20 border border-white/[0.04]">
                 <Swords className="w-5 h-5 text-white" />
               </div>
               
               <div>
-                <div className="flex items-center gap-2 mb-1.5">
-                  <h3 className="text-xl font-extrabold text-white tracking-tight">
+                <div className="flex items-center gap-2 mb-0.5">
+                  <h3 className="text-lg font-bold text-white tracking-tight">
                     Challenge a Friend
                   </h3>
-                  <span className="px-2 py-0.5 rounded-full text-[9px] font-bold bg-violet-500/20 text-violet-300 border border-violet-500/30 tracking-widest uppercase">New</span>
+                  <span className="px-2 py-0.5 rounded-full text-[8.5px] font-extrabold bg-violet-500/20 text-violet-300 border border-violet-500/30 tracking-widest uppercase select-none">New</span>
                 </div>
-                <p className="text-xs text-zinc-400 max-w-md leading-relaxed">
-                  Commit to daily consistency side-by-side. The winner takes the entire stakes pool.
+                <p className="text-xs text-zinc-450 leading-normal">
+                  Commit to daily coding side-by-side. Winner takes the stakes.
                 </p>
               </div>
             </div>
