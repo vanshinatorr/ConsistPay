@@ -308,7 +308,7 @@ export function DashboardBattleWidget({ onRefreshRequest }: DashboardBattleWidge
             <div className="absolute right-0 top-0 bottom-0 w-[2px] bg-gradient-to-b from-violet-500/30 to-fuchsia-500/30" />
 
             {/* Monoline Tortoise & Hare Background Illustration */}
-            <div className="absolute right-[22%] md:right-[26%] lg:right-[30%] top-1/2 -translate-y-1/2 pointer-events-none select-none opacity-[0.04] group-hover:opacity-[0.10] transition-opacity duration-500 hidden sm:block">
+            <div className="absolute right-[22%] md:right-[26%] lg:right-[30%] top-1/2 -translate-y-1/2 pointer-events-none select-none opacity-[0.40] group-hover:opacity-[0.75] transition-opacity duration-500 hidden sm:block">
               <svg width="150" height="72" viewBox="0 0 150 72" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" xmlns="http://www.w3.org/2000/svg" className="text-white">
                 {/* 🐢 TORTOISE (Left) */}
                 <g transform="translate(4, 20)">
