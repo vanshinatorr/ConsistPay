@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Wallet, Lock, Coins, Shield, TrendingDown, RefreshCw, Check, AlertTriangle, ArrowUpRight, HelpCircle, CheckCircle2 } from "lucide-react";
 import { WithdrawModal } from "../../components/WithdrawModal";
+import { useNavigate } from "react-router-dom";
 
 interface WalletCardProps {
   plan?: string;
@@ -47,6 +48,7 @@ export function WalletCard({
   syncLogs = [],
 }: WalletCardProps) {
   const [showWithdrawModal, setShowWithdrawModal] = useState(false);
+  const navigate = useNavigate();
 
   const hasSolvedToday = todaySubmissionsCount > 0;
   const verifiedPlatforms = linkedPlatforms.filter((p) => p.isVerified);
@@ -222,6 +224,92 @@ export function WalletCard({
                   : "Link your profiles in the left console to enable daily verification."
                 }
               </p>
+
+              {/* Inner Action Section */}
+              <div className="w-full mt-3 pt-3 border-t border-white/[0.04] flex items-center justify-between gap-3">
+                {/* Streak Timer Status */}
+                {!hasSolvedToday && hasVerifiedPlatform && timeLeft ? (
+                  <div className="flex items-center gap-1 font-mono text-zinc-150 shrink-0 select-none">
+                    <span className="text-[9px] uppercase font-bold text-zinc-500 mr-1.5 tracking-wider">Time:</span>
+                    <div className={`px-2 py-1 rounded bg-[#0A0B10]/80 border border-white/[0.04] text-[11.5px] font-bold shadow-inner ${isStakeAtRisk ? "text-red-400 border-red-500/20" : "text-zinc-200"}`}>
+                      {String(timeLeft.h).padStart(2, "0")}h
+                    </div>
+                    <span className="text-zinc-700 text-xs font-bold">:</span>
+                    <div className={`px-2 py-1 rounded bg-[#0A0B10]/80 border border-white/[0.04] text-[11.5px] font-bold shadow-inner ${isStakeAtRisk ? "text-red-400" : "text-zinc-200"}`}>
+                      {String(timeLeft.m).padStart(2, "0")}m
+                    </div>
+                  </div>
+                ) : hasSolvedToday ? (
+                  <div className="flex items-center gap-1.5 text-[10px] font-bold text-emerald-450 select-none bg-emerald-500/5 px-2 py-1 rounded-lg border border-emerald-500/10">
+                    <CheckCircle2 className="w-3.5 h-3.5" />
+                    <span>Stake Secured</span>
+                  </div>
+                ) : (
+                  <span className="text-[10px] font-bold text-zinc-550 select-none">Setup Pending</span>
+                )}
+
+                {/* Sync Solves Button */}
+                {handleSync && (
+                  <div className="shrink-0 flex-1 flex justify-end">
+                    {hasVerifiedPlatform ? (
+                      <button
+                        type="button"
+                        onClick={handleSync}
+                        disabled={syncLoading || hasSolvedToday}
+                        className={`h-8.5 px-3 rounded-lg font-bold text-xs transition-all duration-300 flex items-center gap-1.5 cursor-pointer border ${
+                          hasSolvedToday
+                            ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-400 cursor-default"
+                            : syncLoading
+                            ? "bg-white/[0.02] border-white/[0.04] text-zinc-550 cursor-not-allowed"
+                            : "bg-white text-black hover:bg-zinc-200 border-white active:scale-95 shadow-md shadow-white/5 hover:scale-[1.01]"
+                        }`}
+                      >
+                        {hasSolvedToday ? (
+                          <>Synced</>
+                        ) : (
+                          <>
+                            <RefreshCw className={`w-3.5 h-3.5 ${syncLoading ? "animate-spin text-zinc-500" : "text-emerald-500"}`} />
+                            {syncLoading ? "Verifying..." : "Sync Solves"}
+                          </>
+                        )}
+                      </button>
+                    ) : (
+                      <button
+                        onClick={() => navigate("/settings?tab=platforms")}
+                        className="h-8.5 px-3 bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/20 text-amber-400 rounded-lg font-bold text-[10px] flex items-center justify-center transition-all cursor-pointer active:scale-95 shadow-sm"
+                      >
+                        Link Profile
+                      </button>
+                    )}
+                  </div>
+                )}
+              </div>
+
+              {/* Console Logs / Error Outputs inside banner */}
+              {(apiError || (syncLogs && syncLogs.length > 0)) && (
+                <div className="w-full mt-2.5 pt-2.5 border-t border-white/[0.03] text-left">
+                  {apiError ? (
+                    <p className="text-[9.5px] text-red-400 font-medium leading-normal flex items-start gap-1">
+                      <AlertTriangle className="w-3.5 h-3.5 shrink-0 mt-0.5" />
+                      <span>{apiError}</span>
+                    </p>
+                  ) : (
+                    <div className="bg-black/35 rounded-lg p-2 font-mono text-[7.5px] text-zinc-450 leading-normal max-h-[36px] overflow-hidden">
+                      {syncLogs.slice(-1).map((log, idx) => {
+                        let textClass = "text-zinc-500";
+                        if (log.includes("✅") || log.includes("Secured")) textClass = "text-emerald-400 font-bold";
+                        if (log.includes("❌")) textClass = "text-red-400 font-bold";
+                        return (
+                          <div key={idx} className={`${textClass} truncate`}>
+                            <span className="text-zinc-700 mr-1">&gt;</span>
+                            {log}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
 
             {/* Secured & Lost Side-by-Side Cards (Green & Red Theme) */}
@@ -257,91 +345,6 @@ export function WalletCard({
                   {missedDays} day{missedDays !== 1 ? "s" : ""}
                 </span>
               </div>
-            </div>
-
-            {/* Accountability Console (Timer & Sync Control) */}
-            <div className="mt-2.5 bg-[#12131A] border border-white/[0.04] rounded-xl p-3.5 flex flex-col gap-2.5 shadow-md">
-              <div className="flex items-center justify-between text-[9px] text-zinc-450 font-bold uppercase tracking-wider">
-                <span>Streak Timer</span>
-                <span>Verification trigger</span>
-              </div>
-
-              <div className="flex items-center justify-between gap-3">
-                {/* Timer Clock */}
-                {timeLeft ? (
-                  <div className="flex items-center gap-1.5 font-mono text-zinc-100 shrink-0">
-                    <div className={`px-2.5 py-1.5 rounded bg-[#0A0B10] border border-white/[0.06] text-sm font-bold shadow-inner ${isStakeAtRisk ? "text-red-400 border-red-500/20" : "text-zinc-200"}`}>
-                      {String(timeLeft.h).padStart(2, "0")}h
-                    </div>
-                    <span className="text-zinc-700 text-sm font-bold">:</span>
-                    <div className={`px-2.5 py-1.5 rounded bg-[#0A0B10] border border-white/[0.06] text-sm font-bold shadow-inner ${isStakeAtRisk ? "text-red-400" : "text-zinc-200"}`}>
-                      {String(timeLeft.m).padStart(2, "0")}m
-                    </div>
-                  </div>
-                ) : (
-                  <span className="text-xs text-zinc-600">--:--</span>
-                )}
-
-                {/* Sync Solves Button */}
-                {handleSync && (
-                  <div className="shrink-0 flex-1 flex justify-end">
-                    {hasVerifiedPlatform ? (
-                      <button
-                        type="button"
-                        onClick={handleSync}
-                        disabled={syncLoading || hasSolvedToday}
-                        className={`h-9 px-4 rounded-lg font-black text-xs transition-all duration-300 flex items-center gap-1.5 cursor-pointer border ${
-                          hasSolvedToday
-                            ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-400 cursor-default"
-                            : syncLoading
-                            ? "bg-white/[0.02] border-white/[0.04] text-zinc-650 cursor-not-allowed"
-                            : "bg-white text-black hover:bg-zinc-200 border-white active:scale-95 shadow-md shadow-white/5 hover:scale-[1.01]"
-                        }`}
-                      >
-                        {hasSolvedToday ? (
-                          <>
-                            <Check className="w-3.5 h-3.5 text-emerald-400" />
-                            Synced & Protected
-                          </>
-                        ) : (
-                          <>
-                            <RefreshCw className={`w-3.5 h-3.5 ${syncLoading ? "animate-spin text-zinc-500" : "text-emerald-500"}`} />
-                            {syncLoading ? "Verifying..." : "Sync Solves"}
-                          </>
-                        )}
-                      </button>
-                    ) : (
-                      <div className="h-9 px-3 bg-white/[0.02] border border-white/[0.04] text-zinc-500 rounded-lg font-bold text-[10px] flex items-center justify-center select-none cursor-not-allowed">
-                        Link Profile first
-                      </div>
-                    )}
-                  </div>
-                )}
-              </div>
-
-              {/* Console log outputs */}
-              {syncLogs && syncLogs.length > 0 && (
-                <div className="border border-white/[0.04] bg-black/40 rounded-lg p-2 font-mono text-[8px] text-zinc-450 leading-normal max-h-[40px] overflow-y-auto custom-scrollbar">
-                  {syncLogs.slice(-2).map((log, idx) => {
-                    let textClass = "text-zinc-500";
-                    if (log.includes("✅") || log.includes("Secured")) textClass = "text-emerald-400 font-bold";
-                    if (log.includes("❌")) textClass = "text-red-400 font-bold";
-                    return (
-                      <div key={idx} className={`${textClass} truncate`}>
-                        <span className="text-zinc-700 mr-1">&gt;</span>
-                        {log}
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
-
-              {apiError && (
-                <p className="text-[10px] text-red-400 font-medium leading-normal font-sans flex items-start gap-1">
-                  <AlertTriangle className="w-3.5 h-3.5 shrink-0 mt-0.5" />
-                  <span>{apiError}</span>
-                </p>
-              )}
             </div>
 
             {/* Streak Shields & Progress bar */}
