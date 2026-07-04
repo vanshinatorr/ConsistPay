@@ -269,9 +269,15 @@ html:not(.dark) [class*="bg-[#12131c]" i],
 html:not(.dark) [class*="bg-[#161720]" i],
 html:not(.dark) [class*="bg-[#07070a]" i],
 html:not(.dark) [class*="bg-[#0f0f13]/95" i],
+html:not(.dark) [class*="bg-[#0c0d15]" i],
+html:not(.dark) [class*="bg-[#141522]" i],
+html:not(.dark) [class*="bg-[#0f1018]" i],
+html:not(.dark) [class*="bg-[#06080d]" i],
+html:not(.dark) [class*="bg-[#0d0d0f]" i],
 html:not(.dark) [class*="bg-white/5"] {
   background-color: #FFFFFF !important;
   background: #FFFFFF !important;
+  background-image: none !important;
   border-color: #E5E7EB !important;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02), 0 4px 6px -1px rgba(0, 0, 0, 0.01) !important;
 }
@@ -310,9 +316,12 @@ html:not(.dark) [class*="bg-white/5"][class*="border-white/[0.04]"]:hover {
 
 /* Additional card inner backgrounds and timer cells in light mode */
 html:not(.dark) [class*="bg-black/30"],
-html:not(.dark) [class*="bg-[#0a0b10]/80" i] {
+html:not(.dark) [class*="bg-[#0a0b10]/80" i],
+html:not(.dark) [class*="bg-white/5"][class*="border"],
+html:not(.dark) [class*="bg-white/10"] {
   background-color: #F3F4F6 !important;
   background: #F3F4F6 !important;
+  background-image: none !important;
   border-color: #E5E7EB !important;
   color: #1F2937 !important;
 }
@@ -326,5 +335,16 @@ html:not(.dark) .text-zinc-550 {
 html:not(.dark) .text-zinc-300,
 html:not(.dark) .text-zinc-400 {
   color: #374151 !important;
+}
+
+/* Hover states in light mode */
+html:not(.dark) [class*="hover:text-white"]:hover {
+  color: #111827 !important;
+}
+
+html:not(.dark) [class*="hover:bg-white"]:hover,
+html:not(.dark) [class*="hover:bg-zinc-800"]:hover {
+  background-color: #E5E7EB !important;
+  background: #E5E7EB !important;
 }
 
