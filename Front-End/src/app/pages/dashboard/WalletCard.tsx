@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Wallet, Lock, Coins, Shield, TrendingDown, RefreshCw, Check, AlertTriangle, ArrowUpRight, HelpCircle, CheckCircle2 } from "lucide-react";
+import { Wallet, Lock, Coins, Shield, TrendingDown, RefreshCw, Check, AlertTriangle, ArrowUpRight, HelpCircle, CheckCircle2, Clock } from "lucide-react";
 // WithdrawModal rendered globally at Dashboard level
 import { useNavigate } from "react-router-dom";
 
@@ -189,7 +189,7 @@ export function WalletCard({
                 : isStakeAtRisk
                 ? "bg-red-500/[0.02] border-red-500/15 text-red-400 animate-pulse"
                 : hasVerifiedPlatform
-                ? "bg-yellow-500/[0.01] border-yellow-500/10 text-yellow-405"
+                ? "bg-white/[0.005] border-white/[0.03] text-zinc-400"
                 : "bg-white/[0.005] border-white/[0.03] text-zinc-500"
             }`}>
               <div className="flex items-center gap-2">
@@ -207,8 +207,8 @@ export function WalletCard({
                   </>
                 ) : hasVerifiedPlatform ? (
                   <>
-                    <span className="w-1.5 h-1.5 rounded-full bg-yellow-500 animate-ping" />
-                    <span className="text-xs font-bold tracking-wider text-yellow-450">Daily Solve Pending</span>
+                    <Clock className="w-4 h-4 text-zinc-500" />
+                    <span className="text-xs font-bold tracking-wider text-zinc-400">Daily Solve Pending</span>
                   </>
                 ) : (
                   <>
