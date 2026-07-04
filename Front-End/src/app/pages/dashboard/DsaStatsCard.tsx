@@ -132,30 +132,30 @@ export function DsaStatsCard({ stats, onboardingComplete = true }: DsaStatsCardP
         </div>
 
         {/* Right Side: Rows */}
-        <div className="flex-1 space-y-2">
+        <div className="flex-1 space-y-1">
           {/* Easy Row */}
-          <div className="flex items-center justify-between bg-white/[0.02] border border-white/[0.03] rounded-lg px-3 py-1.5 hover:bg-white/[0.04] transition-colors">
-            <div className="flex items-center gap-1.5">
+          <div className="flex items-center justify-between py-2 border-b border-white/[0.02] hover:border-white/[0.05] transition-colors">
+            <div className="flex items-center gap-2">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-              <span className="text-xs font-semibold text-zinc-400">Easy</span>
+              <span className="text-xs font-medium text-zinc-400">Easy</span>
             </div>
             <span className="text-xs font-bold text-emerald-400">{easy}</span>
           </div>
 
           {/* Medium Row */}
-          <div className="flex items-center justify-between bg-white/[0.02] border border-white/[0.03] rounded-lg px-3 py-1.5 hover:bg-white/[0.04] transition-colors">
-            <div className="flex items-center gap-1.5">
+          <div className="flex items-center justify-between py-2 border-b border-white/[0.02] hover:border-white/[0.05] transition-colors">
+            <div className="flex items-center gap-2">
               <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />
-              <span className="text-xs font-semibold text-zinc-400">Medium</span>
+              <span className="text-xs font-medium text-zinc-400">Medium</span>
             </div>
             <span className="text-xs font-bold text-amber-400">{medium}</span>
           </div>
 
           {/* Hard Row */}
-          <div className="flex items-center justify-between bg-white/[0.02] border border-white/[0.03] rounded-lg px-3 py-1.5 hover:bg-white/[0.04] transition-colors">
-            <div className="flex items-center gap-1.5">
+          <div className="flex items-center justify-between py-2 border-b border-white/[0.02] hover:border-white/[0.05] transition-colors">
+            <div className="flex items-center gap-2">
               <span className="w-1.5 h-1.5 rounded-full bg-rose-500" />
-              <span className="text-xs font-semibold text-zinc-400">Hard</span>
+              <span className="text-xs font-medium text-zinc-400">Hard</span>
             </div>
             <span className="text-xs font-bold text-rose-500">{hard}</span>
           </div>
