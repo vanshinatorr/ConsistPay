@@ -116,16 +116,38 @@ export function PlatformsWidget({ onLinkageChanged, onboardingComplete = true }:
             <path fillRule="evenodd" clipRule="evenodd" d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.17 6.839 9.49.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.603-3.369-1.34-3.369-1.34-.454-1.156-1.11-1.464-1.11-1.464-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.579.688.481C19.137 20.167 22 16.418 22 12c0-5.523-4.477-10-10-10z" />
           </svg>
         );
+      case "CodeChef":
+        return (
+          <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 fill-current text-[#F0A500]" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 2c-3.31 0-6 2.69-6 6 0 1.97 1.05 3.72 2.66 4.72-.88 1.09-1.66 2.37-2.28 3.82-.48 1.13.33 2.46 1.55 2.46h8.14c1.22 0 2.03-1.33 1.55-2.46-.62-1.45-1.4-2.73-2.28-3.82C16.95 11.72 18 9.97 18 8c0-3.31-2.69-6-6-6zm0 18H8v-2h8v2h-4z" />
+          </svg>
+        );
+      case "AtCoder":
+        return (
+          <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 fill-current text-[#555]" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 2L2 22h20L12 2zm0 4l6.5 13H5.5L12 6z" />
+          </svg>
+        );
+      case "HackerEarth":
+        return (
+          <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 fill-current text-[#323754]" xmlns="http://www.w3.org/2000/svg">
+            <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-2 12h-4v4h-2v-4H7V9h2v4h4V9h2v6z" />
+          </svg>
+        );
       default:
         return <Link2 className="w-3.5 h-3.5 text-zinc-400" />;
     }
   };
 
+  // 10 total platforms: LeetCode + GFG (active) + 8 mock/coming soon ones to fill the 522px vertical container
   const mockPlatforms = [
     { name: "Code360", badge: "Coming Soon" },
     { name: "InterviewBit", badge: "Coming Soon" },
     { name: "HackerRank", badge: "Coming Soon" },
     { name: "Codeforces", badge: "Coming Soon" },
+    { name: "CodeChef", badge: "Coming Soon" },
+    { name: "AtCoder", badge: "Coming Soon" },
+    { name: "HackerEarth", badge: "Coming Soon" },
     { name: "GitHub", badge: "Coming Soon" }
   ];
 
@@ -138,25 +160,22 @@ export function PlatformsWidget({ onLinkageChanged, onboardingComplete = true }:
   );
 
   return (
-    <div className={`relative rounded-2xl border border-white/[0.04] bg-[#0F0F13] px-3 py-4 overflow-hidden group hover:border-white/10 transition-all duration-300 h-[522px] min-h-[522px] flex flex-col justify-between select-none ${!onboardingComplete ? 'opacity-40 pointer-events-none' : ''}`}>
+    <div className={`relative rounded-2xl border border-white/[0.04] bg-[#0F0F13] px-3.5 py-4 overflow-hidden group hover:border-white/10 transition-all duration-300 h-[522px] min-h-[522px] flex flex-col justify-between select-none ${!onboardingComplete ? 'opacity-40 pointer-events-none' : ''}`}>
       {/* Background patterns */}
       <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.002)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.002)_1px,transparent_1px)] bg-[size:20px_20px] pointer-events-none" />
       
-      {/* Header */}
-      <div className="flex items-center justify-between mb-2 relative z-10 border-b border-white/[0.04] pb-2 shrink-0">
-        <h3 className="text-[8.5px] font-extrabold text-zinc-400 uppercase tracking-widest flex items-center gap-1.5">
-          <Link2 className="w-3.5 h-3.5 text-emerald-450 shrink-0" />
-          Problem Solving Stats
-        </h3>
-      </div>
-
-      {/* Main Container */}
-      <div className="relative z-10 flex-1 flex flex-col justify-between overflow-hidden">
+      {/* Container wrapper for dynamic vertical distribution */}
+      <div className="relative z-10 flex flex-col h-full justify-between">
         
-        {/* Scroll-free active elements list */}
+        {/* SECTION 1: DSA Platforms (Problem Solving Stats) */}
         <div className="flex flex-col gap-2 shrink-0">
-          
-          {/* Active linked platforms list */}
+          <div className="flex items-center justify-between border-b border-white/[0.04] pb-2 shrink-0">
+            <h3 className="text-[8.5px] font-extrabold text-zinc-400 uppercase tracking-widest flex items-center gap-1.5">
+              <Link2 className="w-3.5 h-3.5 text-emerald-450 shrink-0" />
+              Problem Solving Stats
+            </h3>
+          </div>
+
           <div className="space-y-0.5">
             {linkedPlatformsList.length > 0 ? (
               linkedPlatformsList.map((plat) => {
@@ -188,7 +207,7 @@ export function PlatformsWidget({ onLinkageChanged, onboardingComplete = true }:
                             href={getProfileUrl(plat, linkage.username)}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-zinc-550 hover:text-zinc-300 transition-colors p-0.5 shrink-0"
+                            className="text-zinc-555 hover:text-zinc-300 transition-colors p-0.5 shrink-0"
                           >
                             <ExternalLink className="w-3 h-3" />
                           </a>
@@ -220,16 +239,15 @@ export function PlatformsWidget({ onLinkageChanged, onboardingComplete = true }:
               onClick={() => navigate("/settings?tab=platforms")}
               className="w-full py-1.5 border border-dashed border-white/[0.06] hover:border-amber-500/30 hover:bg-white/[0.01] text-amber-550 hover:text-amber-400 font-bold text-[10px] rounded-xl transition-all flex items-center justify-center gap-1.5 cursor-pointer active:scale-95 mt-0.5"
             >
-              <Plus className="w-3 h-3 text-amber-500" />
+              <Plus className="w-3.5 h-3.5 text-amber-500" />
               <span>Add Platform</span>
             </button>
           )}
-
         </div>
 
-        {/* ─── DEVELOPMENT STATS SECTION ─── */}
-        <div className="mt-2 pt-2 border-t border-white/[0.04] shrink-0">
-          <h4 className="text-[8.5px] font-extrabold text-zinc-500 uppercase tracking-widest block mb-1.5 px-0.5">
+        {/* SECTION 2: Development Stats */}
+        <div className="flex flex-col gap-2 shrink-0">
+          <h4 className="text-[8.5px] font-extrabold text-zinc-500 uppercase tracking-widest block border-b border-white/[0.02] pb-1 px-0.5">
             Development Stats
           </h4>
           <div className="flex items-center justify-between py-1 px-0.5 opacity-55">
@@ -245,9 +263,9 @@ export function PlatformsWidget({ onLinkageChanged, onboardingComplete = true }:
           </div>
         </div>
 
-        {/* ─── COMING SOON LIST (InterviewBit, HackerRank, Codeforces stacked vertically) ─── */}
-        <div className="mt-2 pt-2 border-t border-white/[0.04] shrink-0">
-          <h4 className="text-[8.5px] font-extrabold text-zinc-500 uppercase tracking-widest block mb-1.5 px-0.5">
+        {/* SECTION 3: Coming Soon Platforms (Code360, InterviewBit, HackerRank, Codeforces, CodeChef, AtCoder, HackerEarth) */}
+        <div className="flex flex-col gap-1.5 shrink-0">
+          <h4 className="text-[8.5px] font-extrabold text-zinc-500 uppercase tracking-widest block border-b border-white/[0.02] pb-1 px-0.5">
             Coming Soon
           </h4>
           <div className="space-y-0.5">
@@ -257,7 +275,7 @@ export function PlatformsWidget({ onLinkageChanged, onboardingComplete = true }:
                   <div className="w-5.5 h-5.5 rounded bg-white/5 border border-white/[0.04] flex items-center justify-center shrink-0">
                     {getPlatformLogo(mockPlat.name)}
                   </div>
-                  <span className="text-[10.5px] font-bold text-zinc-350 tracking-wide">{mockPlat.name}</span>
+                  <span className="text-[10.5px] font-bold text-zinc-355 tracking-wide">{mockPlat.name}</span>
                 </div>
                 <span className="text-[6.5px] font-black tracking-widest text-zinc-550 bg-white/[0.03] border border-white/[0.05] px-1.5 py-0.5 rounded uppercase">
                   Coming Soon
