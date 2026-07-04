@@ -82,9 +82,9 @@ export function WalletCard({
   return (
     <div className="relative h-full flex flex-col">
       {/* Background Glow */}
-      <div className="absolute inset-0 rounded-2xl blur-xl opacity-20 bg-gradient-to-br from-yellow-500/10 to-orange-500/10" />
+      <div className="absolute inset-0 rounded-2xl blur-2xl opacity-35 bg-gradient-to-br from-yellow-500/15 via-orange-500/10 to-transparent pointer-events-none" />
 
-      <div className="relative bg-[#0F0F13] border border-white/[0.04] rounded-2xl p-5 flex flex-col justify-between h-[522px] min-h-[522px] shadow-2xl overflow-hidden hover:border-white/[0.08] transition-all duration-300">
+      <div className="relative bg-gradient-to-b from-[#141522]/95 to-[#0F1018]/95 border border-white/[0.12] rounded-2xl p-5 flex flex-col justify-between h-[522px] min-h-[522px] shadow-[0_20px_50px_rgba(0,0,0,0.4)] overflow-hidden hover:border-white/[0.18] transition-all duration-300">
         {/* Ambient Grid overlay */}
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808003_1px,transparent_1px),linear-gradient(to_bottom,#80808005_1px,transparent_1px)] bg-[size:14px_24px] pointer-events-none" />
 
@@ -94,13 +94,13 @@ export function WalletCard({
             <div className="w-7 h-7 bg-yellow-500/10 border border-yellow-500/20 rounded-lg flex items-center justify-center shadow-inner">
               <Wallet className="w-4 h-4 text-yellow-500" />
             </div>
-            <span className="text-xs font-bold text-white uppercase tracking-wider">
+            <span className="text-xs font-bold text-white uppercase tracking-widest">
               Consistency Wallet
             </span>
           </div>
 
           <span
-            className={`text-[9px] px-2.5 py-0.5 rounded-full font-black border uppercase tracking-wider shadow-sm ${
+            className={`text-[9px] px-2.5 py-0.5 rounded-full font-bold border uppercase tracking-wider shadow-sm ${
               plan?.toLowerCase() === "pro"
                 ? "text-violet-400 bg-violet-500/10 border-violet-500/20"
                 : "text-zinc-550 bg-white/[0.02] border-white/[0.06]"
@@ -116,60 +116,60 @@ export function WalletCard({
           <div className="flex flex-col justify-between h-full">
             
             {/* 1. Withdrawable Balance Card */}
-            <div className="bg-[#12131A] border border-white/[0.04] rounded-xl p-4 flex items-center justify-between hover:border-white/[0.08] transition-all duration-200 shadow-md">
+            <div className="bg-black/30 border border-white/[0.03] rounded-xl p-4 flex items-center justify-between hover:border-white/[0.06] transition-all duration-200 shadow-md">
               <div>
-                <span className="text-[10px] text-emerald-400 font-bold uppercase tracking-wider block">
+                <span className="text-[9px] text-emerald-455 font-bold uppercase tracking-widest block">
                   Withdrawable Balance
                 </span>
-                <span className="text-3xl font-black font-mono text-white mt-1 block">
-                  <span className="text-zinc-500 text-xl font-normal mr-0.5">₹</span>
+                <span className="text-3xl font-bold text-white tracking-tight mt-1.5 block">
+                  <span className="text-zinc-500 text-2xl font-light mr-0.5">₹</span>
                   {onboardingComplete ? Math.round(balance) : "0"}
                 </span>
-                <span className="text-[9.5px] text-zinc-400 block mt-1.5 leading-normal">
+                <span className="text-[11px] text-zinc-450 block mt-1 leading-normal">
                   Funds secured from completed commitments.
                 </span>
               </div>
               {onboardingComplete && balance > 0 ? (
                 <button
                   onClick={() => setShowWithdrawModal(true)}
-                  className="px-4 py-2 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-450 hover:to-teal-450 text-black text-xs font-bold rounded-lg transition-all active:scale-95 shadow-md shadow-emerald-500/10 cursor-pointer"
+                  className="px-4 py-2 bg-white hover:bg-zinc-200 text-black text-xs font-bold rounded-lg transition-all active:scale-95 shadow-md shadow-white/5 cursor-pointer"
                 >
                   Withdraw
                 </button>
               ) : (
-                <span className="text-[9px] text-zinc-500 font-bold bg-white/[0.03] border border-white/[0.06] px-2.5 py-1.5 rounded-md select-none">
+                <span className="text-[9px] text-zinc-550 font-bold bg-white/[0.01] border border-white/[0.03] px-2.5 py-1.5 rounded-md select-none">
                   Empty Wallet
                 </span>
               )}
             </div>
 
             {/* 2. Active Deposit Pool (Locked) Card */}
-            <div className="bg-[#12131A] border border-white/[0.04] rounded-xl p-4 mt-2.5 flex-1 flex flex-col justify-center hover:border-white/[0.08] transition-all duration-200 shadow-md">
-              <span className="text-[10px] text-zinc-400 uppercase tracking-wider font-bold block">
+            <div className="bg-black/30 border border-white/[0.03] rounded-xl p-4 mt-2.5 flex-1 flex flex-col justify-center hover:border-white/[0.06] transition-all duration-200 shadow-md">
+              <span className="text-[9px] text-zinc-400 uppercase tracking-widest font-bold block">
                 Active Deposit Pool (Locked)
               </span>
-              <span className="text-2xl font-black font-mono text-white mt-1 block">
-                <span className="text-zinc-500 text-lg font-normal mr-0.5">₹</span>
+              <span className="text-2xl font-bold text-white tracking-tight mt-1.5 block">
+                <span className="text-zinc-500 text-xl font-light mr-0.5">₹</span>
                 {onboardingComplete ? Math.round(activeDeposit) : "0"}
               </span>
-              <span className="text-[9.5px] text-zinc-400 block mt-1">
+              <span className="text-[11px] text-zinc-450 block mt-1">
                 ₹{dailyCommitment}/day commitment • 30-day plan
               </span>
             </div>
 
             {/* 3. Month-end Payout Preview Card (Gold theme) */}
-            <div className="bg-amber-500/[0.02] border border-amber-500/15 rounded-xl p-4 mt-2.5 flex-1 flex flex-col justify-center hover:border-amber-500/25 transition-all duration-200 shadow-md">
-              <div className="flex items-center gap-1.5 text-amber-400">
-                <Coins className="w-4.5 h-4.5" />
-                <span className="text-[10px] font-bold uppercase tracking-wider block">
+            <div className="bg-amber-500/[0.01] border border-amber-500/10 rounded-xl p-4 mt-2.5 flex-1 flex flex-col justify-center hover:border-amber-500/20 transition-all duration-200 shadow-md">
+              <div className="flex items-center gap-1.5 text-amber-400/90">
+                <Coins className="w-4 h-4" />
+                <span className="text-[9px] font-bold uppercase tracking-widest block">
                   Month-end Payout Preview
                 </span>
               </div>
-              <span className="text-2xl font-black font-mono text-amber-450 mt-1 block">
-                <span className="text-amber-600/70 text-lg font-normal mr-0.5">₹</span>
+              <span className="text-2xl font-bold text-amber-400 tracking-tight mt-1.5 block">
+                <span className="text-amber-600/60 text-xl font-light mr-0.5">₹</span>
                 {completedDays * dailyCommitment}
               </span>
-              <span className="text-[9.5px] text-zinc-400 block mt-1">
+              <span className="text-[11px] text-zinc-450 block mt-1">
                 {Math.max(30 - (completedDays + missedDays), 0)} days left — keep submitting!
               </span>
             </div>
@@ -180,41 +180,41 @@ export function WalletCard({
           <div className="flex flex-col justify-between h-full">
             
             {/* Daily Safety Alert Banner */}
-            <div className={`border rounded-xl p-3 text-center flex flex-col items-center justify-center transition-all duration-300 ${
+            <div className={`border rounded-xl p-3 text-left flex flex-col items-start justify-center transition-all duration-300 ${
               hasSolvedToday
-                ? "bg-emerald-500/[0.02] border-emerald-500/10 text-emerald-400"
+                ? "bg-emerald-500/[0.01] border-emerald-500/10 text-emerald-400"
                 : isStakeAtRisk
-                ? "bg-red-500/[0.03] border-red-500/20 text-red-400 animate-pulse"
+                ? "bg-red-500/[0.02] border-red-500/15 text-red-400 animate-pulse"
                 : hasVerifiedPlatform
-                ? "bg-yellow-500/[0.02] border-yellow-500/10 text-yellow-450"
-                : "bg-white/[0.01] border-white/[0.04] text-zinc-500"
+                ? "bg-yellow-500/[0.01] border-yellow-500/10 text-yellow-405"
+                : "bg-white/[0.005] border-white/[0.03] text-zinc-500"
             }`}>
               <div className="flex items-center gap-2">
                 {hasSolvedToday ? (
                   <>
                     <div className="w-4.5 h-4.5 rounded-full bg-emerald-500/10 flex items-center justify-center">
-                      <Check className="w-3 h-3 text-emerald-400" />
+                      <Check className="w-2.5 h-2.5 text-emerald-400" />
                     </div>
-                    <span className="text-xs font-extrabold tracking-wide text-emerald-400">Streak Protected for Today!</span>
+                    <span className="text-xs font-bold tracking-wider text-emerald-400">Streak Protected for Today!</span>
                   </>
                 ) : isStakeAtRisk ? (
                   <>
-                    <AlertTriangle className="w-4.5 h-4.5 text-red-500 animate-bounce" />
-                    <span className="text-xs font-extrabold tracking-wide text-red-400">Action Required: Stake At Risk!</span>
+                    <AlertTriangle className="w-4.5 h-4.5 text-red-505 animate-bounce" />
+                    <span className="text-xs font-bold tracking-wider text-red-400">Action Required: Stake At Risk!</span>
                   </>
                 ) : hasVerifiedPlatform ? (
                   <>
                     <span className="w-1.5 h-1.5 rounded-full bg-yellow-500 animate-ping" />
-                    <span className="text-xs font-extrabold tracking-wide text-yellow-450">Awaiting Daily Coding Sync</span>
+                    <span className="text-xs font-bold tracking-wider text-yellow-450">Awaiting Daily Coding Sync</span>
                   </>
                 ) : (
                   <>
-                    <HelpCircle className="w-4.5 h-4.5 text-zinc-400" />
-                    <span className="text-xs font-bold tracking-wide text-zinc-400">No Profile Connected</span>
+                    <HelpCircle className="w-4.5 h-4.5 text-zinc-500" />
+                    <span className="text-xs font-bold tracking-wider text-zinc-400">No Profile Connected</span>
                   </>
                 )}
               </div>
-              <p className="text-[10px] text-zinc-400 mt-1 leading-normal">
+              <p className="text-[11px] text-zinc-450 mt-1 leading-relaxed">
                 {hasSolvedToday 
                   ? "Daily solution verified on LeetCode/GFG. Locked stake is secure."
                   : isStakeAtRisk

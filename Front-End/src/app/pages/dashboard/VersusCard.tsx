@@ -35,9 +35,9 @@ export function VersusCard({
   return (
     <div className="relative group h-full">
       {/* Background Glow */}
-      <div className="absolute -inset-px bg-gradient-to-r from-violet-500/20 to-fuchsia-500/20 rounded-2xl blur-xl opacity-40 group-hover:opacity-60 transition-opacity duration-500" />
+      <div className="absolute -inset-px bg-gradient-to-r from-indigo-500/10 to-violet-500/10 rounded-2xl blur-xl opacity-20 group-hover:opacity-40 transition-opacity duration-500" />
 
-      <div className="relative bg-[#0F0F13] border border-white/[0.04] rounded-2xl p-5 hover:border-white/10 transition-all duration-300 flex flex-col justify-between h-[249px] min-h-[249px] shadow-xl overflow-hidden">
+      <div className="relative bg-[#0B0C10] border border-white/[0.03] rounded-2xl p-5 hover:border-white/[0.08] transition-all duration-300 flex flex-col justify-between h-[249px] min-h-[249px] shadow-lg overflow-hidden">
         {/* Ambient Grid overlay */}
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808005_1px,transparent_1px),linear-gradient(to_bottom,#80808005_1px,transparent_1px)] bg-[size:14px_24px] pointer-events-none" />
 

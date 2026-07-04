@@ -33,10 +33,10 @@ export function DsaStatsCard({ stats, onboardingComplete = true }: DsaStatsCardP
   const hardStroke = hardPct * circumference;
 
   return (
-    <div className={`relative rounded-2xl border border-white/[0.04] bg-[#0F0F13] p-5 overflow-hidden group hover:border-white/10 transition-all duration-300 h-[249px] min-h-[249px] flex flex-col justify-between ${!onboardingComplete ? 'opacity-40 pointer-events-none' : ''}`}>
+    <div className={`relative rounded-2xl border border-white/[0.03] bg-[#0B0C10] p-5 overflow-hidden group hover:border-white/[0.08] transition-all duration-300 h-[249px] min-h-[249px] flex flex-col justify-between ${!onboardingComplete ? 'opacity-40 pointer-events-none' : ''}`}>
       {/* Premium background effects */}
       <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.002)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.002)_1px,transparent_1px)] bg-[size:20px_20px] pointer-events-none" />
-      <div className="absolute -right-16 -top-16 w-36 h-36 bg-emerald-500/[0.02] rounded-full blur-[40px] pointer-events-none group-hover:bg-emerald-500/[0.04] transition-all duration-300" />
+      <div className="absolute -right-16 -top-16 w-36 h-36 bg-emerald-500/[0.01] rounded-full blur-[40px] pointer-events-none group-hover:bg-emerald-500/[0.03] transition-all duration-300" />
 
       {/* Header */}
       <div className="flex items-center justify-between mb-4 relative z-10">

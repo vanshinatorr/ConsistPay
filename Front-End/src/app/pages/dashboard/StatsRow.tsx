@@ -1,3 +1,4 @@
+import React from "react";
 import { TrendingUp, Flame, CheckCircle2 } from "lucide-react";
 
 interface StatsRowProps {
@@ -19,12 +20,12 @@ export function StatsRow({
       {/* Current Streak */}
       <div className="relative group h-full">
         {/* Glow backdrop */}
-        <div className="absolute -inset-px bg-gradient-to-r from-orange-500 to-red-500 rounded-2xl blur-lg opacity-0 group-hover:opacity-10 transition-opacity duration-500" />
+        <div className="absolute -inset-px bg-gradient-to-r from-orange-500 to-red-500 rounded-2xl blur-lg opacity-0 group-hover:opacity-5 transition-opacity duration-500" />
         
         {/* Card */}
-        <div className="relative h-full bg-[#0F0F13] border border-white/[0.04] rounded-2xl p-5 transition-all duration-300 flex flex-col shadow-lg">
+        <div className="relative h-full bg-[#0B0C10] border border-white/[0.03] rounded-2xl p-5 transition-all duration-300 flex flex-col shadow-[0_8px_30px_rgba(0,0,0,0.3)] hover:border-white/[0.07]">
           <div className="flex items-center justify-between">
-            <span className="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest">
+            <span className="text-[10px] font-extrabold text-zinc-500 uppercase tracking-widest">
               Current Streak
             </span>
             <div className="p-2 bg-orange-500/10 border border-orange-500/20 rounded-xl text-orange-400">
@@ -33,7 +34,7 @@ export function StatsRow({
           </div>
 
           <div className="flex-1 flex flex-col justify-center my-3">
-            <div className="text-5xl font-bold text-white tracking-tight leading-none">
+            <div className="text-4xl font-bold text-white tracking-tight leading-none">
               {onboardingComplete ? currentStreak : "-"}
             </div>
             <p className="text-xs text-zinc-500 mt-2">
@@ -46,12 +47,12 @@ export function StatsRow({
       {/* Problems Solved */}
       <div className="relative group h-full">
         {/* Glow backdrop */}
-        <div className="absolute -inset-px bg-gradient-to-r from-emerald-500 to-green-500 rounded-2xl blur-lg opacity-0 group-hover:opacity-10 transition-opacity duration-500" />
+        <div className="absolute -inset-px bg-gradient-to-r from-emerald-500 to-green-500 rounded-2xl blur-lg opacity-0 group-hover:opacity-5 transition-opacity duration-500" />
         
         {/* Card */}
-        <div className="relative h-full bg-[#0F0F13] border border-white/[0.04] rounded-2xl p-5 transition-all duration-300 flex flex-col shadow-lg">
+        <div className="relative h-full bg-[#0B0C10] border border-white/[0.03] rounded-2xl p-5 transition-all duration-300 flex flex-col shadow-[0_8px_30px_rgba(0,0,0,0.3)] hover:border-white/[0.07]">
           <div className="flex items-center justify-between">
-            <span className="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest">
+            <span className="text-[10px] font-extrabold text-zinc-500 uppercase tracking-widest">
               Problems Solved
             </span>
             <div className="p-2 bg-emerald-500/10 border border-emerald-500/20 rounded-xl text-emerald-400">
@@ -60,7 +61,7 @@ export function StatsRow({
           </div>
 
           <div className="flex-1 flex flex-col justify-center my-3">
-            <div className="text-5xl font-bold text-white tracking-tight leading-none">
+            <div className="text-4xl font-bold text-white tracking-tight leading-none">
               {onboardingComplete ? completedDays : "-"}
             </div>
             <p className="text-xs text-zinc-500 mt-2">
@@ -73,12 +74,12 @@ export function StatsRow({
       {/* Consistency Score */}
       <div className="relative group h-full">
         {/* Glow backdrop */}
-        <div className="absolute -inset-px bg-gradient-to-r from-violet-500 to-purple-500 rounded-2xl blur-lg opacity-0 group-hover:opacity-10 transition-opacity duration-500" />
+        <div className="absolute -inset-px bg-gradient-to-r from-violet-500 to-purple-500 rounded-2xl blur-lg opacity-0 group-hover:opacity-5 transition-opacity duration-500" />
         
         {/* Card */}
-        <div className="relative h-full bg-[#0F0F13] border border-white/[0.04] rounded-2xl p-5 transition-all duration-300 flex flex-col shadow-lg">
+        <div className="relative h-full bg-[#0B0C10] border border-white/[0.03] rounded-2xl p-5 transition-all duration-300 flex flex-col shadow-[0_8px_30px_rgba(0,0,0,0.3)] hover:border-white/[0.07]">
           <div className="flex items-center justify-between">
-            <span className="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest">
+            <span className="text-[10px] font-extrabold text-zinc-500 uppercase tracking-widest">
               Consistency Score
             </span>
             <div className="p-2 bg-violet-500/10 border border-violet-500/20 rounded-xl text-violet-400">
@@ -87,7 +88,7 @@ export function StatsRow({
           </div>
 
           <div className="flex-1 flex flex-col justify-center my-3">
-            <div className="text-5xl font-bold text-white tracking-tight leading-none">
+            <div className="text-4xl font-bold text-white tracking-tight leading-none">
               {onboardingComplete ? `${consistencyScore}%` : "-"}
             </div>
             <p className="text-xs text-zinc-500 mt-2">

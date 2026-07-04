@@ -593,7 +593,7 @@ export function Dashboard() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#0F0F13] flex items-center justify-center">
+      <div className="min-h-screen bg-[#06070D] flex items-center justify-center">
         <div className="text-center">
           <div className="w-12 h-12 border-2 border-violet-500 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
           <p className="text-zinc-400 text-sm">Loading your dashboard...</p>
@@ -603,7 +603,7 @@ export function Dashboard() {
   }
 
   return (
-    <div className="min-h-screen text-white" style={{ backgroundColor: "#0F0F13" }}>
+    <div className="min-h-screen text-white" style={{ backgroundColor: "#06070D" }}>
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-0 right-1/4 w-96 h-96 bg-violet-500/10 rounded-full blur-[120px]" />
         <div className="absolute bottom-1/4 left-1/4 w-96 h-96 bg-emerald-500/10 rounded-full blur-[120px]" />
@@ -612,6 +612,31 @@ export function Dashboard() {
       <Navbar initials={initials} plan={userData?.plan} avatar={avatar} isAvatarUrl={isAvatarUrl} />
 
       <main className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+        {/* Welcome & Today's Goal Hero Section */}
+        <div className="mb-8 relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-white/[0.04] pb-6">
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight text-white">
+              Welcome back, {userData?.name || "Geek"} 👋
+            </h1>
+            <p className="text-sm text-zinc-400 mt-1">
+              Here is your consistency story for today.
+            </p>
+          </div>
+
+          {/* Today's Goal Card inside Welcome Hero */}
+          <div className="bg-[#0C0D15]/65 border border-white/[0.03] rounded-2xl px-4.5 py-3 shadow-[0_8px_30px_rgb(0,0,0,0.2)] flex items-center gap-3 select-none">
+            <div className={`w-2.5 h-2.5 rounded-full ${todaySubmission?.count > 0 ? "bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.4)]" : "bg-yellow-500 animate-pulse shadow-[0_0_8px_rgba(245,158,11,0.4)]"}`} />
+            <div>
+              <span className="text-[9px] font-bold text-zinc-550 uppercase tracking-widest block">Today's Goal</span>
+              <span className="text-xs font-semibold text-zinc-200 mt-0.5 block">
+                {todaySubmission?.count > 0 
+                  ? "Goal secured! Today's sync verified."
+                  : "Solve 1 daily problem and sync below."}
+              </span>
+            </div>
+          </div>
+        </div>
 
         {userData && !userData.onboardingComplete && (
           <div className="mb-8 bg-[#121214] border border-white/5 rounded-2xl p-6 relative overflow-hidden shadow-xl hover:border-emerald-500/20 transition-all">
@@ -693,44 +718,12 @@ export function Dashboard() {
           </div>
         )}
 
-        <div className="flex flex-col gap-6 mb-6">
-          {/* Row 1: Stats & Desktop Calendar */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch">
-            <div className="lg:col-span-2">
-              <StatsRow
-                currentStreak={currentStreak}
-                completedDays={userData?.totalProblemsSolved ?? 0}
-                consistencyScore={consistencyScore}
-                onboardingComplete={userData?.onboardingComplete ?? true}
-              />
-            </div>
-            {/* Desktop Only Calendar */}
-            <div className="hidden lg:block lg:col-span-1">
-              <ConsistencyCalendar
-                yearMonths={yearMonths}
-                onboardingComplete={userData?.onboardingComplete ?? true}
-                dayLabels={dayLabels}
-                onPrevMonth={handlePrevMonth}
-                onNextMonth={handleNextMonth}
-                isNextDisabled={isNextDisabled}
-              />
-            </div>
-          </div>
-
-          {/* Row 2: Challenge a Friend Widget */}
-          <DashboardBattleWidget onRefreshRequest={fetchUserData} />
-
-          {/* Row 3: Top Widgets Row (Platforms Connect, Consistency Wallet, Versus Card + DSA Solves Stack) */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch mb-6">
-            {/* Column 1 - Platforms Connect Widget */}
-            <div className="lg:col-span-2">
-              <PlatformsWidget
-                onLinkageChanged={fetchUserData}
-                onboardingComplete={userData?.onboardingComplete ?? true}
-              />
-            </div>
-            {/* Column 2 - Consistency Wallet Card (Core feature centered and prominent with direct Sync & Timer tools) */}
-            <div className="lg:col-span-7">
+        <div className="flex flex-col gap-8 mb-6">
+          
+          {/* SECTION A: Streak Security & Wallet Hub (Primary) */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+            {/* Column 1 - Consistency Wallet (Primary Focus - Left 9 columns) */}
+            <div className="lg:col-span-9">
               <WalletCard
                 plan={userData?.plan}
                 monthlyBudget={monthlyBudget}
@@ -753,26 +746,72 @@ export function Dashboard() {
                 syncLogs={syncLogs}
               />
             </div>
-            {/* Column 3 - Versus Card & DSA Solves Card Stack */}
-            <div className="lg:col-span-3 flex flex-col gap-6">
+
+            {/* Column 2 - Platforms Connect (Tertiary Sidebar - Right 3 columns) */}
+            <div className="lg:col-span-3">
+              <PlatformsWidget
+                onLinkageChanged={fetchUserData}
+                onboardingComplete={userData?.onboardingComplete ?? true}
+              />
+            </div>
+          </div>
+
+          {/* SECTION B: Coding Metrics & Streak History (Secondary) */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch">
+            {/* Column 1 - Stats Row (Total solved, consistency score) */}
+            <div className="lg:col-span-1">
+              <StatsRow
+                currentStreak={currentStreak}
+                completedDays={userData?.totalProblemsSolved ?? 0}
+                consistencyScore={consistencyScore}
+                onboardingComplete={userData?.onboardingComplete ?? true}
+              />
+            </div>
+
+            {/* Column 2 - Consistency Calendar */}
+            <div className="lg:col-span-1">
+              <ConsistencyCalendar
+                yearMonths={yearMonths}
+                onboardingComplete={userData?.onboardingComplete ?? true}
+                dayLabels={dayLabels}
+                onPrevMonth={handlePrevMonth}
+                onNextMonth={handleNextMonth}
+                isNextDisabled={isNextDisabled}
+              />
+            </div>
+
+            {/* Column 3 - Recent Solves Log */}
+            <div className="lg:col-span-1">
+              <RecentSolves recentSolves={recentSolves} />
+            </div>
+          </div>
+
+          {/* SECTION C: Versus & Competitive Battles (Secondary) */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+            {/* Column 1 - Battle Lobby Prompt */}
+            <div className="lg:col-span-9">
+              <DashboardBattleWidget onRefreshRequest={fetchUserData} />
+            </div>
+
+            {/* Column 2 - Versus Card Balance */}
+            <div className="lg:col-span-3">
               <VersusCard
                 plan={userData?.plan}
                 battleBalance={userData?.battleBalance ?? 0}
                 onboardingComplete={userData?.onboardingComplete ?? true}
                 onRefreshRequest={fetchUserData}
               />
+            </div>
+          </div>
+
+          {/* SECTION D: Social Rank & Achievements (Supporting) */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch">
+            {/* Column 1 - Solves Donut chart */}
+            <div className="lg:col-span-1">
               <DsaStatsCard
                 stats={userData?.dsaStats}
                 onboardingComplete={userData?.onboardingComplete ?? true}
               />
-            </div>
-          </div>
-
-          {/* Row 5: Lower Workspace Area (Recent Solves, Leaderboard, and Achievements side-by-side in 1 line) */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch">
-            {/* Column 1 - Recent Solves */}
-            <div className="lg:col-span-1">
-              <RecentSolves recentSolves={recentSolves} />
             </div>
 
             {/* Column 2 - Leaderboard Rank */}
@@ -802,17 +841,6 @@ export function Dashboard() {
             </div>
           </div>
 
-          {/* Row 6: Mobile Only Calendar */}
-          <div className="block lg:hidden">
-            <ConsistencyCalendar
-              yearMonths={yearMonths}
-              onboardingComplete={userData?.onboardingComplete ?? true}
-              dayLabels={dayLabels}
-              onPrevMonth={handlePrevMonth}
-              onNextMonth={handleNextMonth}
-              isNextDisabled={isNextDisabled}
-            />
-          </div>
         </div>
 
         {/* Modals */}
