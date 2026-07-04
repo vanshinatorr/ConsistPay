@@ -641,12 +641,20 @@ export function Dashboard() {
         <div className={`relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-white/[0.04] overflow-hidden transition-all duration-550 ease-in-out ${
           hideWelcome 
             ? "max-h-0 opacity-0 pb-0 mb-0 border-transparent pointer-events-none" 
-            : "max-h-[140px] opacity-100 pb-6 mb-8"
+            : "max-h-[180px] opacity-100 pb-6 mb-8"
         }`}>
           <div>
             <h1 className="text-3xl font-bold tracking-tight text-white">
-              {getGreeting()}, {getFirstName()} 👋
+              👋 {getGreeting()}, {getFirstName()}
             </h1>
+            <p className="text-sm text-zinc-400 mt-1.5 leading-relaxed">
+              {todaySubmission?.count > 0 
+                ? `You're on a ${currentStreak} day streak. Today's commitment is locked and safe! ✨`
+                : currentStreak > 0
+                ? `You're on a ${currentStreak} day streak. Keep solving to protect today's stake. 🎯`
+                : "Ready to start your consistency streak? Solve your first problem today! 🚀"
+              }
+            </p>
           </div>
 
           {/* Today's Goal Card inside Welcome Hero */}
