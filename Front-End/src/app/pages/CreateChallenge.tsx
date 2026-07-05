@@ -388,8 +388,11 @@ export function CreateChallenge() {
                       </form>
                     </div>
                   </div>
+                </div>
+              </div>
+            )}
 
-                {/* ───────────── SCREEN 1: DURATION ───────────── */}
+            {/* ───────────── SCREEN 1: DURATION ───────────── */}
             {screen === "duration" && (
               <div className="animate-in fade-in slide-in-from-right-4 duration-500">
                 <div className="mb-10 text-center sm:text-left">
@@ -433,9 +436,9 @@ export function CreateChallenge() {
                   <button
                     disabled={!selectedDuration}
                     onClick={() => setScreen("stake")}
-                    className={`px-8 py-4 rounded-xl font-bold text-base transition-all duration-300 flex items-center gap-3 w-full sm:w-auto justify-center cursor-pointer
+                    className={`px-8 py-4 rounded-xl font-semibold text-sm tracking-wide transition-all duration-200 flex items-center gap-3 w-full sm:w-auto justify-center
                       ${selectedDuration
-                        ? "bg-zinc-800 dark:bg-white text-white dark:text-black hover:bg-zinc-700 dark:hover:bg-zinc-200 hover:scale-[1.02]"
+                        ? "border border-zinc-300 dark:border-white/20 text-zinc-800 dark:text-white bg-white dark:bg-white/5 hover:bg-zinc-800 dark:hover:bg-white hover:text-white dark:hover:text-zinc-900 hover:border-zinc-800 dark:hover:border-white cursor-pointer"
                         : "bg-zinc-100 dark:bg-white/5 border border-zinc-200 dark:border-white/10 text-zinc-400 dark:text-zinc-600 cursor-not-allowed"
                       }`}
                   >
@@ -518,9 +521,9 @@ export function CreateChallenge() {
                   <button
                     disabled={!stake || stake < 100 || stake > 1000}
                     onClick={() => setScreen("confirm")}
-                    className={`w-full sm:w-auto px-8 py-4 rounded-xl font-bold text-base transition-all duration-300 flex items-center justify-center gap-3 cursor-pointer
+                    className={`w-full sm:w-auto px-8 py-4 rounded-xl font-semibold text-sm tracking-wide transition-all duration-200 flex items-center justify-center gap-3
                       ${stake && stake >= 100 && stake <= 1000
-                        ? "bg-zinc-800 dark:bg-white text-white dark:text-black hover:bg-zinc-700 dark:hover:bg-zinc-200 hover:scale-[1.02]"
+                        ? "border border-zinc-300 dark:border-white/20 text-zinc-800 dark:text-white bg-white dark:bg-white/5 hover:bg-zinc-800 dark:hover:bg-white hover:text-white dark:hover:text-zinc-900 hover:border-zinc-800 dark:hover:border-white cursor-pointer"
                         : "bg-zinc-100 dark:bg-white/5 border border-zinc-200 dark:border-white/10 text-zinc-400 dark:text-zinc-600 cursor-not-allowed"
                       }`}
                   >
@@ -607,32 +610,31 @@ export function CreateChallenge() {
 
                 {userPlan.toLowerCase() !== "pro" ? (
                   /* Premium Feature Lock Card */
-                  <div className="max-w-md mx-auto mb-6 relative overflow-hidden bg-gradient-to-b from-[#1C162E]/70 to-[#0A0712]/70 border border-violet-500/20 rounded-3xl p-6 sm:p-8 text-center shadow-2xl animate-in fade-in zoom-in-95">
-                    <div className="absolute inset-0 bg-gradient-to-br from-violet-500/10 to-transparent pointer-events-none opacity-30" />
+                  <div className="max-w-md mx-auto mb-6 relative overflow-hidden bg-white dark:bg-gradient-to-b dark:from-[#1C162E]/70 dark:to-[#0A0712]/70 border border-zinc-200 dark:border-violet-500/20 rounded-3xl p-6 sm:p-8 text-center shadow-sm dark:shadow-2xl animate-in fade-in zoom-in-95">
                     
                     <div className="relative z-10 flex flex-col items-center">
-                      <div className="w-14 h-14 bg-violet-500/10 border border-violet-500/20 rounded-2xl flex items-center justify-center mb-5">
-                        <Swords className="w-7 h-7 text-violet-400" />
+                      <div className="w-14 h-14 bg-zinc-100 dark:bg-violet-500/10 border border-zinc-200 dark:border-violet-500/20 rounded-2xl flex items-center justify-center mb-5">
+                        <Swords className="w-7 h-7 text-zinc-600 dark:text-violet-400" />
                       </div>
                       
-                      <h3 className="text-xl font-bold text-white mb-3 flex items-center gap-2">
+                      <h3 className="text-xl font-bold text-zinc-900 dark:text-white mb-3">
                         Premium Duel Locked
                       </h3>
                       
-                      <p className="text-zinc-400 text-sm leading-relaxed mb-8 max-w-sm">
-                        Consistency Battles are exclusive to <span className="text-violet-400 font-semibold">ConsistPay Pro</span> members. Upgrade now to challenge friends, protect streaks, and win stakes.
+                      <p className="text-zinc-500 dark:text-zinc-400 text-sm leading-relaxed mb-8 max-w-sm">
+                        Consistency Battles are exclusive to <span className="text-violet-600 dark:text-violet-400 font-semibold">ConsistPay Pro</span> members. Upgrade now to challenge friends, protect streaks, and win stakes.
                       </p>
 
-                      <div className="w-full flex flex-col sm:flex-row gap-4">
+                      <div className="w-full flex flex-col sm:flex-row gap-3">
                         <button
                           onClick={() => setScreen("stake")}
-                          className="flex-1 px-5 py-4 rounded-xl border border-white/10 text-zinc-400 hover:text-white hover:bg-white/5 transition-all text-sm font-bold flex items-center justify-center gap-2"
+                          className="flex-1 px-5 py-3.5 rounded-xl border border-zinc-200 dark:border-white/10 text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:border-zinc-300 dark:hover:bg-white/5 transition-all text-sm font-medium flex items-center justify-center gap-2 cursor-pointer"
                         >
                           <ArrowLeft className="w-4 h-4" /> Change Stakes
                         </button>
                         <button
                           onClick={() => navigate("/pricing")}
-                          className="flex-1 px-6 py-4 rounded-xl font-black bg-gradient-to-r from-violet-600 to-fuchsia-600 hover:from-violet-500 hover:to-fuchsia-500 text-white transition-all shadow-[0_0_25px_rgba(139,92,246,0.4)] hover:scale-[1.02] text-sm flex items-center justify-center gap-2"
+                          className="flex-1 px-6 py-3.5 rounded-xl font-medium border border-zinc-300 dark:border-violet-500/40 text-zinc-700 dark:text-violet-300 bg-white dark:bg-violet-500/10 hover:bg-zinc-800 dark:hover:bg-gradient-to-r dark:from-violet-600 dark:to-fuchsia-600 hover:text-white hover:border-zinc-800 transition-all text-sm flex items-center justify-center gap-2 cursor-pointer"
                         >
                           <Sparkles className="w-4 h-4" /> Upgrade to Pro
                         </button>

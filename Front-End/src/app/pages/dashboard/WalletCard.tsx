@@ -135,7 +135,7 @@ export function WalletCard({
                     const event = new CustomEvent("open-withdraw-modal", { detail: { walletType: "consistency" } });
                     window.dispatchEvent(event);
                   }}
-                  className="px-4 py-2 bg-zinc-800 dark:bg-white hover:bg-zinc-700 dark:hover:bg-zinc-200 text-white dark:text-black text-xs font-bold rounded-lg transition-all active:scale-95 shadow-md shadow-white/5 cursor-pointer"
+                  className="px-4 py-2 bg-zinc-800 dark:bg-white hover:bg-zinc-700 dark:hover:bg-zinc-100 text-white dark:text-zinc-900 text-xs font-semibold rounded-lg transition-colors active:scale-95 cursor-pointer"
                 >
                   Withdraw
                 </button>
@@ -318,7 +318,7 @@ export function WalletCard({
               </div>
 
               {/* Lost Box */}
-              <div className="bg-rose-50 dark:bg-rose-955/20 border border-rose-250 dark:border-rose-500/20 rounded-xl p-3 flex flex-col justify-between hover:border-rose-300 dark:hover:border-rose-500/35 transition-all duration-200 shadow-sm">
+              <div className="bg-rose-50 dark:bg-rose-950/20 border border-rose-250 dark:border-rose-500/20 rounded-xl p-3 flex flex-col justify-between hover:border-rose-300 dark:hover:border-rose-500/35 transition-all duration-200 shadow-sm">
                 <div className="flex items-center gap-1.5">
                   <TrendingDown className="w-3.5 h-3.5 text-rose-600 dark:text-rose-400" />
                   <span className="text-[9.5px] text-rose-600 dark:text-rose-400 font-bold uppercase tracking-wider block">

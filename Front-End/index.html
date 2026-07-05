@@ -8,7 +8,7 @@
       <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
       <script>
         (function() {
-          const theme = localStorage.getItem("app_theme") || localStorage.getItem("admin_theme") || "dark";
+          const theme = localStorage.getItem("app_theme") || localStorage.getItem("admin_theme") || "light";
           if (theme === "dark") {
             document.documentElement.classList.add("dark");
             document.documentElement.classList.remove("light");

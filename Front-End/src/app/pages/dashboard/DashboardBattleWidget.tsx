@@ -307,12 +307,12 @@ export function DashboardBattleWidget({ onRefreshRequest }: DashboardBattleWidge
             <div className="absolute -left-20 -top-20 w-52 h-52 bg-violet-500/10 rounded-full blur-[80px] pointer-events-none" />
             <div className="absolute right-0 top-0 bottom-0 w-[2px] bg-gradient-to-b from-violet-500/30 to-fuchsia-500/30" />
 
-            {/* Monoline Tortoise & Hare Background Illustration */}
-            <div className="absolute right-[20%] md:right-[24%] lg:right-[28%] top-1/2 -translate-y-1/2 pointer-events-none select-none hidden sm:block w-[160px] h-[80px] overflow-hidden">
+            {/* Monoline Tortoise & Hare Background Illustration — dark mode only */}
+            <div className="absolute right-[20%] md:right-[24%] lg:right-[28%] top-1/2 -translate-y-1/2 pointer-events-none select-none hidden dark:block w-[160px] h-[80px] overflow-hidden">
               <img 
                 src="/logo/tortoise-hare.png" 
                 alt="Tortoise and Hare Illustration" 
-                className="w-full h-full object-contain opacity-35 dark:opacity-30 select-none pointer-events-none" 
+                className="w-full h-full object-contain opacity-30 select-none pointer-events-none" 
               />
             </div>
 
@@ -342,10 +342,10 @@ export function DashboardBattleWidget({ onRefreshRequest }: DashboardBattleWidge
             <div className="relative z-10 w-full md:w-auto shrink-0 flex items-center justify-end gap-4 mt-4 md:mt-0">
               <button 
                 onClick={() => navigate('/create-challenge')}
-                className="w-full md:w-auto px-5 py-2.5 rounded-xl font-bold bg-zinc-800 dark:bg-white text-white dark:text-black hover:bg-zinc-700 dark:hover:bg-zinc-200 transition-all flex items-center justify-center gap-2 hover:scale-[1.02] shadow-xl text-sm cursor-pointer"
+                className="w-full md:w-auto px-4 py-2 rounded-lg font-medium border border-zinc-300 dark:border-white/15 text-zinc-700 dark:text-zinc-200 bg-white dark:bg-white/5 hover:bg-zinc-800 dark:hover:bg-white hover:text-white dark:hover:text-zinc-900 hover:border-zinc-800 dark:hover:border-white transition-all text-sm flex items-center justify-center gap-1.5 cursor-pointer"
               >
                 Create Challenge
-                <ArrowRight className="w-4 h-4" />
+                <ArrowRight className="w-3.5 h-3.5" />
               </button>
             </div>
           </div>

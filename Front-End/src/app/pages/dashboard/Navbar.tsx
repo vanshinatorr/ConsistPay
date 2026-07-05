@@ -20,7 +20,7 @@ export function Navbar({ initials, plan = "free", avatar, isAvatarUrl }: NavbarP
 
   // Theme state
   const [theme, setTheme] = useState<"dark" | "light">(() => {
-    return (localStorage.getItem("app_theme") as "dark" | "light") || "dark";
+    return (localStorage.getItem("app_theme") as "dark" | "light") || "light";
   });
 
   useEffect(() => {

@@ -127,7 +127,7 @@ export function VersusCard({
             <div className="flex gap-2.5 mt-auto relative z-10">
               <Link 
                 to="/create-challenge"
-                className="flex-1 py-2 bg-zinc-800 dark:bg-white hover:bg-zinc-700 dark:hover:bg-zinc-200 text-white dark:text-black font-bold rounded-xl transition-all text-xs flex items-center justify-center gap-1.5 hover:scale-[1.01]"
+                className="flex-1 py-2 border border-zinc-200 dark:border-white/10 bg-white dark:bg-white/5 hover:bg-zinc-800 dark:hover:bg-white hover:text-white dark:hover:text-zinc-900 hover:border-zinc-800 dark:hover:border-white text-zinc-700 dark:text-zinc-300 font-medium rounded-lg transition-all text-xs flex items-center justify-center gap-1.5 cursor-pointer"
               >
                 <Plus className="w-3.5 h-3.5" /> Challenge
               </Link>
