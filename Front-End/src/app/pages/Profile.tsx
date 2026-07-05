@@ -1,10 +1,11 @@
 import { Code2, ArrowLeft, Settings, Award, TrendingUp, Zap, Edit3, Flame, Target, Trophy, Gem, Moon, Sparkles, Shield, Coins, Lock, CheckCircle, XCircle, BarChart3 } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { AvatarSelectorModal } from "../components/AvatarSelectorModal";
 import { AwardsCard } from "./dashboard/AwardsCard";
 
 export function Profile() {
+  const navigate = useNavigate();
   const [userData, setUserData] = useState<any>(null);
   const [challengeStats, setChallengeStats] = useState({ total: 0, won: 0 });
   const [loading, setLoading] = useState(true);
@@ -14,6 +15,10 @@ export function Profile() {
   const token = localStorage.getItem("token") || "";
 
   useEffect(() => {
+    if (!token) {
+      navigate("/login");
+      return;
+    }
     const fetchData = async () => {
       try {
         setLoading(true);
@@ -22,6 +27,12 @@ export function Profile() {
           headers: { Authorization: `Bearer ${token}` }
         });
         
+        if (userRes.status === 401) {
+          localStorage.removeItem("token");
+          navigate("/login");
+          return;
+        }
+
         // Fetch Challenge History
         const challengeRes = await fetch(`${API}/api/challenges/history`, {
           headers: { Authorization: `Bearer ${token}` }
@@ -30,6 +41,8 @@ export function Profile() {
         if (userRes.ok) {
           const userJson = await userRes.json();
           setUserData(userJson);
+        } else {
+          navigate("/login");
         }
 
         if (challengeRes.ok) {
@@ -39,12 +52,13 @@ export function Profile() {
         }
       } catch (err) {
         console.error("Error fetching profile data:", err);
+        navigate("/login");
       } finally {
         setLoading(false);
       }
     };
     fetchData();
-  }, [API, token]);
+  }, [API, token, navigate]);
 
   if (loading || !userData) {
     return (

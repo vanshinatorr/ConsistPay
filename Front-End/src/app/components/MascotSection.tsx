@@ -27,7 +27,7 @@ export function MascotSection() {
   ];
 
   return (
-    <section className="px-6 py-20 md:py-24 relative overflow-hidden bg-[#090A0E] w-full border-b border-white/[0.04]">
+    <section className="px-6 py-20 md:py-24 relative overflow-hidden bg-white dark:bg-[#090A0E] w-full border-b border-zinc-200 dark:border-white/[0.04]">
       <div className="max-w-6xl mx-auto relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-[1.15fr_1.2fr] gap-16 items-start">
           
@@ -42,14 +42,14 @@ export function MascotSection() {
                 className="w-60 sm:w-64 md:w-[18rem] h-auto object-contain relative z-10 transition-all duration-500 hover:scale-[1.03] hover:rotate-1"
               />
               {/* 3D Floor Shadow */}
-              <div className="w-40 sm:w-48 h-3.5 bg-white/5 rounded-[100%] blur-[12px] mt-2 opacity-50 relative z-0" />
+              <div className="w-40 sm:w-48 h-3.5 bg-zinc-200 dark:bg-white/5 rounded-[100%] blur-[12px] mt-2 opacity-50 relative z-0" />
             </div>
 
             {/* Interactive Stake & Yield Calculator Widget */}
-            <div className="w-full max-w-sm bg-[#000000] border border-zinc-800 rounded-[2rem] p-6 shadow-2xl relative overflow-hidden">
-              <div className="flex items-center gap-2 mb-6 border-b border-white/[0.04] pb-4">
-                <Calculator className="w-4 h-4 text-zinc-400" />
-                <h4 className="text-xs font-bold text-white uppercase tracking-wider">
+            <div className="w-full max-w-sm bg-white dark:bg-[#000000] border border-zinc-200 dark:border-zinc-800 rounded-[2rem] p-6 shadow-sm dark:shadow-2xl relative overflow-hidden">
+              <div className="flex items-center gap-2 mb-6 border-b border-zinc-150 dark:border-white/[0.04] pb-4">
+                <Calculator className="w-4 h-4 text-zinc-500 dark:text-zinc-400" />
+                <h4 className="text-xs font-bold text-zinc-950 dark:text-white uppercase tracking-wider">
                   Yield & Stake Estimator
                 </h4>
               </div>
@@ -57,8 +57,8 @@ export function MascotSection() {
               {/* Slider 1: Daily Stake */}
               <div className="space-y-3 mb-5">
                 <div className="flex justify-between items-center text-xs">
-                  <span className="text-zinc-400 font-semibold">Daily Commitment Stake</span>
-                  <span className="font-bold text-white text-sm">₹{dailyStake} / day</span>
+                  <span className="text-zinc-500 dark:text-zinc-400 font-semibold">Daily Commitment Stake</span>
+                  <span className="font-bold text-zinc-800 dark:text-white text-sm">₹{dailyStake} / day</span>
                 </div>
                 <input 
                   type="range" 
@@ -67,15 +67,15 @@ export function MascotSection() {
                   step="1"
                   value={stakeIndex} 
                   onChange={(e) => setStakeIndex(Number(e.target.value))}
-                  className="w-full h-1 bg-zinc-800 rounded-lg appearance-none cursor-pointer accent-white"
+                  className="w-full h-1 bg-zinc-200 dark:bg-zinc-800 rounded-lg appearance-none cursor-pointer accent-zinc-800 dark:accent-white"
                 />
               </div>
 
               {/* Slider 2: Streak Target */}
               <div className="space-y-3 mb-6">
                 <div className="flex justify-between items-center text-xs">
-                  <span className="text-zinc-400 font-semibold">Streak Target Goal</span>
-                  <span className="font-bold text-white text-sm">{streakDays} Days</span>
+                  <span className="text-zinc-500 dark:text-zinc-400 font-semibold">Streak Target Goal</span>
+                  <span className="font-bold text-zinc-800 dark:text-white text-sm">{streakDays} Days</span>
                 </div>
                 <input 
                   type="range" 
@@ -84,25 +84,25 @@ export function MascotSection() {
                   step="1"
                   value={streakDays} 
                   onChange={(e) => setStreakDays(Number(e.target.value))}
-                  className="w-full h-1 bg-zinc-800 rounded-lg appearance-none cursor-pointer accent-white"
+                  className="w-full h-1 bg-zinc-200 dark:bg-zinc-800 rounded-lg appearance-none cursor-pointer accent-zinc-800 dark:accent-white"
                 />
               </div>
 
               {/* Output Metrics Panel */}
-              <div className="bg-[#090A0E] border border-zinc-850 rounded-xl p-4 space-y-3.5">
+              <div className="bg-zinc-50 dark:bg-[#090A0E] border border-zinc-200 dark:border-zinc-850 rounded-xl p-4 space-y-3.5">
                 <div className="flex justify-between items-center text-xs">
-                  <span className="text-zinc-500 font-medium">Refundable Deposit</span>
-                  <span className="font-semibold text-white">₹{principal}</span>
+                  <span className="text-zinc-500 dark:text-zinc-500 font-medium">Refundable Deposit</span>
+                  <span className="font-semibold text-zinc-800 dark:text-white">₹{principal}</span>
                 </div>
                 <div className="flex justify-between items-center text-xs">
-                  <span className="text-zinc-505 font-medium flex items-center gap-1">
-                    Est. Slacker Dividend <TrendingUp className="w-3.5 h-3.5 text-emerald-400" />
+                  <span className="text-zinc-500 dark:text-zinc-505 font-medium flex items-center gap-1">
+                    Est. Slacker Dividend <TrendingUp className="w-3.5 h-3.5 text-emerald-500 dark:text-emerald-400" />
                   </span>
-                  <span className="font-semibold text-emerald-450">+₹{estYield}</span>
+                  <span className="font-semibold text-emerald-600 dark:text-emerald-450">+₹{estYield}</span>
                 </div>
-                <div className="flex justify-between items-center text-xs pt-3.5 border-t border-white/[0.04]">
-                  <span className="text-zinc-300 font-bold">Total Return Payout</span>
-                  <span className="font-bold text-white">₹{totalReturn}</span>
+                <div className="flex justify-between items-center text-xs pt-3.5 border-t border-zinc-200 dark:border-white/[0.04]">
+                  <span className="text-zinc-650 dark:text-zinc-300 font-bold">Total Return Payout</span>
+                  <span className="font-bold text-zinc-800 dark:text-white">₹{totalReturn}</span>
                 </div>
               </div>
             </div>
@@ -112,13 +112,13 @@ export function MascotSection() {
           {/* Right Column: Comparative Proof Blocks */}
           <div className="flex flex-col gap-6 lg:pt-4">
             <div>
-              <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest px-3 py-1.5 rounded-lg bg-white/[0.02] border border-white/[0.06] mb-4 inline-block font-mono">
+              <span className="text-[10px] font-bold text-zinc-650 dark:text-zinc-400 uppercase tracking-widest px-3 py-1.5 rounded-lg bg-zinc-105 dark:bg-white/[0.02] border border-zinc-200 dark:border-white/[0.06] mb-4 inline-block font-mono">
                 Systems Comparison
               </span>
-              <h2 className="text-3xl sm:text-4xl font-bold text-white tracking-tight mb-4 leading-tight">
+              <h2 className="text-3xl sm:text-4xl font-bold text-zinc-950 dark:text-white tracking-tight mb-4 leading-tight">
                 Designed for Real Discipline
               </h2>
-              <p className="text-sm text-zinc-450 leading-relaxed max-w-lg font-normal mb-8">
+              <p className="text-sm text-zinc-500 dark:text-zinc-455 leading-relaxed max-w-lg font-normal mb-8">
                 Most platforms fail because self-reporting is easy to skip. We connect directly to your public profiles to verify every solve.
               </p>
             </div>
@@ -127,8 +127,8 @@ export function MascotSection() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 items-stretch">
               
               {/* Box 1: Typical Trackers */}
-              <div className="bg-[#000000]/40 border border-white/[0.03] rounded-2xl p-6 flex flex-col">
-                <h4 className="text-xs font-bold text-zinc-550 uppercase tracking-wider mb-6">
+              <div className="bg-zinc-100/40 dark:bg-[#000000]/40 border border-zinc-205 dark:border-white/[0.03] rounded-2xl p-6 flex flex-col">
+                <h4 className="text-xs font-bold text-zinc-500 dark:text-zinc-555 uppercase tracking-wider mb-6">
                   Typical Habit Apps
                 </h4>
                 <div className="space-y-4 flex-1">
@@ -137,7 +137,7 @@ export function MascotSection() {
                       <div className="w-5 h-5 rounded-full bg-rose-500/10 flex items-center justify-center shrink-0 mt-0.5">
                         <X className="w-3.5 h-3.5 text-rose-500" strokeWidth={3} />
                       </div>
-                      <p className="text-zinc-450 text-xs leading-relaxed font-normal">
+                      <p className="text-zinc-500 dark:text-zinc-450 text-xs leading-relaxed font-normal">
                         {item.typical}
                       </p>
                     </div>
@@ -146,17 +146,17 @@ export function MascotSection() {
               </div>
 
               {/* Box 2: ConsistPay (Highlighted offset card) */}
-              <div className="bg-[#0D0E12] border border-zinc-800 hover:border-zinc-700 rounded-2xl p-6 shadow-xl relative overflow-hidden flex flex-col sm:translate-y-[-8px] transition-colors">
-                <h4 className="text-xs font-bold text-white uppercase tracking-wider mb-6 relative z-10">
+              <div className="bg-white dark:bg-[#0D0E12] border border-zinc-200 dark:border-zinc-800 hover:border-zinc-300 dark:hover:border-zinc-700 rounded-2xl p-6 shadow-md dark:shadow-xl relative overflow-hidden flex flex-col sm:translate-y-[-8px] transition-colors">
+                <h4 className="text-xs font-bold text-zinc-900 dark:text-white uppercase tracking-wider mb-6 relative z-10">
                   ConsistPay
                 </h4>
                 <div className="space-y-4 flex-1 relative z-10">
                   {comparisons.map((item, index) => (
                     <div key={index} className="flex items-start gap-3">
                       <div className="w-5 h-5 rounded-full bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center shrink-0 mt-0.5">
-                        <Check className="w-3.5 h-3.5 text-emerald-450" strokeWidth={3} />
+                        <Check className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-455" strokeWidth={3} />
                       </div>
-                      <p className="text-zinc-200 text-xs leading-relaxed font-semibold">
+                      <p className="text-zinc-800 dark:text-zinc-200 text-xs leading-relaxed font-semibold">
                         {item.consistpay}
                       </p>
                     </div>
