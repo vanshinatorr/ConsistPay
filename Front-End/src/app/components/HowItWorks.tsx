@@ -238,6 +238,7 @@ export function HowItWorks() {
 
         </div>
 
+      </div>
     </section>
   );
 }
