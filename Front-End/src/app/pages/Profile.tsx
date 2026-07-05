@@ -27,32 +27,35 @@ export function Profile() {
           headers: { Authorization: `Bearer ${token}` }
         });
         
+        // Only redirect to login on 401 Unauthorized — not on any other error
         if (userRes.status === 401) {
           localStorage.removeItem("token");
           navigate("/login");
           return;
         }
 
-        // Fetch Challenge History
-        const challengeRes = await fetch(`${API}/api/challenges/history`, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-
         if (userRes.ok) {
           const userJson = await userRes.json();
           setUserData(userJson);
-        } else {
-          navigate("/login");
         }
+        // else: server error (500 etc.) — stay on page, userData stays null, handled below
 
-        if (challengeRes.ok) {
-          const challenges = await challengeRes.json();
-          const won = challenges.filter((c: any) => c.outcome === "WON").length;
-          setChallengeStats({ total: challenges.length, won });
+        // Fetch Challenge History (non-critical, don't block on failure)
+        try {
+          const challengeRes = await fetch(`${API}/api/challenges/history`, {
+            headers: { Authorization: `Bearer ${token}` }
+          });
+          if (challengeRes.ok) {
+            const challenges = await challengeRes.json();
+            const won = challenges.filter((c: any) => c.outcome === "WON").length;
+            setChallengeStats({ total: challenges.length, won });
+          }
+        } catch (_) {
+          // challenge history is optional — ignore errors
         }
       } catch (err) {
         console.error("Error fetching profile data:", err);
-        navigate("/login");
+        // Network error — do NOT redirect to login, just stop loading
       } finally {
         setLoading(false);
       }
@@ -60,10 +63,24 @@ export function Profile() {
     fetchData();
   }, [API, token, navigate]);
 
-  if (loading || !userData) {
+  if (loading) {
     return (
       <div className="min-h-screen bg-[#0D0D0F] flex items-center justify-center">
         <div className="w-12 h-12 border-2 border-violet-500 border-t-transparent rounded-full animate-spin mx-auto" />
+      </div>
+    );
+  }
+
+  if (!userData) {
+    return (
+      <div className="min-h-screen bg-[#0D0D0F] flex flex-col items-center justify-center gap-4">
+        <p className="text-zinc-400 text-sm">Couldn't load profile. Please check your connection.</p>
+        <button
+          onClick={() => window.location.reload()}
+          className="px-4 py-2 bg-violet-500/20 border border-violet-500/30 text-violet-300 rounded-lg text-sm hover:bg-violet-500/30 transition-all"
+        >
+          Retry
+        </button>
       </div>
     );
   }
