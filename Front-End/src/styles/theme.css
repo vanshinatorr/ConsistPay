@@ -202,9 +202,9 @@
 /* ==========================================================================
    ConsistPay Global Light Mode Overrides
    ========================================================================== */
-html:not(.dark) body, 
-html:not(.dark) .min-h-screen,
-html:not(.dark) div[style*="backgroundColor"] {
+/* Pages with class auth-page are excluded from all light mode overrides */
+html:not(.dark) body:not(:has(.auth-page)),
+html:not(.dark) .min-h-screen:not(.auth-page) {
   background-color: #F8F9FA !important;
   background: #F8F9FA !important;
   color: #1F2937 !important;

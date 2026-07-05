@@ -177,7 +177,7 @@ export function Auth() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0A0B10] flex relative overflow-hidden font-sans">
+    <div className="auth-page dark min-h-screen bg-[#0A0B10] flex relative overflow-hidden font-sans">
       <Toaster position="top-center" toastOptions={{ style: { background: '#18181B', color: '#fff', border: '1px solid rgba(255,255,255,0.1)' } }} />
       
       {/* Subtle Premium Background & Grid */}
@@ -188,7 +188,7 @@ export function Auth() {
       </div>
 
       {/* LEFT SIDE - Motivation Panel */}
-      <div className="hidden lg:flex lg:w-1/2 flex-col justify-center px-16 xl:px-24 relative z-10 border-r border-white/[0.04]">
+      <div className="hidden lg:flex lg:w-1/2 flex-col justify-center px-16 xl:px-24 relative z-10 border-r border-white/[0.04] bg-[#0A0B10]">
         <Link to="/" className="flex items-center gap-3 mb-24 w-fit group">
           <img
             src="/logo/brand-logo.png"
