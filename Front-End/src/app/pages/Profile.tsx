@@ -6,9 +6,14 @@ import { AwardsCard } from "./dashboard/AwardsCard";
 
 export function Profile() {
   const navigate = useNavigate();
-  const [userData, setUserData] = useState<any>(null);
+
+  // ── Load cached data instantly from localStorage (set by Dashboard) ──
+  const cachedRaw = localStorage.getItem("consistpay_user_data");
+  const cachedUser = cachedRaw ? JSON.parse(cachedRaw) : null;
+
+  const [userData, setUserData] = useState<any>(cachedUser);
   const [challengeStats, setChallengeStats] = useState({ total: 0, won: 0 });
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(!cachedUser); // skip spinner if cache exists
   const [isAvatarModalOpen, setIsAvatarModalOpen] = useState(false);
 
   const API = import.meta.env.VITE_API_URL;
@@ -21,15 +26,17 @@ export function Profile() {
     }
     const fetchData = async () => {
       try {
-        setLoading(true);
-        // Fetch User Data
-        const userRes = await fetch(`${API}/api/users/me`, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-        
-        // Only redirect to login on 401 Unauthorized — not on any other error
+        // Fetch user + challenge history in parallel for speed
+        const [userRes, challengeRes] = await Promise.all([
+          fetch(`${API}/api/users/me`, { headers: { Authorization: `Bearer ${token}` } }),
+          fetch(`${API}/api/challenges/history`, { headers: { Authorization: `Bearer ${token}` } })
+            .catch(() => null) // challenge history is non-critical
+        ]);
+
+        // Only redirect to login on 401 Unauthorized
         if (userRes.status === 401) {
           localStorage.removeItem("token");
+          localStorage.removeItem("consistpay_user_data");
           navigate("/login");
           return;
         }
@@ -37,25 +44,17 @@ export function Profile() {
         if (userRes.ok) {
           const userJson = await userRes.json();
           setUserData(userJson);
+          localStorage.setItem("consistpay_user_data", JSON.stringify(userJson)); // keep cache fresh
         }
-        // else: server error (500 etc.) — stay on page, userData stays null, handled below
 
-        // Fetch Challenge History (non-critical, don't block on failure)
-        try {
-          const challengeRes = await fetch(`${API}/api/challenges/history`, {
-            headers: { Authorization: `Bearer ${token}` }
-          });
-          if (challengeRes.ok) {
-            const challenges = await challengeRes.json();
-            const won = challenges.filter((c: any) => c.outcome === "WON").length;
-            setChallengeStats({ total: challenges.length, won });
-          }
-        } catch (_) {
-          // challenge history is optional — ignore errors
+        if (challengeRes?.ok) {
+          const challenges = await challengeRes.json();
+          const won = challenges.filter((c: any) => c.outcome === "WON").length;
+          setChallengeStats({ total: challenges.length, won });
         }
       } catch (err) {
         console.error("Error fetching profile data:", err);
-        // Network error — do NOT redirect to login, just stop loading
+        // Network error — do NOT redirect, just keep showing cached data
       } finally {
         setLoading(false);
       }
