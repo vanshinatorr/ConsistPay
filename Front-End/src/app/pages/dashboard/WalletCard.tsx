@@ -143,7 +143,7 @@ export function WalletCard({
                 {onboardingComplete ? Math.round(activeDeposit) : "0"}
               </span>
               <span className="text-[11px] text-zinc-500 dark:text-zinc-450 block mt-1 leading-normal font-normal">
-                Released daily upon successful solves. Missed days forfeit ₹{dailyCommitment} from this pool.
+                Missed days forfeit ₹{dailyCommitment} from this pool.
               </span>
             </div>
 
