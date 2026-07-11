@@ -55,7 +55,7 @@ export function WalletCard({
   const hasSolvedToday = todaySubmissionsCount > 0;
   const verifiedPlatforms = linkedPlatforms.filter((p) => p.isVerified);
   const hasVerifiedPlatform = verifiedPlatforms.length > 0;
-  const isStakeAtRisk = onboardingComplete && hasVerifiedPlatform && !hasSolvedToday && (timeLeft?.h || 0) < 2;
+  const isStakeAtRisk = onboardingComplete && hasVerifiedPlatform && !hasSolvedToday && (timeLeft ? (timeLeft.h === 0 && timeLeft.m < 30) : false);
 
   const getPlanRangeString = () => {
     if (!planExpiresAt) return "Not Started";
@@ -222,7 +222,7 @@ export function WalletCard({
                 {hasSolvedToday 
                   ? "Daily solution verified on LeetCode/GFG. Locked stake is secure."
                   : isStakeAtRisk
-                  ? "Less than 2 hours remaining! Submit a solution now to prevent stake loss."
+                  ? "Less than 30 minutes remaining! Submit a solution now to prevent stake loss."
                   : hasVerifiedPlatform
                   ? "Solve 1 daily problem on linked profiles, then hit sync to secure."
                   : "Link your profiles in the left console to enable daily verification."
