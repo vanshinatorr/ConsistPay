@@ -125,16 +125,16 @@ export function ConsistencyCalendar({
         {/* Glow backdrop */}
         <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 to-teal-500/5 rounded-2xl blur-lg opacity-0 group-hover/card:opacity-100 transition-opacity pointer-events-none" />
 
-        <div className="relative bg-[#0F0F13] border border-white/[0.04] rounded-2xl p-4 flex flex-col justify-between h-full shadow-lg transition-all">
+        <div className="relative bg-white dark:bg-[#0F0F13] border border-zinc-200 dark:border-white/[0.04] rounded-2xl p-4 flex flex-col justify-between h-full shadow-lg transition-all">
           
           <div className="flex items-center justify-between mb-2">
-            <span className="text-[10px] font-bold text-zinc-400 font-mono tracking-wider select-none">
+            <span className="text-[10px] font-bold text-zinc-550 dark:text-zinc-400 font-mono tracking-wider select-none">
               {yearLabel}
             </span>
             <div className="flex items-center gap-1">
               <button
                 onClick={onPrevMonth}
-                className="p-1 rounded bg-white/5 border border-white/[0.04] hover:bg-white/10 transition-colors text-zinc-400 hover:text-white"
+                className="p-1 rounded bg-zinc-100 dark:bg-white/5 border border-zinc-200 dark:border-white/[0.04] hover:bg-zinc-200 dark:hover:bg-white/10 transition-colors text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white"
               >
                 <ChevronLeft className="w-3.5 h-3.5" />
               </button>
@@ -142,7 +142,7 @@ export function ConsistencyCalendar({
               <button
                 onClick={onNextMonth}
                 disabled={isNextDisabled}
-                className="p-1 rounded bg-white/5 border border-white/[0.04] hover:bg-white/10 transition-colors text-zinc-400 hover:text-white disabled:opacity-30 disabled:pointer-events-none"
+                className="p-1 rounded bg-zinc-100 dark:bg-white/5 border border-zinc-200 dark:border-white/[0.04] hover:bg-zinc-200 dark:hover:bg-white/10 transition-colors text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white disabled:opacity-30 disabled:pointer-events-none"
               >
                 <ChevronRight className="w-3.5 h-3.5" />
               </button>
@@ -183,16 +183,15 @@ export function ConsistencyCalendar({
                               className={`
                                 group relative w-[10.5px] h-[10.5px] rounded-[1.5px] transition-all duration-200
                                 ${cell.status === "completed" ? "hover:scale-125 cursor-pointer hover:z-50" : ""}
-                                
                                 ${
                                   cell.status === "completed"
                                     ? greenClass
                                     : cell.status === "missed"
                                     ? "bg-rose-500/25 border border-rose-500/40 hover:bg-rose-500/40"
                                     : cell.status === "pending" || cell.status === "inactive"
-                                    ? "bg-[#27272a] border border-[#3f3f46]/30 hover:bg-[#3f3f46]"
+                                    ? "bg-zinc-100 dark:bg-[#27272a] border border-zinc-200 dark:border-[#3f3f46]/30 hover:bg-zinc-200 dark:hover:bg-[#3f3f46]"
                                     : cell.status === "future"
-                                    ? "bg-[#27272a]/30 border border-[#3f3f46]/10"
+                                    ? "bg-zinc-100/30 dark:bg-[#27272a]/30 border border-zinc-200/10 dark:border-[#3f3f46]/10"
                                     : "bg-transparent"
                                 }
                               `}

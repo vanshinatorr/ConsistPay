@@ -135,7 +135,7 @@ export function WalletCard({
                     const event = new CustomEvent("open-withdraw-modal", { detail: { walletType: "consistency" } });
                     window.dispatchEvent(event);
                   }}
-                  className="px-4 py-2 bg-zinc-800 dark:bg-white hover:bg-zinc-700 dark:hover:bg-zinc-100 text-white dark:text-zinc-900 text-xs font-semibold rounded-lg transition-colors active:scale-95 cursor-pointer"
+                  className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-white dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-100 text-xs font-semibold rounded-lg transition-all cursor-pointer shadow-sm shadow-emerald-600/10"
                 >
                   Withdraw
                 </button>
@@ -264,14 +264,14 @@ export function WalletCard({
                             ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-600 dark:text-emerald-400 cursor-default"
                             : syncLoading
                             ? "bg-zinc-100 dark:bg-white/[0.02] border-zinc-200 dark:border-white/[0.04] text-zinc-500 dark:text-zinc-550 cursor-not-allowed"
-                            : "bg-zinc-800 dark:bg-white text-white dark:text-black hover:bg-zinc-700 dark:hover:bg-zinc-200 border-zinc-800 dark:border-white active:scale-95 shadow-md shadow-white/5 hover:scale-[1.01]"
+                            : "bg-violet-600 hover:bg-violet-500 text-white border-violet-600 dark:bg-white dark:text-black dark:border-white dark:hover:bg-zinc-200 active:scale-95 shadow-sm shadow-violet-600/10 hover:scale-[1.01]"
                         }`}
                       >
                         {hasSolvedToday ? (
                           <>Synced</>
                         ) : (
                           <>
-                            <RefreshCw className={`w-3.5 h-3.5 ${syncLoading ? "animate-spin text-zinc-500" : "text-emerald-500"}`} />
+                            <RefreshCw className={`w-3.5 h-3.5 ${syncLoading ? "animate-spin text-zinc-500" : "text-white dark:text-emerald-500"}`} />
                             {syncLoading ? "Verifying..." : "Sync Solves"}
                           </>
                         )}

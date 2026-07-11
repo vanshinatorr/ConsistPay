@@ -48,6 +48,7 @@ const syncUserStreak = async (userOrId) => {
     activeSyncs.add(userIdStr);
 
     try {
+      let hasChanges = false;
       const todayStr = new Date().toLocaleDateString("en-CA", { timeZone: "Asia/Kolkata" }); // YYYY-MM-DD
       
       // Determine start date for consistency checks (from onboarding completion or user registration)
@@ -66,7 +67,43 @@ const syncUserStreak = async (userOrId) => {
       }
 
       // Fetch all submissions for the user to evaluate in-memory (O(1) checks per day)
-      const submissions = await Submission.find({ userId: user._id });
+      let submissions = await Submission.find({ userId: user._id });
+
+      // Clean up conflicting missed submissions (where a completed solve also exists on that day)
+      // or missed submissions created for today (since today is still active)
+      const datesWithCompleted = new Set();
+      submissions.forEach((sub) => {
+        if (sub.status === "completed") {
+          datesWithCompleted.add(sub.date);
+        }
+      });
+
+      const submissionsToDelete = [];
+      let refundedAmount = 0;
+      const filteredSubmissions = [];
+
+      submissions.forEach((sub) => {
+        const isTodayMiss = sub.status === "missed" && sub.date === todayStr;
+        const isDuplicateMiss = sub.status === "missed" && datesWithCompleted.has(sub.date);
+
+        if (isTodayMiss || isDuplicateMiss) {
+          submissionsToDelete.push(sub._id);
+          if (sub.deductionProcessed) {
+            refundedAmount += (user.dailyCommitment || 0);
+          }
+        } else {
+          filteredSubmissions.push(sub);
+        }
+      });
+
+      if (submissionsToDelete.length > 0) {
+        await Submission.deleteMany({ _id: { $in: submissionsToDelete } });
+        console.log(`[StreakHelper] Cleaned up ${submissionsToDelete.length} conflicting/today missed submissions. Refunded ₹${refundedAmount} to activeDeposit.`);
+        user.activeDeposit = (user.activeDeposit || 0) + refundedAmount;
+        hasChanges = true;
+      }
+
+      submissions = filteredSubmissions;
       const submissionsMap = new Map();
 
       submissions.forEach((sub) => {
@@ -84,7 +121,7 @@ const syncUserStreak = async (userOrId) => {
       let graceCoins = user.graceCoins || 0;
       let activeDeposit = user.activeDeposit || 0;
       let balance = user.balance || 0;
-      let unprotectedMisses = user.currentCycleUnprotectedMisses || 0;
+      let unprotectedMisses = 0; // Recalculated from 0 inside the day-by-day loop
       let maxStreak = user.maxStreak || 0;
       let earnedGraceCoinThisStreak = false;
 
@@ -115,48 +152,51 @@ const syncUserStreak = async (userOrId) => {
           }
         } else {
           // Missed this day
-          let missedSub = sub;
-          if (!missedSub) {
-            missedSub = await Submission.create({
-              userId: user._id,
-              problemName: "No Submission",
-              platform: "Unknown",
-              date: cursorStr,
-              status: "missed",
-              accepted: false,
-              isFallback: true,
-              deductionProcessed: false
-            });
-            submissionsMap.set(cursorStr, missedSub);
-          }
-
-          // Process stake deduction if they had an active plan on this date and it wasn't processed yet
-          if (hasActivePlan && !missedSub.deductionProcessed) {
-            const deduction = Math.min(activeDeposit, user.dailyCommitment || 0);
-            if (deduction > 0) {
-              activeDeposit -= deduction;
-              missedSub.deductionProcessed = true;
-              await missedSub.save();
-              console.log(`[StreakHelper] Stake deduction of ₹${deduction} executed retroactively for missed date ${cursorStr}`);
-            }
-          }
-
-          // Streak breaking / grace coin logic (apply only to completed past days)
           if (cursorStr !== todayStr) {
-            if (currentStreak > 0) {
-              if (graceCoins > 0) {
-                graceCoins -= 1;
-                // Streak is protected!
-              } else {
-                currentStreak = 0;
-                unprotectedMisses += 1;
+            let missedSub = sub;
+            if (!missedSub) {
+              missedSub = await Submission.create({
+                userId: user._id,
+                problemName: "No Submission",
+                platform: "Unknown",
+                date: cursorStr,
+                status: "missed",
+                accepted: false,
+                isFallback: true,
+                deductionProcessed: false,
+                graceCoinApplied: false
+              });
+              submissionsMap.set(cursorStr, missedSub);
+            }
+
+            // Process stake deduction and grace coin application if they had an active plan on this date and it wasn't processed yet
+            if (hasActivePlan && !missedSub.deductionProcessed) {
+              const deduction = Math.min(activeDeposit, user.dailyCommitment || 0);
+              if (deduction > 0) {
+                activeDeposit -= deduction;
+                missedSub.deductionProcessed = true;
+                
+                // Apply grace coin if available to protect streak
+                if (graceCoins > 0) {
+                  graceCoins -= 1;
+                  missedSub.graceCoinApplied = true;
+                  console.log(`[StreakHelper] Retroactive miss on date ${cursorStr} protected by Grace Coin. Decremented coin.`);
+                } else {
+                  missedSub.graceCoinApplied = false;
+                }
+                
+                await missedSub.save();
+                console.log(`[StreakHelper] Stake deduction of ₹${deduction} executed retroactively for missed date ${cursorStr}`);
               }
+            }
+
+            // Streak breaking / grace coin logic based on graceCoinApplied
+            if (missedSub.graceCoinApplied) {
+              // Streak is protected! (currentStreak is preserved)
             } else {
-              if (graceCoins > 0) {
-                graceCoins -= 1;
-              } else {
-                unprotectedMisses += 1;
-              }
+              // Streak is broken
+              currentStreak = 0;
+              unprotectedMisses += 1;
             }
           }
         }
@@ -181,6 +221,7 @@ const syncUserStreak = async (userOrId) => {
 
       // Save changes if there's any state delta
       if (
+        hasChanges ||
         user.streak !== currentStreak ||
         user.graceCoins !== graceCoins ||
         user.activeDeposit !== activeDeposit ||

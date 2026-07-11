@@ -73,6 +73,10 @@ const submissionSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    graceCoinApplied: {
+      type: Boolean,
+      default: false,
+    },
   },
   { timestamps: true }
 );

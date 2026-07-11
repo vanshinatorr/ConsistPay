@@ -1,81 +1,78 @@
 @custom-variant dark (&:is(.dark *));
 
+/* =============================================================================
+   ConsistPay Design System — CSS Custom Properties
+   Theme toggle sets .dark or .light class on <html> element
+   ============================================================================= */
+
 :root {
   --font-size: 16px;
-  --background: #ffffff;
-  --foreground: oklch(0.145 0 0);
-  --card: #ffffff;
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
+  --radius: 0.625rem;
+
+  /* Light Mode Tokens */
+  --background: #F8FAFC;
+  --surface:    #FFFFFF;
+  --surface-2:  #F1F5F9;
+  --surface-3:  #E2E8F0;
+  --border:     rgba(0,0,0,0.08);
+  --border-2:   rgba(0,0,0,0.05);
+  --foreground: #0F172A;
+  --muted:      #475569;
+  --subtle:     #94A3B8;
+
+  /* shadcn compat */
+  --card: #FFFFFF;
+  --card-foreground: #0F172A;
+  --popover: #FFFFFF;
+  --popover-foreground: #0F172A;
   --primary: #030213;
-  --primary-foreground: oklch(1 0 0);
-  --secondary: oklch(0.95 0.0058 264.53);
-  --secondary-foreground: #030213;
-  --muted: #ececf0;
-  --muted-foreground: #717182;
-  --accent: #e9ebef;
+  --primary-foreground: #FFFFFF;
+  --secondary: #F1F5F9;
+  --secondary-foreground: #0F172A;
+  --muted-foreground: #64748B;
+  --accent: #E9EBEF;
   --accent-foreground: #030213;
-  --destructive: #d4183d;
-  --destructive-foreground: #ffffff;
-  --border: rgba(0, 0, 0, 0.1);
+  --destructive: #D4183D;
+  --destructive-foreground: #FFFFFF;
   --input: transparent;
-  --input-background: #f3f3f5;
-  --switch-background: #cbced4;
+  --input-background: #F3F3F5;
+  --switch-background: #CBD5E1;
+  --ring: #CBD5E1;
   --font-weight-medium: 500;
   --font-weight-normal: 400;
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
-  --radius: 0.625rem;
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: #030213;
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
 }
 
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.145 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.145 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.985 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
+  /* Dark Mode Tokens */
+  --background: #0A0B10;
+  --surface:    #0F1018;
+  --surface-2:  #131521;
+  --surface-3:  #1A1C2A;
+  --border:     rgba(255,255,255,0.06);
+  --border-2:   rgba(255,255,255,0.04);
+  --foreground: #F8FAFC;
+  --muted:      #94A3B8;
+  --subtle:     #475569;
+
+  --card: #0F1018;
+  --card-foreground: #F8FAFC;
+  --popover: #0F1018;
+  --popover-foreground: #F8FAFC;
+  --primary: #F8FAFC;
+  --primary-foreground: #0F1018;
+  --secondary: #1A1C2A;
+  --secondary-foreground: #F8FAFC;
+  --muted-foreground: #94A3B8;
+  --accent: #1A1C2A;
+  --accent-foreground: #F8FAFC;
   --destructive: oklch(0.396 0.141 25.723);
   --destructive-foreground: oklch(0.637 0.237 25.331);
-  --border: oklch(0.269 0 0);
-  --input: oklch(0.269 0 0);
-  --ring: oklch(0.439 0 0);
+  --input: #1A1C2A;
+  --input-background: #0F1018;
+  --switch-background: #2D3748;
+  --ring: #2D3748;
   --font-weight-medium: 500;
   --font-weight-normal: 400;
-  --chart-1: oklch(0.488 0.243 264.376);
-  --chart-2: oklch(0.696 0.17 162.48);
-  --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(0.269 0 0);
-  --sidebar-ring: oklch(0.439 0 0);
 }
 
 @theme inline {
@@ -89,7 +86,7 @@
   --color-primary-foreground: var(--primary-foreground);
   --color-secondary: var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);
-  --color-muted: var(--muted);
+  --color-muted: var(--secondary);
   --color-muted-foreground: var(--muted-foreground);
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
@@ -100,251 +97,156 @@
   --color-input-background: var(--input-background);
   --color-switch-background: var(--switch-background);
   --color-ring: var(--ring);
-  --color-chart-1: var(--chart-1);
-  --color-chart-2: var(--chart-2);
-  --color-chart-3: var(--chart-3);
-  --color-chart-4: var(--chart-4);
-  --color-chart-5: var(--chart-5);
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
-  --color-sidebar: var(--sidebar);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-ring: var(--sidebar-ring);
 }
 
 @layer base {
-  * {
-    @apply border-border outline-ring/50;
-  }
-
-  body {
-    @apply bg-background text-foreground;
-  }
-
-  /**
-  * Default typography styles for HTML elements (h1-h4, p, label, button, input).
-  * These are in @layer base, so Tailwind utility classes (like text-sm, text-lg) automatically override them.
-  */
-
-  html {
-    font-size: var(--font-size);
-  }
-
-  h1 {
-    font-size: var(--text-2xl);
-    font-weight: var(--font-weight-medium);
-    line-height: 1.5;
-  }
-
-  h2 {
-    font-size: var(--text-xl);
-    font-weight: var(--font-weight-medium);
-    line-height: 1.5;
-  }
-
-  h3 {
-    font-size: var(--text-lg);
-    font-weight: var(--font-weight-medium);
-    line-height: 1.5;
-  }
-
-  h4 {
-    font-size: var(--text-base);
-    font-weight: var(--font-weight-medium);
-    line-height: 1.5;
-  }
-
-  label {
-    font-size: var(--text-base);
-    font-weight: var(--font-weight-medium);
-    line-height: 1.5;
-  }
-
-  button {
-    font-size: var(--text-base);
-    font-weight: var(--font-weight-medium);
-    line-height: 1.5;
-  }
-
-  input {
-    font-size: var(--text-base);
-    font-weight: var(--font-weight-normal);
-    line-height: 1.5;
-  }
+  * { @apply border-border outline-ring/50; }
+  body { @apply bg-background text-foreground; }
+  html { font-size: var(--font-size); }
+  h1 { font-size: var(--text-2xl); font-weight: var(--font-weight-medium); line-height: 1.5; }
+  h2 { font-size: var(--text-xl);  font-weight: var(--font-weight-medium); line-height: 1.5; }
+  h3 { font-size: var(--text-lg);  font-weight: var(--font-weight-medium); line-height: 1.5; }
+  h4 { font-size: var(--text-base); font-weight: var(--font-weight-medium); line-height: 1.5; }
+  label  { font-size: var(--text-base); font-weight: var(--font-weight-medium); line-height: 1.5; }
+  button { font-size: var(--text-base); font-weight: var(--font-weight-medium); line-height: 1.5; }
+  input  { font-size: var(--text-base); font-weight: var(--font-weight-normal);  line-height: 1.5; }
 }
 
-/* Custom Scrollbar Styles for premium desktop-app feel */
-.custom-scrollbar::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
+/* Premium Scrollbar */
+.custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+.custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+.custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 9999px; }
+.custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.18); }
 
-.custom-scrollbar::-webkit-scrollbar-track {
-  background: transparent;
-}
+/* =============================================================================
+   PREMIUM LIGHT MODE — Automatic Global Surface Overrides
+   Scoped to: html.light AND auth-page NOT present in DOM
+   Uses :has() selector (Chrome 105+, Safari 15.4+, Firefox 121+)
+   ============================================================================= */
 
-.custom-scrollbar::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.08);
-  border-radius: 9999px;
-}
-
-.custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.18);
-}
-
-/* ==========================================================================
-   ConsistPay Global Light Mode Overrides
-   ========================================================================== */
-/* Pages with class auth-page are excluded from all light mode overrides */
-html:not(.dark) body:not(:has(.auth-page)),
-html:not(.dark) .min-h-screen:not(.auth-page) {
-  background-color: #F8F9FA !important;
-  background: #F8F9FA !important;
-  color: #1F2937 !important;
-}
-
-html:not(.dark) h1,
-html:not(.dark) h2,
-html:not(.dark) h3,
-html:not(.dark) h4,
-html:not(.dark) h5,
-html:not(.dark) h6,
-html:not(.dark) .text-white,
-html:not(.dark) .text-zinc-100,
-html:not(.dark) .text-zinc-200 {
-  color: #111827 !important;
-}
-
-html:not(.dark) .text-zinc-300,
-html:not(.dark) .text-zinc-400 {
-  color: #374151 !important;
-}
-
-html:not(.dark) .text-zinc-550,
-html:not(.dark) .text-zinc-500 {
-  color: #6B7280 !important;
-}
-
-/* Nav Bar container overrides */
-html:not(.dark) nav.sticky,
-html:not(.dark) nav,
-html:not(.dark) header {
-  background-color: rgba(255, 255, 255, 0.8) !important;
-  border-color: #E5E7EB !important;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
-}
-
-html:not(.dark) nav span, 
-html:not(.dark) nav a,
-html:not(.dark) header h1,
-html:not(.dark) header p {
-  color: #4B5563 !important;
-}
-
-html:not(.dark) nav a.text-violet-300,
-html:not(.dark) header span {
-  color: #6D28D9 !important;
-}
-
-/* Sidebar/Footer, cards, and modal components */
-html:not(.dark) [class*="bg-white/[0.02]"],
-html:not(.dark) [class*="bg-white/[0.01]"],
-html:not(.dark) [class*="bg-white/[0.03]"],
-html:not(.dark) [class*="bg-[#0c0c0f]" i],
-html:not(.dark) [class*="bg-[#131316]" i],
-html:not(.dark) [class*="bg-[#0f0f13]" i],
-html:not(.dark) [class*="bg-zinc-950"],
-html:not(.dark) [class*="bg-[#0b0c10]" i],
-html:not(.dark) [class*="bg-[#0a0b10]" i],
-html:not(.dark) [class*="bg-[#0d0e12]" i],
-html:not(.dark) [class*="bg-[#0e0f14]" i],
-html:not(.dark) [class*="bg-[#12131c]" i],
-html:not(.dark) [class*="bg-[#161720]" i],
-html:not(.dark) [class*="bg-[#07070a]" i],
-html:not(.dark) [class*="bg-[#0f0f13]/95" i],
-html:not(.dark) [class*="bg-[#0c0d15]" i],
-html:not(.dark) [class*="bg-[#141522]" i],
-html:not(.dark) [class*="bg-[#0f1018]" i],
-html:not(.dark) [class*="bg-[#06080d]" i],
-html:not(.dark) [class*="bg-[#0d0d0f]" i],
-html:not(.dark) [class*="bg-white/5"] {
-  background-color: #FFFFFF !important;
-  background: #FFFFFF !important;
+/* 1. Page backgrounds */
+html.light:not(:has(.auth-page)) body,
+html.light:not(:has(.auth-page)) .min-h-screen,
+html.light:not(:has(.auth-page)) [class*="bg-[#0a0b10]"],
+html.light:not(:has(.auth-page)) [class*="bg-[#0d0d0f]"],
+html.light:not(:has(.auth-page)) [class*="bg-[#0c0c0f]"],
+html.light:not(:has(.auth-page)) [class*="bg-[#07070a]"],
+html.light:not(:has(.auth-page)) [class*="bg-[#06080d]"],
+html.light:not(:has(.auth-page)) [class*="bg-black"]:not([class*="from-"]):not([class*="via-"]) {
+  background-color: var(--background) !important;
   background-image: none !important;
-  border-color: #E5E7EB !important;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02), 0 4px 6px -1px rgba(0, 0, 0, 0.01) !important;
+  color: var(--foreground) !important;
 }
 
-/* Borders */
-html:not(.dark) [class*="border-white/[0.03]"],
-html:not(.dark) [class*="border-white/[0.04]"],
-html:not(.dark) [class*="border-white/[0.06]"],
-html:not(.dark) [class*="border-white/[0.08]"],
-html:not(.dark) [class*="border-white/10"],
-html:not(.dark) [class*="border-white/5"],
-html:not(.dark) [class*="border-zinc-800"] {
-  border-color: #E5E7EB !important;
-}
-
-/* Consistency Contribution Grid adjustments */
-html:not(.dark) .ConsistencyCalendar, 
-html:not(.dark) .consistency-grid, 
-html:not(.dark) rect[fill="rgba(255, 255, 255, 0.03)"],
-html:not(.dark) [class*="bg-white/5"] {
-  background-color: #F3F4F6 !important;
-  border-color: #E5E7EB !important;
-}
-
-/* Notifications overlay dropdown box */
-html:not(.dark) [class*="bg-[#0f0f13]" i].absolute.right-0 {
-  background-color: #FFFFFF !important;
-  border-color: #E5E7EB !important;
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.03) !important;
-}
-
-/* Buttons in light mode */
-html:not(.dark) [class*="bg-white/5"][class*="border-white/[0.04]"]:hover {
-  background-color: #F3F4F6 !important;
-}
-
-/* Additional card inner backgrounds and timer cells in light mode */
-html:not(.dark) [class*="bg-black/30"],
-html:not(.dark) [class*="bg-[#0a0b10]/80" i],
-html:not(.dark) [class*="bg-white/5"][class*="border"],
-html:not(.dark) [class*="bg-white/10"] {
-  background-color: #F3F4F6 !important;
-  background: #F3F4F6 !important;
+/* 2. Card surfaces — dark inner panels become clean white cards */
+html.light:not(:has(.auth-page)) [class*="bg-[#0f0f13]"],
+html.light:not(:has(.auth-page)) [class*="bg-[#0f1018]"],
+html.light:not(:has(.auth-page)) [class*="bg-[#131316]"],
+html.light:not(:has(.auth-page)) [class*="bg-[#131521]"],
+html.light:not(:has(.auth-page)) [class*="bg-[#12131a]"],
+html.light:not(:has(.auth-page)) [class*="bg-[#12131c]"],
+html.light:not(:has(.auth-page)) [class*="bg-[#0d0e12]"],
+html.light:not(:has(.auth-page)) [class*="bg-[#0e0f14]"],
+html.light:not(:has(.auth-page)) [class*="bg-[#141522]"],
+html.light:not(:has(.auth-page)) [class*="bg-[#0c0d15]"],
+html.light:not(:has(.auth-page)) [class*="bg-[#161720]"],
+html.light:not(:has(.auth-page)) [class*="bg-[#0f0f13]/80"],
+html.light:not(:has(.auth-page)) [class*="bg-[#0f0f13]/95"],
+html.light:not(:has(.auth-page)) [class*="bg-[#0a0b10]/80"],
+html.light:not(:has(.auth-page)) [class*="bg-white/[0.01]"],
+html.light:not(:has(.auth-page)) [class*="bg-white/[0.02]"],
+html.light:not(:has(.auth-page)) [class*="bg-white/[0.03]"],
+html.light:not(:has(.auth-page)) [class*="bg-white/[0.04]"],
+html.light:not(:has(.auth-page)) [class*="bg-white/[0.005]"],
+html.light:not(:has(.auth-page)) [class*="bg-white/5"],
+html.light:not(:has(.auth-page)) [class*="bg-zinc-950"] {
+  background-color: var(--surface) !important;
   background-image: none !important;
-  border-color: #E5E7EB !important;
-  color: #1F2937 !important;
+  border-color: var(--border) !important;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05), 0 1px 2px rgba(0,0,0,0.03) !important;
 }
 
-html:not(.dark) .text-zinc-450,
-html:not(.dark) .text-zinc-500,
-html:not(.dark) .text-zinc-550 {
-  color: #6B7280 !important;
+/* 3. Inset / nested areas */
+html.light:not(:has(.auth-page)) [class*="bg-white/10"],
+html.light:not(:has(.auth-page)) [class*="bg-white/[0.1]"],
+html.light:not(:has(.auth-page)) [class*="bg-black/30"],
+html.light:not(:has(.auth-page)) [class*="bg-black/50"] {
+  background-color: var(--surface-2) !important;
+  background-image: none !important;
+  border-color: var(--border) !important;
+  color: var(--foreground) !important;
 }
 
-html:not(.dark) .text-zinc-300,
-html:not(.dark) .text-zinc-400 {
-  color: #374151 !important;
+/* 4. Text */
+html.light:not(:has(.auth-page)) .text-white,
+html.light:not(:has(.auth-page)) .text-zinc-50,
+html.light:not(:has(.auth-page)) .text-zinc-100,
+html.light:not(:has(.auth-page)) .text-zinc-200 { color: var(--foreground) !important; }
+
+html.light:not(:has(.auth-page)) .text-zinc-300,
+html.light:not(:has(.auth-page)) .text-zinc-400,
+html.light:not(:has(.auth-page)) .text-zinc-450 { color: var(--muted) !important; }
+
+html.light:not(:has(.auth-page)) .text-zinc-500,
+html.light:not(:has(.auth-page)) .text-zinc-550,
+html.light:not(:has(.auth-page)) .text-zinc-600 { color: var(--subtle) !important; }
+
+/* 5. Borders */
+html.light:not(:has(.auth-page)) [class*="border-white/[0.02]"],
+html.light:not(:has(.auth-page)) [class*="border-white/[0.03]"],
+html.light:not(:has(.auth-page)) [class*="border-white/[0.04]"],
+html.light:not(:has(.auth-page)) [class*="border-white/[0.06]"],
+html.light:not(:has(.auth-page)) [class*="border-white/[0.08]"],
+html.light:not(:has(.auth-page)) [class*="border-white/10"],
+html.light:not(:has(.auth-page)) [class*="border-white/20"],
+html.light:not(:has(.auth-page)) [class*="border-white/5"],
+html.light:not(:has(.auth-page)) [class*="border-zinc-800"] { border-color: var(--border) !important; }
+
+/* 6. Navbar */
+html.light:not(:has(.auth-page)) nav,
+html.light:not(:has(.auth-page)) nav.sticky {
+  background-color: rgba(255,255,255,0.88) !important;
+  backdrop-filter: blur(20px) !important;
+  border-bottom-color: var(--border) !important;
+  box-shadow: 0 1px 0 rgba(0,0,0,0.06) !important;
+  background-image: none !important;
 }
 
-/* Hover states in light mode */
-html:not(.dark) [class*="hover:text-white"]:hover {
-  color: #111827 !important;
+html.light:not(:has(.auth-page)) nav a,
+html.light:not(:has(.auth-page)) nav span { color: var(--muted) !important; }
+
+html.light:not(:has(.auth-page)) nav a[class*="text-violet"] { color: #7C3AED !important; }
+html.light:not(:has(.auth-page)) nav a[class*="text-emerald"] { color: #059669 !important; }
+
+/* 7. Notification dropdown */
+html.light:not(:has(.auth-page)) [class*="bg-[#0f0f13]"].absolute {
+  background-color: var(--surface) !important;
+  border-color: var(--border) !important;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.12) !important;
 }
 
-html:not(.dark) [class*="hover:bg-white"]:hover,
-html:not(.dark) [class*="hover:bg-zinc-800"]:hover {
-  background-color: #E5E7EB !important;
-  background: #E5E7EB !important;
-}
+/* 8. Hover states */
+html.light:not(:has(.auth-page)) [class*="hover:bg-white/5"]:hover,
+html.light:not(:has(.auth-page)) [class*="hover:bg-white/10"]:hover { background-color: var(--surface-3) !important; }
+html.light:not(:has(.auth-page)) [class*="hover:text-white"]:hover { color: var(--foreground) !important; }
 
+/* 9. Input fields */
+html.light:not(:has(.auth-page)) input:not([type="range"]),
+html.light:not(:has(.auth-page)) textarea,
+html.light:not(:has(.auth-page)) select {
+  background-color: var(--surface) !important;
+  border-color: var(--border) !important;
+  color: var(--foreground) !important;
+}
+html.light:not(:has(.auth-page)) input::placeholder,
+html.light:not(:has(.auth-page)) textarea::placeholder { color: var(--subtle) !important; }
+
+/* 10. Divider hairlines */
+html.light:not(:has(.auth-page)) .h-px[class*="bg-white"] { background-color: var(--border) !important; }
+
+/* 11. Contribution grid */
+html.light:not(:has(.auth-page)) rect[fill="rgba(255, 255, 255, 0.03)"] { fill: #E2E8F0 !important; }
