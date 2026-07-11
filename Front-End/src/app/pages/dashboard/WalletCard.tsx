@@ -65,21 +65,6 @@ export function WalletCard({
     return `${start.toLocaleDateString("en-US", formatOption)} - ${end.toLocaleDateString("en-US", formatOption)}`;
   };
 
-  // Render grace coins indicator in a compact, premium way
-  const renderGraceCoins = () => {
-    const maxCoins = plan?.toLowerCase() === "pro" ? 2 : 1;
-    const currentCoins = onboardingComplete ? Math.max(graceCoins, 0) : 0;
-    
-    return (
-      <div className="flex items-center gap-1.5 bg-amber-500/5 dark:bg-amber-500/10 border border-amber-500/20 px-2.5 py-0.5 rounded-lg select-none">
-        <Coins className="w-3.5 h-3.5 text-amber-500 fill-amber-500/10" />
-        <span className="font-bold font-mono text-amber-600 dark:text-amber-400 text-xs">
-          {currentCoins} / {maxCoins} Active
-        </span>
-      </div>
-    );
-  };
-
   return (
     <div className="relative h-full flex flex-col">
       {/* Background Glow */}
@@ -368,12 +353,17 @@ export function WalletCard({
             {/* Streak Shields & Progress bar */}
             <div className="flex flex-col gap-2 mt-auto pt-3 border-t border-zinc-150 dark:border-white/[0.04]">
               {/* Grace Coins Row */}
-              <div className="flex items-center justify-between text-xs px-0.5">
-                <span className="text-[9px] text-zinc-550 dark:text-zinc-450 font-bold uppercase tracking-wider">
-                  Grace Coins
-                </span>
-                <div className="flex items-center gap-2">
-                  {renderGraceCoins()}
+              <div className="flex items-center justify-between text-xs px-0.5 py-1">
+                <div>
+                  <span className="text-[9.5px] text-zinc-500 dark:text-zinc-455 font-bold uppercase tracking-wider block">
+                    Grace Coins
+                  </span>
+                  <span className="text-[9.5px] text-zinc-400 dark:text-zinc-500 block mt-0.5 font-normal">
+                    {plan?.toLowerCase() === "pro" ? "+1 on 15-day streak" : "1 coin included"}
+                  </span>
+                </div>
+                <div className="font-mono text-xs font-bold text-zinc-700 dark:text-zinc-300">
+                  {onboardingComplete ? Math.max(graceCoins, 0) : 0} Active
                 </div>
               </div>
 
