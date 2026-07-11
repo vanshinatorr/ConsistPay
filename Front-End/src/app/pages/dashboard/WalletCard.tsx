@@ -137,17 +137,17 @@ export function WalletCard({
               )}
             </div>
 
-            {/* 2. Active Deposit Pool (Locked) Card */}
+            {/* 2. Money At Stake Card */}
             <div className="bg-zinc-50 dark:bg-black/30 border border-zinc-200 dark:border-white/[0.03] rounded-xl p-4 mt-2.5 flex-1 flex flex-col justify-center hover:border-zinc-300 dark:hover:border-white/[0.06] transition-all duration-200 shadow-md">
               <span className="text-[9px] text-zinc-550 dark:text-zinc-400 uppercase tracking-widest font-bold block">
-                Active Deposit Pool (Locked)
+                Money At Stake
               </span>
               <span className="text-2xl font-bold text-zinc-800 dark:text-white tracking-tight mt-1.5 block">
-                <span className="text-zinc-500 text-xl font-light mr-0.5">₹</span>
+                <span className="text-zinc-400 dark:text-zinc-500 text-xl font-light mr-0.5">₹</span>
                 {onboardingComplete ? Math.round(activeDeposit) : "0"}
               </span>
-              <span className="text-[11px] text-zinc-500 dark:text-zinc-450 block mt-1">
-                ₹{dailyCommitment}/day commitment • 30-day plan
+              <span className="text-[11px] text-zinc-500 dark:text-zinc-450 block mt-1 leading-normal">
+                Released daily upon successful solves. Missed days forfeit ₹{dailyCommitment} from this pool.
               </span>
             </div>
 
