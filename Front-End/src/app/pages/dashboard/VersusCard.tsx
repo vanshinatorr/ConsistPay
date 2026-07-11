@@ -135,7 +135,7 @@ export function VersusCard({
                 onClick={() => setShowTopupModal(true)}
                 className="px-3 py-2 bg-zinc-100 dark:bg-white/5 hover:bg-zinc-200 dark:hover:bg-white/10 text-zinc-700 dark:text-zinc-300 hover:text-zinc-950 dark:hover:text-white border border-zinc-200 dark:border-white/[0.04] transition-all rounded-xl text-xs font-semibold flex items-center justify-center gap-1 cursor-pointer"
               >
-                <Coins className="w-3.5 h-3.5 text-violet-600 dark:text-violet-400" /> Add Funds
+                <Coins className="w-3.5 h-3.5 text-zinc-450 dark:text-zinc-400" /> Add Funds
               </button>
               {battleBalance > 0 && (
                 <button 
@@ -143,9 +143,9 @@ export function VersusCard({
                     const event = new CustomEvent("open-withdraw-modal", { detail: { walletType: "battle" } });
                     window.dispatchEvent(event);
                   }}
-                  className="px-3 py-2 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-700 dark:text-emerald-455 border border-emerald-500/20 transition-all rounded-xl text-xs font-semibold flex items-center justify-center gap-1 cursor-pointer"
+                  className="px-3 py-2 bg-zinc-900 hover:bg-zinc-800 text-white dark:bg-white dark:hover:bg-zinc-100 dark:text-zinc-950 border border-zinc-900 dark:border-white transition-all rounded-xl text-xs font-semibold flex items-center justify-center gap-1 cursor-pointer shadow-sm active:scale-95"
                 >
-                  <Coins className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-450" /> Claim
+                  <Coins className="w-3.5 h-3.5 text-white dark:text-zinc-900" /> Claim
                 </button>
               )}
             </div>

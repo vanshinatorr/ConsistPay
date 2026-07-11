@@ -118,11 +118,11 @@ export function WalletCard({
             {/* 1. Withdrawable Balance Card */}
             <div className="bg-zinc-50 dark:bg-black/30 border border-zinc-200 dark:border-white/[0.03] rounded-xl p-4 flex items-center justify-between hover:border-zinc-300 dark:hover:border-white/[0.06] transition-all duration-200 shadow-md">
               <div>
-                <span className="text-[9px] text-emerald-600 dark:text-emerald-455 font-bold uppercase tracking-widest block">
+                <span className="text-[9px] text-zinc-500 dark:text-zinc-400 font-bold uppercase tracking-widest block">
                   Withdrawable Balance
                 </span>
                 <span className="text-3xl font-bold text-zinc-800 dark:text-white tracking-tight mt-1.5 block">
-                  <span className="text-zinc-500 text-2xl font-light mr-0.5">₹</span>
+                  <span className="text-zinc-400 dark:text-zinc-500 text-2xl font-light mr-0.5">₹</span>
                   {onboardingComplete ? Math.round(balance) : "0"}
                 </span>
                 <span className="text-[11px] text-zinc-500 dark:text-zinc-450 block mt-1 leading-normal">
@@ -135,12 +135,12 @@ export function WalletCard({
                     const event = new CustomEvent("open-withdraw-modal", { detail: { walletType: "consistency" } });
                     window.dispatchEvent(event);
                   }}
-                  className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-white dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-100 text-xs font-semibold rounded-lg transition-all cursor-pointer shadow-sm shadow-emerald-600/10"
+                  className="px-4 py-2 bg-zinc-900 hover:bg-zinc-800 active:scale-95 text-white dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-100 text-xs font-bold rounded-lg transition-all cursor-pointer shadow-sm"
                 >
                   Withdraw
                 </button>
               ) : (
-                <span className="text-[9px] text-zinc-500 dark:text-zinc-550 font-bold bg-zinc-100 dark:bg-white/[0.01] border border-zinc-200 dark:border-white/[0.03] px-2.5 py-1.5 rounded-md select-none">
+                <span className="text-[9px] text-zinc-500 dark:text-zinc-550 font-bold bg-zinc-150 dark:bg-white/[0.01] border border-zinc-200 dark:border-white/[0.03] px-2.5 py-1.5 rounded-md select-none">
                   Empty Wallet
                 </span>
               )}
@@ -261,17 +261,17 @@ export function WalletCard({
                         disabled={syncLoading || hasSolvedToday}
                         className={`h-8.5 px-3 rounded-lg font-bold text-xs transition-all duration-300 flex items-center gap-1.5 cursor-pointer border ${
                           hasSolvedToday
-                            ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-600 dark:text-emerald-400 cursor-default"
+                            ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-700 dark:text-emerald-400 cursor-default"
                             : syncLoading
                             ? "bg-zinc-100 dark:bg-white/[0.02] border-zinc-200 dark:border-white/[0.04] text-zinc-500 dark:text-zinc-550 cursor-not-allowed"
-                            : "bg-violet-600 hover:bg-violet-500 text-white border-violet-600 dark:bg-white dark:text-black dark:border-white dark:hover:bg-zinc-200 active:scale-95 shadow-sm shadow-violet-600/10 hover:scale-[1.01]"
+                            : "bg-zinc-900 hover:bg-zinc-800 text-white border-zinc-900 dark:bg-white dark:text-zinc-950 dark:border-white dark:hover:bg-zinc-200 active:scale-95 shadow-sm hover:scale-[1.01]"
                         }`}
                       >
                         {hasSolvedToday ? (
                           <>Synced</>
                         ) : (
                           <>
-                            <RefreshCw className={`w-3.5 h-3.5 ${syncLoading ? "animate-spin text-zinc-500" : "text-white dark:text-emerald-500"}`} />
+                            <RefreshCw className={`w-3.5 h-3.5 ${syncLoading ? "animate-spin text-zinc-500" : "text-white dark:text-zinc-950"}`} />
                             {syncLoading ? "Verifying..." : "Sync Solves"}
                           </>
                         )}
@@ -302,7 +302,7 @@ export function WalletCard({
             {/* Secured & Lost Side-by-Side Cards (Green & Red Theme) */}
             <div className="grid grid-cols-2 gap-3 mt-2.5">
               {/* Secured Box */}
-              <div className="bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-250 dark:border-emerald-500/20 rounded-xl p-3 flex flex-col justify-between hover:border-emerald-300 dark:hover:border-emerald-500/35 transition-all duration-200 shadow-sm">
+              <div className="bg-zinc-50 dark:bg-black/25 border border-zinc-200 dark:border-white/[0.04] rounded-xl p-3 flex flex-col justify-between hover:border-zinc-300 dark:hover:border-white/[0.08] transition-all duration-200 shadow-sm">
                 <div className="flex items-center gap-1.5">
                   <Lock className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
                   <span className="text-[9.5px] text-emerald-600 dark:text-emerald-400 font-bold uppercase tracking-wider block">
@@ -318,7 +318,7 @@ export function WalletCard({
               </div>
 
               {/* Lost Box */}
-              <div className="bg-rose-50 dark:bg-rose-950/20 border border-rose-250 dark:border-rose-500/20 rounded-xl p-3 flex flex-col justify-between hover:border-rose-300 dark:hover:border-rose-500/35 transition-all duration-200 shadow-sm">
+              <div className="bg-zinc-50 dark:bg-black/25 border border-zinc-200 dark:border-white/[0.04] rounded-xl p-3 flex flex-col justify-between hover:border-zinc-300 dark:hover:border-white/[0.08] transition-all duration-200 shadow-sm">
                 <div className="flex items-center gap-1.5">
                   <TrendingDown className="w-3.5 h-3.5 text-rose-600 dark:text-rose-400" />
                   <span className="text-[9.5px] text-rose-600 dark:text-rose-400 font-bold uppercase tracking-wider block">
