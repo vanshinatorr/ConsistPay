@@ -333,7 +333,7 @@ export function WalletCard({
                     {plan?.toLowerCase() === "pro" ? "+1 on 15-day streak" : "1 coin included"}
                   </span>
                 </div>
-                <div className="font-mono text-xs font-bold text-zinc-700 dark:text-zinc-300">
+                <div className="font-mono text-xs font-medium text-zinc-500 dark:text-zinc-400">
                   {onboardingComplete ? Math.max(graceCoins, 0) : 0} Active
                 </div>
               </div>
