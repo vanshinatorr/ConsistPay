@@ -195,17 +195,17 @@ export function PlatformsManager() {
           return (
             <div
               key={plat}
-              className="bg-[#0B0C10] border border-white/[0.04] rounded-2xl p-6 transition-all duration-300 shadow-md relative overflow-hidden text-left"
+              className="bg-white dark:bg-[#0B0C10] border border-zinc-200 dark:border-white/[0.04] rounded-2xl p-6 transition-all duration-300 shadow-sm relative overflow-hidden text-left"
             >
               {/* Row Header */}
-              <div className="flex items-center justify-between flex-wrap gap-4 relative z-10 pb-5 border-b border-white/[0.04]">
+              <div className="flex items-center justify-between flex-wrap gap-4 relative z-10 pb-5 border-b border-zinc-150 dark:border-white/[0.04]">
                 <div className="flex items-center gap-3.5">
-                  <div className="w-10 h-10 rounded-xl bg-white/5 border border-white/[0.04] flex items-center justify-center shrink-0 shadow-inner select-none">
+                  <div className="w-10 h-10 rounded-xl bg-zinc-50 dark:bg-white/5 border border-zinc-200 dark:border-white/[0.04] flex items-center justify-center shrink-0 shadow-inner select-none">
                     {getPlatformLogo(plat)}
                   </div>
                   <div>
-                    <h3 className="text-sm font-bold text-white tracking-wide">{plat}</h3>
-                    <p className="text-[11px] text-zinc-550 mt-0.5">
+                    <h3 className="text-sm font-bold text-zinc-800 dark:text-white tracking-wide">{plat}</h3>
+                    <p className="text-[11px] text-zinc-500 dark:text-zinc-550 mt-0.5">
                       {isVerified 
                         ? `Connected as @${linkage?.username}`
                         : isLinked 
@@ -228,7 +228,7 @@ export function PlatformsManager() {
                       <span>Verification Pending</span>
                     </div>
                   ) : (
-                    <div className="bg-white/5 border border-white/[0.04] text-zinc-500 text-[10px] font-bold px-3 py-1 rounded-full select-none shadow-inner">
+                    <div className="bg-zinc-100 dark:bg-white/5 border border-zinc-200 dark:border-white/[0.04] text-zinc-500 text-[10px] font-bold px-3 py-1 rounded-full select-none shadow-inner">
                       Not Connected
                     </div>
                   )}
@@ -243,7 +243,7 @@ export function PlatformsManager() {
               )}
 
               {/* 3-Step Wizard Timeline */}
-              <div className="mt-6 space-y-6 relative z-10 pl-6 border-l border-white/[0.06] ml-3.5 text-left">
+              <div className="mt-6 space-y-6 relative z-10 pl-6 border-l border-zinc-150 dark:border-white/[0.06] ml-3.5 text-left">
                 
                 {/* Step 1: Link Handle */}
                 <div className="relative">
@@ -252,13 +252,13 @@ export function PlatformsManager() {
                       ✓
                     </span>
                   ) : (
-                    <span className="absolute -left-[32.5px] top-0.5 flex items-center justify-center w-5 h-5 rounded-full bg-white/5 border border-white/[0.06] text-[9.5px] font-bold text-zinc-400 shadow-inner">
+                    <span className="absolute -left-[32.5px] top-0.5 flex items-center justify-center w-5 h-5 rounded-full bg-zinc-100 dark:bg-white/5 border border-zinc-200 dark:border-white/[0.06] text-[9.5px] font-bold text-zinc-500 dark:text-zinc-400 shadow-inner">
                       1
                     </span>
                   )}
                   <div>
-                    <h4 className="text-xs font-bold text-zinc-200">Connect Username / Handle</h4>
-                    <p className="text-[11px] text-zinc-450 mt-0.5 leading-relaxed">
+                    <h4 className="text-xs font-bold text-zinc-800 dark:text-zinc-200">Connect Username / Handle</h4>
+                    <p className="text-[11px] text-zinc-550 dark:text-zinc-455 mt-0.5 leading-relaxed">
                       Provide your public coding profile username to generate a secure validation token.
                     </p>
                     
@@ -271,33 +271,33 @@ export function PlatformsManager() {
                         className="mt-3 flex gap-2.5 max-w-md"
                       >
                         <div className="flex-1 relative">
-                          <span className="absolute left-3 top-2.5 text-zinc-600 font-mono text-sm select-none">@</span>
+                          <span className="absolute left-3 top-2.5 text-zinc-450 dark:text-zinc-650 font-mono text-sm select-none">@</span>
                           <input
                             type="text"
                             required
                             placeholder={`e.g. ${plat === "LeetCode" ? "leetcode_coder" : "gfg_geek"}`}
                             value={usernamesInput[plat] || ""}
                             onChange={(e) => setUsernamesInput((prev) => ({ ...prev, [plat]: e.target.value }))}
-                            className="w-full bg-[#0A0B10] border border-white/[0.06] focus:border-emerald-500 rounded-xl pl-7 pr-3 py-2 text-xs text-white placeholder-zinc-700 focus:outline-none transition-all shadow-inner font-medium"
+                            className="w-full bg-zinc-50 dark:bg-[#0A0B10] border border-zinc-200 dark:border-white/[0.06] focus:border-emerald-500 rounded-xl pl-7 pr-3 py-2 text-xs text-zinc-850 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-700 focus:outline-none transition-all shadow-inner font-medium"
                           />
                         </div>
                         <button
                           type="submit"
                           disabled={loading}
-                          className="bg-white hover:bg-zinc-200 text-black font-bold px-4 rounded-xl text-xs flex items-center justify-center shrink-0 active:scale-[0.98] transition-all cursor-pointer border border-white"
+                          className="bg-zinc-900 hover:bg-zinc-800 dark:bg-white dark:hover:bg-zinc-200 text-white dark:text-black font-bold px-4 rounded-xl text-xs flex items-center justify-center shrink-0 active:scale-[0.98] transition-all cursor-pointer border border-zinc-900 dark:border-white"
                         >
-                          {loading ? <Loader2 className="w-4 h-4 animate-spin text-black" /> : "Link Profile"}
+                          {loading ? <Loader2 className="w-4 h-4 animate-spin text-white dark:text-black" /> : "Link Profile"}
                         </button>
                       </form>
                     ) : (
-                      <div className="mt-3 flex items-center justify-between bg-white/[0.02] border border-white/[0.04] rounded-xl px-4 py-2.5 max-w-md">
-                        <div className="text-xs text-zinc-300 font-medium">
-                          Handle: <span className="text-emerald-400 font-bold">@{linkage.username}</span>
+                      <div className="mt-3 flex items-center justify-between bg-zinc-50 dark:bg-white/[0.02] border border-zinc-150 dark:border-white/[0.04] rounded-xl px-4 py-2.5 max-w-md">
+                        <div className="text-xs text-zinc-700 dark:text-zinc-300 font-medium">
+                          Handle: <span className="text-emerald-500 dark:text-emerald-400 font-bold">@{linkage.username}</span>
                         </div>
                         <button
                           onClick={() => handleUnlink(plat)}
                           disabled={loading}
-                          className="text-[10px] font-bold text-red-400 hover:text-red-300 transition-colors cursor-pointer flex items-center gap-1 active:scale-95"
+                          className="text-[10px] font-bold text-red-500 dark:text-red-400 hover:text-red-450 dark:hover:text-red-300 transition-colors cursor-pointer flex items-center gap-1 active:scale-95"
                         >
                           <Trash2 className="w-3.5 h-3.5" />
                           <span>Disconnect</span>
@@ -314,25 +314,25 @@ export function PlatformsManager() {
                       ✓
                     </span>
                   ) : (
-                    <span className="absolute -left-[32.5px] top-0.5 flex items-center justify-center w-5 h-5 rounded-full bg-white/5 border border-white/[0.06] text-[9.5px] font-bold text-zinc-400 shadow-inner">
+                    <span className="absolute -left-[32.5px] top-0.5 flex items-center justify-center w-5 h-5 rounded-full bg-zinc-100 dark:bg-white/5 border border-zinc-200 dark:border-white/[0.06] text-[9.5px] font-bold text-zinc-500 dark:text-zinc-400 shadow-inner">
                       2
                     </span>
                   )}
                   <div>
-                    <h4 className="text-xs font-bold text-zinc-200">Paste Token in Profile Bio</h4>
-                    <p className="text-[11px] text-zinc-450 mt-0.5 leading-relaxed">
+                    <h4 className="text-xs font-bold text-zinc-800 dark:text-zinc-200">Paste Token in Profile Bio</h4>
+                    <p className="text-[11px] text-zinc-550 dark:text-zinc-455 mt-0.5 leading-relaxed">
                       Copy the generated token below and paste it anywhere in your <b>{plat} profile bio / "About Me"</b> section.
                     </p>
 
                     {!isLinked ? (
                       /* Locked State */
-                      <div className="mt-3 bg-white/[0.01] border border-dashed border-white/[0.04] rounded-xl p-3 flex items-center gap-2.5 max-w-md text-zinc-650">
-                        <Key className="w-4 h-4 text-zinc-650 shrink-0" />
+                      <div className="mt-3 bg-zinc-50 dark:bg-white/[0.01] border border-dashed border-zinc-200 dark:border-white/[0.04] rounded-xl p-3 flex items-center gap-2.5 max-w-md text-zinc-400 dark:text-zinc-650">
+                        <Key className="w-4 h-4 text-zinc-400 dark:text-zinc-650 shrink-0" />
                         <span className="text-[10px] font-bold uppercase tracking-wider">Token locked until Step 1 is complete</span>
                       </div>
                     ) : isVerified ? (
                       /* Verified State */
-                      <div className="mt-3 bg-emerald-500/5 border border-emerald-500/10 rounded-xl px-4 py-2.5 max-w-md text-xs text-emerald-400 font-medium">
+                      <div className="mt-3 bg-emerald-500/5 border border-emerald-500/10 rounded-xl px-4 py-2.5 max-w-md text-xs text-emerald-500 dark:text-emerald-400 font-medium">
                         Verification token validated successfully.
                       </div>
                     ) : (
@@ -340,21 +340,21 @@ export function PlatformsManager() {
                       <div className="mt-3 space-y-3 max-w-md">
                         <div
                           onClick={() => copyToClipboard(plat, linkage.verificationToken)}
-                          className="bg-[#0A0B10] border border-white/[0.06] hover:border-emerald-500/25 hover:bg-emerald-500/[0.01] rounded-xl p-3 flex items-center justify-between shadow-inner cursor-pointer transition-all group/token active:scale-[0.99]"
+                          className="bg-zinc-50 dark:bg-[#0A0B10] border border-zinc-200 dark:border-white/[0.06] hover:border-emerald-500/25 hover:bg-emerald-500/[0.01] rounded-xl p-3 flex items-center justify-between shadow-inner cursor-pointer transition-all group/token active:scale-[0.99]"
                         >
                           <div>
-                            <span className="text-[8px] text-zinc-550 font-bold uppercase tracking-wider block">Bio Token</span>
-                            <code className="text-xs font-mono font-bold text-emerald-400 mt-0.5 block select-all">{linkage.verificationToken}</code>
+                            <span className="text-[8px] text-zinc-400 dark:text-zinc-550 font-bold uppercase tracking-wider block">Bio Token</span>
+                            <code className="text-xs font-mono font-bold text-emerald-500 dark:text-emerald-400 mt-0.5 block select-all">{linkage.verificationToken}</code>
                           </div>
-                          <span className="text-[9px] text-zinc-500 font-bold uppercase group-hover/token:text-emerald-400 transition-colors flex items-center gap-1.5 select-none shrink-0">
+                          <span className="text-[9px] text-zinc-500 font-bold uppercase group-hover/token:text-emerald-500 dark:group-hover/token:text-emerald-400 transition-colors flex items-center gap-1.5 select-none shrink-0">
                             {copiedMap[plat] ? (
                               <>
-                                <Check className="w-3.5 h-3.5 text-emerald-450" />
-                                <span className="text-emerald-400 font-black">Copied!</span>
+                                <Check className="w-3.5 h-3.5 text-emerald-500 dark:text-emerald-450" />
+                                <span className="text-emerald-500 dark:text-emerald-400 font-black">Copied!</span>
                               </>
                             ) : (
                               <>
-                                <Copy className="w-3.5 h-3.5 text-zinc-650" />
+                                <Copy className="w-3.5 h-3.5 text-zinc-450 dark:text-zinc-650" />
                                 <span>Copy</span>
                               </>
                             )}
@@ -365,9 +365,9 @@ export function PlatformsManager() {
                           href={plat === "LeetCode" ? "https://leetcode.com/profile/" : `https://www.geeksforgeeks.org/user/${linkage.username}/`}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white/5 border border-white/[0.04] hover:bg-white/10 rounded-lg text-[10px] font-bold text-zinc-300 transition-all select-none cursor-pointer"
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-zinc-100 hover:bg-zinc-200 border border-zinc-200 dark:bg-white/5 dark:border-white/[0.04] dark:hover:bg-white/10 rounded-lg text-[10px] font-bold text-zinc-700 hover:text-zinc-900 dark:text-zinc-300 dark:hover:text-white transition-all select-none cursor-pointer"
                         >
-                          <ExternalLink className="w-3 h-3 text-zinc-500" />
+                          <ExternalLink className="w-3 h-3 text-zinc-405 dark:text-zinc-500" />
                           <span>Go to {plat} Settings</span>
                         </a>
                       </div>
@@ -382,13 +382,13 @@ export function PlatformsManager() {
                       ✓
                     </span>
                   ) : (
-                    <span className="absolute -left-[32.5px] top-0.5 flex items-center justify-center w-5 h-5 rounded-full bg-white/5 border border-white/[0.06] text-[9.5px] font-bold text-zinc-400 shadow-inner">
+                    <span className="absolute -left-[32.5px] top-0.5 flex items-center justify-center w-5 h-5 rounded-full bg-zinc-100 dark:bg-white/5 border border-zinc-200 dark:border-white/[0.06] text-[9.5px] font-bold text-zinc-500 dark:text-zinc-400 shadow-inner">
                       3
                     </span>
                   )}
                   <div>
-                    <h4 className="text-xs font-bold text-zinc-200">Verify Profile Ownership</h4>
-                    <p className="text-[11px] text-zinc-450 mt-0.5 leading-relaxed">
+                    <h4 className="text-xs font-bold text-zinc-800 dark:text-zinc-200">Verify Profile Ownership</h4>
+                    <p className="text-[11px] text-zinc-550 dark:text-zinc-455 mt-0.5 leading-relaxed">
                       Confirm you have updated your bio. Our validator will scan your profile and connect consistency payouts.
                     </p>
 
@@ -396,14 +396,14 @@ export function PlatformsManager() {
                       /* Disabled Verification Button */
                       <button
                         disabled
-                        className="w-full max-w-xs mt-3 bg-white/[0.02] border border-white/[0.04] text-zinc-600 font-bold py-2.5 rounded-xl text-xs cursor-not-allowed select-none"
+                        className="w-full max-w-xs mt-3 bg-zinc-50 dark:bg-white/[0.02] border border-zinc-150 dark:border-white/[0.04] text-zinc-400 dark:text-zinc-600 font-bold py-2.5 rounded-xl text-xs cursor-not-allowed select-none"
                       >
                         Verify Connection
                       </button>
                     ) : isVerified ? (
                       /* Completed Verification Status */
-                      <div className="mt-3 flex items-center gap-2 max-w-md text-xs font-medium text-emerald-400">
-                        <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+                      <div className="mt-3 flex items-center gap-2 max-w-md text-xs font-medium text-emerald-500 dark:text-emerald-400">
+                        <CheckCircle2 className="w-4 h-4 text-emerald-500 dark:text-emerald-400 shrink-0" />
                         <span>Integration active. Daily solutions will sync automatically!</span>
                       </div>
                     ) : (

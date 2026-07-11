@@ -33,18 +33,18 @@ export function DsaStatsCard({ stats, onboardingComplete = true }: DsaStatsCardP
   const hardStroke = hardPct * circumference;
 
   return (
-    <div className={`relative rounded-2xl border border-white/[0.03] bg-[#0B0C10] p-5 overflow-hidden group hover:border-white/[0.08] transition-all duration-300 h-[249px] min-h-[249px] flex flex-col justify-between ${!onboardingComplete ? 'opacity-40 pointer-events-none' : ''}`}>
+    <div className={`relative rounded-2xl border border-zinc-200 dark:border-white/[0.03] bg-white dark:bg-[#0B0C10] p-5 overflow-hidden group hover:border-zinc-300 dark:hover:border-white/[0.08] transition-all duration-300 h-[249px] min-h-[249px] flex flex-col justify-between ${!onboardingComplete ? 'opacity-40 pointer-events-none' : ''}`}>
       {/* Premium background effects */}
       <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.002)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.002)_1px,transparent_1px)] bg-[size:20px_20px] pointer-events-none" />
       <div className="absolute -right-16 -top-16 w-36 h-36 bg-emerald-500/[0.01] rounded-full blur-[40px] pointer-events-none group-hover:bg-emerald-500/[0.03] transition-all duration-300" />
 
       {/* Header */}
       <div className="flex items-center justify-between mb-4 relative z-10">
-        <h3 className="text-sm font-bold text-zinc-400 uppercase tracking-wider flex items-center gap-2">
+        <h3 className="text-sm font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-wider flex items-center gap-2">
           <Target className="w-4 h-4 text-emerald-400" />
           DSA Solves
         </h3>
-        <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest bg-white/5 border border-white/[0.04] px-2 py-0.5 rounded">
+        <span className="text-[10px] font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-widest bg-zinc-100 dark:bg-white/5 border border-zinc-200 dark:border-white/[0.04] px-2 py-0.5 rounded">
           Sync Status
         </span>
       </div>
@@ -59,7 +59,8 @@ export function DsaStatsCard({ stats, onboardingComplete = true }: DsaStatsCardP
               cx="50"
               cy="50"
               r={radius}
-              stroke="rgba(255,255,255,0.03)"
+              stroke="rgba(0,0,0,0.03)"
+              className="dark:stroke-white/[0.03]"
               strokeWidth={strokeWidth}
               fill="transparent"
             />
@@ -103,7 +104,7 @@ export function DsaStatsCard({ stats, onboardingComplete = true }: DsaStatsCardP
                     strokeWidth={strokeWidth}
                     fill="transparent"
                     strokeDasharray={`${hardStroke} ${circumference}`}
-                    strokeDashoffset={-(easyStroke + mediumStroke)}
+                    strokeDashoffset={-((easyStroke || 0) + (mediumStroke || 0))}
                     strokeLinecap={easy === 0 && medium === 0 ? "round" : "butt"}
                   />
                 )}
@@ -114,7 +115,8 @@ export function DsaStatsCard({ stats, onboardingComplete = true }: DsaStatsCardP
                 cx="50"
                 cy="50"
                 r={radius}
-                stroke="#27272a"
+                stroke="#e4e4e7"
+                className="dark:stroke-[#27272a]"
                 strokeWidth={strokeWidth}
                 fill="transparent"
               />
@@ -122,10 +124,10 @@ export function DsaStatsCard({ stats, onboardingComplete = true }: DsaStatsCardP
           </svg>
           {/* Central solved count text */}
           <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-            <span className="text-2xl font-black text-white leading-none tracking-tight">
+            <span className="text-2xl font-black text-zinc-900 dark:text-white leading-none tracking-tight">
               {total}
             </span>
-            <span className="text-[9px] font-bold text-zinc-500 uppercase tracking-wider mt-0.5">
+            <span className="text-[9px] font-bold text-zinc-500 dark:text-zinc-500 uppercase tracking-wider mt-0.5">
               Solved
             </span>
           </div>
@@ -134,28 +136,28 @@ export function DsaStatsCard({ stats, onboardingComplete = true }: DsaStatsCardP
         {/* Right Side: Rows */}
         <div className="flex-1 space-y-1">
           {/* Easy Row */}
-          <div className="flex items-center justify-between py-2 border-b border-white/[0.02] hover:border-white/[0.05] transition-colors">
+          <div className="flex items-center justify-between py-2 border-b border-zinc-100 dark:border-white/[0.02] hover:border-zinc-200 dark:hover:border-white/[0.05] transition-colors">
             <div className="flex items-center gap-2">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-              <span className="text-xs font-medium text-zinc-400">Easy</span>
+              <span className="text-xs font-medium text-zinc-450 dark:text-zinc-400">Easy</span>
             </div>
-            <span className="text-xs font-bold text-emerald-400">{easy}</span>
+            <span className="text-xs font-bold text-emerald-500 dark:text-emerald-400">{easy}</span>
           </div>
 
           {/* Medium Row */}
-          <div className="flex items-center justify-between py-2 border-b border-white/[0.02] hover:border-white/[0.05] transition-colors">
+          <div className="flex items-center justify-between py-2 border-b border-zinc-100 dark:border-white/[0.02] hover:border-zinc-200 dark:hover:border-white/[0.05] transition-colors">
             <div className="flex items-center gap-2">
               <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />
-              <span className="text-xs font-medium text-zinc-400">Medium</span>
+              <span className="text-xs font-medium text-zinc-450 dark:text-zinc-400">Medium</span>
             </div>
-            <span className="text-xs font-bold text-amber-400">{medium}</span>
+            <span className="text-xs font-bold text-amber-500 dark:text-amber-400">{medium}</span>
           </div>
 
           {/* Hard Row */}
-          <div className="flex items-center justify-between py-2 border-b border-white/[0.02] hover:border-white/[0.05] transition-colors">
+          <div className="flex items-center justify-between py-2 border-b border-zinc-100 dark:border-white/[0.02] hover:border-zinc-200 dark:hover:border-white/[0.05] transition-colors">
             <div className="flex items-center gap-2">
               <span className="w-1.5 h-1.5 rounded-full bg-rose-500" />
-              <span className="text-xs font-medium text-zinc-400">Hard</span>
+              <span className="text-xs font-medium text-zinc-450 dark:text-zinc-400">Hard</span>
             </div>
             <span className="text-xs font-bold text-rose-500">{hard}</span>
           </div>

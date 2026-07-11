@@ -139,7 +139,7 @@ export function RecentSolves({ recentSolves }: RecentSolvesProps) {
       {showModal && (
         <div className="fixed inset-0 bg-black/75 backdrop-blur-sm z-[100] flex items-center justify-center p-4 animate-in fade-in duration-200">
           <div 
-            className="relative w-full max-w-2xl bg-[#0F0F13] border border-white/[0.08] rounded-3xl p-6 shadow-2xl overflow-hidden max-h-[80vh] flex flex-col animate-in zoom-in-95 duration-200"
+            className="relative w-full max-w-2xl bg-white dark:bg-[#0F0F13] border border-zinc-200 dark:border-white/[0.08] rounded-3xl p-6 shadow-2xl overflow-hidden max-h-[80vh] flex flex-col animate-in zoom-in-95 duration-200"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Background grid overlay */}
@@ -147,23 +147,23 @@ export function RecentSolves({ recentSolves }: RecentSolvesProps) {
             <div className="absolute -right-24 -top-24 w-48 h-48 bg-blue-500/10 rounded-full blur-[80px] pointer-events-none" />
             
             {/* Modal Header */}
-            <div className="flex items-center justify-between pb-4 border-b border-white/[0.06] relative z-10">
+            <div className="flex items-center justify-between pb-4 border-b border-zinc-100 dark:border-white/[0.06] relative z-10">
               <div className="flex items-center gap-2">
                 <div className="w-10 h-10 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400">
                   <History className="w-5 h-5" />
                 </div>
                 <div>
-                  <h3 className="text-lg font-bold text-white flex items-center gap-2">
+                  <h3 className="text-lg font-bold text-zinc-900 dark:text-white flex items-center gap-2">
                     Coding History
                   </h3>
-                  <p className="text-xs text-zinc-400 mt-0.5">
+                  <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">
                     Total {recentSolves.length} verified solutions logged
                   </p>
                 </div>
               </div>
               <button 
                 onClick={() => { setShowModal(false); setSearchQuery(""); setSelectedDifficulty("All"); }}
-                className="w-8 h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-zinc-400 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
+                className="w-8 h-8 rounded-full bg-zinc-100 dark:bg-white/5 border border-zinc-200 dark:border-white/10 flex items-center justify-center text-zinc-500 dark:text-zinc-400 hover:text-zinc-800 dark:hover:text-white hover:bg-zinc-200 dark:hover:bg-white/10 transition-colors cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -179,20 +179,20 @@ export function RecentSolves({ recentSolves }: RecentSolvesProps) {
                   placeholder="Search by problem name or topic..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full bg-[#141419] border border-white/[0.06] rounded-xl py-2 pl-10 pr-4 text-sm text-zinc-200 placeholder-zinc-500 focus:outline-none focus:border-blue-500/50 transition-colors"
+                  className="w-full bg-zinc-100 dark:bg-[#141419] border border-zinc-200 dark:border-white/[0.06] rounded-xl py-2 pl-10 pr-4 text-sm text-zinc-850 dark:text-zinc-200 placeholder-zinc-500 focus:outline-none focus:border-blue-500/50 transition-colors"
                 />
               </div>
 
               {/* Difficulty Filter */}
-              <div className="flex gap-1.5 bg-[#141419] border border-white/[0.06] rounded-xl p-1 shrink-0">
+              <div className="flex gap-1.5 bg-zinc-50 dark:bg-[#141419] border border-zinc-200 dark:border-white/[0.06] rounded-xl p-1 shrink-0">
                 {["All", "Easy", "Medium", "Hard"].map((diff) => (
                   <button
                     key={diff}
                     onClick={() => setSelectedDifficulty(diff)}
                     className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer
                       ${selectedDifficulty === diff 
-                        ? "bg-blue-500/20 text-blue-300 border border-blue-500/25" 
-                        : "text-zinc-400 hover:text-zinc-200"
+                        ? "bg-blue-500/20 text-blue-600 dark:text-blue-300 border border-blue-500/25" 
+                        : "text-zinc-400 hover:text-zinc-650 dark:hover:text-zinc-200"
                       }`}
                   >
                     {diff}
@@ -207,7 +207,7 @@ export function RecentSolves({ recentSolves }: RecentSolvesProps) {
                 filteredSolves.map((solve, idx) => (
                   <div 
                     key={idx}
-                    className="flex items-center justify-between p-3.5 bg-white/[0.01] hover:bg-white/[0.02] border border-white/[0.04] hover:border-white/[0.08] rounded-2xl transition-all duration-200 group"
+                    className="flex items-center justify-between p-3.5 bg-zinc-50/50 hover:bg-zinc-100/50 dark:bg-white/[0.01] dark:hover:bg-white/[0.02] border border-zinc-150 dark:border-white/[0.04] hover:border-zinc-250 dark:hover:border-white/[0.08] rounded-2xl transition-all duration-200 group"
                   >
                     <div className="flex items-center gap-3.5 min-w-0">
                       <div className="w-8 h-8 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 shrink-0 shadow-[0_0_10px_rgba(16,185,129,0.1)]">
@@ -215,7 +215,7 @@ export function RecentSolves({ recentSolves }: RecentSolvesProps) {
                       </div>
                       
                       <div className="min-w-0">
-                        <h4 className="font-bold text-sm text-zinc-200 group-hover:text-white transition-colors truncate max-w-[200px] sm:max-w-sm">
+                        <h4 className="font-bold text-sm text-zinc-800 dark:text-zinc-200 group-hover:text-zinc-950 dark:group-hover:text-white transition-colors truncate max-w-[200px] sm:max-w-sm">
                           {solve.name}
                         </h4>
                         <div className="flex items-center gap-2.5 mt-1.5 flex-wrap">

@@ -601,17 +601,17 @@ export function AwardsCard({
       {/* Glow backdrop */}
       <div className="absolute -inset-px bg-gradient-to-r from-emerald-500/20 to-teal-500/20 rounded-2xl blur-xl opacity-40 group-hover:opacity-60 transition-opacity duration-500" />
 
-      <div className="relative bg-[#0F0F13] border border-white/[0.04] rounded-2xl p-5 hover:border-white/10 transition-all duration-300 flex flex-col justify-between h-full min-h-[196px] shadow-xl">
+      <div className="relative bg-white dark:bg-[#0F0F13] border border-zinc-200 dark:border-white/[0.04] rounded-2xl p-5 hover:border-zinc-300 dark:hover:border-white/10 transition-all duration-300 flex flex-col justify-between h-full min-h-[196px] shadow-xl">
         
         {/* Header */}
         <div className="flex items-center justify-between mb-4">
           <div className="flex flex-col">
-            <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">
+            <span className="text-[10px] font-bold text-zinc-550 dark:text-zinc-500 uppercase tracking-widest">
               Achievements
             </span>
-            <span className="text-xs text-zinc-400 mt-0.5">My Awards</span>
+            <span className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">My Awards</span>
           </div>
-          <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 shrink-0">
+          <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 shrink-0">
             {unlockedCount} / {badges.length} Unlocked
           </span>
         </div>
@@ -745,7 +745,7 @@ export function AwardsCard({
         {sortedBadges.length > 5 && (
           <button
             onClick={() => setShowAll(!showAll)}
-            className="w-full text-center text-[10px] font-bold text-zinc-400 hover:text-white transition-colors pt-2 border-t border-white/[0.02] cursor-pointer"
+            className="w-full text-center text-[10px] font-bold text-zinc-400 hover:text-zinc-700 dark:hover:text-white transition-colors pt-2 border-t border-zinc-100 dark:border-white/[0.02] cursor-pointer"
           >
             {showAll ? "Show Less" : "Show More"}
           </button>

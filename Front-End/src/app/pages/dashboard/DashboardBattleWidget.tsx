@@ -194,7 +194,7 @@ export function DashboardBattleWidget({ onRefreshRequest }: DashboardBattleWidge
       {activeChallenges.length > 0 ? (
         <div>
           <div className="flex justify-between items-end mb-3 px-1">
-            <h2 className="text-lg font-bold text-white flex items-center gap-2">
+            <h2 className="text-lg font-bold text-zinc-800 dark:text-white flex items-center gap-2">
               <svg className="w-5 h-5 text-zinc-550" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" xmlns="http://www.w3.org/2000/svg">
                 <circle cx="8" cy="8" r="3.5" />
                 <path d="M2.5 20.5c0-3.5 3-4.5 5.5-4.5s5.5 1 5.5 4.5" />
@@ -205,7 +205,7 @@ export function DashboardBattleWidget({ onRefreshRequest }: DashboardBattleWidge
             </h2>
             <button 
               onClick={() => navigate('/create-challenge')} 
-              className="text-[12px] font-medium text-zinc-300 hover:text-white bg-white/5 hover:bg-white/10 px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition-colors border border-white/[0.04]"
+              className="text-[12px] font-bold text-zinc-700 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-white bg-zinc-100 dark:bg-white/5 hover:bg-zinc-200 dark:hover:bg-white/10 px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition-colors border border-zinc-250 dark:border-white/[0.04] cursor-pointer active:scale-95 shadow-sm"
             >
               <Plus className="w-3.5 h-3.5" /> New Challenge
             </button>
@@ -224,10 +224,10 @@ export function DashboardBattleWidget({ onRefreshRequest }: DashboardBattleWidge
                 <div 
                   key={challengeItem.id}
                   onClick={() => navigate(`/battle/${challengeItem.id}`)}
-                  className="relative rounded-2xl border border-white/[0.04] bg-[#0F0F13] overflow-hidden group cursor-pointer hover:border-white/10 transition-all duration-300 flex flex-col"
+                  className="relative rounded-2xl border border-zinc-200 dark:border-white/[0.04] bg-white dark:bg-[#0F0F13] overflow-hidden group cursor-pointer hover:border-zinc-300 dark:hover:border-white/10 transition-all duration-300 flex flex-col shadow-sm"
                 >
                   {/* Top section: Context */}
-                  <div className="p-3.5 md:p-4 border-b border-white/[0.04] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-white/[0.01]">
+                  <div className="p-3.5 md:p-4 border-b border-zinc-150 dark:border-white/[0.04] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-zinc-50/50 dark:bg-white/[0.01]">
                      <div className="flex items-center gap-3">
                         <div className="w-8.5 h-8.5 rounded-xl bg-violet-500/10 flex items-center justify-center border border-violet-500/20 shrink-0">
                            <Target className="w-4 h-4 text-violet-400" />
@@ -238,39 +238,39 @@ export function DashboardBattleWidget({ onRefreshRequest }: DashboardBattleWidge
                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                                <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500"></span>
                              </span>
-                             <span className="text-[10px] font-bold text-emerald-400 uppercase tracking-widest">Active</span>
+                             <span className="text-[10px] font-bold text-emerald-500 dark:text-emerald-400 uppercase tracking-widest">Active</span>
                            </div>
-                           <h3 className="text-sm font-semibold text-white">{challengeItem.duration}-Day Consistency Challenge</h3>
+                           <h3 className="text-sm font-semibold text-zinc-800 dark:text-white">{challengeItem.duration}-Day Consistency Challenge</h3>
                         </div>
                      </div>
                      
                      <div className="flex items-center gap-4">
-                       <div className="flex flex-col sm:items-end">
-                         <span className="text-[10px] font-medium text-zinc-500 uppercase tracking-wider mb-0.5">Total Pool</span>
-                         <span className="text-sm font-bold text-emerald-400">₹{challengeItem.pool}</span>
-                       </div>
-                       <div className="hidden sm:flex w-7 h-7 rounded-full bg-white/5 border border-white/[0.04] items-center justify-center group-hover:bg-white/10 transition-colors">
-                          <ArrowRight className="w-4 h-4 text-zinc-400" />
-                       </div>
+                        <div className="flex flex-col sm:items-end">
+                          <span className="text-[10px] font-medium text-zinc-500 uppercase tracking-wider mb-0.5">Total Pool</span>
+                          <span className="text-sm font-bold text-emerald-500 dark:text-emerald-400">₹{challengeItem.pool}</span>
+                        </div>
+                        <div className="hidden sm:flex w-7 h-7 rounded-full bg-zinc-100 dark:bg-white/5 border border-zinc-200 dark:border-white/[0.04] items-center justify-center group-hover:bg-zinc-250 dark:group-hover:bg-white/10 transition-colors">
+                           <ArrowRight className="w-4 h-4 text-zinc-500 dark:text-zinc-400" />
+                        </div>
                      </div>
                   </div>
 
                   {/* Bottom section: Participants & Progress */}
-                  <div className="p-3.5 md:p-4 flex flex-col gap-3.5">
+                  <div className="p-3.5 md:p-4 flex flex-col gap-3.5 bg-white dark:bg-transparent">
                      
                      {/* Participant 1 (You) */}
                      <div className="flex items-center gap-4">
-                        <div className="w-7 h-7 rounded-full border border-white/[0.04] overflow-hidden shrink-0 bg-[#0F0F13] flex items-center justify-center font-bold text-[10px] text-zinc-300 uppercase">
+                        <div className="w-7 h-7 rounded-full border border-zinc-200 dark:border-white/[0.04] overflow-hidden shrink-0 bg-zinc-100 dark:bg-[#0F0F13] flex items-center justify-center font-bold text-[10px] text-zinc-650 dark:text-zinc-300 uppercase">
                            {myData.name ? myData.name.substring(0, 2) : "ME"}
                         </div>
                         <div className="flex-1">
                            <div className="flex justify-between items-center mb-1.5">
-                              <span className="text-sm font-medium text-white flex items-center gap-2">
+                              <span className="text-sm font-medium text-zinc-800 dark:text-white flex items-center gap-2">
                                 {myData.name || "You"} <span className="text-xs text-zinc-500 font-normal">(You)</span>
                               </span>
-                              <span className="text-xs font-semibold text-zinc-400">{myData.score} / {challengeItem.currentDay} Days</span>
+                              <span className="text-xs font-semibold text-zinc-500 dark:text-zinc-400">{myData.score} / {challengeItem.currentDay} Days</span>
                            </div>
-                           <div className="w-full h-1.5 bg-white/5 rounded-full overflow-hidden">
+                           <div className="w-full h-1.5 bg-zinc-100 dark:bg-white/5 rounded-full overflow-hidden">
                               <div className="h-full bg-violet-500 rounded-full" style={{ width: `${myProgressPercent}%` }} />
                            </div>
                         </div>
@@ -278,15 +278,15 @@ export function DashboardBattleWidget({ onRefreshRequest }: DashboardBattleWidge
 
                      {/* Participant 2 (Opponent) */}
                      <div className="flex items-center gap-4">
-                        <div className="w-7 h-7 rounded-full border border-white/[0.04] overflow-hidden shrink-0 bg-[#0F0F13] flex items-center justify-center font-bold text-[10px] text-zinc-300 uppercase">
+                        <div className="w-7 h-7 rounded-full border border-zinc-200 dark:border-white/[0.04] overflow-hidden shrink-0 bg-zinc-100 dark:bg-[#0F0F13] flex items-center justify-center font-bold text-[10px] text-zinc-650 dark:text-zinc-300 uppercase">
                            {oppData.name ? oppData.name.substring(0, 2) : "OP"}
                         </div>
                         <div className="flex-1">
                            <div className="flex justify-between items-center mb-1.5">
-                              <span className="text-sm font-medium text-white">{oppData.name || "Opponent"}</span>
-                              <span className="text-xs font-semibold text-zinc-400">{oppData.score} / {challengeItem.currentDay} Days</span>
+                              <span className="text-sm font-medium text-zinc-800 dark:text-white">{oppData.name || "Opponent"}</span>
+                              <span className="text-xs font-semibold text-zinc-500 dark:text-zinc-400">{oppData.score} / {challengeItem.currentDay} Days</span>
                            </div>
-                           <div className="w-full h-1.5 bg-white/5 rounded-full overflow-hidden">
+                           <div className="w-full h-1.5 bg-zinc-100 dark:bg-white/5 rounded-full overflow-hidden">
                               <div className="h-full bg-emerald-500 rounded-full" style={{ width: `${oppProgressPercent}%` }} />
                            </div>
                         </div>

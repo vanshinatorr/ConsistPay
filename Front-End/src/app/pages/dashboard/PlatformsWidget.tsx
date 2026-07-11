@@ -148,17 +148,17 @@ export function PlatformsWidget({ onLinkageChanged, onboardingComplete = true }:
   ];
 
   return (
-    <div className={`relative rounded-2xl border border-white/[0.02] bg-[#07070A]/90 px-4 py-4 overflow-hidden group hover:border-white/[0.05] transition-all duration-300 h-[522px] min-h-[522px] flex flex-col justify-between select-none ${!onboardingComplete ? 'opacity-40 pointer-events-none' : ''}`}>
+    <div className={`relative rounded-2xl border border-zinc-200 dark:border-white/[0.02] bg-white dark:bg-[#07070A]/90 px-4 py-4 overflow-hidden group hover:border-zinc-300 dark:hover:border-white/[0.05] transition-all duration-300 h-[522px] min-h-[522px] flex flex-col justify-between select-none ${!onboardingComplete ? 'opacity-40 pointer-events-none' : ''}`}>
       {/* Background patterns */}
-      <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.001)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.001)_1px,transparent_1px)] bg-[size:20px_20px] pointer-events-none" />
+      <div className="absolute inset-0 bg-[linear-gradient(rgba(0,0,0,0.001)_1px,transparent_1px),linear-gradient(90deg,rgba(0,0,0,0.001)_1px,transparent_1px)] dark:bg-[linear-gradient(rgba(255,255,255,0.001)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.001)_1px,transparent_1px)] bg-[size:20px_20px] pointer-events-none" />
       
       {/* Container wrapper for dynamic vertical distribution */}
       <div className="relative z-10 flex flex-col h-full justify-between">
         
         {/* SECTION 1: Available Platforms */}
         <div className="flex flex-col gap-2.5 shrink-0">
-          <div className="flex items-center justify-between border-b border-white/[0.04] pb-2 shrink-0">
-            <h3 className="text-[8.5px] font-extrabold text-zinc-400 uppercase tracking-widest flex items-center gap-1.5">
+          <div className="flex items-center justify-between border-b border-zinc-150 dark:border-white/[0.04] pb-2 shrink-0">
+            <h3 className="text-[8.5px] font-extrabold text-zinc-500 dark:text-zinc-400 uppercase tracking-widest flex items-center gap-1.5">
               <Link2 className="w-3.5 h-3.5 text-emerald-455 shrink-0" />
               Available Platforms
             </h3>
@@ -172,14 +172,14 @@ export function PlatformsWidget({ onLinkageChanged, onboardingComplete = true }:
 
               if (isLinked) {
                 return (
-                  <div key={plat} className="flex items-center justify-between py-2 border-b border-white/[0.02] flex-nowrap w-full min-w-0">
+                  <div key={plat} className="flex items-center justify-between py-2 border-b border-zinc-100 dark:border-white/[0.02] flex-nowrap w-full min-w-0">
                     <div className="flex items-center gap-2 min-w-0 flex-1">
                       {/* Platform Logo */}
-                      <div className="w-5.5 h-5.5 rounded bg-white/5 border border-white/[0.04] flex items-center justify-center shrink-0">
+                      <div className="w-5.5 h-5.5 rounded bg-zinc-100 dark:bg-white/5 border border-zinc-200 dark:border-white/[0.04] flex items-center justify-center shrink-0">
                         {getPlatformLogo(plat)}
                       </div>
                       <div className="flex flex-col min-w-0 flex-1">
-                        <span className="text-[11px] font-bold text-zinc-250 tracking-wide truncate">{plat}</span>
+                        <span className="text-[11px] font-bold text-zinc-800 dark:text-zinc-250 tracking-wide truncate">{plat}</span>
                         <span className="text-[9px] text-zinc-500 font-mono truncate">@{linkage.username}</span>
                       </div>
                     </div>
@@ -198,7 +198,7 @@ export function PlatformsWidget({ onLinkageChanged, onboardingComplete = true }:
                             href={getProfileUrl(plat, linkage.username)}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-zinc-550 hover:text-zinc-350 transition-colors p-0.5 shrink-0"
+                            className="text-zinc-400 hover:text-zinc-600 dark:text-zinc-550 dark:hover:text-zinc-350 transition-colors p-0.5 shrink-0"
                           >
                             <ExternalLink className="w-3.5 h-3.5" />
                           </a>
@@ -206,7 +206,7 @@ export function PlatformsWidget({ onLinkageChanged, onboardingComplete = true }:
                       ) : (
                         <button
                           onClick={() => navigate("/settings?tab=platforms")}
-                          className="flex items-center gap-1 bg-yellow-500/10 border border-yellow-500/20 px-2 py-0.5 rounded-full text-[8px] font-extrabold text-yellow-405 select-none hover:bg-yellow-500/20 transition-all cursor-pointer whitespace-nowrap active:scale-95 shrink-0"
+                          className="flex items-center gap-1 bg-yellow-500/10 border border-yellow-500/20 px-2 py-0.5 rounded-full text-[8px] font-extrabold text-yellow-600 dark:text-yellow-405 select-none hover:bg-yellow-500/20 transition-all cursor-pointer whitespace-nowrap active:scale-95 shrink-0"
                         >
                           <AlertCircle className="w-2.5 h-2.5" />
                           <span>Verify</span>
@@ -220,16 +220,16 @@ export function PlatformsWidget({ onLinkageChanged, onboardingComplete = true }:
                   <div
                     key={plat}
                     onClick={() => navigate("/settings?tab=platforms")}
-                    className="flex items-center justify-between py-2 border-b border-white/[0.02] flex-nowrap w-full min-w-0 cursor-pointer group/item hover:bg-white/[0.01] rounded-lg transition-all px-1"
+                    className="flex items-center justify-between py-2 border-b border-zinc-100 dark:border-white/[0.02] flex-nowrap w-full min-w-0 cursor-pointer group/item hover:bg-zinc-50 dark:hover:bg-white/[0.01] rounded-lg transition-all px-1"
                   >
-                    <div className="flex items-center gap-2 min-w-0 flex-1 opacity-40 group-hover/item:opacity-75 transition-opacity">
+                    <div className="flex items-center gap-2 min-w-0 flex-1 opacity-50 group-hover/item:opacity-85 transition-opacity">
                       {/* Platform Logo */}
-                      <div className="w-5.5 h-5.5 rounded bg-white/5 border border-white/[0.04] flex items-center justify-center shrink-0">
+                      <div className="w-5.5 h-5.5 rounded bg-zinc-100 dark:bg-white/5 border border-zinc-200 dark:border-white/[0.04] flex items-center justify-center shrink-0">
                         {getPlatformLogo(plat)}
                       </div>
-                      <span className="text-[11px] font-bold text-zinc-400 tracking-wide truncate">{plat}</span>
+                      <span className="text-[11px] font-bold text-zinc-600 dark:text-zinc-400 tracking-wide truncate">{plat}</span>
                     </div>
-                    <span className="text-[9px] font-extrabold text-zinc-550 group-hover/item:text-amber-500 transition-colors shrink-0 uppercase tracking-widest select-none">
+                    <span className="text-[9px] font-extrabold text-zinc-400 group-hover/item:text-amber-500 transition-colors shrink-0 uppercase tracking-widest select-none">
                       + Link
                     </span>
                   </div>
@@ -241,17 +241,17 @@ export function PlatformsWidget({ onLinkageChanged, onboardingComplete = true }:
 
         {/* SECTION 2: Coming Soon Platforms */}
         <div className="flex flex-col gap-2 shrink-0">
-          <h4 className="text-[8.5px] font-extrabold text-zinc-550 uppercase tracking-widest block border-b border-white/[0.02] pb-1.5 px-0.5 select-none">
+          <h4 className="text-[8.5px] font-extrabold text-zinc-400 dark:text-zinc-550 uppercase tracking-widest block border-b border-zinc-100 dark:border-white/[0.02] pb-1.5 px-0.5 select-none">
             Coming Soon
           </h4>
           <div className="space-y-1">
             {mockPlatforms.map((mockPlat) => (
               <div key={mockPlat.name} className="flex items-center justify-between py-1 px-0.5 select-none transition-all group/coming">
-                <div className="flex items-center gap-2.5 grayscale opacity-25 group-hover/coming:grayscale-0 group-hover/coming:opacity-50 transition-all duration-300">
-                  <div className="w-5.5 h-5.5 rounded bg-white/5 border border-white/[0.02] flex items-center justify-center shrink-0">
+                <div className="flex items-center gap-2.5 grayscale opacity-40 group-hover/coming:grayscale-0 group-hover/coming:opacity-60 transition-all duration-300">
+                  <div className="w-5.5 h-5.5 rounded bg-zinc-100 dark:bg-white/5 border border-zinc-200 dark:border-white/[0.02] flex items-center justify-center shrink-0">
                     {getPlatformLogo(mockPlat.name)}
                   </div>
-                  <span className="text-[10.5px] font-bold text-zinc-450 tracking-wide">{mockPlat.name}</span>
+                  <span className="text-[10.5px] font-bold text-zinc-600 dark:text-zinc-450 tracking-wide">{mockPlat.name}</span>
                 </div>
               </div>
             ))}
