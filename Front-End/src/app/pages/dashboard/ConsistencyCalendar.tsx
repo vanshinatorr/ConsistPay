@@ -198,8 +198,8 @@ export function ConsistencyCalendar({
                             >
                               {cell.status === "completed" && cell.date && (
                                 <div
-                                  className="absolute z-50 hidden group-hover:flex items-center pointer-events-none bottom-[15px] left-1/2 -translate-x-1/2 whitespace-nowrap border border-zinc-800/80 rounded-[3px] px-1.5 py-0.5 shadow-xl text-center text-[8px] font-bold text-zinc-200"
-                                  style={{ backgroundColor: "#09090b", zIndex: 100 }}
+                                  className="absolute z-50 hidden group-hover:flex items-center pointer-events-none bottom-[15px] left-1/2 -translate-x-1/2 whitespace-nowrap bg-white border border-zinc-200 text-zinc-800 dark:bg-zinc-900 dark:border-white/10 dark:text-white rounded-[4px] px-1.5 py-0.5 shadow-md text-center text-[9px] font-bold"
+                                  style={{ zIndex: 100 }}
                                 >
                                   {cell.count} solved
                                 </div>
