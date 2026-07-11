@@ -271,7 +271,7 @@ export function DashboardBattleWidget({ onRefreshRequest }: DashboardBattleWidge
                               <span className="text-xs font-semibold text-zinc-500 dark:text-zinc-400">{myData.score} / {challengeItem.currentDay} Days</span>
                            </div>
                            <div className="w-full h-1 bg-zinc-150 dark:bg-zinc-800/80 rounded-full overflow-hidden">
-                              <div className="h-full bg-zinc-800 dark:bg-zinc-200 rounded-full transition-all duration-500" style={{ width: `${myProgressPercent}%` }} />
+                              <div className="h-full bg-indigo-600 dark:bg-indigo-400 rounded-full transition-all duration-500" style={{ width: `${myProgressPercent}%` }} />
                            </div>
                         </div>
                      </div>
@@ -287,7 +287,7 @@ export function DashboardBattleWidget({ onRefreshRequest }: DashboardBattleWidge
                               <span className="text-xs font-semibold text-zinc-500 dark:text-zinc-400">{oppData.score} / {challengeItem.currentDay} Days</span>
                            </div>
                            <div className="w-full h-1 bg-zinc-150 dark:bg-zinc-800/80 rounded-full overflow-hidden">
-                              <div className="h-full bg-zinc-400 dark:bg-zinc-500 rounded-full transition-all duration-500" style={{ width: `${oppProgressPercent}%` }} />
+                              <div className="h-full bg-zinc-300 dark:bg-zinc-600 rounded-full transition-all duration-500" style={{ width: `${oppProgressPercent}%` }} />
                            </div>
                         </div>
                      </div>

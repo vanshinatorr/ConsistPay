@@ -135,7 +135,7 @@ export function WalletCard({
                     const event = new CustomEvent("open-withdraw-modal", { detail: { walletType: "consistency" } });
                     window.dispatchEvent(event);
                   }}
-                  className="px-4 py-2 bg-zinc-900 hover:bg-zinc-800 active:scale-95 text-white dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-100 text-xs font-bold rounded-lg transition-all cursor-pointer shadow-sm"
+                  className="px-4 py-2 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-100 text-xs font-bold rounded-lg transition-all cursor-pointer shadow-sm active:scale-95"
                 >
                   Withdraw
                 </button>
@@ -264,14 +264,14 @@ export function WalletCard({
                             ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-700 dark:text-emerald-400 cursor-default"
                             : syncLoading
                             ? "bg-zinc-100 dark:bg-white/[0.02] border-zinc-200 dark:border-white/[0.04] text-zinc-500 dark:text-zinc-550 cursor-not-allowed"
-                            : "bg-zinc-900 hover:bg-zinc-800 text-white border-zinc-900 dark:bg-white dark:text-zinc-950 dark:border-white dark:hover:bg-zinc-200 active:scale-95 shadow-sm hover:scale-[1.01]"
+                            : "bg-violet-50 hover:bg-violet-100 text-violet-750 border-violet-200 dark:bg-white dark:text-zinc-950 dark:border-white dark:hover:bg-zinc-200 active:scale-95 shadow-sm hover:scale-[1.01]"
                         }`}
                       >
                         {hasSolvedToday ? (
                           <>Synced</>
                         ) : (
                           <>
-                            <RefreshCw className={`w-3.5 h-3.5 ${syncLoading ? "animate-spin text-zinc-500" : "text-white dark:text-zinc-950"}`} />
+                            <RefreshCw className={`w-3.5 h-3.5 ${syncLoading ? "animate-spin text-zinc-550" : "text-violet-700 dark:text-zinc-950"}`} />
                             {syncLoading ? "Verifying..." : "Sync Solves"}
                           </>
                         )}
@@ -331,6 +331,36 @@ export function WalletCard({
                 <span className="text-[9.5px] text-zinc-500 dark:text-zinc-400 mt-0.5">
                   {missedDays} day{missedDays !== 1 ? "s" : ""}
                 </span>
+              </div>
+            </div>
+
+            {/* Active Plan Details Card */}
+            <div className="bg-zinc-50 dark:bg-black/25 border border-zinc-200 dark:border-white/[0.04] rounded-xl p-4 mt-2.5 flex-1 flex flex-col justify-between hover:border-zinc-300 dark:hover:border-white/[0.08] transition-all duration-200 shadow-sm">
+              <div className="flex items-center gap-1.5 pb-2 border-b border-zinc-150 dark:border-white/[0.04] mb-3">
+                <HelpCircle className="w-3.5 h-3.5 text-violet-650 dark:text-violet-400" />
+                <span className="text-[9.5px] text-zinc-550 dark:text-zinc-400 font-bold uppercase tracking-wider block">
+                  Active Plan Details
+                </span>
+              </div>
+              <div className="grid grid-cols-2 gap-y-3.5 gap-x-2">
+                <div>
+                  <span className="text-[8.5px] text-zinc-400 dark:text-zinc-550 font-bold uppercase tracking-wider block">Daily Payout</span>
+                  <span className="text-xs font-bold text-zinc-700 dark:text-zinc-300 mt-0.5 block">₹{dailyCommitment} / day</span>
+                </div>
+                <div>
+                  <span className="text-[8.5px] text-zinc-400 dark:text-zinc-550 font-bold uppercase tracking-wider block">Total Cycle Stakes</span>
+                  <span className="text-xs font-bold text-zinc-700 dark:text-zinc-300 mt-0.5 block">₹{monthlyBudget} / cycle</span>
+                </div>
+                <div>
+                  <span className="text-[8.5px] text-zinc-400 dark:text-zinc-550 font-bold uppercase tracking-wider block">Cycle Length</span>
+                  <span className="text-xs font-bold text-zinc-700 dark:text-zinc-300 mt-0.5 block">30 Days</span>
+                </div>
+                <div>
+                  <span className="text-[8.5px] text-zinc-400 dark:text-zinc-550 font-bold uppercase tracking-wider block">Plan Level</span>
+                  <span className="text-[10px] font-black text-violet-600 dark:text-violet-400 mt-0.5 block uppercase tracking-wider">
+                    {plan || "Free"}
+                  </span>
+                </div>
               </div>
             </div>
 

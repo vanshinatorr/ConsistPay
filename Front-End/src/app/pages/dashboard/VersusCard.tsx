@@ -143,9 +143,9 @@ export function VersusCard({
                     const event = new CustomEvent("open-withdraw-modal", { detail: { walletType: "battle" } });
                     window.dispatchEvent(event);
                   }}
-                  className="px-3 py-2 bg-zinc-900 hover:bg-zinc-800 text-white dark:bg-white dark:hover:bg-zinc-100 dark:text-zinc-950 border border-zinc-900 dark:border-white transition-all rounded-xl text-xs font-semibold flex items-center justify-center gap-1 cursor-pointer shadow-sm active:scale-95"
+                  className="px-3 py-2 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 dark:bg-white dark:hover:bg-zinc-100 dark:text-zinc-950 transition-all rounded-xl text-xs font-bold flex items-center justify-center gap-1 cursor-pointer shadow-sm active:scale-95"
                 >
-                  <Coins className="w-3.5 h-3.5 text-white dark:text-zinc-900" /> Claim
+                  <Coins className="w-3.5 h-3.5 text-emerald-600 dark:text-zinc-900" /> Claim
                 </button>
               )}
             </div>
