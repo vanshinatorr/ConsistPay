@@ -339,30 +339,28 @@ export function WalletCard({
               </div>
 
               {/* Active Plan Details Card */}
-              <div className="bg-zinc-50 dark:bg-black/25 border border-zinc-200 dark:border-white/[0.04] rounded-xl py-3 px-4 hover:border-zinc-300 dark:hover:border-white/[0.08] transition-all duration-200 shadow-sm">
-                <div className="flex items-center gap-1.5 pb-2 border-b border-zinc-150 dark:border-white/[0.04] mb-3">
+              <div className="bg-zinc-50 dark:bg-black/25 border border-zinc-200 dark:border-white/[0.04] rounded-xl py-2.5 px-3.5 hover:border-zinc-300 dark:hover:border-white/[0.08] transition-all duration-200 shadow-sm">
+                <div className="flex items-center gap-1.5 pb-1.5 border-b border-zinc-150 dark:border-white/[0.04] mb-2.5">
                   <HelpCircle className="w-3.5 h-3.5 text-violet-650 dark:text-violet-400" />
                   <span className="text-[9.5px] text-zinc-555 dark:text-zinc-400 font-bold uppercase tracking-wider block">
                     Active Plan Details
                   </span>
                 </div>
-                <div className="grid grid-cols-2 gap-y-2.5 gap-x-2">
-                  <div>
-                    <span className="text-[8.5px] text-zinc-400 dark:text-zinc-550 font-bold uppercase tracking-wider block">Daily Payout</span>
-                    <span className="text-xs font-bold text-zinc-700 dark:text-zinc-300 mt-0.5 block">₹{dailyCommitment} / day</span>
+                <div className="flex flex-col gap-2 text-xs">
+                  <div className="flex justify-between items-center">
+                    <span className="text-zinc-450 dark:text-zinc-500 font-semibold text-[9.5px] uppercase tracking-wider">Daily Payout</span>
+                    <span className="font-bold text-zinc-700 dark:text-zinc-300">₹{dailyCommitment} / day</span>
                   </div>
-                  <div>
-                    <span className="text-[8.5px] text-zinc-400 dark:text-zinc-550 font-bold uppercase tracking-wider block">Total Cycle Stakes</span>
-                    <span className="text-xs font-bold text-zinc-700 dark:text-zinc-300 mt-0.5 block">₹{monthlyBudget} / cycle</span>
+                  <div className="h-px bg-zinc-200/50 dark:bg-white/[0.03]" />
+                  <div className="flex justify-between items-center">
+                    <span className="text-zinc-455 dark:text-zinc-500 font-semibold text-[9.5px] uppercase tracking-wider">Total Cycle Stakes</span>
+                    <span className="font-bold text-zinc-700 dark:text-zinc-300">₹{monthlyBudget} / cycle</span>
                   </div>
-                  <div>
-                    <span className="text-[8.5px] text-zinc-400 dark:text-zinc-550 font-bold uppercase tracking-wider block">Cycle Length</span>
-                    <span className="text-xs font-bold text-zinc-700 dark:text-zinc-300 mt-0.5 block">30 Days</span>
-                  </div>
-                  <div>
-                    <span className="text-[8.5px] text-zinc-400 dark:text-zinc-550 font-bold uppercase tracking-wider block">Active Range</span>
-                    <span className="text-xs font-bold text-zinc-705 dark:text-zinc-300 mt-0.5 block whitespace-nowrap">
-                      {onboardingComplete ? getPlanRangeString() : "Not Active"}
+                  <div className="h-px bg-zinc-200/50 dark:bg-white/[0.03]" />
+                  <div className="flex justify-between items-center">
+                    <span className="text-zinc-455 dark:text-zinc-500 font-semibold text-[9.5px] uppercase tracking-wider">Active Range</span>
+                    <span className="font-bold text-zinc-705 dark:text-zinc-300">
+                      30 Days ({onboardingComplete ? getPlanRangeString() : "Not Active"})
                     </span>
                   </div>
                 </div>
