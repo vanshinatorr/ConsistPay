@@ -130,7 +130,9 @@ const syncUserStreak = async (userOrId) => {
       while (dateCursor.getTime() <= endCursor.getTime()) {
         const cursorStr = dateCursor.toISOString().substring(0, 10);
         const sub = submissionsMap.get(cursorStr);
-        const hasActivePlan = user.planExpiresAt && new Date(cursorStr + "T00:00:00Z") <= new Date(user.planExpiresAt);
+        const planStartDate = user.planExpiresAt ? new Date(new Date(user.planExpiresAt).getTime() - 30 * 24 * 60 * 60 * 1000) : null;
+        const cursorDate = new Date(cursorStr + "T00:00:00Z");
+        const hasActivePlan = user.planExpiresAt && planStartDate && cursorDate >= planStartDate && cursorDate <= new Date(user.planExpiresAt);
 
         if (sub && sub.status === "completed") {
           // Solved successfully on this day!
@@ -218,6 +220,10 @@ const syncUserStreak = async (userOrId) => {
           "streak"
         );
       }
+
+      // Cap grace coins based on plan and current streak (max 2 for Pro if streak >= 15, otherwise max 1)
+      const maxAllowedCoins = (user.plan === "pro" && currentStreak >= 15) ? 2 : 1;
+      graceCoins = Math.min(Math.max(graceCoins, 0), maxAllowedCoins);
 
       // Save changes if there's any state delta
       if (

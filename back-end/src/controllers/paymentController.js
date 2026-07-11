@@ -98,7 +98,8 @@ try {
   user.dailyCommitment = Number(dailyCommitment);
   user.onboardingComplete = true;
   user.onboardingCompletedAt = new Date();
-  user.graceCoins = isRenewal ? ((user.graceCoins || 0) + 1) : 1;
+  user.graceCoins = 1;
+  user.lastGraceCoinEarnedMonth = "";
   user.planExpiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
   user.currentCycleUnprotectedMisses = 0;
   user.bonusCredited = false;
@@ -137,7 +138,8 @@ try {
   user.dailyCommitment = Number(dailyCommitment);
   user.onboardingComplete = true;
   user.onboardingCompletedAt = new Date();
-  user.graceCoins = isRenewal ? ((user.graceCoins || 0) + 1) : 1;
+  user.graceCoins = 1;
+  user.lastGraceCoinEarnedMonth = "";
   user.planExpiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
   user.currentCycleUnprotectedMisses = 0;
   user.bonusCredited = false;
