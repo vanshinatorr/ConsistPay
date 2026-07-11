@@ -131,11 +131,11 @@
 /* 1. Page backgrounds */
 html.light:not(:has(.auth-page)) body,
 html.light:not(:has(.auth-page)) .min-h-screen,
-html.light:not(:has(.auth-page)) [class*="bg-[#0a0b10]"],
-html.light:not(:has(.auth-page)) [class*="bg-[#0d0d0f]"],
-html.light:not(:has(.auth-page)) [class*="bg-[#0c0c0f]"],
-html.light:not(:has(.auth-page)) [class*="bg-[#07070a]"],
-html.light:not(:has(.auth-page)) [class*="bg-[#06080d]"],
+html.light:not(:has(.auth-page)) [class*="bg-[#0a0b10]" i],
+html.light:not(:has(.auth-page)) [class*="bg-[#0d0d0f]" i],
+html.light:not(:has(.auth-page)) [class*="bg-[#0c0c0f]" i],
+html.light:not(:has(.auth-page)) [class*="bg-[#07070a]" i],
+html.light:not(:has(.auth-page)) [class*="bg-[#06080d]" i],
 html.light:not(:has(.auth-page)) [class*="bg-black"]:not([class*="from-"]):not([class*="via-"]) {
   background-color: var(--background) !important;
   background-image: none !important;
@@ -143,20 +143,20 @@ html.light:not(:has(.auth-page)) [class*="bg-black"]:not([class*="from-"]):not([
 }
 
 /* 2. Card surfaces — dark inner panels become clean white cards */
-html.light:not(:has(.auth-page)) [class*="bg-[#0f0f13]"],
-html.light:not(:has(.auth-page)) [class*="bg-[#0f1018]"],
-html.light:not(:has(.auth-page)) [class*="bg-[#131316]"],
-html.light:not(:has(.auth-page)) [class*="bg-[#131521]"],
-html.light:not(:has(.auth-page)) [class*="bg-[#12131a]"],
-html.light:not(:has(.auth-page)) [class*="bg-[#12131c]"],
-html.light:not(:has(.auth-page)) [class*="bg-[#0d0e12]"],
-html.light:not(:has(.auth-page)) [class*="bg-[#0e0f14]"],
-html.light:not(:has(.auth-page)) [class*="bg-[#141522]"],
-html.light:not(:has(.auth-page)) [class*="bg-[#0c0d15]"],
-html.light:not(:has(.auth-page)) [class*="bg-[#161720]"],
-html.light:not(:has(.auth-page)) [class*="bg-[#0f0f13]/80"],
-html.light:not(:has(.auth-page)) [class*="bg-[#0f0f13]/95"],
-html.light:not(:has(.auth-page)) [class*="bg-[#0a0b10]/80"],
+html.light:not(:has(.auth-page)) [class*="bg-[#0f0f13]" i],
+html.light:not(:has(.auth-page)) [class*="bg-[#0f1018]" i],
+html.light:not(:has(.auth-page)) [class*="bg-[#131316]" i],
+html.light:not(:has(.auth-page)) [class*="bg-[#131521]" i],
+html.light:not(:has(.auth-page)) [class*="bg-[#12131a]" i],
+html.light:not(:has(.auth-page)) [class*="bg-[#12131c]" i],
+html.light:not(:has(.auth-page)) [class*="bg-[#0d0e12]" i],
+html.light:not(:has(.auth-page)) [class*="bg-[#0e0f14]" i],
+html.light:not(:has(.auth-page)) [class*="bg-[#141522]" i],
+html.light:not(:has(.auth-page)) [class*="bg-[#0c0d15]" i],
+html.light:not(:has(.auth-page)) [class*="bg-[#161720]" i],
+html.light:not(:has(.auth-page)) [class*="bg-[#0f0f13]/80" i],
+html.light:not(:has(.auth-page)) [class*="bg-[#0f0f13]/95" i],
+html.light:not(:has(.auth-page)) [class*="bg-[#0a0b10]/80" i],
 html.light:not(:has(.auth-page)) [class*="bg-white/[0.01]"],
 html.light:not(:has(.auth-page)) [class*="bg-white/[0.02]"],
 html.light:not(:has(.auth-page)) [class*="bg-white/[0.03]"],
@@ -223,7 +223,7 @@ html.light:not(:has(.auth-page)) nav a[class*="text-violet"] { color: #7C3AED !i
 html.light:not(:has(.auth-page)) nav a[class*="text-emerald"] { color: #059669 !important; }
 
 /* 7. Notification dropdown */
-html.light:not(:has(.auth-page)) [class*="bg-[#0f0f13]"].absolute {
+html.light:not(:has(.auth-page)) [class*="bg-[#0f0f13]" i].absolute {
   background-color: var(--surface) !important;
   border-color: var(--border) !important;
   box-shadow: 0 10px 40px rgba(0,0,0,0.12) !important;
