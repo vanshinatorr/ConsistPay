@@ -15,6 +15,7 @@ interface WalletCardProps {
   planStatus?: string;
   onboardingComplete?: boolean;
   onRefreshRequest?: () => void;
+  planExpiresAt?: string | Date;
   // Sync integration props
   handleSync?: () => Promise<void>;
   syncLoading?: boolean;
@@ -38,6 +39,7 @@ export function WalletCard({
   planStatus = "active",
   onboardingComplete = true,
   onRefreshRequest,
+  planExpiresAt,
   handleSync,
   syncLoading = false,
   apiError = "",
@@ -54,6 +56,14 @@ export function WalletCard({
   const verifiedPlatforms = linkedPlatforms.filter((p) => p.isVerified);
   const hasVerifiedPlatform = verifiedPlatforms.length > 0;
   const isStakeAtRisk = onboardingComplete && hasVerifiedPlatform && !hasSolvedToday && (timeLeft?.h || 0) < 2;
+
+  const getPlanRangeString = () => {
+    if (!planExpiresAt) return "Not Started";
+    const end = new Date(planExpiresAt);
+    const start = new Date(end.getTime() - 30 * 24 * 60 * 60 * 1000);
+    const formatOption: Intl.DateTimeFormatOptions = { month: "short", day: "numeric" };
+    return `${start.toLocaleDateString("en-US", formatOption)} - ${end.toLocaleDateString("en-US", formatOption)}`;
+  };
 
   // Render grace coins indicator in a compact, premium way
   const renderGraceCoins = () => {
@@ -347,9 +357,9 @@ export function WalletCard({
                   <span className="text-xs font-bold text-zinc-700 dark:text-zinc-300 mt-0.5 block">30 Days</span>
                 </div>
                 <div>
-                  <span className="text-[8.5px] text-zinc-400 dark:text-zinc-550 font-bold uppercase tracking-wider block">Plan Level</span>
-                  <span className="text-[10px] font-black text-violet-600 dark:text-violet-400 mt-0.5 block uppercase tracking-wider">
-                    {plan || "Free"}
+                  <span className="text-[8.5px] text-zinc-400 dark:text-zinc-550 font-bold uppercase tracking-wider block">Active Range</span>
+                  <span className="text-xs font-bold text-zinc-705 dark:text-zinc-300 mt-0.5 block whitespace-nowrap">
+                    {onboardingComplete ? getPlanRangeString() : "Not Active"}
                   </span>
                 </div>
               </div>

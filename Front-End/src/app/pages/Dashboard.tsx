@@ -882,6 +882,7 @@ export function Dashboard() {
                 balance={userData?.balance ?? 0}
                 activeDeposit={userData?.activeDeposit ?? 0}
                 planStatus={userData?.planStatus}
+                planExpiresAt={userData?.planExpiresAt}
                 onboardingComplete={userData?.onboardingComplete ?? true}
                 onRefreshRequest={fetchUserData}
                 handleSync={handleSync}
