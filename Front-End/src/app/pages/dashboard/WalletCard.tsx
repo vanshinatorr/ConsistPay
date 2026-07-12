@@ -336,17 +336,19 @@ export function WalletCard({
             {/* Bottom Section: Grace Coins & Active Plan Details Card */}
             <div className="flex flex-col gap-2.5">
               {/* Grace Coins Row */}
-              <div className="flex items-center justify-between text-xs px-0.5 py-1.5 border-t border-zinc-150 dark:border-white/[0.04]">
-                <div>
-                  <span className="text-[9.5px] text-zinc-500 dark:text-zinc-455 font-bold uppercase tracking-wider block">
+              <div className="flex items-center justify-between text-xs px-0.5 py-2 border-t border-zinc-150 dark:border-white/[0.04]">
+                <div className="min-w-0 pr-2">
+                  <span className="text-[10px] text-zinc-650 dark:text-zinc-300 font-extrabold uppercase tracking-wider block truncate">
                     Grace Coins
                   </span>
-                  <span className="text-[9.5px] text-zinc-400 dark:text-zinc-500 block mt-0.5 font-normal">
+                  <span className="text-[9px] text-zinc-450 dark:text-zinc-500 block mt-0.5 font-normal truncate">
                     {plan?.toLowerCase() === "pro" ? "+1 on 15-day streak" : "1 coin included"}
                   </span>
                 </div>
-                <div className="font-mono text-xs font-medium text-zinc-500 dark:text-zinc-400">
-                  {onboardingComplete ? Math.max(graceCoins, 0) : 0} Active
+                <div className="shrink-0">
+                  <span className="px-2.5 py-1 bg-violet-500/10 border border-violet-500/20 text-violet-600 dark:text-violet-400 rounded-lg font-black font-mono text-xs">
+                    {onboardingComplete ? Math.max(graceCoins, 0) : 0}
+                  </span>
                 </div>
               </div>
 
