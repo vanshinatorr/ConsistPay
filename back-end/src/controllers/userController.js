@@ -190,15 +190,25 @@ const getMe = async (req, res) => {
     let easyCount = 0;
     let mediumCount = 0;
     let hardCount = 0;
-    let totalProblemsSolved = 0;
-
     linkages.forEach(l => {
       if (l.isVerified) {
         easyCount += (l.easySolved || 0);
         mediumCount += (l.mediumSolved || 0);
         hardCount += (l.hardSolved || 0);
-        totalProblemsSolved += (l.totalSolved || 0);
       }
+    });
+
+    const userJoinedDateStr = new Intl.DateTimeFormat("en-CA", {
+      timeZone: "Asia/Kolkata",
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit"
+    }).format(user.createdAt);
+
+    const totalProblemsSolved = await Submission.countDocuments({
+      userId: req.user._id,
+      status: "completed",
+      date: { $gte: userJoinedDateStr }
     });
 
     const totalMissed = await Submission.countDocuments(missedQuery);
