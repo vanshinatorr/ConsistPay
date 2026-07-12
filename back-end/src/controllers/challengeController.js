@@ -381,11 +381,20 @@ const getActiveChallenges = async (req, res) => {
 
     const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
     const active = await Challenge.find({
-      $or: [
-        { status: "active" },
-        { status: "completed", updatedAt: { $gte: oneDayAgo } }
-      ],
-      $or: [{ creatorId: userId }, { opponentId: userId }]
+      $and: [
+        {
+          $or: [
+            { status: "active" },
+            { status: "completed", updatedAt: { $gte: oneDayAgo } }
+          ]
+        },
+        {
+          $or: [
+            { creatorId: userId },
+            { opponentId: userId }
+          ]
+        }
+      ]
     })
       .populate("creatorId", "name streak")
       .populate("opponentId", "name streak");
@@ -394,6 +403,11 @@ const getActiveChallenges = async (req, res) => {
     const now = new Date();
 
     for (const ch of active) {
+      // Null-safety check for populated user models
+      if (!ch.creatorId || !ch.opponentId) {
+        continue;
+      }
+
       const isCreator = ch.creatorId._id.toString() === userId.toString();
       const userRole = isCreator ? "creator" : "opponent";
 
