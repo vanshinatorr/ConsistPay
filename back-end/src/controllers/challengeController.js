@@ -118,9 +118,11 @@ const autoResolveChallenges = async (userId) => {
       const challengeName = `${challenge.duration}-Day Consistency Challenge`;
 
       if (creatorScore > opponentScore) {
-        // Creator wins
-        creator.battleBalance += challenge.stake * 2;
-        await creator.save();
+        // Creator wins atomically
+        await User.updateOne(
+          { _id: challenge.creatorId },
+          { $inc: { battleBalance: challenge.stake * 2 } }
+        );
 
         // Send notifications
         await Notification.create([
@@ -139,9 +141,11 @@ const autoResolveChallenges = async (userId) => {
         ]);
         console.log(`Creator ${creator.email} won stakes: +₹${challenge.stake * 2}`);
       } else if (opponentScore > creatorScore) {
-        // Opponent wins
-        opponent.battleBalance += challenge.stake * 2;
-        await opponent.save();
+        // Opponent wins atomically
+        await User.updateOne(
+          { _id: challenge.opponentId },
+          { $inc: { battleBalance: challenge.stake * 2 } }
+        );
 
         // Send notifications
         await Notification.create([
@@ -160,11 +164,11 @@ const autoResolveChallenges = async (userId) => {
         ]);
         console.log(`Opponent ${opponent.email} won stakes: +₹${challenge.stake * 2}`);
       } else {
-        // Tie - Refund stakes
-        creator.battleBalance += challenge.stake;
-        opponent.battleBalance += challenge.stake;
-        await creator.save();
-        await opponent.save();
+        // Tie - Refund stakes atomically
+        await Promise.all([
+          User.updateOne({ _id: challenge.creatorId }, { $inc: { battleBalance: challenge.stake } }),
+          User.updateOne({ _id: challenge.opponentId }, { $inc: { battleBalance: challenge.stake } })
+        ]);
 
         // Send notifications
         await Notification.create([
@@ -230,9 +234,11 @@ const createChallenge = async (req, res) => {
       return res.status(400).json({ message: `Insufficient balance. You need ₹${deficit} more to lock this commitment.` });
     }
 
-    // Deduct from battle wallet
-    user.battleBalance -= totalCost;
-    await user.save();
+    // Deduct from battle wallet atomically
+    await User.updateOne(
+      { _id: userId },
+      { $inc: { battleBalance: -totalCost } }
+    );
 
     const inviteCode = await generateInviteCode();
 
@@ -250,7 +256,7 @@ const createChallenge = async (req, res) => {
     res.status(201).json({
       message: "Challenge created successfully!",
       inviteCode: challenge.inviteCode,
-      battleBalance: user.battleBalance,
+      battleBalance: user.battleBalance - totalCost,
       challengeId: challenge._id
     });
   } catch (error) {
@@ -312,25 +318,39 @@ const joinChallenge = async (req, res) => {
       return res.status(400).json({ message: `Insufficient balance. Required: ₹${totalCost}, Available: ₹${user.battleBalance}.` });
     }
 
-    // Deduct from battle wallet
-    user.battleBalance -= totalCost;
-    await user.save();
-
     // Start Challenge Dates
     const startDate = new Date();
     const endDate = new Date(startDate.getTime() + challenge.duration * 24 * 60 * 60 * 1000);
 
-    challenge.opponentId = userId;
-    challenge.status = "active";
-    challenge.startDate = startDate;
-    challenge.endDate = endDate;
-    await challenge.save();
+    // Atomically transition the challenge status to prevent race conditions
+    const lockedChallenge = await Challenge.findOneAndUpdate(
+      { _id: challenge._id, status: "pending" },
+      { 
+        $set: { 
+          opponentId: userId, 
+          status: "active", 
+          startDate, 
+          endDate 
+        } 
+      },
+      { new: true }
+    );
+
+    if (!lockedChallenge) {
+      return res.status(400).json({ message: "This battle invitation has already been accepted by another participant." });
+    }
+
+    // Deduct from battle wallet atomically
+    await User.updateOne(
+      { _id: userId },
+      { $inc: { battleBalance: -totalCost } }
+    );
 
     const creator = await User.findById(challenge.creatorId);
 
     res.status(200).json({
       message: "Challenge joined successfully!",
-      battleBalance: user.battleBalance,
+      battleBalance: user.battleBalance - totalCost,
       challengeId: challenge._id,
       opponent: {
         name: creator.name,
@@ -622,18 +642,30 @@ const cancelPendingChallenge = async (req, res) => {
       return res.status(400).json({ message: "No pending battle invitation found to cancel." });
     }
     
-    pendingChallenge.status = "expired";
-    await pendingChallenge.save();
-    
-    const user = await User.findById(userId);
-    if (user) {
-      user.battleBalance += (pendingChallenge.stake + pendingChallenge.entryFee);
-      await user.save();
+    // Atomically transition the status to prevent multiple cancellation refunds
+    const lockedChallenge = await Challenge.findOneAndUpdate(
+      { _id: pendingChallenge._id, status: "pending" },
+      { $set: { status: "expired" } },
+      { new: true }
+    );
+
+    if (!lockedChallenge) {
+      return res.status(400).json({ message: "This battle invitation has already been cancelled or accepted." });
     }
-    
+
+    const refundAmount = pendingChallenge.stake + pendingChallenge.entryFee;
+
+    // Atomically increment user balance
+    await User.updateOne(
+      { _id: userId },
+      { $inc: { battleBalance: refundAmount } }
+    );
+
+    const user = await User.findById(userId);
+
     res.status(200).json({
       message: "Battle cancelled and stakes refunded successfully.",
-      battleBalance: user.battleBalance
+      battleBalance: user ? user.battleBalance : 0
     });
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -658,14 +690,19 @@ const expirePendingChallenges = async () => {
     const expired = await Challenge.find({ status: "pending", createdAt: { $lt: fiveMinsAgo } });
     
     for (const ch of expired) {
-      ch.status = "expired";
-      await ch.save();
-      
-      // Refund the creator
-      const user = await User.findById(ch.creatorId);
-      if (user) {
-        user.battleBalance += (ch.stake + ch.entryFee);
-        await user.save();
+      // Atomically transition the status to prevent multiple cancellation refunds
+      const lockedChallenge = await Challenge.findOneAndUpdate(
+        { _id: ch._id, status: "pending" },
+        { $set: { status: "expired" } },
+        { new: true }
+      );
+
+      if (lockedChallenge) {
+        // Refund the creator atomically
+        await User.updateOne(
+          { _id: ch.creatorId },
+          { $inc: { battleBalance: ch.stake + ch.entryFee } }
+        );
       }
     }
     
