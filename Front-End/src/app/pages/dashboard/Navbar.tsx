@@ -167,10 +167,10 @@ export function Navbar({ initials, plan = "free", avatar, isAvatarUrl }: NavbarP
       <nav className="sticky top-0 z-50 border-b border-white/[0.04] bg-[#0F0F13]/80 backdrop-blur-xl">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2.5 shrink-0">
+            <div className="md:hidden flex items-center gap-2.5 shrink-0">
               <button
                 onClick={() => window.dispatchEvent(new CustomEvent("toggle-sidebar"))}
-                className="md:hidden p-1.5 rounded-xl bg-white/5 border border-white/[0.04] text-zinc-400 hover:text-white hover:bg-white/10 transition-all cursor-pointer shrink-0"
+                className="p-1.5 rounded-xl bg-white/5 border border-white/[0.04] text-zinc-400 hover:text-white hover:bg-white/10 transition-all cursor-pointer shrink-0"
               >
                 <Menu className="w-5 h-5" />
               </button>

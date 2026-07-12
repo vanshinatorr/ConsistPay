@@ -81,14 +81,18 @@ export function Sidebar() {
       <Link
         key={item.label}
         to={item.path}
-        className={`flex items-center gap-3.5 px-3 py-2.5 rounded-xl text-xs font-semibold tracking-wide transition-all duration-200 group relative ${
+        className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-[11.5px] font-semibold tracking-wide transition-all duration-150 group relative ${
           active 
-            ? "bg-violet-500/10 text-violet-400 border border-violet-500/20 shadow-[0_0_15px_rgba(139,92,246,0.05)]" 
-            : "text-zinc-400 hover:text-white hover:bg-white/[0.03] border border-transparent"
+            ? "bg-white/[0.035] text-white" 
+            : "text-zinc-400 hover:text-zinc-200 hover:bg-white/[0.015]"
         }`}
         title={isCollapsed ? item.label : undefined}
       >
-        <IconComponent className={`w-4.5 h-4.5 shrink-0 transition-transform group-hover:scale-105 ${active ? "text-violet-400" : "text-zinc-400 group-hover:text-zinc-300"}`} />
+        {active && (
+          <span className="absolute left-0 top-2.5 bottom-2.5 w-[2px] bg-violet-400 rounded-r shadow-[0_0_8px_rgba(139,92,246,0.6)]" />
+        )}
+
+        <IconComponent className={`w-4 h-4 shrink-0 transition-transform ${active ? "text-violet-400" : "text-zinc-400 group-hover:text-zinc-350"}`} />
         
         <span className={`transition-all duration-300 whitespace-nowrap overflow-hidden ${
           isCollapsed ? "opacity-0 w-0 invisible" : "opacity-100 w-auto visible"
@@ -98,7 +102,7 @@ export function Sidebar() {
 
         {/* Collapsed Tooltip fallback */}
         {isCollapsed && (
-          <div className="absolute left-16 bg-[#16161F] border border-white/[0.08] text-white text-[10px] font-black tracking-wider uppercase px-2.5 py-1.5 rounded-lg opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity duration-200 z-50 shadow-xl whitespace-nowrap">
+          <div className="absolute left-16 bg-[#16161F] border border-white/[0.08] text-white text-[9px] font-bold tracking-wider uppercase px-2.5 py-1.5 rounded-lg opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity duration-200 z-50 shadow-xl whitespace-nowrap">
             {item.label}
           </div>
         )}
@@ -111,20 +115,31 @@ export function Sidebar() {
       {/* Background patterns */}
       <div className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(255,255,255,0.001)_1px,transparent_1px)] bg-[size:100%_16px] pointer-events-none" />
 
-      <div className="flex flex-col gap-6 relative z-10">
+      <div className="flex flex-col gap-5.5 relative z-10">
         {/* Brand Header */}
-        <div className={`flex items-center justify-between border-b border-white/[0.04] pb-4 min-h-[48px] ${isCollapsed ? "justify-center" : ""}`}>
-          <Link to="/dashboard" className="flex items-center gap-3.5 shrink-0">
-            <img
-              src="/logo/brand-logo.png"
-              alt="ConsistPay Logo"
-              className="h-7 w-auto object-contain select-none"
-            />
-            <span className={`text-base font-extrabold tracking-tight text-white transition-all duration-300 ${
+        <div className={`flex items-center justify-between border-b border-white/[0.04] pb-4.5 min-h-[48px] ${isCollapsed ? "justify-center" : ""}`}>
+          <Link to="/dashboard" className="flex items-center gap-3 shrink-0 group/brand">
+            <div className="w-7.5 h-7.5 rounded-xl bg-gradient-to-tr from-violet-500/10 to-emerald-500/10 border border-white/[0.08] flex items-center justify-center shrink-0 shadow-sm transition-all duration-300 group-hover/brand:border-violet-500/30">
+              <img
+                src="/logo/brand-logo.png"
+                alt="ConsistPay Logo"
+                className="h-4 w-auto object-contain select-none transition-transform duration-300 group-hover/brand:scale-105"
+              />
+            </div>
+            
+            <div className={`flex flex-col transition-all duration-300 ${
               isCollapsed ? "opacity-0 w-0 invisible overflow-hidden" : "opacity-100 w-auto visible"
             }`}>
-              Consist<span className="text-emerald-400">Pay</span>
-            </span>
+              <span className="text-sm font-black tracking-tight text-white flex items-center gap-1.5 leading-none">
+                Consist<span className="text-emerald-400">Pay</span>
+                <span className="text-[8px] font-black bg-violet-500/10 text-violet-400 px-1.5 py-0.5 rounded-md border border-violet-500/20 uppercase tracking-widest leading-none">
+                  AI
+                </span>
+              </span>
+              <span className="text-[9px] text-zinc-550 font-bold tracking-wider uppercase leading-none mt-1">
+                Accountability Hub
+              </span>
+            </div>
           </Link>
 
           {/* Close button for Mobile drawer only */}
@@ -133,38 +148,80 @@ export function Sidebar() {
               onClick={() => setIsMobileOpen(false)}
               className="md:hidden p-1.5 rounded-lg hover:bg-white/5 text-zinc-400 hover:text-white cursor-pointer"
             >
-              <X className="w-4.5 h-4.5" />
+              <X className="w-4 h-4" />
             </button>
           )}
         </div>
 
         {/* Main Categories Navigation */}
-        <div className="flex flex-col gap-1.5">
+        <div className="flex flex-col gap-1">
           {mainItems.map(renderNavItem)}
         </div>
 
         {/* Coming Soon Categories Navigation */}
-        <div className="flex flex-col gap-1.5">
-          <h4 className={`text-[9px] font-black uppercase tracking-widest text-zinc-500 border-b border-white/[0.03] pb-1.5 px-3 mb-1 select-none transition-all duration-300 ${
+        <div className="flex flex-col gap-1">
+          <h4 className={`text-[9px] font-black uppercase tracking-wider text-zinc-500 px-3 mt-4 mb-2 select-none transition-all duration-300 ${
             isCollapsed ? "opacity-0 w-0 h-0 overflow-hidden py-0 border-none" : "opacity-100 w-auto"
           }`}>
-            Coming Soon
+            Habit Categories
           </h4>
-          {comingSoonItems.map(renderNavItem)}
+          {comingSoonItems.map((item) => {
+            const active = path === item.path;
+            const IconComponent = item.Icon;
+
+            return (
+              <Link
+                key={item.label}
+                to={item.path}
+                className={`flex items-center justify-between gap-3 px-3 py-2.5 rounded-lg text-[11.5px] font-semibold tracking-wide transition-all duration-150 group relative ${
+                  active 
+                    ? "bg-white/[0.035] text-white" 
+                    : "text-zinc-500 hover:text-zinc-350 hover:bg-white/[0.015]"
+                }`}
+                title={isCollapsed ? item.label : undefined}
+              >
+                {active && (
+                  <span className="absolute left-0 top-2.5 bottom-2.5 w-[2px] bg-violet-400 rounded-r shadow-[0_0_8px_rgba(139,92,246,0.6)]" />
+                )}
+
+                <div className="flex items-center gap-3">
+                  <IconComponent className={`w-4 h-4 shrink-0 transition-transform ${active ? "text-violet-400" : "text-zinc-550 group-hover:text-zinc-450"}`} />
+                  
+                  <span className={`transition-all duration-300 whitespace-nowrap overflow-hidden ${
+                    isCollapsed ? "opacity-0 w-0 invisible" : "opacity-100 w-auto visible"
+                  }`}>
+                    {item.label}
+                  </span>
+                </div>
+
+                {!isCollapsed && (
+                  <span className="text-[8px] font-black text-zinc-650 dark:text-zinc-650 bg-white/[0.01] border border-white/[0.04] px-1.5 py-0.5 rounded uppercase tracking-wider scale-90 opacity-70 group-hover:opacity-100 transition-all select-none">
+                    Soon
+                  </span>
+                )}
+
+                {isCollapsed && (
+                  <div className="absolute left-16 bg-[#16161F] border border-white/[0.08] text-white text-[9px] font-bold tracking-wider uppercase px-2.5 py-1.5 rounded-lg opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity duration-200 z-50 shadow-xl whitespace-nowrap">
+                    {item.label} (Soon)
+                  </div>
+                )}
+              </Link>
+            );
+          })}
         </div>
       </div>
 
       {/* Bottom Actions section */}
-      <div className="flex flex-col gap-5 relative z-10">
-        <div className="flex flex-col gap-1.5 border-t border-white/[0.04] pt-4">
+      <div className="flex flex-col gap-4 relative z-10">
+        <div className="flex flex-col gap-1 border-t border-white/[0.04] pt-4">
           {bottomItems.map(renderNavItem)}
 
           <button
             onClick={handleLogout}
-            className="flex items-center gap-3.5 px-3 py-2.5 rounded-xl text-xs font-semibold tracking-wide text-rose-400/80 hover:text-rose-400 hover:bg-rose-500/5 transition-all duration-200 border border-transparent w-full text-left cursor-pointer group"
+            className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-[11.5px] font-semibold tracking-wide text-rose-400/80 hover:text-rose-450 hover:bg-rose-550/5 transition-all duration-150 border border-transparent w-full text-left cursor-pointer group"
             title={isCollapsed ? "Log Out" : undefined}
           >
-            <LogOut className="w-4.5 h-4.5 shrink-0 transition-transform group-hover:translate-x-0.5" />
+            <LogOut className="w-4 h-4 shrink-0 transition-transform group-hover:translate-x-0.5" />
             <span className={`transition-all duration-300 whitespace-nowrap overflow-hidden ${
               isCollapsed ? "opacity-0 w-0 invisible" : "opacity-100 w-auto visible"
             }`}>
