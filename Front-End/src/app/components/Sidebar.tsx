@@ -243,7 +243,7 @@ export function Sidebar() {
   return (
     <>
       {/* Desktop Sidebar Panel */}
-      <aside className={`hidden md:block shrink-0 h-screen sticky top-0 transition-all duration-300 ease-in-out select-none ${
+      <aside className={`hidden md:block shrink-0 h-screen sticky top-0 z-30 transition-all duration-300 ease-in-out select-none ${
         isCollapsed ? "w-18" : "w-60"
       }`}>
         {sidebarContent}
