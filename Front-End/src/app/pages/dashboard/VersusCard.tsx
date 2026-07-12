@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { Swords, Lock, Info, Plus, Coins, Sparkles } from "lucide-react";
+import { Swords, Lock, Info, Plus, Coins, Zap } from "lucide-react";
 import TopupModal from "../../components/battle/TopupModal";
 import VersusInfoModal from "../../components/battle/VersusInfoModal";
 // WithdrawModal rendered globally at Dashboard level
@@ -47,7 +47,7 @@ export function VersusCard({
             {/* Header */}
             <div className="flex items-center justify-between w-full relative z-10">
               <span className="text-[10px] font-bold text-zinc-500 dark:text-zinc-550 uppercase tracking-widest">
-                Versus Mode
+                Battle Mode
               </span>
               <span className="text-[9px] font-bold text-violet-650 dark:text-violet-400 uppercase tracking-widest bg-violet-500/5 dark:bg-violet-500/10 border border-violet-200 dark:border-violet-500/20 px-2 py-0.5 rounded">
                 PRO ONLY
@@ -83,9 +83,9 @@ export function VersusCard({
               </button>
               <Link
                 to="/pricing"
-                className="flex-1 py-2 rounded-xl bg-gradient-to-r from-indigo-500 to-violet-600 hover:from-indigo-400 hover:to-violet-500 text-white font-bold text-xs transition-all shadow-[0_0_12px_rgba(99,102,241,0.2)] flex items-center justify-center gap-1 hover:scale-[1.01]"
+                className="flex-1 py-2 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white-force font-bold text-xs transition-all shadow-[0_0_12px_rgba(16,185,129,0.2)] flex items-center justify-center gap-1 hover:scale-[1.01]"
               >
-                <Sparkles className="w-3.5 h-3.5 text-yellow-350" /> Upgrade
+                Upgrade
               </Link>
             </div>
           </div>
@@ -96,7 +96,7 @@ export function VersusCard({
             <div className="flex items-center justify-between relative z-10">
               <div className="flex flex-col">
                 <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">
-                  Versus Mode
+                  Battle Mode
                 </span>
                 <span className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">Available for Stakes</span>
               </div>

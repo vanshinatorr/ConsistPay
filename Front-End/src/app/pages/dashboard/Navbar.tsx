@@ -295,9 +295,9 @@ export function Navbar({ initials, plan = "free", avatar, isAvatarUrl }: NavbarP
                       ) : (
                         unreadNotifications.map(n => {
                           // Determine icon and color based on title
-                          let Icon = Sparkles;
-                          let iconColor = "text-violet-400";
-                          let iconBg = "bg-violet-500/10";
+                          let Icon = Bell;
+                          let iconColor = "text-zinc-400";
+                          let iconBg = "bg-zinc-500/10";
                           
                           const titleLower = n.title.toLowerCase();
                           if (titleLower.includes("submission") || titleLower.includes("recorded") || titleLower.includes("verified")) {

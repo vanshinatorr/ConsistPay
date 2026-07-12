@@ -230,7 +230,7 @@ export function CreateChallenge() {
                 className="h-8 w-auto object-contain select-none"
               />
               <span className="text-lg font-bold text-zinc-800 dark:text-white">
-                Consist<span className="text-emerald-500 dark:text-emerald-400">Pay</span>
+                Consist<span className="text-emerald-600 dark:text-emerald-400">Pay</span>
               </span>
             </div>
             <div className="w-24 flex justify-end">
@@ -269,7 +269,7 @@ export function CreateChallenge() {
                   <div>
                     <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight mb-4 text-zinc-800 dark:text-white">
                       Compete. Stay Consistent.<br/>
-                      <span className="bg-gradient-to-r from-violet-605 to-emerald-500 dark:from-violet-400 dark:to-emerald-400 bg-clip-text text-transparent">
+                      <span className="bg-gradient-to-r from-emerald-600 to-teal-600 dark:from-emerald-400 dark:to-teal-400 bg-clip-text text-transparent">
                         Win Together.
                       </span>
                     </h1>
@@ -284,7 +284,7 @@ export function CreateChallenge() {
                       { icon: CheckCircle, text: "AI verified submissions", color: "text-emerald-500 dark:text-emerald-400", bg: "bg-emerald-500/5 dark:bg-emerald-500/10", border: "border-emerald-500/10 dark:border-emerald-500/20" },
                       { icon: Target, text: "Shared daily deadlines", color: "text-blue-500 dark:text-blue-400", bg: "bg-blue-500/5 dark:bg-blue-500/10", border: "border-blue-500/10 dark:border-blue-500/20" },
                       { icon: Trophy, text: "Winner takes all", color: "text-yellow-600 dark:text-yellow-400", bg: "bg-yellow-500/5 dark:bg-yellow-500/10", border: "border-yellow-500/10 dark:border-yellow-500/20" },
-                      { icon: Zap, text: "Real-time tracking", color: "text-violet-605 dark:text-violet-400", bg: "bg-violet-500/5 dark:bg-violet-500/10", border: "border-violet-500/10 dark:border-violet-500/20" }
+                      { icon: Clock, text: "Real-time tracking", color: "text-emerald-600 dark:text-emerald-450", bg: "bg-emerald-500/5 dark:bg-emerald-500/10", border: "border-emerald-500/10 dark:border-emerald-500/20" }
                     ].map((f, idx) => (
                       <div key={idx} className="flex items-center gap-3">
                         <div className={`w-8 h-8 rounded-lg ${f.bg} ${f.border} border flex items-center justify-center shrink-0`}>
@@ -297,7 +297,7 @@ export function CreateChallenge() {
 
                   {/* Example Scenario Grid Preview */}
                   <div className="relative rounded-2xl border border-zinc-200 dark:border-white/10 bg-zinc-50 dark:bg-white/[0.01] p-5 overflow-hidden shadow-inner hidden sm:block">
-                    <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-violet-500 via-purple-500 to-emerald-500 opacity-60" />
+                    <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-emerald-500 via-teal-500 to-emerald-600 opacity-60" />
                     <div className="flex justify-between items-end mb-6">
                       <div>
                         <div className="text-[10px] font-bold text-violet-600 dark:text-violet-400 uppercase tracking-widest mb-1 flex items-center gap-1.5">
@@ -634,9 +634,9 @@ export function CreateChallenge() {
                         </button>
                         <button
                           onClick={() => navigate("/pricing")}
-                          className="flex-1 px-6 py-3.5 rounded-xl font-medium border border-zinc-300 dark:border-violet-500/40 text-zinc-700 dark:text-violet-300 bg-white dark:bg-violet-500/10 hover:bg-zinc-800 dark:hover:bg-gradient-to-r dark:from-violet-600 dark:to-fuchsia-600 hover:text-white hover:border-zinc-800 transition-all text-sm flex items-center justify-center gap-2 cursor-pointer"
+                          className="flex-1 px-6 py-3.5 rounded-xl font-medium border border-zinc-300 dark:border-violet-500/40 text-zinc-700 dark:text-violet-300 bg-white dark:bg-violet-500/10 hover:bg-zinc-800 dark:hover:bg-gradient-to-r dark:from-violet-600 dark:to-fuchsia-600 hover:text-white-force hover:border-zinc-800 transition-all text-sm flex items-center justify-center gap-2 cursor-pointer"
                         >
-                          <Sparkles className="w-4 h-4" /> Upgrade to Pro
+                          <Zap className="w-4 h-4 text-amber-500" /> Upgrade to Pro
                         </button>
                       </div>
                     </div>

@@ -18,11 +18,11 @@ export default function VersusInfoModal({ onClose }: VersusInfoModalProps) {
         {/* Header */}
         <div className="p-6 pb-4 border-b border-white/5 flex items-center justify-between sticky top-0 bg-[#0D0D0F]/90 backdrop-blur-md z-10">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-violet-500/10 rounded-xl flex items-center justify-center border border-violet-500/20">
-              <Swords className="w-5 h-5 text-violet-400" />
+            <div className="w-10 h-10 bg-emerald-500/10 rounded-xl flex items-center justify-center border border-emerald-500/20">
+              <Swords className="w-5 h-5 text-emerald-400" />
             </div>
             <div>
-              <h2 className="text-xl font-bold text-white">Versus Mode</h2>
+              <h2 className="text-xl font-bold text-white">Battle Mode</h2>
               <p className="text-xs text-zinc-400">Head-to-Head Accountability</p>
             </div>
           </div>
@@ -40,11 +40,11 @@ export default function VersusInfoModal({ onClose }: VersusInfoModalProps) {
           {/* Hero Section */}
           <div className="text-center space-y-5">
             <h3 className="text-2xl font-black text-white">
-              Put Your Money Where Your <span className="text-transparent bg-clip-text bg-gradient-to-r from-violet-400 to-purple-400">Consistency Is.</span>
+              Put Your Money Where Your <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-400">Consistency Is.</span>
             </h3>
             <div className="flex flex-wrap items-center justify-center gap-3 max-w-md mx-auto">
               <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/[0.03] border border-white/5 text-sm text-zinc-300">
-                <Swords className="w-4 h-4 text-violet-400" /> Challenge friends
+                <Swords className="w-4 h-4 text-emerald-400" /> Challenge friends
               </div>
               <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/[0.03] border border-white/5 text-sm text-zinc-300">
                 <IndianRupee className="w-4 h-4 text-emerald-400" /> Lock in stakes
@@ -58,12 +58,12 @@ export default function VersusInfoModal({ onClose }: VersusInfoModalProps) {
           {/* How it Works */}
           <div className="space-y-4">
             <h4 className="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
-              <Target className="w-4 h-4 text-violet-400" /> How It Works
+              <Target className="w-4 h-4 text-emerald-400" /> How It Works
             </h4>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="p-5 rounded-xl bg-white/[0.03] border border-white/10 space-y-3 relative overflow-hidden group">
-                <div className="absolute inset-0 bg-gradient-to-br from-violet-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                <div className="w-10 h-10 rounded-full bg-violet-500/20 flex items-center justify-center text-violet-400 font-bold mb-2">1</div>
+                <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                <div className="w-10 h-10 rounded-full bg-emerald-500/20 flex items-center justify-center text-emerald-400 font-bold mb-2">1</div>
                 <h5 className="text-white font-bold text-sm">Set the Stakes</h5>
                 <p className="text-sm text-zinc-400 leading-relaxed">Decide a custom amount (e.g., ₹500) and invite a friend.</p>
               </div>
@@ -74,8 +74,8 @@ export default function VersusInfoModal({ onClose }: VersusInfoModalProps) {
                 <p className="text-sm text-zinc-400 leading-relaxed">Both players deposit the stake into the secure pool.</p>
               </div>
               <div className="p-5 rounded-xl bg-white/[0.03] border border-white/10 space-y-3 relative overflow-hidden group">
-                <div className="absolute inset-0 bg-gradient-to-br from-rose-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                <div className="w-10 h-10 rounded-full bg-rose-500/20 flex items-center justify-center text-rose-400 font-bold mb-2">3</div>
+                <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                <div className="w-10 h-10 rounded-full bg-emerald-500/20 flex items-center justify-center text-emerald-400 font-bold mb-2">3</div>
                 <h5 className="text-white font-bold text-sm">Highest Streak Wins</h5>
                 <p className="text-sm text-zinc-400 leading-relaxed">The person with the higher streak at the end wins.</p>
               </div>
@@ -88,7 +88,7 @@ export default function VersusInfoModal({ onClose }: VersusInfoModalProps) {
               <Swords className="w-32 h-32 text-white" />
             </div>
             <h4 className="text-xs font-bold text-zinc-400 uppercase tracking-widest mb-6 flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-violet-500 shadow-[0_0_10px_rgba(139,92,246,0.8)]"></span> Example Scenario
+              <span className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.8)]"></span> Example Scenario
             </h4>
             
             <div className="flex items-center justify-between max-w-md mx-auto mb-8 relative z-10">
@@ -100,7 +100,7 @@ export default function VersusInfoModal({ onClose }: VersusInfoModalProps) {
               </div>
               
               <div className="flex flex-col items-center justify-center px-4">
-                <span className="text-[10px] font-bold text-violet-400 uppercase tracking-widest mb-1">Total Pool</span>
+                <span className="text-[10px] font-bold text-emerald-400 uppercase tracking-widest mb-1">Total Pool</span>
                 <span className="text-3xl font-black text-white tracking-tight">₹1,000</span>
               </div>
 
@@ -117,8 +117,8 @@ export default function VersusInfoModal({ onClose }: VersusInfoModalProps) {
                 <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
                 <p className="text-sm text-zinc-300 leading-relaxed"><span className="font-semibold text-white">If it's a tie:</span> You both maintained equal streaks. The pool is split and you get your ₹500 back.</p>
               </div>
-              <div className="flex items-start gap-3 bg-violet-500/10 border border-violet-500/20 p-4 rounded-xl shadow-[inset_0_0_20px_rgba(139,92,246,0.05)]">
-                <Zap className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
+              <div className="flex items-start gap-3 bg-emerald-500/10 border border-emerald-500/20 p-4 rounded-xl shadow-[inset_0_0_20px_rgba(16,185,129,0.05)]">
+                <Swords className="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
                 <p className="text-sm text-zinc-200 leading-relaxed"><span className="font-semibold text-white">If you have a higher streak:</span> You beat Vansh's consistency and win the entire ₹1,000 pool!</p>
               </div>
             </div>

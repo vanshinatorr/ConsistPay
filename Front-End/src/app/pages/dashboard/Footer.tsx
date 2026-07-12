@@ -20,8 +20,8 @@ export function Footer({ className }: FooterProps = {}) {
                 alt="ConsistPay Logo"
                 className="h-6 w-auto object-contain select-none"
               />
-              <span className="text-xl font-bold tracking-tight text-zinc-800 dark:text-white">
-                Consist<span className="text-emerald-500 dark:text-emerald-400">Pay</span>
+              <span className="text-xl font-bold tracking-tight text-zinc-900 dark:text-white">
+                Consist<span className="text-emerald-600 dark:text-emerald-400">Pay</span>
               </span>
             </Link>
             

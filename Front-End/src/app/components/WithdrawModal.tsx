@@ -184,7 +184,7 @@ export function WithdrawModal({
                 : "text-zinc-500 hover:text-zinc-800 dark:text-zinc-450 dark:hover:text-zinc-200"
             }`}
           >
-            ⚔️ Versus Wallet (₹{battleBalance})
+            ⚔️ Battle Wallet (₹{battleBalance})
           </button>
         </div>
 
@@ -195,7 +195,7 @@ export function WithdrawModal({
             <span className="text-2xl font-black font-mono text-emerald-400 mt-1 block">₹{availableBalance}</span>
           </div>
           <span className="text-[10px] uppercase font-extrabold px-3 py-1.5 bg-emerald-500/10 border border-emerald-500/20 rounded-xl text-emerald-400 tracking-wider">
-            {walletType === "battle" ? "Versus Stake" : "Habit Reward"}
+            {walletType === "battle" ? "Battle Stake" : "Habit Reward"}
           </span>
         </div>
 

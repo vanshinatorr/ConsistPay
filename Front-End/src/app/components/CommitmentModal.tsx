@@ -318,7 +318,7 @@ export function CommitmentModal({ isOpen, onClose, onComplete, currentBalance = 
 
               <button
                 onClick={handleNext}
-                className="w-full mt-4 py-3.5 bg-violet-600 hover:bg-violet-500 text-white font-medium rounded-xl transition-all flex items-center justify-center gap-2"
+                className="w-full mt-4 py-3.5 bg-violet-600 hover:bg-violet-500 text-white-force font-medium rounded-xl transition-all flex items-center justify-center gap-2"
               >
                 Continue Setup
                 <ArrowRight className="w-4 h-4" />
@@ -408,7 +408,7 @@ export function CommitmentModal({ isOpen, onClose, onComplete, currentBalance = 
                 </button>
                 <button
                   onClick={handleNext}
-                  className="flex-1 py-3 bg-violet-600 hover:bg-violet-500 text-white font-medium rounded-xl transition-all flex items-center justify-center gap-2 text-sm"
+                  className="flex-1 py-3 bg-violet-600 hover:bg-violet-500 text-white-force font-medium rounded-xl transition-all flex items-center justify-center gap-2 text-sm"
                 >
                   Continue
                   <ArrowRight className="w-4 h-4" />
@@ -526,9 +526,9 @@ export function CommitmentModal({ isOpen, onClose, onComplete, currentBalance = 
                       </li>
                       <li className="flex items-center gap-2.5 text-zinc-300">
                         <div className="w-4 h-4 rounded-full bg-violet-500/10 border border-violet-500/20 flex items-center justify-center shrink-0">
-                          <Sparkles className="w-3 h-3 text-violet-400" />
+                          <Award className="w-3 h-3 text-violet-400" />
                         </div>
-                        <span>Gemini AI Performance Advisor</span>
+                        <span>Premium Performance Analytics</span>
                       </li>
                       <li className="flex items-center gap-2.5 text-zinc-550">
                         <div className="w-4 h-4 rounded-full bg-zinc-850 flex items-center justify-center shrink-0">
@@ -544,7 +544,7 @@ export function CommitmentModal({ isOpen, onClose, onComplete, currentBalance = 
                       {plan === "Pro" && <span className="text-[10px] text-violet-400 font-semibold uppercase tracking-wider">Active</span>}
                     </div>
                     <div className="text-[10px] text-violet-300/80 leading-normal italic font-normal flex items-center gap-1.5 bg-violet-500/5 border border-violet-500/10 rounded-lg p-1.5 mt-0.5">
-                      <Sparkles className="w-3.5 h-3.5 text-violet-400 shrink-0" />
+                      <Zap className="w-3.5 h-3.5 text-violet-400 shrink-0" />
                       <span>Less than a cup of coffee to unlock Pro!</span>
                     </div>
                   </div>
@@ -561,7 +561,7 @@ export function CommitmentModal({ isOpen, onClose, onComplete, currentBalance = 
                 <button
                   onClick={handleNext}
                   disabled={!plan}
-                  className="flex-1 py-2.5 bg-violet-600 hover:bg-violet-500 disabled:opacity-50 disabled:hover:bg-violet-600 text-white font-semibold rounded-xl transition-all flex items-center justify-center gap-2 text-xs"
+                  className="flex-1 py-2.5 bg-violet-600 hover:bg-violet-500 disabled:opacity-50 disabled:hover:bg-violet-600 text-white-force font-semibold rounded-xl transition-all flex items-center justify-center gap-2 text-xs"
                 >
                   Continue
                   <ArrowRight className="w-3.5 h-3.5" />
@@ -653,7 +653,7 @@ export function CommitmentModal({ isOpen, onClose, onComplete, currentBalance = 
                 <button
                   onClick={handleNext}
                   disabled={!amount}
-                  className="flex-1 py-3.5 bg-violet-600 hover:bg-violet-500 disabled:opacity-50 disabled:hover:bg-violet-600 text-white font-semibold rounded-xl transition-all flex items-center justify-center gap-2 text-sm"
+                  className="flex-1 py-3.5 bg-violet-600 hover:bg-violet-500 disabled:opacity-50 disabled:hover:bg-violet-600 text-white-force font-semibold rounded-xl transition-all flex items-center justify-center gap-2 text-sm"
                 >
                   Continue
                   <ArrowRight className="w-4 h-4" />
@@ -782,7 +782,7 @@ export function CommitmentModal({ isOpen, onClose, onComplete, currentBalance = 
                 </button>
                 <button
                   onClick={handleNext}
-                  className="flex-1 py-2.5 bg-violet-600 hover:bg-violet-500 text-white font-semibold rounded-xl transition-all flex items-center justify-center gap-2 text-xs shadow-md"
+                  className="flex-1 py-2.5 bg-violet-600 hover:bg-violet-500 text-white-force font-semibold rounded-xl transition-all flex items-center justify-center gap-2 text-xs shadow-md"
                 >
                   Continue to Secure Checkout
                   <ArrowRight className="w-3.5 h-3.5" />
@@ -845,7 +845,7 @@ export function CommitmentModal({ isOpen, onClose, onComplete, currentBalance = 
                     <div className="flex items-center justify-between text-xs">
                       <span className="text-zinc-500">Selected Plan</span>
                       <span className="text-white font-semibold capitalize flex items-center gap-1.5">
-                        {plan === "Pro" && <Sparkles className="w-3.5 h-3.5 text-violet-400" />}
+                        {plan === "Pro" && <Zap className="w-3.5 h-3.5 text-violet-400" />}
                         {plan} Mode
                       </span>
                     </div>
@@ -928,13 +928,13 @@ export function CommitmentModal({ isOpen, onClose, onComplete, currentBalance = 
                     <button
                       onClick={handleSkipPayment}
                       disabled={loading}
-                      className="w-full py-3 bg-violet-600 hover:bg-violet-500 disabled:opacity-50 text-white font-semibold rounded-xl shadow-lg transition-all flex items-center justify-center gap-2 text-sm cursor-pointer"
+                      className="w-full py-3 bg-violet-600 hover:bg-violet-500 disabled:opacity-50 text-white-force font-semibold rounded-xl shadow-lg transition-all flex items-center justify-center gap-2 text-sm cursor-pointer"
                     >
                       {loading ? (
                         <Loader2 className="w-4 h-4 animate-spin" />
                       ) : (
                         <>
-                          <Zap className="w-4 h-4 shrink-0 text-white" />
+                          <Shield className="w-4 h-4 shrink-0 text-white-force" />
                           {useWalletBalance && currentBalance >= (plan === "Pro" ? (amount ? amount * 30 : 0) + 49 : (amount ? amount * 30 : 0))
                             ? "Confirm Plan Activation (Free using Wallet)"
                             : "Simulate Secure Payment (Test Mode)"
@@ -1021,7 +1021,7 @@ export function CommitmentModal({ isOpen, onClose, onComplete, currentBalance = 
                   }, 1200);
                 }}
                 disabled={loading}
-                className="block w-full py-4 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-white font-semibold rounded-xl transition-all duration-300 shadow-lg shadow-emerald-500/25 text-base"
+                className="block w-full py-4 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-white-force font-semibold rounded-xl transition-all duration-300 shadow-lg shadow-emerald-500/25 text-base"
               >
                 {loading ? (
                   <span className="flex items-center justify-center gap-2">

@@ -29,6 +29,7 @@ export function Settings() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [plan, setPlan] = useState("free");
+  const [onboardingComplete, setOnboardingComplete] = useState(false);
   const [avatar, setAvatar] = useState("");
   const [showAvatarSelector, setShowAvatarSelector] = useState(false);
   const avatarOptions = ["👨‍💻", "👩‍💻", "🚀", "⚡", "👾", "🎯", "👑", "🦄"];
@@ -64,6 +65,7 @@ export function Settings() {
           setAvatar(data.avatar || "");
           setDailyCommitment(data.dailyCommitment || 5);
           setPlan(data.plan || "free");
+          setOnboardingComplete(data.onboardingComplete || false);
         }
       } catch (err) {
         console.error("Error fetching user data:", err);
@@ -210,8 +212,8 @@ export function Settings() {
                 alt="ConsistPay Logo"
                 className="h-8 w-auto object-contain select-none"
               />
-              <span className="text-lg font-bold text-white">
-                Consist<span className="text-emerald-400">Pay</span>
+              <span className="text-lg font-bold text-zinc-900 dark:text-white">
+                Consist<span className="text-emerald-600 dark:text-emerald-400">Pay</span>
               </span>
             </div>
             <div className="w-20" />
@@ -550,10 +552,19 @@ export function Settings() {
                   <div className="relative bg-white/5 backdrop-blur-xl border border-violet-500/20 rounded-2xl p-6">
                     <div className="flex items-center justify-between mb-4">
                       <h2 className="text-lg font-bold">Current Plan</h2>
-                      <span className="text-xs bg-emerald-500/20 border border-emerald-500/30 text-emerald-300 px-2 py-1 rounded-full">Active</span>
+                      <span className={`text-xs px-2 py-1 rounded-full ${onboardingComplete ? "bg-emerald-500/20 border border-emerald-500/30 text-emerald-300" : "bg-zinc-550/20 border border-zinc-550/30 text-zinc-400"}`}>
+                        {onboardingComplete ? "Active" : "Setup Incomplete"}
+                      </span>
                     </div>
                     
-                    {plan?.toLowerCase() === "pro" ? (
+                    {!onboardingComplete ? (
+                      <div className="flex items-center justify-between p-4 bg-white/5 border border-white/10 rounded-xl">
+                        <div>
+                          <div className="font-bold text-zinc-400 text-lg">No Active Plan</div>
+                          <div className="text-zinc-550 text-sm">Please complete onboarding setup</div>
+                        </div>
+                      </div>
+                    ) : plan?.toLowerCase() === "pro" ? (
                       <div className="flex items-center justify-between p-4 bg-violet-500/10 border border-violet-500/20 rounded-xl">
                         <div>
                           <div className="font-bold text-violet-300 text-lg">⚡ Pro Plan</div>
@@ -586,8 +597,8 @@ export function Settings() {
                         "Full global leaderboard",
                         "10% referral commission",
                       ].map((feature) => (
-                        <div key={feature} className={`flex items-center gap-2 text-sm ${plan?.toLowerCase() === "pro" ? "text-zinc-300" : "text-zinc-500"}`}>
-                          <Check className={`w-4 h-4 shrink-0 ${plan?.toLowerCase() === "pro" ? "text-emerald-400" : "text-zinc-600"}`} />
+                        <div key={feature} className={`flex items-center gap-2 text-sm ${onboardingComplete && plan?.toLowerCase() === "pro" ? "text-zinc-300" : "text-zinc-500"}`}>
+                          <Check className={`w-4 h-4 shrink-0 ${onboardingComplete && plan?.toLowerCase() === "pro" ? "text-emerald-400" : "text-zinc-600"}`} />
                           {feature}
                         </div>
                       ))}
@@ -601,7 +612,11 @@ export function Settings() {
                   <div className="relative bg-white/5 backdrop-blur-xl border border-white/[0.04] rounded-2xl p-6">
                     <h2 className="text-lg font-bold mb-4">Billing</h2>
                     
-                    {plan?.toLowerCase() === "pro" ? (
+                    {!onboardingComplete ? (
+                      <div className="text-sm text-zinc-400">
+                        You have not completed the onboarding process. Setup commitment to activate tracking.
+                      </div>
+                    ) : plan?.toLowerCase() === "pro" ? (
                       <div className="space-y-3">
                         {[
                           { label: "Next billing date", value: "Next Month" },
@@ -621,14 +636,24 @@ export function Settings() {
                     )}
 
                     <div className="flex gap-3 mt-5">
-                      <Link
-                        to="/pricing"
-                        className="flex-1 py-3 rounded-xl font-semibold text-center bg-white/5 border border-white/[0.04] hover:bg-white/10 transition-all text-sm flex items-center justify-center gap-1"
-                      >
-                        {plan?.toLowerCase() === "pro" ? "Manage Plan" : "Upgrade to Pro"}
-                        <ChevronRight className="w-4 h-4" />
-                      </Link>
-                      {plan?.toLowerCase() === "pro" && (
+                      {!onboardingComplete ? (
+                        <Link
+                          to="/onboarding"
+                          className="flex-1 py-3 rounded-xl font-semibold text-center bg-violet-600 hover:bg-violet-500 text-white-force text-sm flex items-center justify-center gap-1 shadow-sm shadow-violet-650/15"
+                        >
+                          Setup Commitment
+                          <ChevronRight className="w-4 h-4" />
+                        </Link>
+                      ) : (
+                        <Link
+                          to="/pricing"
+                          className="flex-1 py-3 rounded-xl font-semibold text-center bg-white/5 border border-white/[0.04] hover:bg-white/10 transition-all text-sm flex items-center justify-center gap-1"
+                        >
+                          {plan?.toLowerCase() === "pro" ? "Manage Plan" : "Upgrade to Pro"}
+                          <ChevronRight className="w-4 h-4" />
+                        </Link>
+                      )}
+                      {onboardingComplete && plan?.toLowerCase() === "pro" && (
                         <button className="flex-1 py-3 rounded-xl font-semibold bg-red-500/10 border border-red-500/20 text-red-400 hover:bg-red-500/20 transition-all text-sm">
                           Cancel Plan
                         </button>

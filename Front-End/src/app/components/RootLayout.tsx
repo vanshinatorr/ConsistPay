@@ -40,21 +40,9 @@ export function RootLayout() {
         // Try instant redirect using cache
         const cachedUserStr = localStorage.getItem("consistpay_user_data");
         if (token && cachedUserStr && (path === "/" || path === "/login" || path === "/signup" || path === "/auth")) {
-          try {
-            const cachedUser = JSON.parse(cachedUserStr);
-            const userHasPlanOrDeposit = cachedUser.onboardingComplete === true || (cachedUser.activeDeposit || 0) > 0 || cachedUser.plan === "pro";
-            if (!userHasPlanOrDeposit) {
-              navigate("/onboarding");
-              setLoading(false);
-              return;
-            } else {
-              navigate("/dashboard");
-              setLoading(false);
-              return;
-            }
-          } catch (e) {
-            // Ignore parse errors
-          }
+          navigate("/dashboard");
+          setLoading(false);
+          return;
         }
 
         if (!token) {
@@ -77,17 +65,7 @@ export function RootLayout() {
             const userHasPlanOrDeposit = data.onboardingComplete === true || (data.activeDeposit || 0) > 0 || data.plan === "pro";
 
             if (isLandingOrAuthPage) {
-              if (!userHasPlanOrDeposit) {
-                navigate("/onboarding");
-              } else {
-                navigate("/dashboard");
-              }
-            } else {
-              if (userHasPlanOrDeposit && path === "/onboarding") {
-                navigate("/dashboard");
-              } else if (!userHasPlanOrDeposit && path !== "/onboarding" && path !== "/payment") {
-                navigate("/onboarding");
-              }
+              navigate("/dashboard");
             }
           } catch (e) {
             // Ignore parse errors
@@ -113,17 +91,7 @@ export function RootLayout() {
           const userHasPlanOrDeposit = data.onboardingComplete === true || (data.activeDeposit || 0) > 0 || data.plan === "pro";
 
           if (isLandingOrAuthPage) {
-            if (!userHasPlanOrDeposit) {
-              navigate("/onboarding");
-            } else {
-              navigate("/dashboard");
-            }
-          } else {
-            if (userHasPlanOrDeposit && path === "/onboarding") {
-              navigate("/dashboard");
-            } else if (!userHasPlanOrDeposit && path !== "/onboarding" && path !== "/payment") {
-              navigate("/onboarding");
-            }
+            navigate("/dashboard");
           }
         } else {
           setIsAuth(false);

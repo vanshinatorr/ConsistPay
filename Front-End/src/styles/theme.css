@@ -143,6 +143,7 @@ html.light [class*="bg-black"]:not([class*="from-"]):not([class*="via-"]) {
 }
 
 /* 2. Card surfaces — dark inner panels become clean white cards */
+html.light [class*="bg-[#121214]" i],
 html.light [class*="bg-[#0f0f13]" i],
 html.light [class*="bg-[#0f1018]" i],
 html.light [class*="bg-[#131316]" i],
@@ -157,12 +158,17 @@ html.light [class*="bg-[#161720]" i],
 html.light [class*="bg-[#0f0f13]/80" i],
 html.light [class*="bg-[#0f0f13]/95" i],
 html.light [class*="bg-[#0a0b10]/80" i],
+html.light [class*="bg-[#0c0c10]" i],
+html.light [class*="bg-[#0c0c10]/80" i],
+html.light [class*="bg-[#0c0c10]/90" i],
+html.light [class*="bg-[#0c0c10]/95" i],
 html.light [class*="bg-white/[0.01]"],
 html.light [class*="bg-white/[0.02]"],
 html.light [class*="bg-white/[0.03]"],
 html.light [class*="bg-white/[0.04]"],
 html.light [class*="bg-white/[0.005]"],
 html.light [class*="bg-white/5"],
+html.light [class*="bg-zinc-900"],
 html.light [class*="bg-zinc-950"] {
   background-color: var(--surface) !important;
   background-image: none !important;
@@ -219,8 +225,11 @@ html.light nav.sticky {
 html.light nav a,
 html.light nav span { color: var(--muted) !important; }
 
-html.light nav a[class*="text-violet"] { color: #7C3AED !important; }
-html.light nav a[class*="text-emerald"] { color: #059669 !important; }
+html.light nav a[class*="text-violet"],
+html.light nav span[class*="text-violet"] { color: #7C3AED !important; }
+
+html.light nav a[class*="text-emerald"],
+html.light nav span[class*="text-emerald"] { color: #059669 !important; }
 
 /* 7. Notification dropdown */
 html.light [class*="bg-[#0f0f13]" i].absolute {
@@ -250,3 +259,10 @@ html.light .h-px[class*="bg-white"] { background-color: var(--border) !important
 
 /* 11. Contribution grid */
 html.light rect[fill="rgba(255, 255, 255, 0.03)"] { fill: #E2E8F0 !important; }
+
+/* 12. Forced white text for dark elements in light mode */
+html.light nav a.text-white-force,
+html.light nav span.text-white-force,
+.text-white-force {
+  color: #ffffff !important;
+}

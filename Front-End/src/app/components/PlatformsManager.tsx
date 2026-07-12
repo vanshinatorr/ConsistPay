@@ -284,7 +284,7 @@ export function PlatformsManager() {
                         <button
                           type="submit"
                           disabled={loading}
-                          className="bg-zinc-900 hover:bg-zinc-800 dark:bg-white dark:hover:bg-zinc-200 text-white dark:text-black font-bold px-4 rounded-xl text-xs flex items-center justify-center shrink-0 active:scale-[0.98] transition-all cursor-pointer border border-zinc-900 dark:border-white"
+                          className="bg-zinc-900 hover:bg-zinc-800 dark:bg-white dark:hover:bg-zinc-200 text-white-force dark:text-black font-bold px-4 rounded-xl text-xs flex items-center justify-center shrink-0 active:scale-[0.98] transition-all cursor-pointer border border-zinc-900 dark:border-white"
                         >
                           {loading ? <Loader2 className="w-4 h-4 animate-spin text-white dark:text-black" /> : "Link Profile"}
                         </button>

@@ -21,8 +21,8 @@ export function NotFound() {
                 alt="ConsistPay Logo"
                 className="h-8 w-auto object-contain select-none"
               />
-              <span className="text-lg font-bold text-white">
-                Consist<span className="text-emerald-400">Pay</span>
+              <span className="text-lg font-bold text-zinc-900 dark:text-white">
+                Consist<span className="text-emerald-600 dark:text-emerald-400">Pay</span>
               </span>
         </Link>
 

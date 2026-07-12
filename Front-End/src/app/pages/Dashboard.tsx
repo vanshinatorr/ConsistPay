@@ -712,8 +712,8 @@ export function Dashboard() {
   return (
     <div className="min-h-screen text-white" style={{ backgroundColor: "#06070D" }}>
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-0 right-1/4 w-96 h-96 bg-violet-500/10 rounded-full blur-[120px]" />
-        <div className="absolute bottom-1/4 left-1/4 w-96 h-96 bg-emerald-500/10 rounded-full blur-[120px]" />
+        <div className="hidden dark:block absolute top-0 right-1/4 w-96 h-96 bg-violet-500/10 rounded-full blur-[120px]" />
+        <div className="hidden dark:block absolute bottom-1/4 left-1/4 w-96 h-96 bg-emerald-500/10 rounded-full blur-[120px]" />
       </div>
 
       <Navbar initials={initials} plan={userData?.plan} avatar={avatar} isAvatarUrl={isAvatarUrl} />
@@ -756,7 +756,7 @@ export function Dashboard() {
 
         {userData && !userData.onboardingComplete && (
           <div className="mb-8 bg-[#121214] border border-white/5 rounded-2xl p-6 relative overflow-hidden shadow-xl hover:border-emerald-500/20 transition-all">
-            <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/5 rounded-full blur-[80px]" />
+            <div className="hidden dark:block absolute top-0 right-0 w-64 h-64 bg-emerald-500/5 rounded-full blur-[80px]" />
             <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
               <div>
                 <h3 className="text-xl font-bold text-white mb-2 flex items-center gap-2">
@@ -793,7 +793,7 @@ export function Dashboard() {
 
         {userData?.onboardingComplete && (userData?.planStatus === "grace_period" || userData?.planStatus === "expired") && (
           <div className="mb-8 bg-gradient-to-r from-red-500/10 via-amber-500/5 to-red-500/10 border border-red-500/20 rounded-2xl p-6 relative overflow-hidden shadow-xl">
-            <div className="absolute top-0 right-0 w-64 h-64 bg-red-500/5 rounded-full blur-[80px]" />
+            <div className="hidden dark:block absolute top-0 right-0 w-64 h-64 bg-red-500/5 rounded-full blur-[80px]" />
             <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
               <div className="flex items-start gap-4">
                 <div className="p-3 bg-red-500/10 rounded-xl text-red-400 shrink-0">
@@ -842,14 +842,14 @@ export function Dashboard() {
                 currentStreak={currentStreak}
                 completedDays={userData?.totalProblemsSolved ?? 0}
                 consistencyScore={consistencyScore}
-                onboardingComplete={userData?.onboardingComplete ?? true}
+                onboardingComplete={true}
               />
             </div>
             {/* Desktop Only Calendar */}
             <div className="hidden lg:block lg:col-span-1">
               <ConsistencyCalendar
                 yearMonths={yearMonths}
-                onboardingComplete={userData?.onboardingComplete ?? true}
+                onboardingComplete={true}
                 dayLabels={dayLabels}
                 onPrevMonth={handlePrevMonth}
                 onNextMonth={handleNextMonth}
@@ -867,7 +867,7 @@ export function Dashboard() {
             <div className="lg:col-span-2">
               <PlatformsWidget
                 onLinkageChanged={fetchUserData}
-                onboardingComplete={userData?.onboardingComplete ?? true}
+                onboardingComplete={true}
               />
             </div>
             {/* Column 2 - Consistency Wallet Card (Core feature centered and prominent with direct Sync & Timer tools) */}
@@ -884,6 +884,7 @@ export function Dashboard() {
                 planStatus={userData?.planStatus}
                 planExpiresAt={userData?.planExpiresAt}
                 onboardingComplete={userData?.onboardingComplete ?? true}
+                onSetupClick={() => setShowSetupModal(true)}
                 onRefreshRequest={fetchUserData}
                 handleSync={handleSync}
                 syncLoading={syncLoading}
@@ -900,12 +901,12 @@ export function Dashboard() {
               <VersusCard
                 plan={userData?.plan}
                 battleBalance={userData?.battleBalance ?? 0}
-                onboardingComplete={userData?.onboardingComplete ?? true}
+                onboardingComplete={true}
                 onRefreshRequest={fetchUserData}
               />
               <DsaStatsCard
                 stats={userData?.dsaStats}
-                onboardingComplete={userData?.onboardingComplete ?? true}
+                onboardingComplete={true}
               />
             </div>
           </div>
@@ -923,7 +924,7 @@ export function Dashboard() {
                 rank={userRank}
                 totalUsers={totalUsers}
                 loading={leaderboardLoading}
-                onboardingComplete={userData?.onboardingComplete ?? true}
+                onboardingComplete={true}
               />
             </div>
 

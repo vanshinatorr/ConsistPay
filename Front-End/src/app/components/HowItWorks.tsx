@@ -56,7 +56,7 @@ export function HowItWorks() {
             Interactive Showcase
           </span>
           <h2 className="text-3xl sm:text-4xl font-bold text-zinc-950 dark:text-white tracking-tight mb-4">
-            How Consist<span className="text-emerald-505 dark:text-emerald-400">Pay</span> Works
+            How ConsistPay Works
           </h2>
           <p className="text-sm text-zinc-500 dark:text-zinc-455 max-w-lg mx-auto font-normal">
             Select a phase below to explore how automated accountability secures your coding discipline.
@@ -75,7 +75,7 @@ export function HowItWorks() {
                   onClick={() => setActiveTab(t.id)}
                   className={`flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-xs font-semibold uppercase tracking-wider transition-all cursor-pointer ${
                     isActive 
-                      ? "bg-zinc-800 dark:bg-white text-white dark:text-black shadow-sm" 
+                      ? "bg-violet-50/30 dark:bg-white text-violet-600 dark:text-black border border-violet-100/50 dark:border-transparent shadow-sm" 
                       : "text-zinc-500 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white hover:bg-zinc-200/50 dark:hover:bg-white/[0.02]"
                   }`}
                 >

@@ -9,10 +9,10 @@ export function HeroNew() {
     <section className="relative px-6 pt-6 pb-20 md:pt-8 md:pb-28 overflow-hidden w-full bg-white dark:bg-[#000000] border-b border-zinc-200 dark:border-white/[0.04]">
       {/* Subtle backing glow for the mockup card to add 3D depth */}
       <div className="absolute right-0 top-1/4 w-[40rem] h-[40rem] bg-emerald-500/[0.02] rounded-full blur-[140px] pointer-events-none z-0" />
-      
+
       <div className="max-w-6xl mx-auto relative z-10">
         <div className="grid grid-cols-1 xl:grid-cols-[1fr_1.1fr] gap-16 items-center">
-          
+
           {/* Left: Text Content */}
           <div className="relative z-20 flex flex-col items-center text-center xl:items-start xl:text-left">
             {/* Top Badge */}
@@ -22,32 +22,32 @@ export function HeroNew() {
                 Automated Verification Engine
               </span>
             </div>
- 
+
             {/* Headline */}
             <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-[4rem] xl:text-[4.2rem] font-bold mb-6 leading-[1.1] tracking-tight text-zinc-900 dark:text-white">
               Stay Consistent.<br />
               Build Real Discipline.<br />
-              <span className="bg-gradient-to-r from-emerald-550 to-teal-500 dark:from-emerald-400 dark:to-teal-400 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-emerald-600 to-teal-500 dark:from-emerald-400 dark:to-teal-400 bg-clip-text text-transparent">
                 Get Paid.
               </span>
             </h1>
- 
+
             {/* Subtext */}
             <p className="text-base sm:text-lg text-zinc-650 dark:text-zinc-300 mb-10 leading-relaxed max-w-lg font-normal">
               The ultimate accountability platform for placement preparation. Auto-sync your profiles, commit a daily refundable stake, and earn rewards funded by those who break their streaks.
             </p>
- 
+
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row gap-4 mb-10">
-              <button 
+              <button
                 onClick={() => navigate("/auth")}
-                className="group px-7 py-3.5 bg-zinc-800 hover:bg-zinc-700 dark:bg-white dark:hover:bg-zinc-200 text-white dark:text-black font-semibold rounded-xl transition-all duration-250 flex items-center justify-center gap-2 active:scale-[0.98] cursor-pointer"
+                className="group px-7 py-3.5 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-550 hover:to-indigo-550 text-white-force dark:from-white dark:to-white dark:text-zinc-950 dark:border-transparent dark:hover:from-zinc-100 dark:hover:to-zinc-100 font-semibold rounded-xl transition-all duration-200 flex items-center justify-center gap-2 active:scale-[0.98] cursor-pointer shadow-[0_1px_2px_rgba(99,102,241,0.2),0_4px_12px_rgba(99,102,241,0.1)] hover:-translate-y-0.5 hover:shadow-[0_4px_16px_rgba(99,102,241,0.2),0_1px_3px_rgba(99,102,241,0.1)]"
               >
                 Start Free
                 <ArrowRight className="w-4.5 h-4.5 transition-transform duration-250 group-hover:translate-x-1" />
               </button>
-              
-              <a 
+
+              <a
                 href="https://youtu.be/bdeShmhlTlA"
                 target="_blank"
                 rel="noopener noreferrer"
@@ -57,7 +57,7 @@ export function HeroNew() {
                 <PlayCircle className="w-4.5 h-4.5 text-zinc-550 dark:text-zinc-400 group-hover:text-zinc-800 dark:group-hover:text-white transition-colors" />
               </a>
             </div>
- 
+
             {/* Trust indicators */}
             <div className="flex flex-col sm:flex-row sm:flex-wrap gap-x-6 gap-y-3 text-sm text-zinc-500 dark:text-zinc-400 font-medium justify-center xl:justify-start">
               <div className="flex items-center gap-2">
@@ -74,12 +74,12 @@ export function HeroNew() {
               </div>
             </div>
           </div>
-  
+
           {/* Right: Mock Connected Platforms Widget */}
           <div className="hidden xl:block relative w-full mx-auto xl:mx-0 font-sans z-10">
             {/* Main Widget Card */}
             <div className="relative bg-white dark:bg-[#090A0F] rounded-[2.5rem] p-8 border border-zinc-200 dark:border-white/[0.05] shadow-sm dark:shadow-2xl overflow-hidden">
-              
+
               {/* Header */}
               <div className="flex items-center justify-between mb-8 pb-6 border-b border-zinc-200 dark:border-white/[0.04]">
                 <div>
@@ -94,10 +94,10 @@ export function HeroNew() {
                   14 Day Streak
                 </div>
               </div>
-  
+
               {/* Platforms List */}
               <div className="space-y-4 mb-6">
-                
+
                 {/* LeetCode Sync */}
                 <div className="flex items-center justify-between p-4 bg-zinc-50 dark:bg-white/[0.01] border border-zinc-200 dark:border-white/[0.04] rounded-2xl hover:border-zinc-300 dark:hover:border-white/[0.08] transition-colors">
                   <div className="flex items-center gap-4">
@@ -116,7 +116,7 @@ export function HeroNew() {
                     <span className="text-xs text-zinc-700 dark:text-zinc-300 font-semibold">352 Solved</span>
                   </div>
                 </div>
-  
+
                 {/* GFG Sync */}
                 <div className="flex items-center justify-between p-4 bg-zinc-50 dark:bg-white/[0.01] border border-zinc-200 dark:border-white/[0.04] rounded-2xl hover:border-zinc-300 dark:hover:border-white/[0.08] transition-colors">
                   <div className="flex items-center gap-4">
@@ -135,7 +135,7 @@ export function HeroNew() {
                     <span className="text-xs text-zinc-700 dark:text-zinc-300 font-semibold">198 Solved</span>
                   </div>
                 </div>
-  
+
                 {/* Codeforces - Coming Soon (Disabled Style) */}
                 <div className="flex items-center justify-between p-4 bg-zinc-50/50 dark:bg-white/[0.005] border border-zinc-200 dark:border-white/[0.02] border-dashed rounded-2xl opacity-50">
                   <div className="flex items-center gap-4">
@@ -151,9 +151,9 @@ export function HeroNew() {
                     Coming Soon
                   </span>
                 </div>
-  
+
               </div>
-  
+
               {/* Real-time Verification Terminal Feed (High Fidelity Utility) - Keep dark theme style for coding feel */}
               <div className="bg-zinc-950 border border-zinc-800 rounded-2xl p-4 mb-6 font-mono text-[11px] leading-relaxed select-none">
                 <div className="flex items-center justify-between text-zinc-500 mb-3 pb-2 border-b border-zinc-800">
@@ -188,10 +188,10 @@ export function HeroNew() {
                   </div>
                 </div>
               </div>
-  
+
               {/* Daily Streak Progress Grid */}
               <div className="grid grid-cols-2 gap-4">
-                
+
                 {/* Left Card: Active Commitment */}
                 <div className="bg-zinc-50 dark:bg-white/[0.01] border border-zinc-200 dark:border-white/[0.04] hover:border-zinc-300 dark:hover:border-white/[0.08] rounded-2xl p-4 flex items-center gap-4 transition-colors">
                   <div className="w-10 h-10 rounded-xl bg-zinc-100 dark:bg-white/[0.02] border border-zinc-200 dark:border-white/[0.06] flex items-center justify-center shrink-0">
@@ -202,7 +202,7 @@ export function HeroNew() {
                     <span className="text-sm font-bold text-zinc-900 dark:text-white">₹250 Locked</span>
                   </div>
                 </div>
-  
+
                 {/* Right Card: Shared Pool Yield */}
                 <div className="bg-emerald-50/40 dark:bg-emerald-500/[0.01] border border-emerald-500/10 hover:border-emerald-500/20 rounded-2xl p-4 flex items-center gap-4 transition-colors">
                   <div className="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center shrink-0">
@@ -213,11 +213,11 @@ export function HeroNew() {
                     <span className="text-sm font-bold text-emerald-600 dark:text-emerald-400">+₹48.50 Earned</span>
                   </div>
                 </div>
-  
+
               </div>
             </div>
           </div>
-  
+
         </div>
       </div>
     </section>

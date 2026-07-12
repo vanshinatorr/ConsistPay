@@ -43,7 +43,7 @@ export function Pricing() {
     { text: "1 Grace coin per month", included: true },
     { text: "Basic global leaderboard", included: true },
     { text: "Basic analytics", included: true },
-    { text: "Versus Mode challenges", included: false },
+    { text: "Battle Mode challenges", included: false },
     { text: "Referral commission", included: false },
     { text: "Full analytics dashboard", included: false },
   ];
@@ -54,7 +54,7 @@ export function Pricing() {
     { text: "1 Grace coin + 1 bonus on 15-day streak", included: true },
     { text: "Full global leaderboard", included: true },
     { text: "Advanced analytics dashboard", included: true },
-    { text: "Versus Mode challenges", included: true, highlight: true },
+    { text: "Battle Mode challenges", included: true, highlight: true },
     { text: "10% referral commission", included: true },
     { text: "Priority support", included: true },
   ];
@@ -79,8 +79,8 @@ export function Pricing() {
                 alt="ConsistPay Logo"
                 className="h-8 w-auto object-contain select-none"
               />
-              <span className="text-lg font-bold text-white">
-                Consist<span className="text-emerald-400">Pay</span>
+              <span className="text-lg font-bold text-zinc-900 dark:text-white">
+                Consist<span className="text-emerald-600 dark:text-emerald-400">Pay</span>
               </span>
             </Link>
 
@@ -233,7 +233,7 @@ export function Pricing() {
                 <div className="w-12 h-12 bg-emerald-500/10 rounded-lg flex items-center justify-center mb-4 border border-emerald-500/10">
                   <Users className="w-6 h-6 text-emerald-400" />
                 </div>
-                <h3 className="font-semibold mb-2">Versus Mode</h3>
+                <h3 className="font-semibold mb-2">Battle Mode</h3>
                 <p className="text-sm text-zinc-400">
                   Compete with friends in 1v1 challenges. Winner takes all. Build habits together.
                 </p>
@@ -313,15 +313,15 @@ export function Pricing() {
             onClick={(e) => e.stopPropagation()}
           >
             {/* Glow Effect */}
-            <div className="absolute inset-0 bg-gradient-to-br from-violet-500/20 to-purple-500/20 rounded-2xl blur-xl opacity-60 -z-10" />
+            <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/20 to-teal-500/20 rounded-2xl blur-xl opacity-60 -z-10" />
 
             {/* Header */}
             <div className="sticky top-0 bg-[#0F0F13]/95 backdrop-blur-xl border-b border-white/[0.04] p-6 rounded-t-2xl">
               <div className="flex items-start justify-between">
                 <div>
                   <h3 className="text-2xl font-bold mb-2 flex items-center gap-2">
-                    <Users className="w-6 h-6 text-violet-400" />
-                    Versus Mode
+                    <Users className="w-6 h-6 text-emerald-400" />
+                    Battle Mode
                   </h3>
                   <p className="text-zinc-400 text-sm">Compete 1v1 with friends, winner takes all</p>
                 </div>
@@ -435,7 +435,7 @@ export function Pricing() {
                 <ul className="space-y-2 text-sm text-zinc-300">
                   <li className="flex items-start gap-2">
                     <X className="w-4 h-4 text-red-400 flex-shrink-0 mt-0.5" />
-                    <span><strong className="text-red-300">Grace coins CANNOT be used</strong> during active Versus Mode challenges.</span>
+                    <span><strong className="text-red-300">Grace coins CANNOT be used</strong> during active Battle Mode challenges.</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <Check className="w-4 h-4 text-emerald-400 flex-shrink-0 mt-0.5" />

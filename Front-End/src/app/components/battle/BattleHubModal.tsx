@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { 
   X, Lock, Trophy, Users, ShieldAlert, Sparkles, 
-  Plus, ArrowRight, Zap, Target, ShieldCheck, Play
+  Plus, ArrowRight, Clock, Target, ShieldCheck, Play
 } from "lucide-react";
 
 interface BattleHubModalProps {
@@ -107,7 +107,7 @@ export function BattleHubModal({ isOpen, onClose, plan = "free" }: BattleHubModa
                 { icon: ShieldCheck, text: "AI verified submissions", color: "text-emerald-400", bg: "bg-emerald-500/10", border: "border-emerald-500/20" },
                 { icon: Target, text: "Shared daily deadlines", color: "text-blue-400", bg: "bg-blue-500/10", border: "border-blue-500/20" },
                 { icon: Trophy, text: "Winner takes all", color: "text-yellow-400", bg: "bg-yellow-500/10", border: "border-yellow-500/20" },
-                { icon: Zap, text: "Real-time tracking", color: "text-violet-400", bg: "bg-violet-500/10", border: "border-violet-500/20" }
+                {icon: Clock, text: "Real-time tracking", color: "text-emerald-400", bg: "bg-emerald-500/10", border: "border-emerald-500/20" }
               ].map((f, idx) => (
                 <div key={idx} className="flex items-center gap-3">
                   <div className={`w-8 h-8 rounded-lg ${f.bg} ${f.border} border flex items-center justify-center shrink-0`}>

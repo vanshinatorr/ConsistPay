@@ -77,12 +77,12 @@ export default function TopupModal({ onClose, onSuccess }: TopupModalProps) {
         {/* Header */}
         <div className="p-6 pb-4 border-b border-white/5 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-violet-500/10 rounded-xl flex items-center justify-center border border-violet-500/20">
-              <Coins className="w-5 h-5 text-violet-400" />
+            <div className="w-10 h-10 bg-emerald-500/10 rounded-xl flex items-center justify-center border border-emerald-500/20">
+              <Coins className="w-5 h-5 text-emerald-400" />
             </div>
             <div>
               <h2 className="text-xl font-bold text-white">Add Funds</h2>
-              <p className="text-xs text-zinc-400">Top-up your Versus battle wallet</p>
+              <p className="text-xs text-zinc-400">Top-up your Battle wallet</p>
             </div>
           </div>
           <button 

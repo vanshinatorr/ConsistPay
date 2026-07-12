@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import { Wallet, Lock, Coins, Shield, TrendingDown, RefreshCw, Check, AlertTriangle, ArrowUpRight, HelpCircle, CheckCircle2, Clock } from "lucide-react";
+import { Wallet, Lock, Coins, Shield, TrendingDown, RefreshCw, Check, AlertTriangle, ArrowUpRight, HelpCircle, CheckCircle2, Clock, Zap } from "lucide-react";
 // WithdrawModal rendered globally at Dashboard level
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 interface WalletCardProps {
   plan?: string;
@@ -16,6 +16,7 @@ interface WalletCardProps {
   onboardingComplete?: boolean;
   onRefreshRequest?: () => void;
   planExpiresAt?: string | Date;
+  onSetupClick?: () => void;
   // Sync integration props
   handleSync?: () => Promise<void>;
   syncLoading?: boolean;
@@ -40,6 +41,7 @@ export function WalletCard({
   onboardingComplete = true,
   onRefreshRequest,
   planExpiresAt,
+  onSetupClick,
   handleSync,
   syncLoading = false,
   apiError = "",
@@ -68,7 +70,7 @@ export function WalletCard({
   return (
     <div className="relative h-full flex flex-col">
       {/* Background Glow */}
-      <div className="absolute inset-0 rounded-2xl blur-2xl opacity-35 bg-gradient-to-br from-yellow-500/15 via-orange-500/10 to-transparent pointer-events-none" />
+      <div className="hidden dark:block absolute inset-0 rounded-2xl blur-2xl opacity-35 bg-gradient-to-br from-yellow-500/15 via-orange-500/10 to-transparent pointer-events-none" />
 
       <div className="relative bg-white dark:bg-gradient-to-b dark:from-[#141522]/95 dark:to-[#0F1018]/95 border border-zinc-200 dark:border-white/[0.12] rounded-2xl p-5 flex flex-col justify-between h-[522px] min-h-[522px] shadow-[0_20px_50px_rgba(0,0,0,0.02)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.4)] overflow-hidden hover:border-zinc-300 dark:hover:border-white/[0.18] transition-all duration-300">
         {/* Ambient Grid overlay */}
@@ -85,15 +87,25 @@ export function WalletCard({
             </span>
           </div>
 
-          <span
-            className={`text-[9px] px-2.5 py-0.5 rounded-full font-bold border uppercase tracking-wider shadow-sm relative z-10 ${
-              plan?.toLowerCase() === "pro"
-                ? "text-violet-600 dark:text-violet-400 bg-violet-500/5 dark:bg-violet-500/10 border-violet-200 dark:border-violet-500/20"
-                : "text-zinc-650 dark:text-zinc-550 bg-zinc-50 dark:bg-white/[0.02] border-zinc-200 dark:border-white/[0.06]"
-            }`}
-          >
-            {plan?.toLowerCase() === "pro" ? "Pro Plan" : "Free Plan"}
-          </span>
+          {!onboardingComplete && onSetupClick ? (
+            <button
+              onClick={onSetupClick}
+              className="text-[10px] px-3.5 py-1.5 rounded-xl font-bold bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white-force transition-all flex items-center gap-1 active:scale-95 shadow-md shadow-emerald-500/15 cursor-pointer border border-transparent relative z-10"
+            >
+              Choose a Plan
+            </button>
+          ) : plan?.toLowerCase() === "pro" ? (
+            <span className="text-[9px] px-2.5 py-0.5 rounded-full font-bold border uppercase tracking-wider shadow-sm text-violet-650 dark:text-violet-400 bg-violet-500/5 dark:bg-violet-500/10 border-violet-200 dark:border-violet-500/20 relative z-10">
+              Pro Plan
+            </span>
+          ) : (
+            <Link
+              to="/pricing"
+              className="text-[9px] px-2.5 py-1 rounded-full font-bold border uppercase tracking-wider shadow-sm text-violet-600 dark:text-violet-400 bg-violet-500/5 dark:bg-violet-500/10 border-violet-200 dark:border-violet-500/20 hover:bg-violet-500/15 dark:hover:bg-violet-500/20 transition-all flex items-center gap-1 active:scale-95 relative z-10 cursor-pointer"
+            >
+              Free Plan — Upgrade
+            </Link>
+          )}
         </div>
 
         {/* ─── 2-COLUMN MAIN CONTENT GRID ─── */}
@@ -142,8 +154,8 @@ export function WalletCard({
                 <span className="text-zinc-400 dark:text-zinc-500 text-xl font-light mr-0.5">₹</span>
                 {onboardingComplete ? Math.round(activeDeposit) : "0"}
               </span>
-              <span className="text-[11px] text-zinc-500 dark:text-zinc-450 block mt-1 leading-normal font-normal">
-                Missed days forfeit ₹{dailyCommitment} from this pool.
+              <span className="text-[11px] text-zinc-500 dark:text-zinc-455 block mt-1 leading-normal font-normal">
+                Missed days forfeit ₹{onboardingComplete ? dailyCommitment : 0} from this pool.
               </span>
             </div>
 
@@ -157,7 +169,7 @@ export function WalletCard({
               </div>
               <span className="text-2xl font-bold text-amber-600 dark:text-amber-400 tracking-tight mt-1 block">
                 <span className="text-amber-600/60 dark:text-amber-600/60 text-xl font-light mr-0.5">₹</span>
-                {completedDays * dailyCommitment}
+                {onboardingComplete ? completedDays * dailyCommitment : 0}
               </span>
               <span className="text-[11px] text-zinc-500 dark:text-zinc-450 block mt-1 leading-normal font-normal">
                 {Math.max(30 - (completedDays + missedDays), 0)} days left — keep submitting!
@@ -297,7 +309,7 @@ export function WalletCard({
                   </span>
                 </div>
                 <span className="text-2xl font-bold font-mono text-emerald-600 dark:text-emerald-400 mt-2">
-                  +₹{completedDays * dailyCommitment}
+                  +₹{onboardingComplete ? completedDays * dailyCommitment : 0}
                 </span>
                 <span className="text-[9.5px] text-zinc-500 dark:text-zinc-400 mt-0.5">
                   {completedDays} day{completedDays !== 1 ? "s" : ""}
@@ -307,13 +319,13 @@ export function WalletCard({
               {/* Lost Box */}
               <div className="bg-zinc-50 dark:bg-black/25 border border-zinc-200 dark:border-white/[0.04] rounded-xl py-3 px-4 flex flex-col justify-between hover:border-zinc-300 dark:hover:border-white/[0.08] transition-all duration-200 shadow-sm">
                 <div className="flex items-center gap-1.5">
-                  <TrendingDown className="w-3.5 h-3.5 text-rose-600 dark:text-rose-450" />
+                  <TrendingDown className="w-3.5 h-3.5 text-rose-600 dark:text-rose-455" />
                   <span className="text-[9.5px] text-rose-600 dark:text-rose-400 font-bold uppercase tracking-wider block">
                     Lost
                   </span>
                 </div>
                 <span className="text-2xl font-bold font-mono text-rose-600 dark:text-rose-455 mt-2">
-                  -₹{missedDays * dailyCommitment}
+                  -₹{onboardingComplete ? missedDays * dailyCommitment : 0}
                 </span>
                 <span className="text-[9.5px] text-zinc-500 dark:text-zinc-400 mt-0.5">
                   {missedDays} day{missedDays !== 1 ? "s" : ""}
@@ -349,12 +361,16 @@ export function WalletCard({
                 <div className="flex flex-col gap-2 text-xs">
                   <div className="flex justify-between items-center">
                     <span className="text-zinc-450 dark:text-zinc-500 font-semibold text-[9.5px] uppercase tracking-wider">Daily Payout</span>
-                    <span className="font-bold text-zinc-700 dark:text-zinc-300">₹{dailyCommitment} / day</span>
+                    <span className="font-bold text-zinc-700 dark:text-zinc-300">
+                      {onboardingComplete ? `₹${dailyCommitment} / day` : "Not Active"}
+                    </span>
                   </div>
                   <div className="h-px bg-zinc-200/50 dark:bg-white/[0.03]" />
                   <div className="flex justify-between items-center">
                     <span className="text-zinc-455 dark:text-zinc-500 font-semibold text-[9.5px] uppercase tracking-wider">Total Cycle Stakes</span>
-                    <span className="font-bold text-zinc-700 dark:text-zinc-300">₹{monthlyBudget} / cycle</span>
+                    <span className="font-bold text-zinc-700 dark:text-zinc-300">
+                      {onboardingComplete ? `₹${monthlyBudget} / cycle` : "Not Active"}
+                    </span>
                   </div>
                   <div className="h-px bg-zinc-200/50 dark:bg-white/[0.03]" />
                   <div className="flex justify-between items-center">

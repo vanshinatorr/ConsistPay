@@ -55,15 +55,10 @@ const syncUserStreak = async (userOrId) => {
       let startDateStr = "";
       if (user.onboardingComplete && user.onboardingCompletedAt) {
         startDateStr = new Date(user.onboardingCompletedAt).toLocaleDateString("en-CA", { timeZone: "Asia/Kolkata" });
-      } else if (user.onboardingComplete && user.createdAt) {
+      } else if (user.createdAt) {
         startDateStr = new Date(user.createdAt).toLocaleDateString("en-CA", { timeZone: "Asia/Kolkata" });
       } else {
-        // Onboarding is not completed yet, reset streak and wait
-        if (user.streak !== 0) {
-          user.streak = 0;
-          await user.save();
-        }
-        return user;
+        startDateStr = todayStr;
       }
 
       // Fetch all submissions for the user to evaluate in-memory (O(1) checks per day)
