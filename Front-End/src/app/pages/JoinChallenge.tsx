@@ -209,94 +209,97 @@ export function JoinChallenge() {
           <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-300">
             
             {/* Header */}
-            <div className="text-center mb-10">
-              <div className="inline-flex items-center gap-2 bg-emerald-500/10 border border-emerald-500/20 rounded-full px-4 py-1.5 text-sm text-emerald-300 mb-4 font-semibold">
+            <div className="text-center mb-6">
+              <div className="inline-flex items-center gap-2 bg-emerald-500/10 border border-emerald-500/20 rounded-full px-4 py-1.5 text-sm text-emerald-600 dark:text-emerald-305 mb-3 font-semibold">
                 <Target className="w-4 h-4" />
                 Challenge Request
               </div>
-              <h1 className="text-3xl sm:text-4xl font-extrabold mb-3">
+              <h1 className="text-2xl sm:text-3xl font-extrabold mb-2 text-zinc-900 dark:text-white">
                 You've been challenged!
               </h1>
-              <p className="text-zinc-400 text-sm max-w-sm mx-auto">
+              <p className="text-zinc-500 dark:text-zinc-400 text-sm max-w-sm mx-auto">
                 {challengeData.createdBy} wants to lock in a consistency contract with you. Review the terms below.
               </p>
             </div>
 
-            {/* VS Card */}
-            <div className="relative">
-              <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/10 to-teal-500/10 rounded-3xl blur-xl opacity-60" />
-              <div className="relative bg-[#0F0F13] border border-white/[0.04] rounded-3xl p-8 shadow-2xl">
-                
-                {/* Visual VS Setup */}
-                <div className="flex items-center justify-center gap-6 mb-8">
-                  <div className="flex flex-col items-center gap-2">
-                    <div className="w-14 h-14 bg-gradient-to-br from-zinc-700 to-zinc-800 rounded-full flex items-center justify-center border-2 border-zinc-600">
-                      <User className="w-6 h-6 text-zinc-400" />
+            {/* Cards Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch">
+              
+              {/* VS Card */}
+              <div className="relative bg-[#0F0F13] border border-white/[0.04] rounded-3xl p-6 shadow-2xl flex flex-col justify-between">
+                <div>
+                  {/* Visual VS Setup */}
+                  <div className="flex items-center justify-center gap-6 mb-6">
+                    <div className="flex flex-col items-center gap-2">
+                      <div className="w-12 h-12 bg-zinc-200 dark:bg-zinc-800 rounded-full flex items-center justify-center border-2 border-zinc-300 dark:border-zinc-700">
+                        <User className="w-5 h-5 text-zinc-600 dark:text-zinc-400" />
+                      </div>
+                      <span className="text-xs font-bold text-zinc-650 dark:text-zinc-400">YOU (₹{challengeData.stake})</span>
                     </div>
-                    <span className="text-xs font-bold text-zinc-400">YOU (₹{challengeData.stake})</span>
-                  </div>
-                  <div className="text-sm font-black text-emerald-500 italic flex items-center justify-center w-10 h-10 rounded-full bg-emerald-500/10 border border-emerald-500/20 shadow-[0_0_15px_rgba(16,185,129,0.3)]">VS</div>
-                  <div className="flex flex-col items-center gap-2">
-                    <div className="w-14 h-14 bg-gradient-to-br from-violet-500 to-purple-600 rounded-full flex items-center justify-center border-2 border-violet-400/30 text-white font-bold text-xl">
-                      {creatorAvatar}
+                    <div className="text-xs font-black text-emerald-500 italic flex items-center justify-center w-8 h-8 rounded-full bg-emerald-500/10 border border-emerald-500/20 shadow-[0_0_15px_rgba(16,185,129,0.3)]">VS</div>
+                    <div className="flex flex-col items-center gap-2">
+                      <div className="w-12 h-12 bg-gradient-to-br from-violet-500 to-purple-600 rounded-full flex items-center justify-center border-2 border-violet-400/30 text-white font-bold text-lg">
+                        {creatorAvatar}
+                      </div>
+                      <span className="text-xs font-bold text-violet-600 dark:text-violet-300 uppercase truncate max-w-[100px] text-center">{challengeData.createdBy.split(" ")[0]} (₹{challengeData.stake})</span>
                     </div>
-                    <span className="text-xs font-bold text-violet-300 uppercase truncate max-w-[100px] text-center">{challengeData.createdBy.split(" ")[0]} (₹{challengeData.stake})</span>
                   </div>
-                </div>
 
-                <div className="space-y-4">
-                  {[
-                    { label: "Duration", value: `${challengeData.duration} days`, highlight: false },
-                    { label: "Your Stake", value: `₹${challengeData.stake}`, highlight: false },
-                    { label: "Entry Fee", value: `₹${challengeData.entryFee}`, highlight: false },
-                    { label: "Total Prize Pool", value: `₹${challengeData.stake * 2}`, highlight: true },
-                  ].map(({ label, value, highlight }) => (
-                    <div key={label} className="flex justify-between items-center py-3 border-b border-white/[0.04] last:border-0">
-                      <span className="text-zinc-400 text-sm">{label}</span>
-                      <span className={`font-bold ${highlight ? "text-yellow-400 text-xl" : "text-white"}`}>{value}</span>
-                    </div>
-                  ))}
+                  <div className="space-y-3">
+                    {[
+                      { label: "Duration", value: `${challengeData.duration} days`, highlight: false },
+                      { label: "Your Stake", value: `₹${challengeData.stake}`, highlight: false },
+                      { label: "Entry Fee", value: `₹${challengeData.entryFee}`, highlight: false },
+                      { label: "Total Prize Pool", value: `₹${challengeData.stake * 2}`, highlight: true },
+                    ].map(({ label, value, highlight }) => (
+                      <div key={label} className="flex justify-between items-center py-2.5 border-b border-white/[0.04] last:border-0">
+                        <span className="text-zinc-550 dark:text-zinc-450 text-sm">{label}</span>
+                        <span className={`font-bold ${highlight ? "text-yellow-500 dark:text-yellow-400 text-lg" : "text-zinc-800 dark:text-white"}`}>{value}</span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
-            </div>
 
-            {/* Rules */}
-            <div className="bg-[#0F0F13] border border-white/[0.04] rounded-2xl p-6 backdrop-blur-xl shadow-xl">
-              <h3 className="text-sm font-bold text-white mb-4 uppercase tracking-wider flex items-center gap-2">
-                <Shield className="w-4 h-4 text-emerald-400" /> Contract Rules
-              </h3>
-              <ul className="space-y-3 text-sm text-zinc-400">
-                <li className="flex items-start gap-3">
-                  <CheckCircle className="w-5 h-5 text-emerald-400 shrink-0" />
-                  <span>Submit LeetCode/Code360 link daily before <strong className="text-zinc-200">11:59 PM</strong></span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <CheckCircle className="w-5 h-5 text-emerald-400 shrink-0" />
-                  <span>Solving multiple problems in a day still counts as <strong className="text-emerald-300">1 point</strong> (this only increases your overall leaderboard score, not your head-to-head points)</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <CheckCircle className="w-5 h-5 text-emerald-400 shrink-0" />
-                  <span>The challenge begins the moment you accept this contract</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <CheckCircle className="w-5 h-5 text-emerald-400 shrink-0" />
-                  <span>Most consistent coder takes the entire <strong className="text-yellow-400">₹{challengeData.stake * 2}</strong> pool</span>
-                </li>
-              </ul>
+              {/* Rules Card */}
+              <div className="bg-[#0F0F13] border border-white/[0.04] rounded-3xl p-6 sm:p-8 backdrop-blur-xl shadow-xl flex flex-col justify-center">
+                <h3 className="text-sm font-bold text-zinc-800 dark:text-white mb-4 uppercase tracking-wider flex items-center gap-2">
+                  <Shield className="w-4 h-4 text-emerald-500 dark:text-emerald-400" /> Contract Rules
+                </h3>
+                <ul className="space-y-3 text-sm text-zinc-650 dark:text-zinc-400">
+                  <li className="flex items-start gap-2.5">
+                    <CheckCircle className="w-4 h-4 mt-0.5 text-emerald-500 dark:text-emerald-400 shrink-0" />
+                    <span>Submit daily proof before <strong className="text-zinc-800 dark:text-zinc-200">11:59 PM</strong></span>
+                  </li>
+                  <li className="flex items-start gap-2.5">
+                    <CheckCircle className="w-4 h-4 mt-0.5 text-emerald-500 dark:text-emerald-400 shrink-0" />
+                    <span>Solving problems counts as <strong className="text-emerald-600 dark:text-emerald-300">1 point</strong></span>
+                  </li>
+                  <li className="flex items-start gap-2.5">
+                    <CheckCircle className="w-4 h-4 mt-0.5 text-emerald-500 dark:text-emerald-400 shrink-0" />
+                    <span>Challenge begins when you accept contract</span>
+                  </li>
+                  <li className="flex items-start gap-2.5">
+                    <CheckCircle className="w-4 h-4 mt-0.5 text-emerald-500 dark:text-emerald-400 shrink-0" />
+                    <span>Winner takes the <strong className="text-yellow-600 dark:text-yellow-400 font-bold">₹{challengeData.stake * 2}</strong> pool</span>
+                  </li>
+                </ul>
+              </div>
+
             </div>
 
             {/* CTAs */}
-            <div className="flex flex-col sm:flex-row gap-3 pt-4">
+            <div className="flex flex-col sm:flex-row gap-3 pt-2">
               <Link
                 to="/dashboard"
-                className="w-full sm:w-1/3 py-4 rounded-xl font-semibold text-center bg-white/5 border border-white/[0.04] hover:bg-white/10 transition-all text-sm"
+                className="w-full sm:w-1/3 py-3 rounded-xl font-semibold text-center bg-white/5 border border-white/[0.04] hover:bg-white/10 transition-all text-sm flex items-center justify-center text-zinc-700 dark:text-zinc-300"
               >
                 Decline
               </Link>
               <button
                 disabled={joinLoading}
                 onClick={handleAccept}
-                className="w-full sm:w-2/3 py-4 rounded-xl font-bold bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 shadow-lg shadow-emerald-500/30 transition-all hover:-translate-y-0.5 text-base flex justify-center items-center gap-2 disabled:opacity-50 text-white"
+                className="w-full sm:w-2/3 py-3 rounded-xl font-bold bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 shadow-lg shadow-emerald-500/20 transition-all hover:-translate-y-0.5 text-sm flex justify-center items-center gap-2 disabled:opacity-50 text-white cursor-pointer"
               >
                 {joinLoading ? (
                   <>

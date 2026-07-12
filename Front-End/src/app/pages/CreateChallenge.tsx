@@ -259,7 +259,7 @@ export function CreateChallenge() {
             </div>
           )}
 
-          <div className="p-8 sm:p-12 min-h-[500px] flex flex-col justify-center">
+          <div className={`p-6 sm:p-10 ${screen === "waiting" ? "min-h-0" : "min-h-[480px]"} flex flex-col justify-center`}>
 
             {/* ───────────── SCREEN 0: BATTLE HUB / ENTRY ───────────── */}
             {screen === "hub" && (
@@ -749,28 +749,28 @@ export function CreateChallenge() {
 
             {/* ───────────── SCREEN 4: WAITING / INVITE ───────────── */}
             {screen === "waiting" && (
-              <div className="animate-in fade-in zoom-in-95 duration-500 flex flex-col items-center justify-center py-6">
+              <div className="animate-in fade-in zoom-in-95 duration-500 flex flex-col items-center justify-center py-1">
                 
-                <h1 className="text-3xl font-extrabold mb-2 text-center text-white tracking-tight">
+                <h1 className="text-2xl sm:text-3xl font-extrabold mb-1 text-center text-white tracking-tight">
                   Lobby: Awaiting Opponent
                 </h1>
-                <p className="text-zinc-400 text-sm text-center mb-8 max-w-sm">
+                <p className="text-zinc-400 text-sm text-center mb-4 sm:mb-5 max-w-sm">
                   The {selectedDuration}-day consistency challenge begins the moment your opponent enters the code and joins.
                 </p>
 
                 {/* Matchup Duel Box */}
-                <div className="w-full max-w-md bg-zinc-50 dark:bg-[#121214] border border-zinc-200 dark:border-white/5 rounded-3xl overflow-hidden mb-6 shadow-2xl">
+                <div className="w-full max-w-md bg-zinc-50 dark:bg-[#121214] border border-zinc-200 dark:border-white/5 rounded-3xl overflow-hidden mb-4 shadow-2xl">
                   {/* VS Header with Avatars */}
-                  <div className="p-6 bg-gradient-to-b from-violet-500/[0.03] to-transparent flex items-center justify-center gap-12">
+                  <div className="py-4 px-6 bg-gradient-to-b from-violet-500/[0.03] to-transparent flex items-center justify-center gap-8 sm:gap-12">
                      <div className="flex flex-col items-center">
-                        <div className="w-16 h-16 bg-zinc-250 dark:bg-[#0D0D10] border border-violet-500/20 rounded-2xl flex items-center justify-center shadow-lg shadow-violet-500/20 rotate-3 overflow-hidden">
+                        <div className="w-14 h-14 sm:w-16 sm:h-16 bg-zinc-250 dark:bg-[#0D0D10] border border-violet-500/20 rounded-2xl flex items-center justify-center shadow-lg shadow-violet-500/20 rotate-3 overflow-hidden">
                           {isAvatarUrl ? (
                             <img src={userAvatar!} alt="You" className="w-full h-full object-cover scale-110" />
                           ) : (
                             <span className="text-xl font-bold text-violet-650 dark:text-violet-400">{initials}</span>
                           )}
                         </div>
-                        <div className="text-center mt-2.5">
+                        <div className="text-center mt-2">
                           <span className="block text-xs font-bold text-violet-600 dark:text-violet-300 tracking-wider">YOU</span>
                           <span className="inline-block text-[9px] bg-violet-100 dark:bg-violet-500/20 border border-violet-250 dark:border-violet-500/30 text-violet-750 dark:text-violet-300 px-2 py-0.5 rounded-full font-bold uppercase tracking-wider mt-1">₹{stake} STAKE</span>
                         </div>
@@ -778,18 +778,18 @@ export function CreateChallenge() {
                       
                      <div className="relative flex items-center justify-center shrink-0">
                        <div className="absolute inset-0 bg-violet-500/20 blur-lg rounded-full" />
-                       <div className="text-[11px] font-black text-zinc-800 dark:text-white italic flex items-center justify-center w-9 h-9 rounded-full bg-zinc-200 dark:bg-white/5 border border-zinc-300 dark:border-white/10 relative z-10 animate-pulse">
+                       <div className="text-[10px] font-black text-zinc-800 dark:text-white italic flex items-center justify-center w-8 h-8 rounded-full bg-zinc-200 dark:bg-white/5 border border-zinc-300 dark:border-white/10 relative z-10 animate-pulse">
                          VS
                        </div>
                      </div>
 
                      <div className="flex flex-col items-center">
-                        <div className="w-16 h-16 bg-zinc-200 dark:bg-zinc-950 border-2 border-dashed border-zinc-400 dark:border-zinc-700/60 rounded-2xl flex items-center justify-center -rotate-3 relative overflow-hidden group animate-pulse">
+                        <div className="w-14 h-14 sm:w-16 sm:h-16 bg-zinc-200 dark:bg-zinc-950 border-2 border-dashed border-zinc-400 dark:border-zinc-700/60 rounded-2xl flex items-center justify-center -rotate-3 relative overflow-hidden group animate-pulse">
                           {/* Pulsing scanner scanner beam inside opponent slot */}
                           <div className="absolute inset-0 bg-gradient-to-b from-transparent via-violet-500/5 to-transparent animate-pulse" />
-                          <span className="text-2xl font-black text-zinc-550 dark:text-zinc-700 relative z-10 animate-bounce">?</span>
+                          <span className="text-2xl font-black text-zinc-555 dark:text-zinc-700 relative z-10 animate-bounce">?</span>
                         </div>
-                        <div className="text-center mt-2.5">
+                        <div className="text-center mt-2">
                           <span className="block text-xs font-bold text-zinc-650 dark:text-zinc-400 tracking-wider">OPPONENT</span>
                           <span className="inline-block text-[9px] bg-zinc-200 dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-700/30 text-zinc-600 dark:text-zinc-500 px-2 py-0.5 rounded-full font-bold uppercase tracking-wider mt-1">WAITING...</span>
                         </div>
@@ -797,26 +797,26 @@ export function CreateChallenge() {
                   </div>
 
                   {/* Summary Footer */}
-                  <div className="px-6 py-4 bg-zinc-100/50 dark:bg-black/35 border-t border-zinc-250 dark:border-white/5 flex items-center justify-between text-xs text-zinc-600 dark:text-zinc-400">
+                  <div className="px-6 py-3 bg-zinc-100/50 dark:bg-black/35 border-t border-zinc-250 dark:border-white/5 flex items-center justify-between text-xs text-zinc-600 dark:text-zinc-400">
                     <span className="flex items-center gap-1.5"><Trophy className="w-3.5 h-3.5 text-yellow-500" /> Pool: ₹{stake * 2}</span>
                     <span className="flex items-center gap-1.5"><Clock className="w-3.5 h-3.5 text-violet-400" /> Duration: {selectedDuration} Days</span>
                   </div>
                 </div>
 
                 {/* Secret Invite Code Card */}
-                <div className="w-full max-w-md bg-[#0F0F13] border border-white/[0.04] rounded-3xl p-6 text-center relative overflow-hidden group shadow-2xl">
+                <div className="w-full max-w-md bg-[#0F0F13] border border-white/[0.04] rounded-2xl py-4.5 px-6 text-center relative overflow-hidden group shadow-2xl">
                   <div className="absolute inset-0 bg-gradient-to-br from-violet-500/5 to-fuchsia-500/5 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                   
-                  <p className="text-[10px] text-zinc-500 font-bold tracking-[0.25em] uppercase mb-4">Secret Invite Code</p>
+                  <p className="text-[9px] text-zinc-500 font-bold tracking-[0.25em] uppercase mb-2">Secret Invite Code</p>
                   
-                  <div className="text-3xl sm:text-4xl font-black tracking-[0.15em] text-white mb-6 font-mono select-all">
+                  <div className="text-2xl sm:text-3xl font-black tracking-[0.15em] text-white mb-4 font-mono select-all">
                     {generatedInviteCode}
                   </div>
 
                   <div className="flex gap-3 justify-center relative z-10">
                     <button
                       onClick={handleCopy}
-                      className={`flex-1 flex items-center justify-center gap-1.5 py-3 rounded-xl font-bold text-sm transition-all duration-300
+                      className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-xl font-bold text-xs transition-all duration-300
                         ${copied
                           ? "bg-emerald-500/20 border border-emerald-500/20 text-emerald-400"
                           : "bg-white/5 border border-white/[0.04] hover:bg-white/10 text-white"
@@ -825,7 +825,7 @@ export function CreateChallenge() {
                       {copied ? <CheckCircle className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
                       {copied ? "Copied!" : "Copy Code"}
                     </button>
-                    <button className="flex-1 flex items-center justify-center gap-1.5 py-3 rounded-xl font-bold text-sm bg-white text-black hover:bg-zinc-200 transition-all duration-300 hover:scale-[1.02] shadow-xl">
+                    <button className="flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-xl font-bold text-xs bg-white text-black hover:bg-zinc-200 transition-all duration-300 hover:scale-[1.02] shadow-xl">
                       <Share2 className="w-4 h-4" />
                       Share Link
                     </button>
@@ -833,14 +833,14 @@ export function CreateChallenge() {
                 </div>
 
                 {/* Timer Badge */}
-                <div className="mt-6 mb-2">
+                <div className="mt-4 mb-1">
                   {timeLeft > 0 ? (
-                    <div className="flex items-center gap-1.5 text-rose-400 bg-rose-500/10 px-4 py-2 rounded-xl font-bold border border-rose-500/20 text-xs animate-pulse">
+                    <div className="flex items-center gap-1.5 text-rose-400 bg-rose-500/10 px-3.5 py-1.5 rounded-xl font-bold border border-rose-500/20 text-xs animate-pulse">
                       <Clock className="w-4 h-4" /> 
                       <span>Code expires in <span className="font-mono font-black tracking-wider">{formatTime(timeLeft)}</span></span>
                     </div>
                   ) : (
-                    <div className="flex items-center gap-1.5 text-zinc-400 bg-white/5 px-4 py-2 rounded-xl font-bold border border-white/[0.04] text-xs">
+                    <div className="flex items-center gap-1.5 text-zinc-400 bg-white/5 px-3.5 py-1.5 rounded-xl font-bold border border-white/[0.04] text-xs">
                       <Shield className="w-4 h-4" /> 
                       <span>Code Expired. Refunded to wallet.</span>
                     </div>
@@ -849,7 +849,7 @@ export function CreateChallenge() {
 
                 <button
                   onClick={handleCancelBattle}
-                  className="mt-8 text-zinc-500 hover:text-rose-400 transition-colors text-xs font-bold flex items-center gap-1.5"
+                  className="mt-4 sm:mt-5 text-zinc-500 hover:text-rose-400 transition-colors text-xs font-bold flex items-center gap-1.5"
                 >
                   <ArrowLeft className="w-3.5 h-3.5"/> Cancel Challenge & Refund
                 </button>
