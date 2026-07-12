@@ -1,10 +1,10 @@
 import React from "react";
-import { Link } from "react-router-dom";
 import { 
   Dumbbell, BookOpen, Bike, Flower2, GraduationCap, 
   Wallet, Sparkles, Lock, TrendingUp, Clock, Footprints, 
-  ChevronRight, Compass, ShieldAlert, ArrowRight
+  Compass, ArrowRight
 } from "lucide-react";
+import { toast } from "sonner";
 import { Navbar } from "./dashboard/Navbar";
 
 interface CategoryData {
@@ -12,6 +12,7 @@ interface CategoryData {
   tagline: string;
   description: string;
   icon: React.ReactNode;
+  imageUrl?: string;
   features: {
     title: string;
     description: string;
@@ -33,108 +34,167 @@ function CategoryPlaceholder({ data }: { data: CategoryData }) {
     } catch (e) {}
   }
 
+  const [requestedAccess, setRequestedAccess] = React.useState(false);
+
+  const handleRequestAccess = () => {
+    setRequestedAccess(true);
+    toast.success(`Early access request submitted for ${data.title}! We will notify you.`);
+  };
+
   return (
-    <div className="min-h-screen bg-[#0F0F13] text-white flex flex-col">
+    <div className="min-h-screen bg-zinc-50 dark:bg-[#0F0F13] text-zinc-900 dark:text-white flex flex-col transition-colors duration-300">
       {/* Module Navbar at top */}
       <Navbar initials={initials} plan={plan} />
 
       {/* Main Content Container */}
-      <div className="flex-1 max-w-5xl mx-auto px-6 py-12 md:py-16 flex flex-col justify-center relative z-10 w-full">
+      <div className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12 flex flex-col justify-center relative z-10 w-full">
         {/* Glow ambient background elements */}
-        <div className="absolute -left-12 top-1/4 w-80 h-80 bg-violet-500/[0.02] rounded-full blur-[100px] pointer-events-none" />
-        <div className="absolute -right-12 bottom-1/4 w-80 h-80 bg-emerald-500/[0.02] rounded-full blur-[100px] pointer-events-none" />
+        <div className="absolute -left-12 top-1/4 w-80 h-80 bg-violet-500/[0.03] rounded-full blur-[100px] pointer-events-none" />
+        <div className="absolute -right-12 bottom-1/4 w-80 h-80 bg-emerald-500/[0.03] rounded-full blur-[100px] pointer-events-none" />
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
-          {/* Left Column: Premium Pitch Card */}
-          <div className="lg:col-span-7 flex flex-col items-start text-left">
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-violet-500/10 border border-violet-500/20 text-violet-400 rounded-full text-[10px] font-extrabold uppercase tracking-widest mb-6">
-              <Sparkles className="w-3 h-3" />
-              <span>Coming Soon</span>
-            </div>
-
-            <div className="flex items-center gap-4 mb-4">
-              <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-violet-500/10 to-emerald-500/10 border border-zinc-250 dark:border-white/[0.08] flex items-center justify-center text-violet-400">
-                {data.icon}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
+          {/* Left Column: Premium Pitch & Roadmap */}
+          <div className="lg:col-span-7 flex flex-col justify-between">
+            <div className="flex flex-col items-start text-left">
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-violet-500/10 border border-violet-500/20 text-violet-600 dark:text-violet-400 rounded-full text-[10px] font-extrabold uppercase tracking-widest mb-5">
+                <Sparkles className="w-3 h-3 animate-pulse" />
+                <span>Future Module</span>
               </div>
-              <h1 className="text-3xl md:text-4xl font-black tracking-tight text-zinc-900 dark:text-white">
-                {data.title}
-              </h1>
-            </div>
 
-            <p className="text-sm font-semibold text-zinc-600 dark:text-zinc-400 mb-2">
-              {data.tagline}
-            </p>
-            
-            <p className="text-xs text-zinc-500 dark:text-zinc-500 leading-relaxed mb-8 max-w-xl">
-              {data.description}
-            </p>
+              <div className="flex items-center gap-4 mb-4">
+                <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-violet-500/10 to-emerald-500/10 border border-zinc-200 dark:border-white/[0.08] flex items-center justify-center text-violet-500 dark:text-violet-400 shadow-sm">
+                  {data.icon}
+                </div>
+                <div>
+                  <h1 className="text-2xl md:text-3xl font-black tracking-tight text-zinc-900 dark:text-white leading-none mb-1">
+                    {data.title}
+                  </h1>
+                  <p className="text-xs font-semibold text-zinc-500 dark:text-zinc-400">
+                    {data.tagline}
+                  </p>
+                </div>
+              </div>
 
-            {/* Planned Features list */}
-            <div className="w-full space-y-4">
-              <h3 className="text-xs font-bold text-zinc-500 dark:text-zinc-450 uppercase tracking-widest mb-2">
-                Planned Features
-              </h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {data.features.map((feat, idx) => (
-                  <div 
-                    key={idx} 
-                    className="p-4 rounded-xl border border-zinc-200/80 dark:border-white/[0.03] bg-zinc-50/50 dark:bg-white/[0.01] hover:bg-zinc-100/50 dark:hover:bg-white/[0.02] transition-all"
-                  >
-                    <div className="flex items-center gap-2.5 mb-1.5">
-                      <div className="text-violet-500 dark:text-violet-450 shrink-0">
-                        {feat.icon}
+              <p className="text-xs text-zinc-600 dark:text-zinc-450 leading-relaxed mb-6 max-w-2xl">
+                {data.description}
+              </p>
+
+              {/* Roadmap Timeline Inside Left Column */}
+              <div className="w-full rounded-2xl border border-zinc-200 dark:border-white/[0.06] bg-white dark:bg-gradient-to-b dark:from-[#141522]/50 dark:to-[#0F1018]/50 p-5 shadow-sm mb-6">
+                <h3 className="text-xs font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 mb-4 flex items-center gap-2">
+                  <Compass className="w-4 h-4 text-violet-500 dark:text-violet-400" />
+                  Implementation Timeline
+                </h3>
+
+                <div className="space-y-4 relative before:absolute before:left-3 before:top-2 before:bottom-2 before:w-[1px] before:bg-zinc-200 dark:before:bg-white/[0.08]">
+                  {data.roadmap.map((step, idx) => (
+                    <div key={idx} className="flex gap-4 items-start relative pl-1">
+                      <div className={`w-6 h-6 rounded-full border flex items-center justify-center shrink-0 text-[10px] font-black z-10 ${
+                        idx === 0 
+                          ? "bg-violet-500/10 border-violet-500/30 text-violet-655 dark:text-violet-400" 
+                          : "bg-zinc-100 dark:bg-[#0F0F13] border-zinc-200 dark:border-white/[0.08] text-zinc-500 dark:text-zinc-650"
+                      }`}>
+                        {idx + 1}
                       </div>
-                      <h4 className="text-xs font-extrabold text-zinc-800 dark:text-white">
-                        {feat.title}
-                      </h4>
+                      <div className="flex-1 pt-0.5">
+                        <h4 className={`text-xs font-bold ${idx === 0 ? "text-zinc-800 dark:text-white" : "text-zinc-500"}`}>
+                          {step.split(" - ")[0]}
+                        </h4>
+                        <p className="text-[10px] text-zinc-500 dark:text-zinc-450 mt-0.5 leading-normal">
+                          {step.split(" - ")[1]}
+                        </p>
+                      </div>
                     </div>
-                    <p className="text-[10.5px] text-zinc-500 dark:text-zinc-450 leading-normal">
-                      {feat.description}
-                    </p>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
+
+              {/* Early Access Action Button */}
+              <button
+                onClick={handleRequestAccess}
+                disabled={requestedAccess}
+                className={`w-full md:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl text-xs font-bold tracking-wide transition-all duration-150 shadow-sm cursor-pointer border ${
+                  requestedAccess 
+                    ? "bg-zinc-150 dark:bg-zinc-800/20 border-zinc-200 dark:border-white/[0.04] text-zinc-400 cursor-default" 
+                    : "bg-zinc-900 dark:bg-white text-white dark:text-zinc-950 border-zinc-950 dark:border-white hover:bg-zinc-800 dark:hover:bg-zinc-100 active:scale-[0.98]"
+                }`}
+              >
+                <span>{requestedAccess ? "Waiting List Joined" : "Request Early Beta Access"}</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </button>
             </div>
           </div>
 
-          {/* Right Column: Roadmap Timeline Card */}
-          <div className="lg:col-span-5 w-full">
-            <div className="relative rounded-2xl border border-zinc-200/80 dark:border-white/[0.06] bg-zinc-50 dark:bg-gradient-to-b dark:from-[#141522]/85 dark:to-[#0F1018]/85 p-5.5 shadow-sm dark:shadow-2xl overflow-hidden">
-              <div className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(255,255,255,0.002)_1px,transparent_1px)] bg-[size:100%_12px] pointer-events-none" />
+          {/* Right Column: Premium System Preview Mockup Card */}
+          <div className="lg:col-span-5 flex flex-col justify-start">
+            <div className="relative rounded-2xl border border-zinc-200 dark:border-white/[0.06] bg-white dark:bg-gradient-to-b dark:from-[#141522]/70 dark:to-[#0F1018]/70 p-4 shadow-sm dark:shadow-2xl overflow-hidden flex-1 flex flex-col justify-between">
+              <div className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(255,255,255,0.001)_1px,transparent_1px)] bg-[size:100%_12px] pointer-events-none" />
               
-              <h3 className="text-sm font-black text-zinc-850 dark:text-white mb-6 flex items-center gap-2">
-                <Compass className="w-4.5 h-4.5 text-violet-500 dark:text-violet-400" />
-                Category Roadmap
-              </h3>
-
-              <div className="space-y-6 relative before:absolute before:left-3 before:top-2 before:bottom-2 before:w-[1px] before:bg-zinc-200 dark:before:bg-white/[0.08]">
-                {data.roadmap.map((step, idx) => (
-                  <div key={idx} className="flex gap-4 items-start relative pl-1">
-                    <div className={`w-6 h-6 rounded-full border flex items-center justify-center shrink-0 text-[10px] font-black z-10 ${
-                      idx === 0 
-                        ? "bg-violet-500/20 border-violet-500/40 text-violet-550 dark:text-violet-400" 
-                        : "bg-zinc-100 dark:bg-[#0F0F13] border-zinc-200 dark:border-white/[0.08] text-zinc-500 dark:text-zinc-650"
-                    }`}>
-                      {idx + 1}
-                    </div>
-                    <div className="flex-1 pt-0.5">
-                      <h4 className={`text-xs font-bold ${idx === 0 ? "text-zinc-900 dark:text-white" : "text-zinc-500 dark:text-zinc-500"}`}>
-                        {step.split(" - ")[0]}
-                      </h4>
-                      <p className="text-[10.5px] text-zinc-500 dark:text-zinc-500 mt-0.5 leading-normal">
-                        {step.split(" - ")[1]}
-                      </p>
-                    </div>
-                  </div>
-                ))}
+              <div className="flex items-center justify-between mb-3.5 px-1">
+                <div className="flex items-center gap-2">
+                  <div className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
+                  <span className="text-[10px] font-black uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
+                    System Preview
+                  </span>
+                </div>
+                <span className="text-[9px] font-black text-violet-650 dark:text-violet-400 bg-violet-500/10 border border-violet-500/20 px-1.5 py-0.5 rounded-md uppercase tracking-wider">
+                  Alpha v0.1
+                </span>
               </div>
 
-              <div className="mt-8 pt-5 border-t border-white/[0.04] text-center">
-                <p className="text-[10px] text-zinc-500 font-semibold uppercase tracking-wider">
-                  Staking & Verification Beta Starts Q3 2026
-                </p>
+              {/* Framing container for image mockup */}
+              <div className="relative rounded-xl overflow-hidden border border-zinc-200/60 dark:border-white/[0.06] bg-zinc-950/20 dark:bg-zinc-950/40 flex-1 flex items-center justify-center p-1 select-none min-h-[220px]">
+                {data.imageUrl ? (
+                  <img
+                    src={data.imageUrl}
+                    alt={`${data.title} Preview`}
+                    className="max-h-[340px] w-auto object-contain rounded-lg shadow-lg hover:scale-[1.01] transition-transform duration-300"
+                  />
+                ) : (
+                  <div className="text-zinc-500 text-[10px] uppercase font-bold">Preview Loading...</div>
+                )}
+              </div>
+
+              <div className="mt-3.5 pt-3.5 border-t border-zinc-200 dark:border-white/[0.04] flex items-center justify-between text-[10px] text-zinc-500 font-semibold uppercase tracking-wider px-1">
+                <span>Staking Escrow Pools</span>
+                <span>Active Q3 2026</span>
               </div>
             </div>
+          </div>
+        </div>
+
+        {/* Feature Grid Below columns */}
+        <div className="mt-8 pt-8 border-t border-zinc-200 dark:border-white/[0.04] w-full text-left">
+          <h3 className="text-xs font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-widest mb-4">
+            Key Modular Systems
+          </h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {data.features.map((feat, idx) => (
+              <div 
+                key={idx} 
+                className="p-4.5 rounded-xl border border-zinc-200/80 dark:border-white/[0.03] bg-white dark:bg-white/[0.01] hover:bg-zinc-100/50 dark:hover:bg-white/[0.02] transition-all flex flex-col justify-between shadow-sm"
+              >
+                <div>
+                  <div className="flex items-center gap-2.5 mb-2">
+                    <div className="text-violet-600 dark:text-violet-400 shrink-0">
+                      {feat.icon}
+                    </div>
+                    <h4 className="text-xs font-extrabold text-zinc-800 dark:text-white">
+                      {feat.title}
+                    </h4>
+                  </div>
+                  <p className="text-[10.5px] text-zinc-550 dark:text-zinc-450 leading-relaxed">
+                    {feat.description}
+                  </p>
+                </div>
+                <div className="mt-3 flex items-center gap-1.5">
+                  <div className="w-1.5 h-1.5 rounded-full bg-violet-450" />
+                  <span className="text-[8px] font-black text-violet-600/80 dark:text-violet-400/80 uppercase tracking-wider">
+                    Planned Feature
+                  </span>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </div>
@@ -149,6 +209,7 @@ export function FitnessPage() {
     tagline: "AI Live Camera Form & Habit Verification",
     description: "Connect your workout routine directly to your stakes. Open the camera, perform your set, and let our computer-vision engine verify your reps automatically to secure your streak.",
     icon: <Dumbbell className="w-6 h-6" />,
+    imageUrl: "/mockups/fitness_mockup.png",
     features: [
       {
         title: "AI Exercise Tracking",
@@ -194,6 +255,7 @@ export function StudyPage() {
     tagline: "Proof-of-Focus Accountability Timer",
     description: "Stake on your daily reading or coursework goals. Our smart timer verifies that you stay inside the study interface, automatically penalizing tab-switching to ensure absolute focus.",
     icon: <BookOpen className="w-6 h-6" />,
+    imageUrl: "/mockups/study_mockup.png",
     features: [
       {
         title: "Anti-Distraction Lock",
@@ -239,6 +301,7 @@ export function RunningPage() {
     tagline: "GPS Staked Distance & Pace Tracking",
     description: "Verify daily runs using Strava, GPS coords, or Google Fit logs. Set target distance goals and get penalised if you skip your morning cardio routine.",
     icon: <Footprints className="w-6 h-6" />,
+    imageUrl: "/mockups/running_mockup.png",
     features: [
       {
         title: "GPS Verification",
@@ -284,6 +347,7 @@ export function CyclingPage() {
     tagline: "GPS Distance Tracking & Payouts",
     description: "Log your cycle trips through Strava or GPS integrations. Guarantee your commuting or sport cycling streaks with daily consistency stakes.",
     icon: <Bike className="w-6 h-6" />,
+    imageUrl: "/mockups/cycling_mockup.png",
     features: [
       {
         title: "Strava Sync",
@@ -329,6 +393,7 @@ export function MeditationPage() {
     tagline: "Mindfulness Duration & HRV Tracker",
     description: "Commit to daily mental health practices. Stake on daily mindfulness sessions verified through meditation timers or heart rate variability (HRV) syncs.",
     icon: <Flower2 className="w-6 h-6" />,
+    imageUrl: "/mockups/meditation_mockup.png",
     features: [
       {
         title: "Guided Timer Sync",
@@ -374,6 +439,7 @@ export function SkillLearningPage() {
     tagline: "Dedicated Practice Hours & Milestone Logs",
     description: "Stake on learning any new habit - design, language, music, or writing. Log practice sessions verified with focus screenshots or portfolio milestone updates.",
     icon: <GraduationCap className="w-6 h-6" />,
+    imageUrl: "/mockups/skills_mockup.png",
     features: [
       {
         title: "Custom Skill Hub",
@@ -419,6 +485,7 @@ export function WalletPage() {
     tagline: "Your Multi-Category Stakes Control Hub",
     description: "ConsistPay Wallet manages your deposits, stakes, and payout withdrawals. Currently, active stakes and commitments are configured directly under the Coding dashboard.",
     icon: <Wallet className="w-6 h-6" />,
+    imageUrl: "/mockups/wallet_mockup.png",
     features: [
       {
         title: "Unified Balance",
