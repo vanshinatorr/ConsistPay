@@ -129,41 +129,41 @@
    ============================================================================= */
 
 /* 1. Page backgrounds */
-html.light:not(:has(.auth-page)) body,
-html.light:not(:has(.auth-page)) .min-h-screen,
-html.light:not(:has(.auth-page)) [class*="bg-[#0a0b10]" i],
-html.light:not(:has(.auth-page)) [class*="bg-[#0d0d0f]" i],
-html.light:not(:has(.auth-page)) [class*="bg-[#0c0c0f]" i],
-html.light:not(:has(.auth-page)) [class*="bg-[#07070a]" i],
-html.light:not(:has(.auth-page)) [class*="bg-[#06080d]" i],
-html.light:not(:has(.auth-page)) [class*="bg-black"]:not([class*="from-"]):not([class*="via-"]) {
+html.light body,
+html.light .min-h-screen,
+html.light [class*="bg-[#0a0b10]" i],
+html.light [class*="bg-[#0d0d0f]" i],
+html.light [class*="bg-[#0c0c0f]" i],
+html.light [class*="bg-[#07070a]" i],
+html.light [class*="bg-[#06080d]" i],
+html.light [class*="bg-black"]:not([class*="from-"]):not([class*="via-"]) {
   background-color: var(--background) !important;
   background-image: none !important;
   color: var(--foreground) !important;
 }
 
 /* 2. Card surfaces — dark inner panels become clean white cards */
-html.light:not(:has(.auth-page)) [class*="bg-[#0f0f13]" i],
-html.light:not(:has(.auth-page)) [class*="bg-[#0f1018]" i],
-html.light:not(:has(.auth-page)) [class*="bg-[#131316]" i],
-html.light:not(:has(.auth-page)) [class*="bg-[#131521]" i],
-html.light:not(:has(.auth-page)) [class*="bg-[#12131a]" i],
-html.light:not(:has(.auth-page)) [class*="bg-[#12131c]" i],
-html.light:not(:has(.auth-page)) [class*="bg-[#0d0e12]" i],
-html.light:not(:has(.auth-page)) [class*="bg-[#0e0f14]" i],
-html.light:not(:has(.auth-page)) [class*="bg-[#141522]" i],
-html.light:not(:has(.auth-page)) [class*="bg-[#0c0d15]" i],
-html.light:not(:has(.auth-page)) [class*="bg-[#161720]" i],
-html.light:not(:has(.auth-page)) [class*="bg-[#0f0f13]/80" i],
-html.light:not(:has(.auth-page)) [class*="bg-[#0f0f13]/95" i],
-html.light:not(:has(.auth-page)) [class*="bg-[#0a0b10]/80" i],
-html.light:not(:has(.auth-page)) [class*="bg-white/[0.01]"],
-html.light:not(:has(.auth-page)) [class*="bg-white/[0.02]"],
-html.light:not(:has(.auth-page)) [class*="bg-white/[0.03]"],
-html.light:not(:has(.auth-page)) [class*="bg-white/[0.04]"],
-html.light:not(:has(.auth-page)) [class*="bg-white/[0.005]"],
-html.light:not(:has(.auth-page)) [class*="bg-white/5"],
-html.light:not(:has(.auth-page)) [class*="bg-zinc-950"] {
+html.light [class*="bg-[#0f0f13]" i],
+html.light [class*="bg-[#0f1018]" i],
+html.light [class*="bg-[#131316]" i],
+html.light [class*="bg-[#131521]" i],
+html.light [class*="bg-[#12131a]" i],
+html.light [class*="bg-[#12131c]" i],
+html.light [class*="bg-[#0d0e12]" i],
+html.light [class*="bg-[#0e0f14]" i],
+html.light [class*="bg-[#141522]" i],
+html.light [class*="bg-[#0c0d15]" i],
+html.light [class*="bg-[#161720]" i],
+html.light [class*="bg-[#0f0f13]/80" i],
+html.light [class*="bg-[#0f0f13]/95" i],
+html.light [class*="bg-[#0a0b10]/80" i],
+html.light [class*="bg-white/[0.01]"],
+html.light [class*="bg-white/[0.02]"],
+html.light [class*="bg-white/[0.03]"],
+html.light [class*="bg-white/[0.04]"],
+html.light [class*="bg-white/[0.005]"],
+html.light [class*="bg-white/5"],
+html.light [class*="bg-zinc-950"] {
   background-color: var(--surface) !important;
   background-image: none !important;
   border-color: var(--border) !important;
@@ -171,10 +171,10 @@ html.light:not(:has(.auth-page)) [class*="bg-zinc-950"] {
 }
 
 /* 3. Inset / nested areas */
-html.light:not(:has(.auth-page)) [class*="bg-white/10"],
-html.light:not(:has(.auth-page)) [class*="bg-white/[0.1]"],
-html.light:not(:has(.auth-page)) [class*="bg-black/30"],
-html.light:not(:has(.auth-page)) [class*="bg-black/50"] {
+html.light [class*="bg-white/10"],
+html.light [class*="bg-white/[0.1]"],
+html.light [class*="bg-black/30"],
+html.light [class*="bg-black/50"] {
   background-color: var(--surface-2) !important;
   background-image: none !important;
   border-color: var(--border) !important;
@@ -182,33 +182,33 @@ html.light:not(:has(.auth-page)) [class*="bg-black/50"] {
 }
 
 /* 4. Text */
-html.light:not(:has(.auth-page)) .text-white,
-html.light:not(:has(.auth-page)) .text-zinc-50,
-html.light:not(:has(.auth-page)) .text-zinc-100,
-html.light:not(:has(.auth-page)) .text-zinc-200 { color: var(--foreground) !important; }
+html.light .text-white,
+html.light .text-zinc-50,
+html.light .text-zinc-100,
+html.light .text-zinc-200 { color: var(--foreground) !important; }
 
-html.light:not(:has(.auth-page)) .text-zinc-300,
-html.light:not(:has(.auth-page)) .text-zinc-400,
-html.light:not(:has(.auth-page)) .text-zinc-450 { color: var(--muted) !important; }
+html.light .text-zinc-300,
+html.light .text-zinc-400,
+html.light .text-zinc-450 { color: var(--muted) !important; }
 
-html.light:not(:has(.auth-page)) .text-zinc-500,
-html.light:not(:has(.auth-page)) .text-zinc-550,
-html.light:not(:has(.auth-page)) .text-zinc-600 { color: var(--subtle) !important; }
+html.light .text-zinc-500,
+html.light .text-zinc-550,
+html.light .text-zinc-600 { color: var(--subtle) !important; }
 
 /* 5. Borders */
-html.light:not(:has(.auth-page)) [class*="border-white/[0.02]"],
-html.light:not(:has(.auth-page)) [class*="border-white/[0.03]"],
-html.light:not(:has(.auth-page)) [class*="border-white/[0.04]"],
-html.light:not(:has(.auth-page)) [class*="border-white/[0.06]"],
-html.light:not(:has(.auth-page)) [class*="border-white/[0.08]"],
-html.light:not(:has(.auth-page)) [class*="border-white/10"],
-html.light:not(:has(.auth-page)) [class*="border-white/20"],
-html.light:not(:has(.auth-page)) [class*="border-white/5"],
-html.light:not(:has(.auth-page)) [class*="border-zinc-800"] { border-color: var(--border) !important; }
+html.light [class*="border-white/[0.02]"],
+html.light [class*="border-white/[0.03]"],
+html.light [class*="border-white/[0.04]"],
+html.light [class*="border-white/[0.06]"],
+html.light [class*="border-white/[0.08]"],
+html.light [class*="border-white/10"],
+html.light [class*="border-white/20"],
+html.light [class*="border-white/5"],
+html.light [class*="border-zinc-800"] { border-color: var(--border) !important; }
 
 /* 6. Navbar */
-html.light:not(:has(.auth-page)) nav,
-html.light:not(:has(.auth-page)) nav.sticky {
+html.light nav,
+html.light nav.sticky {
   background-color: rgba(255,255,255,0.88) !important;
   backdrop-filter: blur(20px) !important;
   border-bottom-color: var(--border) !important;
@@ -216,37 +216,37 @@ html.light:not(:has(.auth-page)) nav.sticky {
   background-image: none !important;
 }
 
-html.light:not(:has(.auth-page)) nav a,
-html.light:not(:has(.auth-page)) nav span { color: var(--muted) !important; }
+html.light nav a,
+html.light nav span { color: var(--muted) !important; }
 
-html.light:not(:has(.auth-page)) nav a[class*="text-violet"] { color: #7C3AED !important; }
-html.light:not(:has(.auth-page)) nav a[class*="text-emerald"] { color: #059669 !important; }
+html.light nav a[class*="text-violet"] { color: #7C3AED !important; }
+html.light nav a[class*="text-emerald"] { color: #059669 !important; }
 
 /* 7. Notification dropdown */
-html.light:not(:has(.auth-page)) [class*="bg-[#0f0f13]" i].absolute {
+html.light [class*="bg-[#0f0f13]" i].absolute {
   background-color: var(--surface) !important;
   border-color: var(--border) !important;
   box-shadow: 0 10px 40px rgba(0,0,0,0.12) !important;
 }
 
 /* 8. Hover states */
-html.light:not(:has(.auth-page)) [class*="hover:bg-white/5"]:hover,
-html.light:not(:has(.auth-page)) [class*="hover:bg-white/10"]:hover { background-color: var(--surface-3) !important; }
-html.light:not(:has(.auth-page)) [class*="hover:text-white"]:hover { color: var(--foreground) !important; }
+html.light [class*="hover:bg-white/5"]:hover,
+html.light [class*="hover:bg-white/10"]:hover { background-color: var(--surface-3) !important; }
+html.light [class*="hover:text-white"]:hover { color: var(--foreground) !important; }
 
 /* 9. Input fields */
-html.light:not(:has(.auth-page)) input:not([type="range"]),
-html.light:not(:has(.auth-page)) textarea,
-html.light:not(:has(.auth-page)) select {
+html.light input:not([type="range"]),
+html.light textarea,
+html.light select {
   background-color: var(--surface) !important;
   border-color: var(--border) !important;
   color: var(--foreground) !important;
 }
-html.light:not(:has(.auth-page)) input::placeholder,
-html.light:not(:has(.auth-page)) textarea::placeholder { color: var(--subtle) !important; }
+html.light input::placeholder,
+html.light textarea::placeholder { color: var(--subtle) !important; }
 
 /* 10. Divider hairlines */
-html.light:not(:has(.auth-page)) .h-px[class*="bg-white"] { background-color: var(--border) !important; }
+html.light .h-px[class*="bg-white"] { background-color: var(--border) !important; }
 
 /* 11. Contribution grid */
-html.light:not(:has(.auth-page)) rect[fill="rgba(255, 255, 255, 0.03)"] { fill: #E2E8F0 !important; }
+html.light rect[fill="rgba(255, 255, 255, 0.03)"] { fill: #E2E8F0 !important; }

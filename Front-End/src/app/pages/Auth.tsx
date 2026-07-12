@@ -177,7 +177,7 @@ export function Auth() {
   };
 
   return (
-    <div className="auth-page dark min-h-screen bg-[#0A0B10] flex relative overflow-hidden font-sans">
+    <div className="auth-page min-h-screen bg-background text-foreground flex relative overflow-hidden font-sans">
       <Toaster position="top-center" toastOptions={{ style: { background: '#18181B', color: '#fff', border: '1px solid rgba(255,255,255,0.1)' } }} />
       
       {/* Subtle Premium Background & Grid */}
@@ -226,13 +226,13 @@ export function Auth() {
         <div className="flex items-center gap-4">
           <div className="flex -space-x-3">
              {/* Human Avatar */}
-             <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix&backgroundColor=ffdfbf" alt="User" className="w-10 h-10 rounded-full border-2 border-[#0F0F13]" />
+             <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix&backgroundColor=ffdfbf" alt="User" className="w-10 h-10 rounded-full border-2 border-background" />
              {/* Aesthetic Cat */}
-             <img src="https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=100&h=100&fit=crop" alt="User" className="w-10 h-10 rounded-full border-2 border-[#0F0F13] object-cover" />
+             <img src="https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=100&h=100&fit=crop" alt="User" className="w-10 h-10 rounded-full border-2 border-background object-cover" />
              {/* Male Avatar */}
-             <img src="https://api.dicebear.com/7.x/micah/svg?seed=Oliver&backgroundColor=b6e3f4" alt="User" className="w-10 h-10 rounded-full border-2 border-[#0F0F13]" />
+             <img src="https://api.dicebear.com/7.x/micah/svg?seed=Oliver&backgroundColor=b6e3f4" alt="User" className="w-10 h-10 rounded-full border-2 border-background" />
              
-             <div className="w-10 h-10 rounded-full border-2 border-[#0F0F13] bg-zinc-800 flex items-center justify-center text-xs font-bold text-white z-10 shadow-inner">
+             <div className="w-10 h-10 rounded-full border-2 border-background bg-zinc-200 dark:bg-zinc-800 flex items-center justify-center text-xs font-bold text-zinc-900 dark:text-white z-10 shadow-inner">
                30+
              </div>
           </div>

@@ -163,14 +163,14 @@ export function WithdrawModal({
         </div>
 
         {/* Dynamic Wallet Segment Selector */}
-        <div className="grid grid-cols-2 gap-1.5 p-1 bg-[#14151f] border border-white/[0.04] rounded-xl mb-4">
+        <div className="grid grid-cols-2 gap-1.5 p-1 bg-zinc-100 dark:bg-[#14151f] border border-zinc-200 dark:border-white/[0.04] rounded-xl mb-4">
           <button
             type="button"
             onClick={() => { setWalletType("consistency"); setAmount(""); setError(""); setSuccess(false); }}
             className={`py-2 px-3 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
               walletType === "consistency" 
-                ? "bg-white/10 text-white border border-white/[0.08]" 
-                : "text-zinc-450 hover:text-zinc-200"
+                ? "bg-white dark:bg-white/10 text-zinc-900 dark:text-white border border-zinc-200 dark:border-white/[0.08] shadow-sm" 
+                : "text-zinc-500 hover:text-zinc-800 dark:text-zinc-450 dark:hover:text-zinc-200"
             }`}
           >
             ⚡ Habits Wallet (₹{consistencyBalance})
@@ -180,8 +180,8 @@ export function WithdrawModal({
             onClick={() => { setWalletType("battle"); setAmount(""); setError(""); setSuccess(false); }}
             className={`py-2 px-3 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
               walletType === "battle" 
-                ? "bg-white/10 text-white border border-white/[0.08]" 
-                : "text-zinc-450 hover:text-zinc-200"
+                ? "bg-white dark:bg-white/10 text-zinc-900 dark:text-white border border-zinc-200 dark:border-white/[0.08] shadow-sm" 
+                : "text-zinc-500 hover:text-zinc-800 dark:text-zinc-450 dark:hover:text-zinc-200"
             }`}
           >
             ⚔️ Versus Wallet (₹{battleBalance})
@@ -229,7 +229,7 @@ export function WithdrawModal({
                   placeholder="example@upi"
                   value={upiId}
                   onChange={(e) => setUpiId(e.target.value)}
-                  className="w-full bg-[#14151f] border border-white/10 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-violet-500/70 focus:ring-4 focus:ring-violet-500/10 transition-all placeholder-zinc-650"
+                  className="w-full bg-zinc-50 dark:bg-[#14151f] border border-zinc-200 dark:border-white/10 rounded-xl p-3 text-sm text-zinc-900 dark:text-white focus:outline-none focus:border-violet-500/70 focus:ring-4 focus:ring-violet-500/10 transition-all placeholder-zinc-400 dark:placeholder-zinc-650"
                   required
                 />
               </div>
@@ -242,13 +242,13 @@ export function WithdrawModal({
                     placeholder={`Max ₹${availableBalance}`}
                     value={amount}
                     onChange={(e) => setAmount(e.target.value)}
-                    className="w-full bg-[#14151f] border border-white/10 rounded-xl p-3 pr-16 text-sm text-white focus:outline-none focus:border-violet-500/70 focus:ring-4 focus:ring-violet-500/10 transition-all font-mono placeholder-zinc-650"
+                    className="w-full bg-zinc-50 dark:bg-[#14151f] border border-zinc-200 dark:border-white/10 rounded-xl p-3 pr-16 text-sm text-zinc-900 dark:text-white focus:outline-none focus:border-violet-500/70 focus:ring-4 focus:ring-violet-500/10 transition-all font-mono placeholder-zinc-400 dark:placeholder-zinc-650"
                     required
                   />
                   <button
                     type="button"
                     onClick={() => setAmount(String(availableBalance))}
-                    className="absolute right-2.5 top-1/2 -translate-y-1/2 px-2.5 py-1 text-[10px] font-bold text-violet-400 hover:text-white bg-violet-500/10 hover:bg-violet-500/20 border border-violet-500/25 rounded-lg transition-all active:scale-95 cursor-pointer"
+                    className="absolute right-2.5 top-1/2 -translate-y-1/2 px-2.5 py-1 text-[10px] font-bold text-violet-650 dark:text-violet-400 hover:text-violet-850 dark:hover:text-white bg-violet-500/10 hover:bg-violet-500/20 border border-violet-500/25 rounded-lg transition-all active:scale-95 cursor-pointer"
                   >
                     MAX
                   </button>
