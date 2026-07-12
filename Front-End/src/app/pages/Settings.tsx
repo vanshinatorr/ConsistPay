@@ -168,9 +168,20 @@ export function Settings() {
     }
   };
 
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+
   const handleLogout = () => {
-    localStorage.removeItem("token");
-    navigate("/login");
+    setShowLogoutConfirm(true);
+  };
+
+  const confirmLogout = () => {
+    setIsLoggingOut(true);
+    setTimeout(() => {
+      localStorage.removeItem("token");
+      localStorage.removeItem("consistpay_user_data");
+      navigate("/login");
+    }, 850);
   };
 
   const sections = [
@@ -194,7 +205,8 @@ export function Settings() {
   const username = email ? email.split("@")[0] : "user";
 
   return (
-    <div className="min-h-screen text-white" style={{ backgroundColor: "#0F0F13" }}>
+    <>
+      <div className="min-h-screen text-white" style={{ backgroundColor: "#0F0F13" }}>
       {/* Background */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-0 right-1/4 w-96 h-96 bg-violet-500/10 rounded-full blur-[120px]" />
@@ -671,5 +683,51 @@ export function Settings() {
         </div>
       </main>
     </div>
-  );
+
+    {/* Logout Confirmation Modal (SaaS Vibe) */}
+    {showLogoutConfirm && (
+      <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-in fade-in duration-200">
+        <div className="bg-[#0F1018] border border-white/[0.06] rounded-2xl p-6 max-w-sm w-full shadow-2xl animate-in fade-in zoom-in-95 duration-200 text-left">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-10 h-10 rounded-xl bg-red-500/10 border border-red-500/20 flex items-center justify-center text-red-500 shrink-0">
+              <LogOut className="w-5 h-5" />
+            </div>
+            <div>
+              <h3 className="text-sm font-bold text-white">Sign Out</h3>
+              <p className="text-[10px] text-zinc-500 uppercase font-black tracking-wider mt-0.5">End active session</p>
+            </div>
+          </div>
+          
+          <p className="text-xs text-zinc-400 leading-relaxed mb-6">
+            Are you sure you want to sign out of ConsistPay? You will need to log back in to access your dashboard, track streaks, and process streak payouts.
+          </p>
+          
+          <div className="flex gap-3 justify-end">
+            <button
+              onClick={() => setShowLogoutConfirm(false)}
+              disabled={isLoggingOut}
+              className="px-4 py-2 rounded-xl text-xs font-bold text-zinc-300 hover:bg-white/5 border border-white/[0.06] transition-all cursor-pointer disabled:opacity-50"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={confirmLogout}
+              disabled={isLoggingOut}
+              className="px-4 py-2 rounded-xl text-xs font-bold bg-red-500 hover:bg-red-600 text-white flex items-center gap-2 transition-all cursor-pointer shadow-md shadow-red-500/15 disabled:opacity-50 active:scale-95"
+            >
+              {isLoggingOut ? (
+                <>
+                  <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                  <span>Signing out...</span>
+                </>
+              ) : (
+                <span>Sign Out</span>
+              )}
+            </button>
+          </div>
+        </div>
+      </div>
+    )}
+  </>
+);
 }
