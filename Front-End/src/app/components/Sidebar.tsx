@@ -86,7 +86,6 @@ export function Sidebar() {
             ? "bg-zinc-200/55 dark:bg-white/[0.035] text-zinc-900 dark:text-white" 
             : "text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 hover:bg-zinc-100/50 dark:hover:text-zinc-200 dark:hover:bg-white/[0.015]"
         }`}
-        title={isCollapsed ? item.label : undefined}
       >
         {active && (
           <span className="absolute left-0 top-2.5 bottom-2.5 w-[2px] bg-violet-500 dark:bg-violet-400 rounded-r shadow-[0_0_8px_rgba(139,92,246,0.6)]" />
@@ -102,7 +101,7 @@ export function Sidebar() {
 
         {/* Collapsed Tooltip fallback */}
         {isCollapsed && (
-          <div className="absolute left-16 bg-[#16161F] border border-white/[0.08] text-white-force text-[9px] font-bold tracking-wider uppercase px-2.5 py-1.5 rounded-lg opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity duration-200 z-50 shadow-xl whitespace-nowrap">
+          <div className="absolute left-16 bg-white dark:bg-[#16161F] border border-zinc-200 dark:border-white/[0.08] text-zinc-850 dark:text-zinc-200 text-[9px] font-bold tracking-wider uppercase px-2.5 py-1.5 rounded-lg opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity duration-200 z-50 shadow-md dark:shadow-xl whitespace-nowrap">
             {item.label}
           </div>
         )}
@@ -178,7 +177,6 @@ export function Sidebar() {
                     ? "bg-zinc-200/55 dark:bg-white/[0.035] text-zinc-900 dark:text-white" 
                     : "text-zinc-550 dark:text-zinc-400 hover:text-zinc-900 hover:bg-zinc-100/50 dark:hover:text-zinc-200 dark:hover:bg-white/[0.015]"
                 }`}
-                title={isCollapsed ? item.label : undefined}
               >
                 {active && (
                   <span className="absolute left-0 top-2.5 bottom-2.5 w-[2px] bg-violet-500 dark:bg-violet-400 rounded-r shadow-[0_0_8px_rgba(139,92,246,0.6)]" />
@@ -201,7 +199,7 @@ export function Sidebar() {
                 )}
 
                 {isCollapsed && (
-                  <div className="absolute left-16 bg-[#16161F] border border-white/[0.08] text-white-force text-[9px] font-bold tracking-wider uppercase px-2.5 py-1.5 rounded-lg opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity duration-200 z-50 shadow-xl whitespace-nowrap">
+                  <div className="absolute left-16 bg-white dark:bg-[#16161F] border border-zinc-200 dark:border-white/[0.08] text-zinc-850 dark:text-zinc-200 text-[9px] font-bold tracking-wider uppercase px-2.5 py-1.5 rounded-lg opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity duration-200 z-50 shadow-md dark:shadow-xl whitespace-nowrap">
                     {item.label} (Soon)
                   </div>
                 )}
