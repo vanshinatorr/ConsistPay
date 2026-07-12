@@ -346,7 +346,7 @@ export function WalletCard({
                   </span>
                 </div>
                 <div className="shrink-0">
-                  <span className="px-2.5 py-1 bg-violet-500/10 border border-violet-500/20 text-violet-600 dark:text-violet-400 rounded-lg font-black font-mono text-xs">
+                  <span className="font-mono text-xs font-semibold text-zinc-750 dark:text-zinc-300">
                     {onboardingComplete ? Math.max(graceCoins, 0) : 0}
                   </span>
                 </div>
