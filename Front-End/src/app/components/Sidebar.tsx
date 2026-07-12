@@ -102,7 +102,7 @@ export function Sidebar() {
 
         {/* Collapsed Tooltip fallback */}
         {isCollapsed && (
-          <div className="absolute left-16 bg-[#16161F] border border-white/[0.08] text-white text-[9px] font-bold tracking-wider uppercase px-2.5 py-1.5 rounded-lg opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity duration-200 z-50 shadow-xl whitespace-nowrap">
+          <div className="absolute left-16 bg-[#16161F] border border-white/[0.08] text-white-force text-[9px] font-bold tracking-wider uppercase px-2.5 py-1.5 rounded-lg opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity duration-200 z-50 shadow-xl whitespace-nowrap">
             {item.label}
           </div>
         )}
@@ -201,7 +201,7 @@ export function Sidebar() {
                 )}
 
                 {isCollapsed && (
-                  <div className="absolute left-16 bg-[#16161F] border border-white/[0.08] text-white text-[9px] font-bold tracking-wider uppercase px-2.5 py-1.5 rounded-lg opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity duration-200 z-50 shadow-xl whitespace-nowrap">
+                  <div className="absolute left-16 bg-[#16161F] border border-white/[0.08] text-white-force text-[9px] font-bold tracking-wider uppercase px-2.5 py-1.5 rounded-lg opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity duration-200 z-50 shadow-xl whitespace-nowrap">
                     {item.label} (Soon)
                   </div>
                 )}
