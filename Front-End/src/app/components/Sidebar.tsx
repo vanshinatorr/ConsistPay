@@ -236,15 +236,9 @@ export function Sidebar() {
             </div>
             
             {!isCollapsed && (
-              <div className="flex flex-col animate-in fade-in duration-200">
-                <span className="text-sm font-black tracking-tight text-zinc-900 dark:text-white flex items-center gap-1.5 leading-none">
+              <div className="flex flex-col animate-in fade-in duration-200 justify-center">
+                <span className="text-sm font-black tracking-tight text-zinc-900 dark:text-white leading-none">
                   Consist<span className="text-emerald-400">Pay</span>
-                  <span className="text-[8px] font-black bg-violet-500/10 text-violet-400 px-1.5 py-0.5 rounded-md border border-violet-500/20 uppercase tracking-widest leading-none">
-                    AI
-                  </span>
-                </span>
-                <span className="text-[9px] text-zinc-500 dark:text-zinc-400 font-bold tracking-wider uppercase leading-none mt-1">
-                  Accountability Hub
                 </span>
               </div>
             )}
