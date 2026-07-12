@@ -476,4 +476,49 @@ const devResetUser = async (req, res) => {
   }
 };
 
-module.exports = { getMe, updateMe, getLeaderboard, addBattleFunds, devResetUser };
+const requestBetaAccess = async (req, res) => {
+  try {
+    const { category } = req.body;
+    if (!category) {
+      return res.status(400).json({ message: "Category is required." });
+    }
+
+    const BetaAccessRequest = require("../models/BetaAccessRequest");
+
+    const existing = await BetaAccessRequest.findOne({
+      userId: req.user._id,
+      category,
+    });
+
+    if (existing) {
+      return res.status(200).json({ message: `Already requested early access for ${category}.`, alreadyRequested: true });
+    }
+
+    const betaRequest = await BetaAccessRequest.create({
+      userId: req.user._id,
+      category,
+    });
+
+    res.status(201).json({
+      message: `Successfully requested early access for ${category}!`,
+      alreadyRequested: false,
+      betaRequest
+    });
+  } catch (error) {
+    console.error("Error requesting beta access:", error);
+    res.status(500).json({ message: error.message });
+  }
+};
+
+const getBetaAccessRequests = async (req, res) => {
+  try {
+    const BetaAccessRequest = require("../models/BetaAccessRequest");
+    const requests = await BetaAccessRequest.find({ userId: req.user._id });
+    res.status(200).json({ requests });
+  } catch (error) {
+    console.error("Error fetching beta access requests:", error);
+    res.status(500).json({ message: error.message });
+  }
+};
+
+module.exports = { getMe, updateMe, getLeaderboard, addBattleFunds, devResetUser, requestBetaAccess, getBetaAccessRequests };

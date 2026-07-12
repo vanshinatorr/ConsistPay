@@ -36,9 +36,63 @@ function CategoryPlaceholder({ data }: { data: CategoryData }) {
 
   const [requestedAccess, setRequestedAccess] = React.useState(false);
 
-  const handleRequestAccess = () => {
+  React.useEffect(() => {
+    const checkBetaAccess = async () => {
+      const token = localStorage.getItem("token");
+      if (!token) return;
+      try {
+        const API = import.meta.env.VITE_API_URL || "http://localhost:5000";
+        const res = await fetch(`${API}/api/users/beta-access`, {
+          headers: {
+            "Authorization": `Bearer ${token}`
+          }
+        });
+        if (res.ok) {
+          const resData = await res.json();
+          const alreadyRequested = resData.requests?.some((r: any) => r.category === data.title);
+          if (alreadyRequested) {
+            setRequestedAccess(true);
+          }
+        }
+      } catch (err) {
+        console.error("Failed to check beta access:", err);
+      }
+    };
+    checkBetaAccess();
+  }, [data.title]);
+
+  const handleRequestAccess = async () => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      toast.error("Please login to request beta access.");
+      return;
+    }
+    
     setRequestedAccess(true);
-    toast.success(`Early access request submitted for ${data.title}! We will notify you.`);
+    
+    try {
+      const API = import.meta.env.VITE_API_URL || "http://localhost:5000";
+      const res = await fetch(`${API}/api/users/beta-access`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify({ category: data.title })
+      });
+      
+      const resData = await res.json();
+      if (res.ok) {
+        toast.success(resData.message || `Early access request submitted for ${data.title}!`);
+      } else {
+        setRequestedAccess(false);
+        toast.error(resData.message || "Failed to submit request.");
+      }
+    } catch (err) {
+      setRequestedAccess(false);
+      console.error("Error requesting beta access:", err);
+      toast.error("Network error. Please try again.");
+    }
   };
 
   return (
@@ -123,7 +177,7 @@ function CategoryPlaceholder({ data }: { data: CategoryData }) {
                 disabled={requestedAccess}
                 className="w-full sm:w-auto flex items-center justify-center gap-2 bg-zinc-900 dark:bg-white hover:bg-zinc-800 dark:hover:bg-zinc-100 text-white dark:text-zinc-950 font-bold px-6 py-3 rounded-xl transition-all duration-200 text-xs shadow-md dark:shadow-xl hover:shadow-lg scale-100 active:scale-[0.98]"
               >
-                <span>Request Early Beta Access</span>
+                <span>{requestedAccess ? "Access Requested" : "Request Early Beta Access"}</span>
                 <ArrowRight className="w-3.5 h-3.5" />
               </button>
             </div>
