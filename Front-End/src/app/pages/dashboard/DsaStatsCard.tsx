@@ -50,7 +50,7 @@ export function DsaStatsCard({ stats, onboardingComplete = true }: DsaStatsCardP
       </div>
 
       {/* Main Content: Ring & Rows */}
-      <div className="flex items-center justify-between gap-6 relative z-10">
+      <div className="flex-1 flex items-center justify-between gap-6 relative z-10">
         {/* Left Side: Segmented SVG Donut Ring */}
         <div className="relative w-[100px] h-[100px] flex items-center justify-center shrink-0">
           <svg className="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
