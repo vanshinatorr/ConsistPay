@@ -64,6 +64,12 @@ const autoResolveChallenges = async (userId) => {
     $or: [{ creatorId: userId }, { opponentId: userId }]
   });
 
+  if (expiredChallenges.length === 0) return;
+
+  const platformService = require("../services/platformService");
+  const PlatformLinkage = require("../models/PlatformLinkage");
+  const Notification = require("../models/Notification");
+
   for (const challenge of expiredChallenges) {
     try {
       // Atomically lock the challenge as completed before distributing payouts
@@ -78,31 +84,103 @@ const autoResolveChallenges = async (userId) => {
         continue;
       }
 
+      // Fetch creator and opponent profile linkages and trigger an auto-sync for both
+      // to make sure any last-minute coding solves are recorded before resolution.
+      const syncUserPlatforms = async (uId) => {
+        const linkages = await PlatformLinkage.find({ userId: uId, isVerified: true });
+        for (const linkage of linkages) {
+          try {
+            await platformService.syncDailySolve(uId, linkage.platform);
+          } catch (syncErr) {
+            console.error(`[Resolution Sync] Failed to sync ${linkage.platform} for user ${uId}:`, syncErr.message);
+          }
+        }
+      };
+
+      await Promise.all([
+        syncUserPlatforms(challenge.creatorId),
+        syncUserPlatforms(challenge.opponentId)
+      ]);
+
       const creatorScore = await countCompletedSubmissions(challenge.creatorId, challenge.startDate, challenge.endDate, challenge.duration);
       const opponentScore = await countCompletedSubmissions(challenge.opponentId, challenge.startDate, challenge.endDate, challenge.duration);
 
       console.log(`Resolving challenge ${challenge._id}. Scores: Creator=${creatorScore}, Opponent=${opponentScore}`);
 
+      const creator = await User.findById(challenge.creatorId);
+      const opponent = await User.findById(challenge.opponentId);
+
+      if (!creator || !opponent) {
+        console.error(`[Resolution] Creator or Opponent not found during resolution of ${challenge._id}`);
+        continue;
+      }
+
+      const challengeName = `${challenge.duration}-Day Consistency Challenge`;
+
       if (creatorScore > opponentScore) {
         // Creator wins
-        const creator = await User.findById(challenge.creatorId);
         creator.battleBalance += challenge.stake * 2;
         await creator.save();
+
+        // Send notifications
+        await Notification.create([
+          {
+            userId: challenge.creatorId,
+            title: "🏆 Battle Won!",
+            desc: `You won the ${challengeName} against ${opponent.name}! ₹${challenge.stake * 2} has been added to your wallet.`,
+            type: "battle"
+          },
+          {
+            userId: challenge.opponentId,
+            title: "⚔️ Battle Ended",
+            desc: `${creator.name} won the ${challengeName} with a higher consistency score. Better luck next time!`,
+            type: "battle"
+          }
+        ]);
         console.log(`Creator ${creator.email} won stakes: +₹${challenge.stake * 2}`);
       } else if (opponentScore > creatorScore) {
         // Opponent wins
-        const opponent = await User.findById(challenge.opponentId);
         opponent.battleBalance += challenge.stake * 2;
         await opponent.save();
+
+        // Send notifications
+        await Notification.create([
+          {
+            userId: challenge.opponentId,
+            title: "🏆 Battle Won!",
+            desc: `You won the ${challengeName} against ${creator.name}! ₹${challenge.stake * 2} has been added to your wallet.`,
+            type: "battle"
+          },
+          {
+            userId: challenge.creatorId,
+            title: "⚔️ Battle Ended",
+            desc: `${opponent.name} won the ${challengeName} with a higher consistency score. Better luck next time!`,
+            type: "battle"
+          }
+        ]);
         console.log(`Opponent ${opponent.email} won stakes: +₹${challenge.stake * 2}`);
       } else {
         // Tie - Refund stakes
-        const creator = await User.findById(challenge.creatorId);
-        const opponent = await User.findById(challenge.opponentId);
         creator.battleBalance += challenge.stake;
         opponent.battleBalance += challenge.stake;
         await creator.save();
         await opponent.save();
+
+        // Send notifications
+        await Notification.create([
+          {
+            userId: challenge.creatorId,
+            title: "🤝 Battle Tied!",
+            desc: `The ${challengeName} against ${opponent.name} ended in a tie. Your stake of ₹${challenge.stake} has been refunded to your wallet.`,
+            type: "battle"
+          },
+          {
+            userId: challenge.opponentId,
+            title: "🤝 Battle Tied!",
+            desc: `The ${challengeName} against ${creator.name} ended in a tie. Your stake of ₹${challenge.stake} has been refunded to your wallet.`,
+            type: "battle"
+          }
+        ]);
         console.log("Challenge tied. Stakes refunded to both.");
       }
     } catch (err) {
