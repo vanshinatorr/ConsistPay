@@ -263,6 +263,6 @@ html.light rect[fill="rgba(255, 255, 255, 0.03)"] { fill: #E2E8F0 !important; }
 /* 12. Forced white text for dark elements in light mode */
 html.light nav a.text-white-force,
 html.light nav span.text-white-force,
-.text-white-force {
+html.light .text-white-force {
   color: #ffffff !important;
 }
