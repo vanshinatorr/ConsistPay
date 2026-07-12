@@ -75,7 +75,7 @@ function CategoryPlaceholder({ data }: { data: CategoryData }) {
                 </div>
               </div>
 
-              <p className="text-xs text-zinc-600 dark:text-zinc-450 leading-relaxed mb-6 max-w-2xl">
+              <p className="text-xs text-zinc-600 dark:text-zinc-300 leading-relaxed mb-6 max-w-2xl">
                 {data.description}
               </p>
 
@@ -91,8 +91,8 @@ function CategoryPlaceholder({ data }: { data: CategoryData }) {
                     <div key={idx} className="flex gap-4 items-start relative pl-1">
                       <div className={`w-6 h-6 rounded-full border flex items-center justify-center shrink-0 text-[10px] font-black z-10 ${
                         idx === 0 
-                          ? "bg-violet-500/10 border-violet-500/30 text-violet-655 dark:text-violet-400" 
-                          : "bg-zinc-100 dark:bg-[#0F0F13] border-zinc-200 dark:border-white/[0.08] text-zinc-500 dark:text-zinc-650"
+                          ? "bg-violet-500/10 border-violet-500/30 text-violet-600 dark:text-violet-400" 
+                          : "bg-zinc-100 dark:bg-[#0F0F13] border-zinc-200 dark:border-white/[0.08] text-zinc-500 dark:text-zinc-400"
                       }`}>
                         {idx + 1}
                       </div>
@@ -100,7 +100,7 @@ function CategoryPlaceholder({ data }: { data: CategoryData }) {
                         <h4 className={`text-xs font-bold ${idx === 0 ? "text-zinc-800 dark:text-white" : "text-zinc-500"}`}>
                           {step.split(" - ")[0]}
                         </h4>
-                        <p className="text-[10px] text-zinc-500 dark:text-zinc-450 mt-0.5 leading-normal">
+                        <p className="text-[10px] text-zinc-500 dark:text-zinc-400 mt-0.5 leading-normal">
                           {step.split(" - ")[1]}
                         </p>
                       </div>
@@ -137,7 +137,7 @@ function CategoryPlaceholder({ data }: { data: CategoryData }) {
                     System Preview
                   </span>
                 </div>
-                <span className="text-[9px] font-black text-violet-650 dark:text-violet-400 bg-violet-500/10 border border-violet-500/20 px-1.5 py-0.5 rounded-md uppercase tracking-wider">
+                <span className="text-[9px] font-black text-violet-600 dark:text-violet-400 bg-violet-500/10 border border-violet-500/20 px-1.5 py-0.5 rounded-md uppercase tracking-wider">
                   Alpha v0.1
                 </span>
               </div>
@@ -183,12 +183,12 @@ function CategoryPlaceholder({ data }: { data: CategoryData }) {
                       {feat.title}
                     </h4>
                   </div>
-                  <p className="text-[10.5px] text-zinc-550 dark:text-zinc-450 leading-relaxed">
+                  <p className="text-[10.5px] text-zinc-500 dark:text-zinc-400 leading-relaxed">
                     {feat.description}
                   </p>
                 </div>
                 <div className="mt-3 flex items-center gap-1.5">
-                  <div className="w-1.5 h-1.5 rounded-full bg-violet-450" />
+                  <div className="w-1.5 h-1.5 rounded-full bg-violet-500" />
                   <span className="text-[8px] font-black text-violet-600/80 dark:text-violet-400/80 uppercase tracking-wider">
                     Planned Feature
                   </span>

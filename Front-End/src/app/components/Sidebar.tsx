@@ -190,7 +190,7 @@ export function Sidebar() {
           <span className="absolute left-0 top-2.5 bottom-2.5 w-[2px] bg-violet-500 dark:bg-violet-400 rounded-r shadow-[0_0_8px_rgba(139,92,246,0.6)]" />
         )}
 
-        <IconComponent className={`w-4 h-4 shrink-0 transition-transform ${active ? "text-violet-550 dark:text-violet-400" : "text-zinc-400 dark:text-zinc-450 group-hover:text-zinc-700 dark:group-hover:text-zinc-350"}`} />
+        <IconComponent className={`w-4 h-4 shrink-0 transition-transform ${active ? "text-violet-600 dark:text-violet-400" : "text-zinc-500 dark:text-zinc-400 group-hover:text-zinc-700 dark:group-hover:text-zinc-300"}`} />
         
         <span className={`transition-all duration-300 whitespace-nowrap overflow-hidden ${
           isCollapsed ? "opacity-0 w-0 invisible" : "opacity-100 w-auto visible"
@@ -200,7 +200,7 @@ export function Sidebar() {
 
         {/* Collapsed Tooltip fallback */}
         {isCollapsed && (
-          <div className="absolute left-16 bg-white dark:bg-[#16161F] border border-zinc-200 dark:border-white/[0.08] text-zinc-850 dark:text-zinc-200 text-[9px] font-bold tracking-wider uppercase px-2.5 py-1.5 rounded-lg opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity duration-200 z-50 shadow-md dark:shadow-xl whitespace-nowrap">
+          <div className="absolute left-16 bg-white dark:bg-[#16161F] border border-zinc-200 dark:border-white/[0.08] text-zinc-800 dark:text-zinc-200 text-[9px] font-bold tracking-wider uppercase px-2.5 py-1.5 rounded-lg opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity duration-200 z-50 shadow-md dark:shadow-xl whitespace-nowrap">
             {item.label}
           </div>
         )}
@@ -233,7 +233,7 @@ export function Sidebar() {
                     AI
                   </span>
                 </span>
-                <span className="text-[9px] text-zinc-500 dark:text-zinc-550 font-bold tracking-wider uppercase leading-none mt-1">
+                <span className="text-[9px] text-zinc-500 dark:text-zinc-400 font-bold tracking-wider uppercase leading-none mt-1">
                   Accountability Hub
                 </span>
               </div>
@@ -274,7 +274,7 @@ export function Sidebar() {
                 className={`flex items-center justify-between gap-3 px-3 py-2.5 rounded-lg text-[11.5px] font-semibold tracking-wide transition-all duration-150 group relative ${
                   active 
                     ? "bg-zinc-200/55 dark:bg-white/[0.035] text-zinc-900 dark:text-white" 
-                    : "text-zinc-550 dark:text-zinc-400 hover:text-zinc-900 hover:bg-zinc-100/50 dark:hover:text-zinc-200 dark:hover:bg-white/[0.015]"
+                    : "text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 hover:bg-zinc-100/50 dark:hover:text-zinc-200 dark:hover:bg-white/[0.015]"
                 }`}
               >
                 {active && (
@@ -282,7 +282,7 @@ export function Sidebar() {
                 )}
 
                 <div className="flex items-center gap-3">
-                  <IconComponent className={`w-4 h-4 shrink-0 transition-transform ${active ? "text-violet-550 dark:text-violet-400" : "text-zinc-400 dark:text-zinc-450 group-hover:text-zinc-700 dark:group-hover:text-zinc-350"}`} />
+                  <IconComponent className={`w-4 h-4 shrink-0 transition-transform ${active ? "text-violet-600 dark:text-violet-400" : "text-zinc-500 dark:text-zinc-400 group-hover:text-zinc-700 dark:group-hover:text-zinc-300"}`} />
                   
                   {!isCollapsed && (
                     <span className="transition-all duration-300 whitespace-nowrap overflow-hidden">
@@ -292,13 +292,13 @@ export function Sidebar() {
                 </div>
 
                 {!isCollapsed && (
-                  <span className="text-[8px] font-black text-zinc-500 dark:text-zinc-650 bg-zinc-200/55 dark:bg-[#1A1C2A] border border-zinc-300/80 dark:border-white/[0.04] px-1.5 py-0.5 rounded uppercase tracking-wider scale-90 opacity-70 group-hover:opacity-100 transition-all select-none">
+                  <span className="text-[8px] font-black text-zinc-500 dark:text-zinc-400 bg-zinc-200/55 dark:bg-[#1A1C2A] border border-zinc-300/80 dark:border-white/[0.04] px-1.5 py-0.5 rounded uppercase tracking-wider scale-90 opacity-70 group-hover:opacity-100 transition-all select-none">
                     Soon
                   </span>
                 )}
 
                 {isCollapsed && (
-                  <div className="absolute left-16 bg-white dark:bg-[#16161F] border border-zinc-200 dark:border-white/[0.08] text-zinc-850 dark:text-zinc-200 text-[9px] font-bold tracking-wider uppercase px-2.5 py-1.5 rounded-lg opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity duration-200 z-50 shadow-md dark:shadow-xl whitespace-nowrap">
+                  <div className="absolute left-16 bg-white dark:bg-[#16161F] border border-zinc-200 dark:border-white/[0.08] text-zinc-800 dark:text-zinc-200 text-[9px] font-bold tracking-wider uppercase px-2.5 py-1.5 rounded-lg opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity duration-200 z-50 shadow-md dark:shadow-xl whitespace-nowrap">
                     {item.label} (Soon)
                   </div>
                 )}
