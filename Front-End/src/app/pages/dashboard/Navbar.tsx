@@ -3,6 +3,7 @@ import { Bell, CheckCircle2, Swords, Trophy, Flame, Sparkles, X, Sun, Moon, Menu
 import { Logo } from "../../components/Logo";
 import { Link, useLocation } from "react-router-dom";
 import { BattleHubModal } from "../../components/battle/BattleHubModal";
+import confetti from "canvas-confetti";
 
 interface NavbarProps {
   initials: string;
@@ -17,6 +18,7 @@ export function Navbar({ initials, plan = "free", avatar, isAvatarUrl }: NavbarP
   const [showNotifs, setShowNotifs] = useState(false);
   const [notifications, setNotifications] = useState<any[]>([]);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const processedConfettiNotifs = useRef<Set<string>>(new Set());
 
   // Theme state
   const [theme, setTheme] = useState<"dark" | "light">(() => {
@@ -64,6 +66,30 @@ export function Navbar({ initials, plan = "free", avatar, isAvatarUrl }: NavbarP
       if (res.ok) {
         const data = await res.json();
         setNotifications(data);
+
+        // Confetti trigger for unread won battles
+        if (Array.isArray(data)) {
+          const unreadWins = data.filter((n: any) => !n.read && n.type === "battle" && n.title === "Battle Won");
+          let triggeredAny = false;
+
+          unreadWins.forEach((n: any) => {
+            const idStr = n._id || n.id;
+            if (idStr && !processedConfettiNotifs.current.has(idStr)) {
+              processedConfettiNotifs.current.add(idStr);
+              triggeredAny = true;
+            }
+          });
+
+          if (triggeredAny) {
+            setTimeout(() => {
+              confetti({ particleCount: 80, spread: 60, origin: { x: 0.2, y: 0.6 } });
+              confetti({ particleCount: 80, spread: 60, origin: { x: 0.8, y: 0.6 } });
+            }, 300);
+            setTimeout(() => {
+              confetti({ particleCount: 100, spread: 80, origin: { x: 0.5, y: 0.5 } });
+            }, 700);
+          }
+        }
       }
     } catch (err) {
       console.error("Failed to fetch notifications:", err);
