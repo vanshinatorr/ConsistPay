@@ -244,15 +244,18 @@ export function PlatformsWidget({ onLinkageChanged, onboardingComplete = true }:
           <h4 className="text-[8.5px] font-extrabold text-zinc-400 dark:text-zinc-550 uppercase tracking-widest block border-b border-zinc-100 dark:border-white/[0.02] pb-1.5 px-0.5 select-none">
             Coming Soon
           </h4>
-          <div className="space-y-1">
+          <div className="space-y-0.5">
             {mockPlatforms.map((mockPlat) => (
-              <div key={mockPlat.name} className="flex items-center justify-between py-1 px-0.5 select-none transition-all group/coming">
-                <div className="flex items-center gap-2.5 grayscale opacity-40 group-hover/coming:grayscale-0 group-hover/coming:opacity-60 transition-all duration-300">
-                  <div className="w-5.5 h-5.5 rounded bg-zinc-100 dark:bg-white/5 border border-zinc-200 dark:border-white/[0.02] flex items-center justify-center shrink-0">
+              <div key={mockPlat.name} className="flex items-center justify-between py-1.5 px-0.5 select-none transition-all">
+                <div className="flex items-center gap-2.5 transition-all duration-300">
+                  <div className="w-5.5 h-5.5 rounded bg-zinc-100 dark:bg-white/5 border border-zinc-200 dark:border-white/[0.02] flex items-center justify-center shrink-0 grayscale opacity-55">
                     {getPlatformLogo(mockPlat.name)}
                   </div>
-                  <span className="text-[10.5px] font-bold text-zinc-600 dark:text-zinc-450 tracking-wide">{mockPlat.name}</span>
+                  <span className="text-[10.5px] font-bold text-zinc-700 dark:text-zinc-300 tracking-wide">{mockPlat.name}</span>
                 </div>
+                <span className="text-[8px] font-extrabold text-zinc-400 dark:text-zinc-550 uppercase tracking-widest bg-zinc-100 dark:bg-white/5 px-1.5 py-0.5 rounded select-none">
+                  Soon
+                </span>
               </div>
             ))}
           </div>
