@@ -222,12 +222,12 @@ export function PlatformsWidget({ onLinkageChanged, onboardingComplete = true }:
                     onClick={() => navigate("/settings?tab=platforms")}
                     className="flex items-center justify-between py-2 border-b border-zinc-100 dark:border-white/[0.02] flex-nowrap w-full min-w-0 cursor-pointer group/item hover:bg-zinc-50 dark:hover:bg-white/[0.01] rounded-lg transition-all px-1"
                   >
-                    <div className="flex items-center gap-2 min-w-0 flex-1 opacity-50 group-hover/item:opacity-85 transition-opacity">
+                    <div className="flex items-center gap-2 min-w-0 flex-1">
                       {/* Platform Logo */}
                       <div className="w-5.5 h-5.5 rounded bg-zinc-100 dark:bg-white/5 border border-zinc-200 dark:border-white/[0.04] flex items-center justify-center shrink-0">
                         {getPlatformLogo(plat)}
                       </div>
-                      <span className="text-[11px] font-bold text-zinc-600 dark:text-zinc-400 tracking-wide truncate">{plat}</span>
+                      <span className="text-[11px] font-bold text-zinc-700 dark:text-zinc-300 tracking-wide truncate">{plat}</span>
                     </div>
                     <span className="text-[9px] font-extrabold text-zinc-400 group-hover/item:text-amber-500 transition-colors shrink-0 uppercase tracking-widest select-none">
                       + Link
