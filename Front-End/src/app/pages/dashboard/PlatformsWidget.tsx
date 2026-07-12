@@ -153,7 +153,7 @@ export function PlatformsWidget({ onLinkageChanged, onboardingComplete = true }:
       <div className="absolute inset-0 bg-[linear-gradient(rgba(0,0,0,0.001)_1px,transparent_1px),linear-gradient(90deg,rgba(0,0,0,0.001)_1px,transparent_1px)] dark:bg-[linear-gradient(rgba(255,255,255,0.001)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.001)_1px,transparent_1px)] bg-[size:20px_20px] pointer-events-none" />
       
       {/* Container wrapper for dynamic vertical distribution */}
-      <div className="relative z-10 flex flex-col h-full justify-between">
+      <div className="relative z-10 flex flex-col gap-6">
         
         {/* SECTION 1: Available Platforms */}
         <div className="flex flex-col gap-2.5 shrink-0">
