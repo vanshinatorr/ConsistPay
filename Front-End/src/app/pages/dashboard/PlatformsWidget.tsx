@@ -253,9 +253,6 @@ export function PlatformsWidget({ onLinkageChanged, onboardingComplete = true }:
                   </div>
                   <span className="text-[10.5px] font-bold text-zinc-700 dark:text-zinc-300 tracking-wide">{mockPlat.name}</span>
                 </div>
-                <span className="text-[8px] font-extrabold text-zinc-400 dark:text-zinc-550 uppercase tracking-widest bg-zinc-100 dark:bg-white/5 px-1.5 py-0.5 rounded select-none">
-                  Soon
-                </span>
               </div>
             ))}
           </div>
