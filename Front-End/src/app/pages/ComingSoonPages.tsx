@@ -80,7 +80,7 @@ function CategoryPlaceholder({ data }: { data: CategoryData }) {
               </p>
 
               {/* Roadmap Timeline Inside Left Column */}
-              <div className="w-full rounded-2xl border border-zinc-200 dark:border-white/[0.06] bg-white dark:bg-gradient-to-b dark:from-[#141522]/50 dark:to-[#0F1018]/50 p-5 shadow-sm mb-6">
+              <div className="w-full rounded-2xl border border-zinc-200 dark:border-white/[0.06] bg-white dark:bg-[#131521] dark:bg-gradient-to-b dark:from-[#141522]/50 dark:to-[#0F1018]/50 p-5 shadow-sm mb-6">
                 <h3 className="text-xs font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 mb-4 flex items-center gap-2">
                   <Compass className="w-4 h-4 text-violet-500 dark:text-violet-400" />
                   Implementation Timeline
@@ -92,15 +92,23 @@ function CategoryPlaceholder({ data }: { data: CategoryData }) {
                       <div className={`w-6 h-6 rounded-full border flex items-center justify-center shrink-0 text-[10px] font-black z-10 ${
                         idx === 0 
                           ? "bg-violet-500/10 border-violet-500/30 text-violet-600 dark:text-violet-400" 
-                          : "bg-zinc-100 dark:bg-[#0F0F13] border-zinc-200 dark:border-white/[0.08] text-zinc-500 dark:text-zinc-400"
+                          : "bg-zinc-100 dark:bg-[#0F0F13] border-zinc-200 dark:border-white/[0.08] text-zinc-500 dark:text-zinc-550"
                       }`}>
                         {idx + 1}
                       </div>
                       <div className="flex-1 pt-0.5">
-                        <h4 className={`text-xs font-bold ${idx === 0 ? "text-zinc-800 dark:text-white" : "text-zinc-500"}`}>
+                        <h4 className={`text-xs font-bold ${
+                          idx === 0 
+                            ? "text-zinc-800 dark:text-white" 
+                            : "text-zinc-500 dark:text-zinc-400"
+                        }`}>
                           {step.split(" - ")[0]}
                         </h4>
-                        <p className="text-[10px] text-zinc-500 dark:text-zinc-400 mt-0.5 leading-normal">
+                        <p className={`text-[10px] mt-0.5 leading-normal ${
+                          idx === 0
+                            ? "text-zinc-500 dark:text-zinc-400"
+                            : "text-zinc-400 dark:text-zinc-500"
+                        }`}>
                           {step.split(" - ")[1]}
                         </p>
                       </div>
@@ -113,21 +121,17 @@ function CategoryPlaceholder({ data }: { data: CategoryData }) {
               <button
                 onClick={handleRequestAccess}
                 disabled={requestedAccess}
-                className={`w-full md:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl text-xs font-bold tracking-wide transition-all duration-150 shadow-sm cursor-pointer border ${
-                  requestedAccess 
-                    ? "bg-zinc-150 dark:bg-zinc-800/20 border-zinc-200 dark:border-white/[0.04] text-zinc-400 cursor-default" 
-                    : "bg-zinc-900 dark:bg-white text-white dark:text-zinc-950 border-zinc-950 dark:border-white hover:bg-zinc-800 dark:hover:bg-zinc-100 active:scale-[0.98]"
-                }`}
+                className="w-full sm:w-auto flex items-center justify-center gap-2 bg-zinc-900 dark:bg-white hover:bg-zinc-800 dark:hover:bg-zinc-100 text-white dark:text-zinc-950 font-bold px-6 py-3 rounded-xl transition-all duration-200 text-xs shadow-md dark:shadow-xl hover:shadow-lg scale-100 active:scale-[0.98]"
               >
-                <span>{requestedAccess ? "Waiting List Joined" : "Request Early Beta Access"}</span>
+                <span>Request Early Beta Access</span>
                 <ArrowRight className="w-3.5 h-3.5" />
               </button>
             </div>
           </div>
 
-          {/* Right Column: Premium System Preview Mockup Card */}
+          {/* Right Column: System Preview Mockup */}
           <div className="lg:col-span-5 flex flex-col justify-start">
-            <div className="relative rounded-2xl border border-zinc-200 dark:border-white/[0.06] bg-white dark:bg-gradient-to-b dark:from-[#141522]/70 dark:to-[#0F1018]/70 p-4 shadow-sm dark:shadow-2xl overflow-hidden flex-1 flex flex-col justify-between">
+            <div className="relative rounded-2xl border border-zinc-200 dark:border-white/[0.06] bg-white dark:bg-[#131521] dark:bg-gradient-to-b dark:from-[#141522]/70 dark:to-[#0F1018]/70 p-4 shadow-sm dark:shadow-2xl overflow-hidden flex-1 flex flex-col justify-between">
               <div className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(255,255,255,0.001)_1px,transparent_1px)] bg-[size:100%_12px] pointer-events-none" />
               
               <div className="flex items-center justify-between mb-3.5 px-1">
