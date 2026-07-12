@@ -53,42 +53,42 @@ function CategoryPlaceholder({ data }: { data: CategoryData }) {
             </div>
 
             <div className="flex items-center gap-4 mb-4">
-              <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-violet-500/10 to-emerald-500/10 border border-white/[0.06] flex items-center justify-center text-violet-400">
+              <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-violet-500/10 to-emerald-500/10 border border-zinc-250 dark:border-white/[0.08] flex items-center justify-center text-violet-400">
                 {data.icon}
               </div>
-              <h1 className="text-3xl md:text-4xl font-black tracking-tight text-white">
+              <h1 className="text-3xl md:text-4xl font-black tracking-tight text-zinc-900 dark:text-white">
                 {data.title}
               </h1>
             </div>
 
-            <p className="text-sm font-semibold text-zinc-400 mb-2">
+            <p className="text-sm font-semibold text-zinc-600 dark:text-zinc-400 mb-2">
               {data.tagline}
             </p>
             
-            <p className="text-xs text-zinc-550 leading-relaxed mb-8 max-w-xl">
+            <p className="text-xs text-zinc-500 dark:text-zinc-500 leading-relaxed mb-8 max-w-xl">
               {data.description}
             </p>
 
             {/* Planned Features list */}
             <div className="w-full space-y-4">
-              <h3 className="text-xs font-bold text-zinc-400 uppercase tracking-widest mb-2">
+              <h3 className="text-xs font-bold text-zinc-500 dark:text-zinc-450 uppercase tracking-widest mb-2">
                 Planned Features
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {data.features.map((feat, idx) => (
                   <div 
                     key={idx} 
-                    className="p-4 rounded-2xl border border-white/[0.03] bg-white/[0.01] hover:bg-white/[0.02] transition-colors"
+                    className="p-4 rounded-xl border border-zinc-200/80 dark:border-white/[0.03] bg-zinc-50/50 dark:bg-white/[0.01] hover:bg-zinc-100/50 dark:hover:bg-white/[0.02] transition-all"
                   >
                     <div className="flex items-center gap-2.5 mb-1.5">
-                      <div className="text-violet-400 shrink-0">
+                      <div className="text-violet-500 dark:text-violet-450 shrink-0">
                         {feat.icon}
                       </div>
-                      <h4 className="text-xs font-bold text-white">
+                      <h4 className="text-xs font-extrabold text-zinc-800 dark:text-white">
                         {feat.title}
                       </h4>
                     </div>
-                    <p className="text-[10.5px] text-zinc-500 leading-normal">
+                    <p className="text-[10.5px] text-zinc-500 dark:text-zinc-450 leading-normal">
                       {feat.description}
                     </p>
                   </div>
@@ -99,29 +99,29 @@ function CategoryPlaceholder({ data }: { data: CategoryData }) {
 
           {/* Right Column: Roadmap Timeline Card */}
           <div className="lg:col-span-5 w-full">
-            <div className="relative rounded-3xl border border-white/[0.06] bg-gradient-to-b from-[#141522]/85 to-[#0F1018]/85 p-6 shadow-2xl overflow-hidden">
+            <div className="relative rounded-2xl border border-zinc-200/80 dark:border-white/[0.06] bg-zinc-50 dark:bg-gradient-to-b dark:from-[#141522]/85 dark:to-[#0F1018]/85 p-5.5 shadow-sm dark:shadow-2xl overflow-hidden">
               <div className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(255,255,255,0.002)_1px,transparent_1px)] bg-[size:100%_12px] pointer-events-none" />
               
-              <h3 className="text-sm font-black text-white mb-6 flex items-center gap-2">
-                <Compass className="w-4.5 h-4.5 text-violet-400" />
+              <h3 className="text-sm font-black text-zinc-850 dark:text-white mb-6 flex items-center gap-2">
+                <Compass className="w-4.5 h-4.5 text-violet-500 dark:text-violet-400" />
                 Category Roadmap
               </h3>
 
-              <div className="space-y-6 relative before:absolute before:left-3 before:top-2 before:bottom-2 before:w-[1px] before:bg-white/[0.08]">
+              <div className="space-y-6 relative before:absolute before:left-3 before:top-2 before:bottom-2 before:w-[1px] before:bg-zinc-200 dark:before:bg-white/[0.08]">
                 {data.roadmap.map((step, idx) => (
                   <div key={idx} className="flex gap-4 items-start relative pl-1">
                     <div className={`w-6 h-6 rounded-full border flex items-center justify-center shrink-0 text-[10px] font-black z-10 ${
                       idx === 0 
-                        ? "bg-violet-500/20 border-violet-500/40 text-violet-400" 
-                        : "bg-[#0F0F13] border-white/[0.08] text-zinc-650"
+                        ? "bg-violet-500/20 border-violet-500/40 text-violet-550 dark:text-violet-400" 
+                        : "bg-zinc-100 dark:bg-[#0F0F13] border-zinc-200 dark:border-white/[0.08] text-zinc-500 dark:text-zinc-650"
                     }`}>
                       {idx + 1}
                     </div>
                     <div className="flex-1 pt-0.5">
-                      <h4 className={`text-xs font-bold ${idx === 0 ? "text-white" : "text-zinc-550"}`}>
+                      <h4 className={`text-xs font-bold ${idx === 0 ? "text-zinc-900 dark:text-white" : "text-zinc-500 dark:text-zinc-500"}`}>
                         {step.split(" - ")[0]}
                       </h4>
-                      <p className="text-[10.5px] text-zinc-500 mt-0.5 leading-normal">
+                      <p className="text-[10.5px] text-zinc-500 dark:text-zinc-500 mt-0.5 leading-normal">
                         {step.split(" - ")[1]}
                       </p>
                     </div>

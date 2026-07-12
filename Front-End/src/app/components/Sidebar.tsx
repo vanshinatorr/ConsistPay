@@ -83,16 +83,16 @@ export function Sidebar() {
         to={item.path}
         className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-[11.5px] font-semibold tracking-wide transition-all duration-150 group relative ${
           active 
-            ? "bg-white/[0.035] text-white" 
-            : "text-zinc-400 hover:text-zinc-200 hover:bg-white/[0.015]"
+            ? "bg-zinc-200/55 dark:bg-white/[0.035] text-zinc-900 dark:text-white" 
+            : "text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 hover:bg-zinc-100/50 dark:hover:text-zinc-200 dark:hover:bg-white/[0.015]"
         }`}
         title={isCollapsed ? item.label : undefined}
       >
         {active && (
-          <span className="absolute left-0 top-2.5 bottom-2.5 w-[2px] bg-violet-400 rounded-r shadow-[0_0_8px_rgba(139,92,246,0.6)]" />
+          <span className="absolute left-0 top-2.5 bottom-2.5 w-[2px] bg-violet-500 dark:bg-violet-400 rounded-r shadow-[0_0_8px_rgba(139,92,246,0.6)]" />
         )}
 
-        <IconComponent className={`w-4 h-4 shrink-0 transition-transform ${active ? "text-violet-400" : "text-zinc-400 group-hover:text-zinc-350"}`} />
+        <IconComponent className={`w-4 h-4 shrink-0 transition-transform ${active ? "text-violet-550 dark:text-violet-400" : "text-zinc-400 dark:text-zinc-450 group-hover:text-zinc-700 dark:group-hover:text-zinc-350"}`} />
         
         <span className={`transition-all duration-300 whitespace-nowrap overflow-hidden ${
           isCollapsed ? "opacity-0 w-0 invisible" : "opacity-100 w-auto visible"
@@ -111,7 +111,7 @@ export function Sidebar() {
   };
 
   const sidebarContent = (
-    <div className="h-full flex flex-col justify-between bg-[#0F0F13] border-r border-white/[0.04] p-4 text-white relative">
+    <div className="h-full flex flex-col justify-between bg-zinc-50 dark:bg-[#0F0F13] border-r border-zinc-200/80 dark:border-white/[0.04] p-4 text-zinc-900 dark:text-white relative">
       {/* Background patterns */}
       <div className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(255,255,255,0.001)_1px,transparent_1px)] bg-[size:100%_16px] pointer-events-none" />
 
