@@ -158,7 +158,7 @@ export function Leaderboard() {
           </div>
           <h1 className="text-2xl sm:text-3xl font-extrabold mb-2 tracking-tight text-zinc-850 dark:text-white">
             Compete with the{" "}
-            <span className="bg-gradient-to-r from-violet-605 via-fuchsia-500 to-emerald-500 dark:from-violet-400 dark:via-fuchsia-400 dark:to-emerald-400 bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-emerald-600 to-teal-600 dark:from-emerald-400 dark:to-teal-400 bg-clip-text text-transparent">
               Best
             </span>
           </h1>
