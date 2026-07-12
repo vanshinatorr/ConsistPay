@@ -130,9 +130,11 @@ const syncUserStreak = async (userOrId) => {
       while (dateCursor.getTime() <= endCursor.getTime()) {
         const cursorStr = dateCursor.toISOString().substring(0, 10);
         const sub = submissionsMap.get(cursorStr);
-        const planStartDate = user.planExpiresAt ? new Date(new Date(user.planExpiresAt).getTime() - 30 * 24 * 60 * 60 * 1000) : null;
-        const cursorDate = new Date(cursorStr + "T00:00:00Z");
-        const hasActivePlan = user.planExpiresAt && planStartDate && cursorDate >= planStartDate && cursorDate <= new Date(user.planExpiresAt);
+        const planEndDate = user.planExpiresAt ? new Date(user.planExpiresAt) : null;
+        const planStartDate = planEndDate ? new Date(planEndDate.getTime() - 30 * 24 * 60 * 60 * 1000) : null;
+        const planStartDateStr = planStartDate ? planStartDate.toISOString().substring(0, 10) : "";
+        const planEndDateStr = planEndDate ? planEndDate.toISOString().substring(0, 10) : "";
+        const hasActivePlan = user.planExpiresAt && cursorStr >= planStartDateStr && cursorStr <= planEndDateStr;
 
         if (sub && sub.status === "completed") {
           // Solved successfully on this day!
@@ -143,6 +145,18 @@ const syncUserStreak = async (userOrId) => {
 
           // Process payout if they had an active plan and it wasn't paid out yet
           if (hasActivePlan && !sub.payoutProcessed) {
+            // Reverse any past deduction processed for this date
+            if (sub.deductionProcessed) {
+              activeDeposit += user.dailyCommitment || 0;
+              sub.deductionProcessed = false;
+              console.log(`[StreakHelper] Reversed deduction of ₹${user.dailyCommitment} for date ${cursorStr} because solve was synced`);
+            }
+            // Refund grace coin if it was applied to this day
+            if (sub.graceCoinApplied) {
+              graceCoins += 1;
+              sub.graceCoinApplied = false;
+              console.log(`[StreakHelper] Refunded 1 Grace Coin for date ${cursorStr} because solve was synced`);
+            }
             const payoutAmount = Math.min(activeDeposit, user.dailyCommitment || 0);
             if (payoutAmount > 0) {
               activeDeposit -= payoutAmount;
