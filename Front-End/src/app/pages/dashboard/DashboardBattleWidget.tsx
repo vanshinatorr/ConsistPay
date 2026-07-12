@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowRight, Zap, Target, Plus, Clock, Copy, CheckCircle, Trash2 } from 'lucide-react';
+import { ArrowRight, Zap, Target, Plus, Clock, Copy, CheckCircle, Trash2, Trophy } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 interface DashboardBattleWidgetProps {
@@ -219,6 +219,80 @@ export function DashboardBattleWidget({ onRefreshRequest }: DashboardBattleWidge
               
               const myProgressPercent = Math.min(100, Math.round((myData.score / challengeItem.duration) * 100));
               const oppProgressPercent = Math.min(100, Math.round((oppData.score / challengeItem.duration) * 100));
+
+              if (challengeItem.status === "completed") {
+                const isTie = challengeItem.creator.score === challengeItem.opponent.score;
+                const iWon = !isTie && ((isCreator && challengeItem.creator.score > challengeItem.opponent.score) || (!isCreator && challengeItem.opponent.score > challengeItem.creator.score));
+
+                return (
+                  <div 
+                    key={challengeItem.id}
+                    className="relative rounded-2xl border border-blue-500/25 dark:border-blue-500/15 bg-gradient-to-r from-blue-500/[0.03] via-transparent to-transparent dark:from-blue-500/[0.02] dark:to-transparent overflow-hidden transition-all duration-300 p-4 md:p-5 flex flex-col md:flex-row items-center justify-between gap-4 shadow-sm"
+                  >
+                    {/* Background subtle mesh glow */}
+                    <div className="absolute -left-16 -top-16 w-36 h-36 bg-blue-500/5 rounded-full blur-[50px] pointer-events-none" />
+
+                    {/* Left: Outcome visual and details */}
+                    <div className="relative z-10 flex items-center gap-4 w-full md:w-auto">
+                      <div className="w-10 h-10 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center shrink-0">
+                        {isTie ? (
+                          <svg className="w-5 h-5 text-blue-500 dark:text-blue-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                            <circle cx="9" cy="7" r="4" />
+                            <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                          </svg>
+                        ) : iWon ? (
+                          <Trophy className="w-5 h-5 text-amber-500 dark:text-amber-400" />
+                        ) : (
+                          <Target className="w-5 h-5 text-zinc-455 dark:text-zinc-400" />
+                        )}
+                      </div>
+
+                      <div className="space-y-0.5 text-left">
+                        <div className="flex items-center gap-2">
+                          <span className="px-2 py-0.5 rounded-full text-[9px] font-extrabold bg-blue-500/10 dark:bg-blue-500/15 text-blue-600 dark:text-blue-400 border border-blue-500/20 tracking-wider uppercase">
+                            {isTie ? "Battle Tied" : iWon ? "Victory" : "Defeat"}
+                          </span>
+                          <span className="text-[10px] text-zinc-500 dark:text-zinc-450 font-bold">
+                            {challengeItem.duration}-Day Challenge
+                          </span>
+                        </div>
+                        <h4 className="text-sm font-extrabold text-zinc-800 dark:text-white tracking-tight">
+                          {isTie 
+                            ? `You and ${oppData.name || "Opponent"} matched scores!` 
+                            : iWon 
+                            ? `You defeated ${oppData.name || "Opponent"}!` 
+                            : `${oppData.name || "Opponent"} won the battle.`}
+                        </h4>
+                        <p className="text-[11px] text-zinc-500 dark:text-zinc-400">
+                          Final Score: <span className="font-semibold text-zinc-700 dark:text-zinc-200">{myData.score}/{challengeItem.duration}</span> vs <span className="font-semibold text-zinc-700 dark:text-zinc-200">{oppData.score}/{challengeItem.duration}</span>
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Right: Pool distributed & CTA to rematch/new battle */}
+                    <div className="relative z-10 w-full md:w-auto flex flex-row items-center justify-between md:justify-end gap-5 shrink-0 border-t border-zinc-150 dark:border-white/[0.04] md:border-t-0 pt-3 md:pt-0">
+                      <div className="flex flex-col md:items-end text-left md:text-right">
+                        <span className="text-[9px] font-bold text-zinc-500 uppercase tracking-wider mb-0.5">Stakes Distributed</span>
+                        <span className="text-sm font-extrabold text-emerald-600 dark:text-emerald-400">
+                          {isTie ? `₹${challengeItem.stake} Refunded` : iWon ? `+₹${challengeItem.pool} Added` : "₹0 Received"}
+                        </span>
+                      </div>
+
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          navigate('/create-challenge');
+                        }}
+                        className="px-3.5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold transition-all shadow-sm shadow-blue-500/20 hover:scale-[1.02] active:scale-95 cursor-pointer flex items-center gap-1.5"
+                      >
+                        Start New Battle <ArrowRight className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  </div>
+                );
+              }
 
               return (
                 <div 
