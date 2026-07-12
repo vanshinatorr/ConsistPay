@@ -17,6 +17,10 @@ import { Payment } from "./pages/Payment";
 import FaqPage from "./pages/FaqPage";
 import { AdminDashboard } from "./pages/AdminDashboard";
 import { RootLayout } from "./components/RootLayout";
+import { 
+  FitnessPage, StudyPage, RunningPage, CyclingPage, 
+  MeditationPage, SkillLearningPage, WalletPage 
+} from "./pages/ComingSoonPages";
 
 export const router = createBrowserRouter([
   {
@@ -39,6 +43,13 @@ export const router = createBrowserRouter([
       { path: "/profile", Component: Profile },
       { path: "/notifications", Component: Notifications },
       { path: "/settings", Component: Settings },
+      { path: "/fitness", Component: FitnessPage },
+      { path: "/study", Component: StudyPage },
+      { path: "/running", Component: RunningPage },
+      { path: "/cycling", Component: CyclingPage },
+      { path: "/meditation", Component: MeditationPage },
+      { path: "/skill-learning", Component: SkillLearningPage },
+      { path: "/wallet", Component: WalletPage },
       { path: "/admin", Component: AdminDashboard },
       { path: "*", Component: NotFound },
     ]

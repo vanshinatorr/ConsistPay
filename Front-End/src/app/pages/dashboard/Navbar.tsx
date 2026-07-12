@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { Bell, CheckCircle2, Swords, Trophy, Flame, Sparkles, X, Sun, Moon } from "lucide-react";
+import { Bell, CheckCircle2, Swords, Trophy, Flame, Sparkles, X, Sun, Moon, Menu } from "lucide-react";
 import { Logo } from "../../components/Logo";
 import { Link, useLocation } from "react-router-dom";
 import { BattleHubModal } from "../../components/battle/BattleHubModal";
@@ -167,20 +167,28 @@ export function Navbar({ initials, plan = "free", avatar, isAvatarUrl }: NavbarP
       <nav className="sticky top-0 z-50 border-b border-white/[0.04] bg-[#0F0F13]/80 backdrop-blur-xl">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2">
           <div className="flex items-center justify-between">
-            <Link
-              to="/dashboard"
-              className="flex items-center gap-3 shrink-0"
-            >
-              <img
-                src="/logo/brand-logo.png"
-                alt="ConsistPay Logo"
-                className="h-8 w-auto object-contain select-none"
-              />
+            <div className="flex items-center gap-2.5 shrink-0">
+              <button
+                onClick={() => window.dispatchEvent(new CustomEvent("toggle-sidebar"))}
+                className="md:hidden p-1.5 rounded-xl bg-white/5 border border-white/[0.04] text-zinc-400 hover:text-white hover:bg-white/10 transition-all cursor-pointer shrink-0"
+              >
+                <Menu className="w-5 h-5" />
+              </button>
 
-              <span className="hidden sm:block text-lg font-bold text-white">
-                Consist<span className="text-emerald-400">Pay</span>
-              </span>
-            </Link>
+              <Link
+                to="/dashboard"
+                className="flex items-center gap-2.5 shrink-0"
+              >
+                <img
+                  src="/logo/brand-logo.png"
+                  alt="ConsistPay Logo"
+                  className="h-7.5 w-auto object-contain select-none"
+                />
+                <span className="hidden sm:block text-base font-extrabold tracking-tight text-white">
+                  Consist<span className="text-emerald-400">Pay</span>
+                </span>
+              </Link>
+            </div>
 
             <div className="hidden md:flex items-center gap-1">
               {navLinks.map(({ label, path }) => {
