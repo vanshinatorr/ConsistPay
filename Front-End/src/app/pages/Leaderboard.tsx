@@ -197,28 +197,28 @@ export function Leaderboard() {
           </div>
 
           {/* 1st Place */}
-          <div className="relative bg-gradient-to-r from-yellow-500/[0.06] via-[#161622]/40 to-transparent border border-yellow-500/30 rounded-2xl p-4.5 backdrop-blur-xl shadow-[0_0_25px_rgba(234,179,8,0.05),inset_0_1px_1px_rgba(234,179,8,0.08)] flex items-center justify-between overflow-hidden group hover:scale-[1.01] hover:border-yellow-500/45 transition-all duration-300">
+          <div className="relative bg-gradient-to-r from-yellow-500/[0.08] via-amber-500/5 to-transparent dark:from-yellow-500/[0.06] dark:via-[#161622]/40 dark:to-transparent border border-yellow-500/20 dark:border-yellow-500/30 rounded-2xl p-4.5 backdrop-blur-xl shadow-md dark:shadow-lg flex items-center justify-between overflow-hidden group hover:scale-[1.01] hover:border-yellow-500/45 transition-all duration-300">
             {/* Subtle gold radial background glow */}
             <div className="absolute top-0 right-0 w-32 h-32 bg-yellow-500/[0.03] rounded-full blur-2xl pointer-events-none" />
             <div className="flex items-center gap-3 relative z-10">
               <div className="relative">
                 <AvatarRenderer 
                   avatar={sorted[0]?.avatar || "US"} 
-                  className="w-12 h-12 rounded-full flex items-center justify-center font-bold text-xs ring-4 ring-yellow-500/50 ring-offset-2 ring-offset-[#0F0F13]" 
+                  className="w-12 h-12 rounded-full flex items-center justify-center font-bold text-xs ring-4 ring-yellow-500/50 ring-offset-2 ring-offset-white dark:ring-offset-[#0F0F13]" 
                   colorClass="from-amber-400 to-yellow-600"
                 />
-                <span className="absolute -bottom-1 -right-1 w-5 h-5 bg-[#1b1b22] text-[9px] font-black text-yellow-450 flex items-center justify-center rounded-full border border-yellow-500/35">
+                <span className="absolute -bottom-1 -right-1 w-5 h-5 bg-amber-100 dark:bg-[#1b1b22] text-[9px] font-black text-amber-800 dark:text-yellow-450 flex items-center justify-center rounded-full border border-amber-200 dark:border-yellow-500/35">
                   1
                 </span>
               </div>
               <div>
                 <div className="font-black text-xs truncate max-w-[85px] sm:max-w-[100px] flex items-center gap-1">
-                  <span className="bg-gradient-to-r from-yellow-100 via-yellow-200 to-amber-300 bg-clip-text text-transparent font-black">
+                  <span className="bg-gradient-to-r from-amber-600 to-yellow-600 dark:from-yellow-100 dark:via-yellow-200 dark:to-amber-300 bg-clip-text text-transparent font-black">
                     {sorted[0]?.username || sorted[0]?.name || "Empty Slot"}
                   </span>
                 </div>
-                <div className="text-[10px] text-yellow-500/80 font-bold mt-0.5">{getValue(sorted[0])}</div>
-                <span className="inline-block text-[8px] text-yellow-400 font-black bg-yellow-500/10 px-1.5 py-0.2 rounded border border-yellow-500/20 mt-1 uppercase tracking-wider">
+                <div className="text-[10px] text-amber-700 dark:text-yellow-500/80 font-bold mt-0.5">{getValue(sorted[0])}</div>
+                <span className="inline-block text-[8px] text-amber-700 dark:text-yellow-400 font-black bg-amber-500/10 dark:bg-yellow-500/10 px-1.5 py-0.2 rounded border border-amber-500/20 dark:border-yellow-500/20 mt-1 uppercase tracking-wider">
                   Leader
                 </span>
               </div>
@@ -230,24 +230,24 @@ export function Leaderboard() {
           </div>
 
           {/* 3rd Place */}
-          <div className="relative bg-[#121217]/50 border border-white/[0.04] rounded-2xl p-4.5 backdrop-blur-xl shadow-lg flex items-center justify-between overflow-hidden group hover:scale-[1.01] hover:bg-white/[0.01] transition-all duration-300">
+          <div className="relative bg-white dark:bg-[#121217]/50 border border-zinc-200 dark:border-white/[0.04] rounded-2xl p-4.5 backdrop-blur-xl shadow-md dark:shadow-lg flex items-center justify-between overflow-hidden group hover:scale-[1.01] hover:bg-zinc-50 dark:hover:bg-white/[0.01] transition-all duration-300">
             <div className="flex items-center gap-3">
               <div className="relative">
                 <AvatarRenderer 
                   avatar={sorted[2]?.avatar || "US"} 
-                  className="w-12 h-12 rounded-full flex items-center justify-center font-bold text-xs ring-4 ring-orange-500/20 ring-offset-2 ring-offset-[#0F0F13]" 
+                  className="w-12 h-12 rounded-full flex items-center justify-center font-bold text-xs ring-4 ring-orange-500/20 ring-offset-2 ring-offset-white dark:ring-offset-[#0F0F13]" 
                   colorClass="from-amber-600 to-orange-705"
                 />
-                <span className="absolute -bottom-1 -right-1 w-5.5 h-5.5 bg-[#1b1b22] text-[9px] font-black text-orange-400 flex items-center justify-center rounded-full border border-orange-500/30">
+                <span className="absolute -bottom-1 -right-1 w-5.5 h-5.5 bg-orange-100 dark:bg-[#1b1b22] text-[9px] font-black text-orange-850 dark:text-orange-400 flex items-center justify-center rounded-full border border-orange-200 dark:border-orange-500/30">
                   3
                 </span>
               </div>
               <div>
-                <div className="font-extrabold text-xs text-white truncate max-w-[85px] sm:max-w-[100px]">
+                <div className="font-extrabold text-xs text-zinc-800 dark:text-white truncate max-w-[85px] sm:max-w-[100px]">
                   {sorted[2]?.username || sorted[2]?.name || "Empty Slot"}
                 </div>
-                <div className="text-[10px] text-zinc-400 font-bold mt-0.5">{getValue(sorted[2])}</div>
-                <span className="inline-block text-[8px] text-orange-400 font-black bg-orange-500/10 px-1.5 py-0.2 rounded border border-orange-500/20 mt-1 uppercase tracking-wider">
+                <div className="text-[10px] text-zinc-500 dark:text-zinc-400 font-bold mt-0.5">{getValue(sorted[2])}</div>
+                <span className="inline-block text-[8px] text-orange-600 dark:text-orange-400 font-black bg-orange-500/10 px-1.5 py-0.2 rounded border border-orange-200 dark:border-orange-500/20 mt-1 uppercase tracking-wider">
                   3rd Place
                 </span>
               </div>
@@ -271,24 +271,24 @@ export function Leaderboard() {
               <div className="relative">
                 <AvatarRenderer 
                   avatar={currentUser.avatar} 
-                  className="w-11 h-11 rounded-full flex items-center justify-center font-bold text-xs ring-2 ring-violet-500/30 ring-offset-2 ring-offset-[#0F0F13]" 
+                  className="w-11 h-11 rounded-full flex items-center justify-center font-bold text-xs ring-2 ring-violet-500/30 ring-offset-2 ring-offset-white dark:ring-offset-[#0F0F13]" 
                   colorClass="from-emerald-400 to-emerald-600"
                 />
-                <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-violet-600 text-white text-[9px] font-black flex items-center justify-center rounded-full border border-violet-500/40">
+                <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-violet-600 text-white-force text-[9px] font-black flex items-center justify-center rounded-full border border-violet-500/40">
                   #{currentUser.rank}
                 </div>
               </div>
               <div>
                 <div className="flex items-center gap-2">
-                  <span className="font-extrabold text-sm text-white">
+                  <span className="font-extrabold text-sm text-zinc-800 dark:text-white">
                     {currentUser.username || currentUser.name}
                   </span>
                   {currentUser.plan?.toLowerCase() === "pro" && (
-                    <span className="bg-violet-500/25 border border-violet-500/30 text-violet-300 text-[8px] font-black px-1.5 py-0.2 rounded uppercase">
+                    <span className="bg-violet-500/25 border border-violet-500/30 text-violet-650 dark:text-violet-300 text-[8px] font-black px-1.5 py-0.2 rounded uppercase">
                       PRO
                     </span>
                   )}
-                  <span className="text-[8px] bg-emerald-500/20 text-emerald-300 border border-emerald-500/20 px-1.5 py-0.2 rounded font-black uppercase">
+                  <span className="text-[8px] bg-emerald-500/20 text-emerald-600 dark:text-emerald-300 border border-emerald-500/20 px-1.5 py-0.2 rounded font-black uppercase">
                     YOU
                   </span>
                 </div>
@@ -298,15 +298,15 @@ export function Leaderboard() {
 
             <div className="flex items-center gap-6 sm:gap-8 text-right mt-2">
               <div>
-                <div className="text-[9px] font-black text-zinc-500 uppercase tracking-wider">Current Streak</div>
-                <div className="text-xs font-extrabold text-white flex items-center gap-1 mt-0.5 justify-end">
+                <div className="text-[9px] font-black text-zinc-555 dark:text-zinc-500 uppercase tracking-wider">Current Streak</div>
+                <div className="text-xs font-extrabold text-zinc-850 dark:text-white flex items-center gap-1 mt-0.5 justify-end">
                   <Flame className="w-3.5 h-3.5 text-orange-450" />
                   <span>{currentUser.streak} days</span>
                 </div>
               </div>
               <div>
-                <div className="text-[9px] font-black text-zinc-500 uppercase tracking-wider">Value</div>
-                <div className="text-xs font-black text-violet-300 mt-0.5">{getValue(currentUser)}</div>
+                <div className="text-[9px] font-black text-zinc-555 dark:text-zinc-500 uppercase tracking-wider">Value</div>
+                <div className="text-xs font-black text-violet-600 dark:text-violet-300 mt-0.5">{getValue(currentUser)}</div>
               </div>
             </div>
           </div>
