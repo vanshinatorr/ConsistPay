@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Award, Flame, Shield, Gem, Crown, Swords, Coins, Trophy, Sparkles, Lock, X, Info, ChevronRight } from "lucide-react";
+import { Flame, Crown, Trophy, Award, Shield, Gem, Sparkles, Lock, X, Info } from "lucide-react";
 import confetti from "canvas-confetti";
 
 interface LeetCodeBadge {
@@ -40,6 +40,7 @@ interface UnifiedBadge {
   iconLucide?: any;
   colorClass: string;
   glowClass: string;
+  gradId: string;
   currentProgress: number;
   targetProgress: number;
   percentage: number;
@@ -50,12 +51,8 @@ export function AwardsCard({
   linkedPlatforms = [],
   streak = 0,
   maxStreak = 0,
-  consistencyScore = 0,
   totalSolved = 0,
-  totalProblemsSolved = 0,
-  graceCoins = 0,
-  plan = "free",
-  dailyCommitment = 5
+  totalProblemsSolved = 0
 }: AwardsCardProps) {
   const [showAll, setShowAll] = useState(false);
   const [selectedBadge, setSelectedBadge] = useState<UnifiedBadge | null>(null);
@@ -73,133 +70,97 @@ export function AwardsCard({
     return `https://leetcode.com${iconPath}`;
   };
 
-  // 1. Core local milestone badges definitions
+  // High-value, underrated local milestones (LeetCode glossy medal styling)
   const localMilestones = [
     {
-      id: "solved_1",
-      name: "First Steps",
-      desc: "Solved your first coding problem! The journey of a thousand miles begins with a single line of code.",
-      requirement: "Solve 1 coding problem",
-      unlocked: totalSolved >= 1,
-      isLeetCode: false,
-      iconLucide: Award,
-      colorClass: "text-teal-400 bg-teal-500/10 border-teal-500/30",
-      glowClass: "from-teal-500/20 to-emerald-500/20",
-      currentProgress: totalSolved,
-      targetProgress: 1,
-      unit: "solved"
-    },
-    {
       id: "streak_7",
-      name: "Streak Starter",
-      desc: "You showed up for 7 days straight! This is where habit meets momentum.",
+      name: "7-Day Streak",
+      desc: "Unlocked a 7-day consistency streak! You showed up for a full week straight.",
       requirement: "Reach a 7-day streak",
       unlocked: streak >= 7 || maxStreak >= 7,
       isLeetCode: false,
       iconLucide: Flame,
-      colorClass: "text-orange-400 bg-orange-500/10 border-orange-500/30",
+      colorClass: "text-amber-500",
       glowClass: "from-orange-500/20 to-red-500/20",
+      gradId: "bronzeGrad",
       currentProgress: Math.max(streak, maxStreak),
       targetProgress: 7,
       unit: "days"
     },
     {
-      id: "grace_shield",
-      name: "Shield of Grace",
-      desc: "Saved your streak with streak-protecting Grace Coins. Always prepared.",
-      requirement: "Keep 1+ Grace Coins",
-      unlocked: graceCoins >= 1,
-      isLeetCode: false,
-      iconLucide: Shield,
-      colorClass: "text-emerald-400 bg-emerald-500/10 border-emerald-500/30",
-      glowClass: "from-emerald-500/20 to-teal-500/20",
-      currentProgress: graceCoins,
-      targetProgress: 1,
-      unit: "coin"
-    },
-    {
-      id: "gladiator",
-      name: "DSA Gladiator",
-      desc: "Stepped into the 1v1 consistency arena. High stakes, high discipline.",
-      requirement: "Participate in battles",
-      unlocked: dailyCommitment > 5 || streak > 0,
-      isLeetCode: false,
-      iconLucide: Swords,
-      colorClass: "text-rose-400 bg-rose-500/10 border-rose-500/30",
-      glowClass: "from-rose-500/20 to-pink-500/20",
-      currentProgress: dailyCommitment > 5 || streak > 0 ? 1 : 0,
-      targetProgress: 1,
-      unit: "battle"
-    },
-    {
-      id: "solved_10",
-      name: "Problem Solver",
-      desc: "Solved 10+ coding problems overall. Getting comfortable with the syntax and paradigms.",
-      requirement: "Solve 10+ coding problems",
-      unlocked: totalProblemsSolved >= 10,
-      isLeetCode: false,
-      iconLucide: Gem,
-      colorClass: "text-cyan-400 bg-cyan-500/10 border-cyan-500/30",
-      glowClass: "from-cyan-500/20 to-sky-500/20",
-      currentProgress: totalProblemsSolved,
-      targetProgress: 10,
-      unit: "solved"
-    },
-    {
       id: "streak_15",
-      name: "Habit Builder",
-      desc: "Maintained a 15-day consistency streak. Coding is officially starting to feel like a daily habit.",
+      name: "15-Day Streak",
+      desc: "Unlocked a 15-day consistency streak! Officially building an unstoppable coding habit.",
       requirement: "Reach a 15-day streak",
       unlocked: streak >= 15 || maxStreak >= 15,
       isLeetCode: false,
-      iconLucide: Flame,
-      colorClass: "text-blue-400 bg-blue-500/10 border-blue-500/30",
-      glowClass: "from-blue-500/20 to-indigo-500/20",
+      iconLucide: Award,
+      colorClass: "text-slate-300",
+      glowClass: "from-slate-400/20 to-zinc-200/20",
+      gradId: "silverGrad",
       currentProgress: Math.max(streak, maxStreak),
       targetProgress: 15,
       unit: "days"
     },
     {
-      id: "consistency_90",
-      name: "Consistency King",
-      desc: "Maintained a >= 90% consistency score. A true master of daily execution.",
-      requirement: "90%+ Consistency score",
-      unlocked: consistencyScore >= 90,
-      isLeetCode: false,
-      iconLucide: Crown,
-      colorClass: "text-amber-400 bg-amber-500/10 border-amber-500/30",
-      glowClass: "from-amber-500/20 to-yellow-500/20",
-      currentProgress: consistencyScore,
-      targetProgress: 90,
-      unit: "% score"
-    },
-    {
-      id: "elite",
-      name: "Elite Member",
-      desc: "Upgraded to Pro habit tracking. Dedicated to long-term compounding growth.",
-      requirement: "Upgrade to Pro Plan",
-      unlocked: plan.toLowerCase() === "pro",
-      isLeetCode: false,
-      iconLucide: Sparkles,
-      colorClass: "text-violet-400 bg-violet-500/10 border-violet-500/30",
-      glowClass: "from-violet-500/20 to-fuchsia-500/20",
-      currentProgress: plan.toLowerCase() === "pro" ? 1 : 0,
-      targetProgress: 1,
-      unit: "upgrade"
-    },
-    {
       id: "streak_30",
-      name: "Consistency Champion",
-      desc: "Hit a legendary 30-day streak! You are now part of the consistency elite.",
+      name: "30-Day Streak",
+      desc: "Legendary 30-day streak! Consistency level: Master. You have ultimate discipline.",
       requirement: "Reach a 30-day streak",
       unlocked: streak >= 30 || maxStreak >= 30,
       isLeetCode: false,
-      iconLucide: Trophy,
-      colorClass: "text-purple-400 bg-purple-500/10 border-purple-500/30",
-      glowClass: "from-purple-500/20 to-pink-500/20",
+      iconLucide: Crown,
+      colorClass: "text-yellow-400",
+      glowClass: "from-yellow-400/20 to-amber-500/20",
+      gradId: "goldGrad",
       currentProgress: Math.max(streak, maxStreak),
       targetProgress: 30,
       unit: "days"
+    },
+    {
+      id: "streak_100",
+      name: "100-Day Streak",
+      desc: "Consistency Legend! Hit an absolute milestone of 100 days of coding.",
+      requirement: "Reach a 100-day streak",
+      unlocked: streak >= 100 || maxStreak >= 100,
+      isLeetCode: false,
+      iconLucide: Trophy,
+      colorClass: "text-violet-400",
+      glowClass: "from-violet-500/25 to-pink-500/25",
+      gradId: "legendGrad",
+      currentProgress: Math.max(streak, maxStreak),
+      targetProgress: 100,
+      unit: "days"
+    },
+    {
+      id: "solved_50",
+      name: "50 Solved",
+      desc: "Solved 50+ DSA problems overall. You are writing clean, efficient, and logical code.",
+      requirement: "Solve 50+ coding problems",
+      unlocked: totalProblemsSolved >= 50,
+      isLeetCode: false,
+      iconLucide: Gem,
+      colorClass: "text-teal-400",
+      glowClass: "from-emerald-500/20 to-teal-500/20",
+      gradId: "emeraldGrad",
+      currentProgress: totalProblemsSolved,
+      targetProgress: 50,
+      unit: "solved"
+    },
+    {
+      id: "solved_100",
+      name: "100 Solved",
+      desc: "Supercommitter! Solved 100+ coding problems overall. Incredible DSA scaling capability.",
+      requirement: "Solve 100+ coding problems",
+      unlocked: totalProblemsSolved >= 100,
+      isLeetCode: false,
+      iconLucide: Sparkles,
+      colorClass: "text-rose-400",
+      glowClass: "from-rose-500/25 to-red-500/25",
+      gradId: "rubyGrad",
+      currentProgress: totalProblemsSolved,
+      targetProgress: 100,
+      unit: "solved"
     }
   ].map(m => ({
     ...m,
@@ -215,27 +176,25 @@ export function AwardsCard({
     unlocked: true,
     isLeetCode: true,
     iconPath: lb.icon,
-    colorClass: "text-violet-400 bg-violet-500/10 border-violet-500/30",
-    glowClass: "from-violet-500/20 to-indigo-500/20",
+    colorClass: "text-violet-400",
+    glowClass: "from-violet-500/25 to-indigo-500/25",
+    gradId: "lcGrad",
     currentProgress: 100,
     targetProgress: 100,
     percentage: 100,
     unit: "%"
   }));
 
-  // Merge both sets of badges
+  // Merge local milestones and LeetCode badges
   const allBadges: UnifiedBadge[] = [...mappedLeetcodeBadges, ...localMilestones];
 
-  // Sort: Unlocked items first, then by progress percentage descending
+  // Sort: Unlocked first, then by progress percentage descending
   const sortedBadges = [...allBadges].sort((a, b) => {
     if (a.unlocked && !b.unlocked) return -1;
     if (!a.unlocked && b.unlocked) return 1;
     return b.percentage - a.percentage;
   });
 
-  const unlockedCount = sortedBadges.filter((b) => b.unlocked).length;
-  
-  // Show 6 badges by default to fit clean grid rows perfectly (2 rows of 3)
   const visibleBadges = showAll ? sortedBadges : sortedBadges.slice(0, 6);
 
   const fireCelebrationConfetti = () => {
@@ -281,6 +240,42 @@ export function AwardsCard({
 
   return (
     <div className="relative group h-full">
+      {/* SVG defs for premium metallic gradients */}
+      <svg className="hidden">
+        <defs>
+          <linearGradient id="bronzeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#FB923C" stopOpacity="0.45" />
+            <stop offset="50%" stopColor="#F59E0B" stopOpacity="0.35" />
+            <stop offset="100%" stopColor="#EA580C" stopOpacity="0.45" />
+          </linearGradient>
+          <linearGradient id="silverGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#94A3B8" stopOpacity="0.45" />
+            <stop offset="50%" stopColor="#F1F5F9" stopOpacity="0.3" />
+            <stop offset="100%" stopColor="#475569" stopOpacity="0.45" />
+          </linearGradient>
+          <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#FDE047" stopOpacity="0.45" />
+            <stop offset="50%" stopColor="#F59E0B" stopOpacity="0.35" />
+            <stop offset="100%" stopColor="#D97706" stopOpacity="0.45" />
+          </linearGradient>
+          <linearGradient id="legendGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#8B5CF6" stopOpacity="0.45" />
+            <stop offset="50%" stopColor="#F472B6" stopOpacity="0.35" />
+            <stop offset="100%" stopColor="#D946EF" stopOpacity="0.45" />
+          </linearGradient>
+          <linearGradient id="emeraldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#34D399" stopOpacity="0.45" />
+            <stop offset="50%" stopColor="#2DD4BF" stopOpacity="0.35" />
+            <stop offset="100%" stopColor="#059669" stopOpacity="0.45" />
+          </linearGradient>
+          <linearGradient id="rubyGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#FB7185" stopOpacity="0.45" />
+            <stop offset="50%" stopColor="#F87171" stopOpacity="0.35" />
+            <stop offset="100%" stopColor="#DB2777" stopOpacity="0.45" />
+          </linearGradient>
+        </defs>
+      </svg>
+
       <style dangerouslySetInnerHTML={{ __html: `
         @keyframes shine-sweep {
           0% { left: -100%; }
@@ -357,13 +352,9 @@ export function AwardsCard({
             </span>
             <span className="text-[11px] text-zinc-400 dark:text-zinc-500 mt-0.5 font-medium">My Badges</span>
           </div>
-          
-          <span className="px-2 py-0.5 rounded-full text-[9px] font-black bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 select-none shadow-sm">
-            {unlockedCount} / {sortedBadges.length} Earned
-          </span>
         </div>
 
-        {/* Badges Display Grid */}
+        {/* Badges Display Grid (Responsive Columns matching LeetCode visual rhythm) */}
         <div className="flex-1 flex flex-wrap items-center justify-start gap-4 py-2">
           {visibleBadges.map((badge) => {
             const isWiggling = wigglingId === badge.id;
@@ -371,7 +362,7 @@ export function AwardsCard({
               <div
                 key={badge.id}
                 onClick={() => handleBadgeClick(badge)}
-                className={`relative group/badge flex items-center justify-center shrink-0 cursor-pointer transition-transform duration-200 hover:scale-105 active:scale-95 ${
+                className={`relative group/badge flex items-center justify-center shrink-0 cursor-pointer transition-transform duration-200 hover:scale-110 active:scale-95 ${
                   isWiggling ? "animate-wiggle" : ""
                 }`}
               >
@@ -380,14 +371,17 @@ export function AwardsCard({
                   <div className="absolute inset-0 flex items-center justify-center rounded-lg overflow-hidden hexagon-shine">
                     {badge.unlocked ? (
                       <>
-                        <div className="absolute inset-0 bg-gradient-to-br from-violet-500/10 to-indigo-500/10 blur-md opacity-0 group-hover/badge:opacity-100 transition-opacity duration-300" />
+                        {/* Glow backing */}
+                        <div className={`absolute inset-0 bg-gradient-to-br ${badge.glowClass} blur-md opacity-40 group-hover/badge:opacity-100 transition-opacity duration-300`} />
                         
-                        <svg className="absolute w-full h-full text-zinc-150 dark:text-white/[0.03] group-hover/badge:text-violet-500/10 transition-all duration-300" viewBox="0 0 100 100" fill="currentColor">
+                        {/* Hexagon polygon borders filled with metallic SVG gradients */}
+                        <svg className="absolute w-full h-full text-zinc-150 dark:text-white/[0.03]" viewBox="0 0 100 100" fill="none">
                           <polygon 
                             points="50,5 93,25 93,75 50,95 7,75 7,25" 
-                            stroke="rgba(139,92,246,0.35)" 
-                            strokeWidth="3.5" 
-                            className="transition-colors group-hover/badge:stroke-violet-500/50"
+                            fill={badge.isLeetCode ? "rgba(139, 92, 246, 0.15)" : `url(#${badge.gradId})`}
+                            stroke="rgba(255, 255, 255, 0.15)" 
+                            strokeWidth="3" 
+                            className="transition-colors group-hover/badge:stroke-white/30"
                           />
                         </svg>
 
@@ -396,28 +390,28 @@ export function AwardsCard({
                           <img
                             src={getBadgeIconUrl(badge.iconPath)}
                             alt={badge.name}
-                            className="w-7.5 h-7.5 object-contain relative z-10"
+                            className="w-8.5 h-8.5 object-contain relative z-10 filter drop-shadow-[0_2px_5px_rgba(0,0,0,0.2)]"
                           />
                         ) : (
-                          <div className={`relative z-15 p-2 rounded-full ${badge.colorClass}`}>
+                          <div className={`relative z-15 p-2 rounded-full ${badge.colorClass} drop-shadow-[0_2px_4px_rgba(0,0,0,0.35)]`}>
                             {React.createElement(badge.iconLucide, { className: "w-5 h-5 fill-current/10" })}
                           </div>
                         )}
                       </>
                     ) : (
                       <>
-                        <div className="absolute inset-0 bg-gradient-to-br from-zinc-800/10 to-zinc-900/10 blur-md opacity-0 group-hover/badge:opacity-40 transition-opacity duration-300" />
+                        <div className="absolute inset-0 bg-gradient-to-br from-zinc-900/10 to-zinc-950/10 blur-md opacity-0 group-hover/badge:opacity-40 transition-opacity duration-300" />
                         
-                        <svg className="absolute w-full h-full text-zinc-100/60 dark:text-white/[0.015] transition-all" viewBox="0 0 100 100" fill="currentColor">
+                        <svg className="absolute w-full h-full text-zinc-100/60 dark:text-white/[0.01]" viewBox="0 0 100 100" fill="none">
                           <polygon 
                             points="50,5 93,25 93,75 50,95 7,75 7,25" 
                             stroke="rgba(255,255,255,0.03)" 
-                            strokeWidth="3" 
-                            className="transition-colors group-hover/badge:stroke-zinc-500/30"
+                            strokeWidth="2.5" 
+                            className="transition-colors group-hover/badge:stroke-zinc-500/20"
                           />
                         </svg>
 
-                        <div className="relative z-15 p-2 rounded-full filter grayscale opacity-25 group-hover/badge:opacity-60 transition-all">
+                        <div className="relative z-15 p-2 rounded-full filter grayscale opacity-20 group-hover/badge:opacity-55 transition-all">
                           {React.createElement(badge.iconLucide, { className: "w-5 h-5 fill-current/10" })}
                         </div>
                       </>
@@ -426,7 +420,7 @@ export function AwardsCard({
 
                   {/* Tiny Lock Icon on top-right of locked badges */}
                   {!badge.unlocked && (
-                    <div className="absolute -top-1.5 -right-1.5 w-4.5 h-4.5 rounded-full bg-zinc-950 border border-white/10 flex items-center justify-center text-zinc-400 shadow-md z-20">
+                    <div className="absolute -top-1.5 -right-1.5 w-4.5 h-4.5 rounded-full bg-zinc-950 border border-white/10 flex items-center justify-center text-zinc-400 shadow-md z-25">
                       <Lock className="w-2.5 h-2.5" />
                     </div>
                   )}
@@ -442,7 +436,7 @@ export function AwardsCard({
                     <span>{badge.name}</span>
                     {!badge.unlocked && <Lock className="w-3 h-3 text-zinc-500 shrink-0" />}
                   </div>
-                  <p className="text-[9.5px] text-zinc-450 dark:text-zinc-400 text-left leading-normal mb-2.5">
+                  <p className="text-[9.5px] text-zinc-400 text-left leading-normal mb-2.5">
                     {badge.requirement}
                   </p>
                   
@@ -451,7 +445,7 @@ export function AwardsCard({
                     <div className="space-y-1.5 mb-2">
                       <div className="flex justify-between items-center text-[8.5px] text-zinc-500 font-bold uppercase tracking-wider">
                         <span>Progress</span>
-                        <span className="text-zinc-300">{badge.currentProgress} / {badge.targetProgress} {badge.unit}</span>
+                        <span className="text-zinc-350">{badge.currentProgress} / {badge.targetProgress} {badge.unit}</span>
                       </div>
                       <div className="w-full h-1 bg-zinc-800 rounded-full overflow-hidden">
                         <div 
@@ -463,7 +457,7 @@ export function AwardsCard({
                   )}
 
                   <div className="h-px bg-white/[0.06] my-2" />
-                  <div className="flex items-center gap-1 justify-start text-[8px] text-zinc-550 font-bold uppercase tracking-wider">
+                  <div className="flex items-center gap-1 justify-start text-[8px] text-zinc-500 font-bold uppercase tracking-wider">
                     <Info className="w-2.5 h-2.5 shrink-0" />
                     <span>{badge.unlocked ? "Tap to Celebrate" : "Locked Milestone"}</span>
                   </div>
@@ -506,10 +500,11 @@ export function AwardsCard({
 
             {/* Giant Hexagon framed Badge Logo */}
             <div className="relative w-24 h-24 mx-auto mb-6 flex items-center justify-center z-10">
-              <svg className={`absolute w-full h-full ${selectedBadge.unlocked ? "text-violet-950/30" : "text-zinc-950/40"}`} viewBox="0 0 100 100" fill="currentColor">
+              <svg className={`absolute w-full h-full ${selectedBadge.unlocked ? "text-violet-950/30" : "text-zinc-950/40"}`} viewBox="0 0 100 100" fill="none">
                 <polygon 
                   points="50,5 93,25 93,75 50,95 7,75 7,25" 
-                  stroke={selectedBadge.unlocked ? "rgba(139, 92, 246, 0.5)" : "rgba(255, 255, 255, 0.1)"} 
+                  fill={selectedBadge.isLeetCode ? "rgba(139, 92, 246, 0.15)" : `url(#${selectedBadge.gradId})`}
+                  stroke={selectedBadge.unlocked ? "rgba(255, 255, 255, 0.4)" : "rgba(255, 255, 255, 0.1)"} 
                   strokeWidth="4" 
                 />
               </svg>
@@ -517,10 +512,10 @@ export function AwardsCard({
                 <img
                   src={getBadgeIconUrl(selectedBadge.iconPath)}
                   alt={selectedBadge.name}
-                  className="w-14 h-14 object-contain relative z-10"
+                  className="w-14 h-14 object-contain relative z-10 filter drop-shadow-[0_4px_8px_rgba(0,0,0,0.35)]"
                 />
               ) : (
-                <div className={`p-4 rounded-full transition-all duration-300 ${selectedBadge.unlocked ? selectedBadge.colorClass : `${selectedBadge.colorClass} filter grayscale opacity-40`}`}>
+                <div className={`p-4 rounded-full transition-all duration-300 ${selectedBadge.unlocked ? selectedBadge.colorClass : `${selectedBadge.colorClass} filter grayscale opacity-40`} drop-shadow-[0_3px_6px_rgba(0,0,0,0.45)]`}>
                   {React.createElement(selectedBadge.iconLucide, { className: "w-10 h-10 fill-current/10" })}
                 </div>
               )}
@@ -550,7 +545,7 @@ export function AwardsCard({
                 <div className="space-y-2">
                   <div className="flex justify-between items-center text-[10px]">
                     <span className="text-zinc-500 font-semibold">Completion Progress</span>
-                    <span className="text-zinc-300 font-extrabold">{selectedBadge.currentProgress} / {selectedBadge.targetProgress} {selectedBadge.unit}</span>
+                    <span className="text-zinc-350 font-extrabold">{selectedBadge.currentProgress} / {selectedBadge.targetProgress} {selectedBadge.unit}</span>
                   </div>
                   
                   <div className="relative w-full h-2.5 bg-zinc-950 border border-white/5 rounded-full overflow-hidden">
