@@ -117,9 +117,9 @@ export function Sidebar() {
 
       <div className="flex flex-col gap-5.5 relative z-10">
         {/* Brand Header */}
-        <div className={`flex items-center justify-between border-b border-white/[0.04] pb-4.5 min-h-[48px] ${isCollapsed ? "justify-center" : ""}`}>
+        <div className={`flex items-center justify-between border-b border-zinc-250 dark:border-white/[0.04] pb-4.5 min-h-[48px] ${isCollapsed ? "justify-center" : ""}`}>
           <Link to="/dashboard" className="flex items-center gap-3 shrink-0 group/brand">
-            <div className="w-7.5 h-7.5 rounded-xl bg-gradient-to-tr from-violet-500/10 to-emerald-500/10 border border-white/[0.08] flex items-center justify-center shrink-0 shadow-sm transition-all duration-300 group-hover/brand:border-violet-500/30">
+            <div className="w-7.5 h-7.5 rounded-xl bg-gradient-to-tr from-violet-500/10 to-emerald-500/10 border border-zinc-200 dark:border-white/[0.08] flex items-center justify-center shrink-0 shadow-sm transition-all duration-300 group-hover/brand:border-violet-500/30">
               <img
                 src="/logo/brand-logo.png"
                 alt="ConsistPay Logo"
@@ -127,19 +127,19 @@ export function Sidebar() {
               />
             </div>
             
-            <div className={`flex flex-col transition-all duration-300 ${
-              isCollapsed ? "opacity-0 w-0 invisible overflow-hidden" : "opacity-100 w-auto visible"
-            }`}>
-              <span className="text-sm font-black tracking-tight text-white flex items-center gap-1.5 leading-none">
-                Consist<span className="text-emerald-400">Pay</span>
-                <span className="text-[8px] font-black bg-violet-500/10 text-violet-400 px-1.5 py-0.5 rounded-md border border-violet-500/20 uppercase tracking-widest leading-none">
-                  AI
+            {!isCollapsed && (
+              <div className="flex flex-col animate-in fade-in duration-200">
+                <span className="text-sm font-black tracking-tight text-zinc-900 dark:text-white flex items-center gap-1.5 leading-none">
+                  Consist<span className="text-emerald-400">Pay</span>
+                  <span className="text-[8px] font-black bg-violet-500/10 text-violet-400 px-1.5 py-0.5 rounded-md border border-violet-500/20 uppercase tracking-widest leading-none">
+                    AI
+                  </span>
                 </span>
-              </span>
-              <span className="text-[9px] text-zinc-550 font-bold tracking-wider uppercase leading-none mt-1">
-                Accountability Hub
-              </span>
-            </div>
+                <span className="text-[9px] text-zinc-500 dark:text-zinc-550 font-bold tracking-wider uppercase leading-none mt-1">
+                  Accountability Hub
+                </span>
+              </div>
+            )}
           </Link>
 
           {/* Close button for Mobile drawer only */}
@@ -160,11 +160,11 @@ export function Sidebar() {
 
         {/* Coming Soon Categories Navigation */}
         <div className="flex flex-col gap-1">
-          <h4 className={`text-[9px] font-black uppercase tracking-wider text-zinc-500 px-3 mt-4 mb-2 select-none transition-all duration-300 ${
-            isCollapsed ? "opacity-0 w-0 h-0 overflow-hidden py-0 border-none" : "opacity-100 w-auto"
-          }`}>
-            Habit Categories
-          </h4>
+          {!isCollapsed && (
+            <h4 className="text-[9px] font-black uppercase tracking-wider text-zinc-400 dark:text-zinc-500 px-3 mt-4 mb-2 select-none">
+              Habit Categories
+            </h4>
+          )}
           {comingSoonItems.map((item) => {
             const active = path === item.path;
             const IconComponent = item.Icon;
@@ -175,27 +175,27 @@ export function Sidebar() {
                 to={item.path}
                 className={`flex items-center justify-between gap-3 px-3 py-2.5 rounded-lg text-[11.5px] font-semibold tracking-wide transition-all duration-150 group relative ${
                   active 
-                    ? "bg-white/[0.035] text-white" 
-                    : "text-zinc-500 hover:text-zinc-350 hover:bg-white/[0.015]"
+                    ? "bg-zinc-200/55 dark:bg-white/[0.035] text-zinc-900 dark:text-white" 
+                    : "text-zinc-550 dark:text-zinc-400 hover:text-zinc-900 hover:bg-zinc-100/50 dark:hover:text-zinc-200 dark:hover:bg-white/[0.015]"
                 }`}
                 title={isCollapsed ? item.label : undefined}
               >
                 {active && (
-                  <span className="absolute left-0 top-2.5 bottom-2.5 w-[2px] bg-violet-400 rounded-r shadow-[0_0_8px_rgba(139,92,246,0.6)]" />
+                  <span className="absolute left-0 top-2.5 bottom-2.5 w-[2px] bg-violet-500 dark:bg-violet-400 rounded-r shadow-[0_0_8px_rgba(139,92,246,0.6)]" />
                 )}
 
                 <div className="flex items-center gap-3">
-                  <IconComponent className={`w-4 h-4 shrink-0 transition-transform ${active ? "text-violet-400" : "text-zinc-550 group-hover:text-zinc-450"}`} />
+                  <IconComponent className={`w-4 h-4 shrink-0 transition-transform ${active ? "text-violet-550 dark:text-violet-400" : "text-zinc-400 dark:text-zinc-450 group-hover:text-zinc-700 dark:group-hover:text-zinc-350"}`} />
                   
-                  <span className={`transition-all duration-300 whitespace-nowrap overflow-hidden ${
-                    isCollapsed ? "opacity-0 w-0 invisible" : "opacity-100 w-auto visible"
-                  }`}>
-                    {item.label}
-                  </span>
+                  {!isCollapsed && (
+                    <span className="transition-all duration-300 whitespace-nowrap overflow-hidden">
+                      {item.label}
+                    </span>
+                  )}
                 </div>
 
                 {!isCollapsed && (
-                  <span className="text-[8px] font-black text-zinc-650 dark:text-zinc-650 bg-white/[0.01] border border-white/[0.04] px-1.5 py-0.5 rounded uppercase tracking-wider scale-90 opacity-70 group-hover:opacity-100 transition-all select-none">
+                  <span className="text-[8px] font-black text-zinc-500 dark:text-zinc-650 bg-zinc-200/55 dark:bg-[#1A1C2A] border border-zinc-300/80 dark:border-white/[0.04] px-1.5 py-0.5 rounded uppercase tracking-wider scale-90 opacity-70 group-hover:opacity-100 transition-all select-none">
                     Soon
                   </span>
                 )}
