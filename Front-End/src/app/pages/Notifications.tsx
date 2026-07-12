@@ -40,6 +40,9 @@ const getNotifIcon = (type: NotifType) => {
 };
 
 export function Notifications() {
+  useEffect(() => {
+    document.title = "Notifications | ConsistPay";
+  }, []);
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<"all" | "unread">("all");

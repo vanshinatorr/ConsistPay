@@ -6,6 +6,9 @@ import { AwardsCard } from "./dashboard/AwardsCard";
 
 export function Profile() {
   const navigate = useNavigate();
+  useEffect(() => {
+    document.title = "Profile | ConsistPay";
+  }, []);
 
   // ── Load cached data instantly from localStorage (set by Dashboard) ──
   const cachedRaw = localStorage.getItem("consistpay_user_data");

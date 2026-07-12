@@ -61,6 +61,9 @@ interface CalendarDay {
 
 export function Dashboard() {
   const navigate = useNavigate();
+  useEffect(() => {
+    document.title = "Dashboard | ConsistPay";
+  }, []);
   const [syncLoading, setSyncLoading] = useState(false);
   const [syncLogs, setSyncLogs] = useState<string[]>([]);
 

@@ -5,6 +5,9 @@ import { useState, useEffect } from "react";
 export function ActiveBattle() {
   const { id } = useParams();
   const navigate = useNavigate();
+  useEffect(() => {
+    document.title = "Active Battle | ConsistPay";
+  }, []);
   const [challenge, setChallenge] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");

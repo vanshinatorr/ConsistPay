@@ -37,6 +37,9 @@ const AvatarRenderer = ({ avatar, className, colorClass }: { avatar: string, cla
 };
 
 export function Leaderboard() {
+  useEffect(() => {
+    document.title = "Leaderboard | ConsistPay";
+  }, []);
   const [activeTab, setActiveTab] = useState<Tab>("streak");
   const [users, setUsers] = useState<UserData[]>([]);
   const [loading, setLoading] = useState(true);

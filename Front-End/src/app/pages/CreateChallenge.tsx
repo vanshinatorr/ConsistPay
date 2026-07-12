@@ -7,6 +7,9 @@ type Screen = "hub" | "duration" | "stake" | "confirm" | "waiting" | "cancelled"
 
 export function CreateChallenge() {
   const navigate = useNavigate();
+  useEffect(() => {
+    document.title = "Create Battle Challenge | ConsistPay";
+  }, []);
   const [screen, setScreen] = useState<Screen>("hub");
   const [selectedDuration, setSelectedDuration] = useState<7 | 15 | 30 | null>(null);
   const [stakeAmount, setStakeAmount] = useState("");

@@ -1,8 +1,11 @@
 import { Code2, Check, X, Info, Trophy, Zap, Users, TrendingUp, Gift, Shield, Coins, Target } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export function Pricing() {
+  useEffect(() => {
+    document.title = "Pricing | ConsistPay";
+  }, []);
   const [showModal, setShowModal] = useState(false);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();

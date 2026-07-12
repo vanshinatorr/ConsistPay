@@ -7,6 +7,9 @@ type Section = "account" | "commitment" | "platforms" | "security" | "notificati
 
 export function Settings() {
   const navigate = useNavigate();
+  useEffect(() => {
+    document.title = "Settings | ConsistPay";
+  }, []);
   const [searchParams] = useSearchParams();
   const tabParam = searchParams.get("tab") as Section | null;
   const [activeSection, setActiveSection] = useState<Section>(tabParam || "account");

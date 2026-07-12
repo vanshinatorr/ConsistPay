@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Menu, X, ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { HeroNew } from "../components/HeroNew";
@@ -8,6 +8,9 @@ import { MascotSection } from "../components/MascotSection";
 import { Footer } from "./dashboard/Footer";
 
 export function Landing() {
+  useEffect(() => {
+    document.title = "ConsistPay | Compete. Stay Consistent.";
+  }, []);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (

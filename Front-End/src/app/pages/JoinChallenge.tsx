@@ -7,6 +7,9 @@ type Screen = "preview" | "joined";
 export function JoinChallenge() {
   const { code } = useParams();
   const navigate = useNavigate();
+  useEffect(() => {
+    document.title = "Join Battle Challenge | ConsistPay";
+  }, []);
   const [screen, setScreen] = useState<Screen>("preview");
   const [challengeData, setChallengeData] = useState<any>(null);
   const [loading, setLoading] = useState(true);

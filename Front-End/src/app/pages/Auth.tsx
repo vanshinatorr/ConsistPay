@@ -36,6 +36,9 @@ const CustomGoogleButton = ({ onSuccess, onError, loading }: { onSuccess: (token
 
 export function Auth() {
   const navigate = useNavigate();
+  useEffect(() => {
+    document.title = "Authentication | ConsistPay";
+  }, []);
   
   const [step, setStep] = useState<AuthStep>("identity");
   const [identifier, setIdentifier] = useState("");
