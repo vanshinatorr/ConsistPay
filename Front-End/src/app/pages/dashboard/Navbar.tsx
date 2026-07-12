@@ -69,7 +69,7 @@ export function Navbar({ initials, plan = "free", avatar, isAvatarUrl }: NavbarP
 
         // Confetti trigger for unread won battles
         if (Array.isArray(data)) {
-          const unreadWins = data.filter((n: any) => !n.read && n.type === "battle" && n.title === "Battle Won");
+          const unreadWins = data.filter((n: any) => !n.read && n.type === "battle" && (n.title === "Battle Won" || n.title === "Battle Tied"));
           let triggeredAny = false;
 
           unreadWins.forEach((n: any) => {
