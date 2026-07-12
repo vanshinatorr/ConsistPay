@@ -759,45 +759,45 @@ export function CreateChallenge() {
                 </p>
 
                 {/* Matchup Duel Box */}
-                <div className="w-full max-w-md bg-[#121214] border border-white/5 rounded-3xl overflow-hidden mb-6 shadow-2xl">
+                <div className="w-full max-w-md bg-zinc-50 dark:bg-[#121214] border border-zinc-200 dark:border-white/5 rounded-3xl overflow-hidden mb-6 shadow-2xl">
                   {/* VS Header with Avatars */}
                   <div className="p-6 bg-gradient-to-b from-violet-500/[0.03] to-transparent flex items-center justify-center gap-12">
                      <div className="flex flex-col items-center">
-                        <div className="w-16 h-16 bg-[#0D0D10] border border-violet-500/30 rounded-2xl flex items-center justify-center shadow-lg shadow-violet-500/20 rotate-3 overflow-hidden">
+                        <div className="w-16 h-16 bg-zinc-250 dark:bg-[#0D0D10] border border-violet-500/20 rounded-2xl flex items-center justify-center shadow-lg shadow-violet-500/20 rotate-3 overflow-hidden">
                           {isAvatarUrl ? (
                             <img src={userAvatar!} alt="You" className="w-full h-full object-cover scale-110" />
                           ) : (
-                            <span className="text-xl font-bold text-violet-400">{initials}</span>
+                            <span className="text-xl font-bold text-violet-650 dark:text-violet-400">{initials}</span>
                           )}
                         </div>
                         <div className="text-center mt-2.5">
-                          <span className="block text-xs font-bold text-violet-300 tracking-wider">YOU</span>
-                          <span className="inline-block text-[9px] bg-violet-500/20 border border-violet-500/30 text-violet-300 px-2 py-0.5 rounded-full font-bold uppercase tracking-wider mt-1">₹{stake} STAKE</span>
+                          <span className="block text-xs font-bold text-violet-600 dark:text-violet-300 tracking-wider">YOU</span>
+                          <span className="inline-block text-[9px] bg-violet-100 dark:bg-violet-500/20 border border-violet-250 dark:border-violet-500/30 text-violet-750 dark:text-violet-300 px-2 py-0.5 rounded-full font-bold uppercase tracking-wider mt-1">₹{stake} STAKE</span>
                         </div>
                      </div>
                       
                      <div className="relative flex items-center justify-center shrink-0">
                        <div className="absolute inset-0 bg-violet-500/20 blur-lg rounded-full" />
-                       <div className="text-[11px] font-black text-white italic flex items-center justify-center w-9 h-9 rounded-full bg-white/5 border border-white/10 relative z-10 animate-pulse">
+                       <div className="text-[11px] font-black text-zinc-800 dark:text-white italic flex items-center justify-center w-9 h-9 rounded-full bg-zinc-200 dark:bg-white/5 border border-zinc-300 dark:border-white/10 relative z-10 animate-pulse">
                          VS
                        </div>
                      </div>
 
                      <div className="flex flex-col items-center">
-                        <div className="w-16 h-16 bg-zinc-950 border-2 border-dashed border-zinc-700/60 rounded-2xl flex items-center justify-center -rotate-3 relative overflow-hidden group animate-pulse">
+                        <div className="w-16 h-16 bg-zinc-200 dark:bg-zinc-950 border-2 border-dashed border-zinc-400 dark:border-zinc-700/60 rounded-2xl flex items-center justify-center -rotate-3 relative overflow-hidden group animate-pulse">
                           {/* Pulsing scanner scanner beam inside opponent slot */}
                           <div className="absolute inset-0 bg-gradient-to-b from-transparent via-violet-500/5 to-transparent animate-pulse" />
-                          <span className="text-2xl font-black text-zinc-700 relative z-10 animate-bounce">?</span>
+                          <span className="text-2xl font-black text-zinc-550 dark:text-zinc-700 relative z-10 animate-bounce">?</span>
                         </div>
                         <div className="text-center mt-2.5">
-                          <span className="block text-xs font-bold text-zinc-400 tracking-wider">OPPONENT</span>
-                          <span className="inline-block text-[9px] bg-zinc-800 border border-zinc-700/30 text-zinc-500 px-2 py-0.5 rounded-full font-bold uppercase tracking-wider mt-1">WAITING...</span>
+                          <span className="block text-xs font-bold text-zinc-650 dark:text-zinc-400 tracking-wider">OPPONENT</span>
+                          <span className="inline-block text-[9px] bg-zinc-200 dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-700/30 text-zinc-600 dark:text-zinc-500 px-2 py-0.5 rounded-full font-bold uppercase tracking-wider mt-1">WAITING...</span>
                         </div>
                      </div>
                   </div>
 
                   {/* Summary Footer */}
-                  <div className="px-6 py-4 bg-black/35 border-t border-white/5 flex items-center justify-between text-xs text-zinc-400">
+                  <div className="px-6 py-4 bg-zinc-100/50 dark:bg-black/35 border-t border-zinc-250 dark:border-white/5 flex items-center justify-between text-xs text-zinc-600 dark:text-zinc-400">
                     <span className="flex items-center gap-1.5"><Trophy className="w-3.5 h-3.5 text-yellow-500" /> Pool: ₹{stake * 2}</span>
                     <span className="flex items-center gap-1.5"><Clock className="w-3.5 h-3.5 text-violet-400" /> Duration: {selectedDuration} Days</span>
                   </div>
