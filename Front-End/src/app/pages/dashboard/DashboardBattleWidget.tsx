@@ -127,8 +127,8 @@ export function DashboardBattleWidget({ onRefreshRequest }: DashboardBattleWidge
       
       {/* ─── PENDING CHALLENGE BANNER ─── */}
       {pendingChallenge && timeLeft > 0 && (
-        <div className="relative rounded-2xl border border-amber-500/20 bg-gradient-to-r from-amber-500/5 via-[#0F0F13]/90 to-[#0F0F13]/90 p-4 md:p-5 overflow-hidden flex flex-col md:flex-row items-center justify-between gap-4 shadow-xl animate-in fade-in slide-in-from-top-4 duration-300">
-          <div className="absolute inset-0 bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:14px_24px] pointer-events-none" />
+        <div className="relative rounded-2xl border border-amber-500/20 bg-amber-500/[0.04] dark:bg-gradient-to-r dark:from-amber-500/5 dark:via-[#0F0F13]/90 dark:to-[#0F0F13]/90 p-4 md:p-5 overflow-hidden flex flex-col md:flex-row items-center justify-between gap-4 shadow-xl animate-in fade-in slide-in-from-top-4 duration-300">
+          <div className="absolute inset-0 bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:14px_24px] pointer-events-none opacity-40 dark:opacity-100" />
           <div className="absolute -left-20 -top-20 w-44 h-44 bg-amber-500/10 rounded-full blur-[60px] pointer-events-none" />
           
           <div className="relative z-10 flex items-center gap-4 w-full md:w-auto">
@@ -138,27 +138,27 @@ export function DashboardBattleWidget({ onRefreshRequest }: DashboardBattleWidge
             
             <div className="space-y-1 text-center md:text-left">
               <div className="flex flex-col md:flex-row md:items-center gap-2">
-                <h3 className="text-base font-extrabold text-amber-400 tracking-tight">
+                <h3 className="text-base font-extrabold text-amber-600 dark:text-amber-400 tracking-tight">
                   Pending Challenge Invitation
                 </h3>
-                <span className="inline-block px-2.5 py-0.5 rounded-full text-[9px] font-bold bg-amber-500/15 text-amber-300 border border-amber-500/20 tracking-wider uppercase animate-pulse">
+                <span className="inline-block px-2.5 py-0.5 rounded-full text-[9px] font-bold bg-amber-500/10 dark:bg-amber-500/15 text-amber-700 dark:text-amber-300 border border-amber-500/20 tracking-wider uppercase animate-pulse">
                   Waiting for Opponent
                 </span>
               </div>
-              <p className="text-xs text-zinc-400">
-                Stakes: <span className="text-zinc-200 font-semibold">₹{pendingChallenge.stake}</span> (Refundable) | Duration: <span className="text-zinc-200 font-semibold">{pendingChallenge.duration} Days</span>
+              <p className="text-xs text-zinc-600 dark:text-zinc-400">
+                Stakes: <span className="text-zinc-800 dark:text-zinc-200 font-semibold">₹{pendingChallenge.stake}</span> (Refundable) | Duration: <span className="text-zinc-800 dark:text-zinc-200 font-semibold">{pendingChallenge.duration} Days</span>
               </p>
               
               {/* Copy Invite Code Box */}
-              <div className="flex items-center gap-2 mt-2 bg-white/5 border border-white/[0.04] rounded-lg px-3 py-1.5 w-fit mx-auto md:mx-0">
+              <div className="flex items-center gap-2 mt-2 bg-zinc-150/50 dark:bg-white/5 border border-zinc-200 dark:border-white/[0.04] rounded-lg px-3 py-1.5 w-fit mx-auto md:mx-0">
                 <span className="text-xs text-zinc-500 uppercase tracking-widest font-mono">Code:</span>
-                <span className="text-xs font-mono font-bold text-white tracking-wider">{pendingChallenge.inviteCode}</span>
+                <span className="text-xs font-mono font-bold text-zinc-800 dark:text-white tracking-wider">{pendingChallenge.inviteCode}</span>
                 <button 
                   onClick={() => handleCopy(pendingChallenge.inviteCode)}
-                  className="text-zinc-400 hover:text-white transition-colors"
+                  className="text-zinc-500 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-white transition-colors"
                   title="Copy Invite Code"
                 >
-                  {copied ? <CheckCircle className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+                  {copied ? <CheckCircle className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5" />}
                 </button>
               </div>
             </div>
@@ -166,7 +166,7 @@ export function DashboardBattleWidget({ onRefreshRequest }: DashboardBattleWidge
 
           <div className="relative z-10 w-full md:w-auto shrink-0 flex flex-col sm:flex-row items-center gap-3">
             {/* Timer countdown */}
-            <div className="flex items-center gap-1.5 text-amber-400 bg-amber-500/10 px-3.5 py-2 rounded-xl border border-amber-500/20 text-xs font-bold font-mono">
+            <div className="flex items-center gap-1.5 text-amber-700 dark:text-amber-400 bg-amber-500/10 px-3.5 py-2 rounded-xl border border-amber-500/20 text-xs font-bold font-mono">
               <Clock className="w-4 h-4 animate-pulse" />
               <span>Expires in {formatTime(timeLeft)}</span>
             </div>
@@ -174,13 +174,13 @@ export function DashboardBattleWidget({ onRefreshRequest }: DashboardBattleWidge
             <div className="flex gap-2 w-full sm:w-auto justify-end">
               <button
                 onClick={() => navigate('/create-challenge')}
-                className="flex-1 sm:flex-none px-4 py-2.5 bg-white/5 hover:bg-white/10 text-white rounded-xl font-bold border border-white/[0.04] transition-all text-xs flex items-center justify-center gap-1.5"
+                className="flex-1 sm:flex-none px-4 py-2.5 bg-zinc-100 hover:bg-zinc-200 dark:bg-white/5 dark:hover:bg-white/10 text-zinc-700 dark:text-white rounded-xl font-bold border border-zinc-250 dark:border-white/[0.04] transition-all text-xs flex items-center justify-center gap-1.5"
               >
                 View Screen
               </button>
               <button
                 onClick={handleCancelPending}
-                className="flex-1 sm:flex-none px-4 py-2.5 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 rounded-xl font-bold border border-rose-500/20 transition-all text-xs flex items-center justify-center gap-1.5"
+                className="flex-1 sm:flex-none px-4 py-2.5 bg-rose-500/10 hover:bg-rose-500/20 text-rose-600 dark:text-rose-400 rounded-xl font-bold border border-rose-500/20 transition-all text-xs flex items-center justify-center gap-1.5"
               >
                 <Trash2 className="w-3.5 h-3.5" />
                 Cancel & Refund
