@@ -432,13 +432,19 @@ const getLeaderboard = async (req, res) => {
 const addBattleFunds = async (req, res) => {
   try {
     const { amount } = req.body;
-    if (!amount || amount <= 0) {
-      return res.status(400).json({ message: "Invalid amount" });
+    const amountVal = parseInt(amount);
+    if (isNaN(amountVal) || amountVal <= 0) {
+      return res.status(400).json({ message: "Invalid deposit amount." });
     }
+
+    // Atomically increment battle balance
+    await User.updateOne(
+      { _id: req.user._id },
+      { $inc: { battleBalance: amountVal } }
+    );
+
     const user = await User.findById(req.user._id);
-    user.battleBalance += amount;
-    await user.save();
-    res.status(200).json({ battleBalance: user.battleBalance, message: `Added ₹${amount} to Battle Wallet` });
+    res.status(200).json({ battleBalance: user.battleBalance, message: `Added ₹${amountVal} to Battle Wallet` });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

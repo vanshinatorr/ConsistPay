@@ -379,22 +379,30 @@ const withdrawFunds = async (req, res) => {
       return res.status(400).json({ message: "Please enter a valid UPI ID (e.g. name@upi)." });
     }
 
-    const user = await User.findById(userId);
     const type = walletType === "battle" ? "battle" : "consistency";
+    let updatedUser;
 
     if (type === "battle") {
-      if (user.battleBalance < amountVal) {
-        return res.status(400).json({ message: `Insufficient battle wallet balance. You only have ₹${user.battleBalance}.` });
+      // Atomically check if balance is sufficient and deduct in one step
+      updatedUser = await User.findOneAndUpdate(
+        { _id: userId, battleBalance: { $gte: amountVal } },
+        { $inc: { battleBalance: -amountVal } },
+        { new: true }
+      );
+      if (!updatedUser) {
+        return res.status(400).json({ message: "Insufficient battle wallet balance." });
       }
-      user.battleBalance -= amountVal;
     } else {
-      if (user.balance < amountVal) {
-        return res.status(400).json({ message: `Insufficient consistency wallet balance. You only have ₹${user.balance}.` });
+      // Atomically check if balance is sufficient and deduct in one step
+      updatedUser = await User.findOneAndUpdate(
+        { _id: userId, balance: { $gte: amountVal } },
+        { $inc: { balance: -amountVal } },
+        { new: true }
+      );
+      if (!updatedUser) {
+        return res.status(400).json({ message: "Insufficient consistency wallet balance." });
       }
-      user.balance -= amountVal;
     }
-
-    await user.save();
 
     const withdrawal = await Withdrawal.create({
       userId,
@@ -414,8 +422,8 @@ const withdrawFunds = async (req, res) => {
 
     res.status(200).json({
       message: "Withdrawal request submitted successfully!",
-      balance: user.balance,
-      battleBalance: user.battleBalance,
+      balance: updatedUser.balance,
+      battleBalance: updatedUser.battleBalance,
       withdrawal
     });
   } catch (error) {
