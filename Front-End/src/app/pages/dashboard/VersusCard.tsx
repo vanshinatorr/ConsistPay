@@ -124,30 +124,32 @@ export function VersusCard({
             </div>
 
             {/* Action Buttons */}
-            <div className="flex gap-2 mt-auto relative z-10 w-full">
+            <div className="flex flex-col gap-2 mt-auto relative z-10 w-full">
               <Link 
                 to="/create-challenge"
-                className="flex-1 h-9 bg-white dark:bg-white/5 border border-zinc-200 dark:border-white/10 hover:bg-zinc-50 dark:hover:bg-white/10 text-zinc-700 dark:text-zinc-300 transition-all rounded-xl text-[11px] font-bold flex items-center justify-center gap-1 cursor-pointer shadow-sm"
+                className="w-full h-9 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white-force transition-all rounded-xl text-[11px] font-bold flex items-center justify-center gap-1 cursor-pointer shadow-sm active:scale-95"
               >
-                <Plus className="w-3.5 h-3.5 shrink-0" /> Challenge
+                Create Battle Challenge
               </Link>
-              <button 
-                onClick={() => setShowTopupModal(true)}
-                className="flex-1 h-9 bg-zinc-100 dark:bg-white/5 hover:bg-zinc-200 dark:hover:bg-white/10 text-zinc-700 dark:text-zinc-300 border border-zinc-200 dark:border-white/[0.04] transition-all rounded-xl text-[11px] font-bold flex items-center justify-center gap-1 cursor-pointer shadow-sm"
-              >
-                <Coins className="w-3.5 h-3.5 text-zinc-450 dark:text-zinc-400 shrink-0" /> Add Funds
-              </button>
-              {battleBalance > 0 && (
+              <div className="flex gap-2 w-full">
                 <button 
-                  onClick={() => {
-                    const event = new CustomEvent("open-withdraw-modal", { detail: { walletType: "battle" } });
-                    window.dispatchEvent(event);
-                  }}
-                  className="flex-1 h-9 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 dark:bg-white dark:hover:bg-zinc-100 dark:text-zinc-950 transition-all rounded-xl text-[11px] font-bold flex items-center justify-center gap-1 cursor-pointer shadow-sm active:scale-95"
+                  onClick={() => setShowTopupModal(true)}
+                  className={`h-9 bg-zinc-100 dark:bg-white/5 hover:bg-zinc-200 dark:hover:bg-white/10 text-zinc-700 dark:text-zinc-300 border border-zinc-200 dark:border-white/[0.04] transition-all rounded-xl text-[10.5px] font-bold flex items-center justify-center gap-1 cursor-pointer shadow-sm active:scale-95 ${battleBalance > 0 ? "flex-1" : "w-full"}`}
                 >
-                  <Coins className="w-3.5 h-3.5 text-emerald-600 dark:text-zinc-900 shrink-0" /> Claim
+                  <Coins className="w-3.5 h-3.5 text-zinc-450 dark:text-zinc-400 shrink-0" /> Add Funds
                 </button>
-              )}
+                {battleBalance > 0 && (
+                  <button 
+                    onClick={() => {
+                      const event = new CustomEvent("open-withdraw-modal", { detail: { walletType: "battle" } });
+                      window.dispatchEvent(event);
+                    }}
+                    className="flex-1 h-9 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 dark:bg-white dark:hover:bg-zinc-100 dark:text-zinc-950 transition-all rounded-xl text-[10.5px] font-bold flex items-center justify-center gap-1 cursor-pointer shadow-sm active:scale-95"
+                  >
+                    Claim Winnings
+                  </button>
+                )}
+              </div>
             </div>
           </div>
         )}
