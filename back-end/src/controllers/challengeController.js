@@ -318,9 +318,18 @@ const joinChallenge = async (req, res) => {
       return res.status(400).json({ message: `Insufficient balance. Required: ₹${totalCost}, Available: ₹${user.battleBalance}.` });
     }
 
-    // Start Challenge Dates
+    // Start Challenge Dates (Current local date)
     const startDate = new Date();
-    const endDate = new Date(startDate.getTime() + challenge.duration * 24 * 60 * 60 * 1000);
+
+    // Calculate endDate as 23:59:59 on the last calendar day (Asia/Kolkata timezone)
+    // Inclusive of the start day (e.g. if started on July 12 for 7 days, it ends July 18 at 23:59:59)
+    const endDayObj = new Date(startDate.getTime());
+    endDayObj.setDate(endDayObj.getDate() + (challenge.duration - 1));
+    const year = endDayObj.getFullYear();
+    const month = endDayObj.getMonth();
+    const date = endDayObj.getDate();
+    const endDateStr = `${year}-${String(month + 1).padStart(2, "0")}-${String(date).padStart(2, "0")}T23:59:59+05:30`;
+    const endDate = new Date(endDateStr);
 
     // Atomically transition the challenge status to prevent race conditions
     const lockedChallenge = await Challenge.findOneAndUpdate(
