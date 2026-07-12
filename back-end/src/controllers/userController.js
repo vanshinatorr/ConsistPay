@@ -252,7 +252,7 @@ const getMe = async (req, res) => {
           const Notification = require("../models/Notification");
           await Notification.create({
             userId: user._id,
-            title: "10% Consistency Bonus! 🏆",
+            title: "10% Consistency Bonus",
             desc: `Congratulations on staying 100% consistent! We've credited ₹${bonus} (10% bonus) to your wallet.`,
             type: "wallet",
             read: false

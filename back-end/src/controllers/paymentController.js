@@ -406,7 +406,7 @@ const withdrawFunds = async (req, res) => {
     const Notification = require("../models/Notification");
     await Notification.create({
       userId,
-      title: "Withdrawal Initiated ⏳",
+      title: "Withdrawal Initiated",
       desc: `Your request to withdraw ₹${amountVal} to UPI: ${upiId} has been received.`,
       type: "wallet",
       read: false

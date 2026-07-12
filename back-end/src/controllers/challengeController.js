@@ -126,13 +126,13 @@ const autoResolveChallenges = async (userId) => {
         await Notification.create([
           {
             userId: challenge.creatorId,
-            title: "🏆 Battle Won!",
+            title: "Battle Won",
             desc: `You won the ${challengeName} against ${opponent.name}! ₹${challenge.stake * 2} has been added to your wallet.`,
             type: "battle"
           },
           {
             userId: challenge.opponentId,
-            title: "⚔️ Battle Ended",
+            title: "Battle Ended",
             desc: `${creator.name} won the ${challengeName} with a higher consistency score. Better luck next time!`,
             type: "battle"
           }
@@ -147,13 +147,13 @@ const autoResolveChallenges = async (userId) => {
         await Notification.create([
           {
             userId: challenge.opponentId,
-            title: "🏆 Battle Won!",
+            title: "Battle Won",
             desc: `You won the ${challengeName} against ${creator.name}! ₹${challenge.stake * 2} has been added to your wallet.`,
             type: "battle"
           },
           {
             userId: challenge.creatorId,
-            title: "⚔️ Battle Ended",
+            title: "Battle Ended",
             desc: `${opponent.name} won the ${challengeName} with a higher consistency score. Better luck next time!`,
             type: "battle"
           }
@@ -170,13 +170,13 @@ const autoResolveChallenges = async (userId) => {
         await Notification.create([
           {
             userId: challenge.creatorId,
-            title: "🤝 Battle Tied!",
+            title: "Battle Tied",
             desc: `The ${challengeName} against ${opponent.name} ended in a tie. Your stake of ₹${challenge.stake} has been refunded to your wallet.`,
             type: "battle"
           },
           {
             userId: challenge.opponentId,
-            title: "🤝 Battle Tied!",
+            title: "Battle Tied",
             desc: `The ${challengeName} against ${creator.name} ended in a tie. Your stake of ₹${challenge.stake} has been refunded to your wallet.`,
             type: "battle"
           }

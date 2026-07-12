@@ -224,7 +224,7 @@ const syncUserStreak = async (userOrId) => {
         user.lastGraceCoinEarnedMonth = currentMonthStr;
         await createNotification(
           user._id,
-          "Grace Coin Unlocked! 🪙",
+          "Grace Coin Unlocked",
           `Congratulations on hitting a ${currentStreak}-day streak! You've earned 1 Grace Coin.`,
           "streak"
         );

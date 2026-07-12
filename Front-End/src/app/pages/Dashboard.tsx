@@ -21,7 +21,7 @@ import { Check } from "lucide-react";
 
 const motivationalLines = [
   "You showed up. That's what counts.",
-  "Streak intact. 🔥",
+  "Streak intact.",
   "Commitment protected. See you tomorrow.",
   "Another day coded. Another day closer.",
   "Small wins compound. Keep going.",
@@ -150,26 +150,18 @@ export function Dashboard() {
     else timeGreeting = "Good evening";
 
     const slangs = [
-      "let's secure the bag 💰",
-      "no cap, time to cook 🧑‍🍳",
-      "keep the green grid lit 🟢",
-      "don't lose your lunch money 💸",
-      "W coding session awaits 🏆",
-      "absolute unit of a coder 🧠",
-      "main character energy today ✨",
-      "big brain moves active 💡",
-      "sheesh, let's ship it 🚀",
-      "we stay grinding 📈",
-      "protect your stake today 🛡️",
-      "back at it again ⚡",
-      "streak checks out 🔥",
-      "grindset mode active 🎯",
-      "code first, talk later 👾",
-      "let's lock it in 🔒",
-      "high key cooking 🍳",
-      "stacking code & cash 💵",
-      "zero misses allowed 🚫",
-      "stay consistent, stay winning 👑"
+      "maintain consistency and secure your daily commitment",
+      "keep your streak active with today's solve",
+      "another verified day secures your stake",
+      "focus on the code, consistency follows",
+      "your daily coding session is ready",
+      "let's complete today's verification",
+      "stay focused, keep your streaks alive",
+      "protect your daily commitment stake",
+      "ship code, verify, repeat",
+      "consistency is built one day at a time",
+      "no missed days is the goal",
+      "your dashboard is fully synced"
     ];
 
     // Seeded index based on current hour + date so it remains stable but updates throughout the day
@@ -731,14 +723,14 @@ export function Dashboard() {
         }`}>
           <div>
             <h1 className="text-3xl font-bold tracking-tight text-white">
-              👋 {getGreeting()}
+              {getGreeting()}
             </h1>
             <p className="text-sm text-zinc-400 mt-1.5 leading-relaxed">
               {todaySubmission?.count > 0 
-                ? `You're on a ${currentStreak} day streak. Today's commitment is locked and safe! ✨`
+                ? `You're on a ${currentStreak} day streak. Today's commitment is locked and safe.`
                 : currentStreak > 0
-                ? `You're on a ${currentStreak} day streak. Keep solving to protect today's stake. 🎯`
-                : "Ready to start your consistency streak? Solve your first problem today! 🚀"
+                ? `You're on a ${currentStreak} day streak. Keep solving to protect today's stake.`
+                : "Ready to start your consistency streak? Solve your first problem today."
               }
             </p>
           </div>
