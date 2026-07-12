@@ -233,23 +233,28 @@ export function DashboardBattleWidget({ onRefreshRequest }: DashboardBattleWidge
                            <Target className="w-4 h-4 text-violet-400" />
                         </div>
                         <div>
-                           {challengeItem.endDate && new Date(challengeItem.endDate) < new Date() ? (
-                             <div className="flex items-center gap-2 mb-1">
-                               <span className="flex h-1.5 w-1.5 relative">
-                                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
-                                 <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-amber-500"></span>
-                               </span>
-                               <span className="text-[10px] font-bold text-amber-500 dark:text-amber-400 uppercase tracking-widest">Awaiting Sync</span>
-                             </div>
-                           ) : (
-                             <div className="flex items-center gap-2 mb-1">
-                               <span className="flex h-1.5 w-1.5 relative">
-                                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                                 <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500"></span>
-                               </span>
-                               <span className="text-[10px] font-bold text-emerald-500 dark:text-emerald-400 uppercase tracking-widest">Active</span>
-                             </div>
-                           )}
+                                {challengeItem.status === "completed" ? (
+                              <div className="flex items-center gap-2 mb-1">
+                                <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-blue-500"></span>
+                                <span className="text-[10px] font-bold text-blue-500 dark:text-blue-400 uppercase tracking-widest">Completed</span>
+                              </div>
+                            ) : challengeItem.endDate && new Date(challengeItem.endDate) < new Date() ? (
+                              <div className="flex items-center gap-2 mb-1">
+                                <span className="flex h-1.5 w-1.5 relative">
+                                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+                                  <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-amber-500"></span>
+                                </span>
+                                <span className="text-[10px] font-bold text-amber-500 dark:text-amber-400 uppercase tracking-widest">Awaiting Sync</span>
+                              </div>
+                            ) : (
+                              <div className="flex items-center gap-2 mb-1">
+                                <span className="flex h-1.5 w-1.5 relative">
+                                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                                  <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500"></span>
+                                </span>
+                                <span className="text-[10px] font-bold text-emerald-500 dark:text-emerald-400 uppercase tracking-widest">Active</span>
+                              </div>
+                            )}
                            <h3 className="text-sm font-semibold text-zinc-800 dark:text-white">{challengeItem.duration}-Day Consistency Challenge</h3>
                         </div>
                      </div>
@@ -302,11 +307,24 @@ export function DashboardBattleWidget({ onRefreshRequest }: DashboardBattleWidge
                         </div>
                      </div>
 
-                     {challengeItem.endDate && new Date(challengeItem.endDate) < new Date() && (
-                       <div className="mt-1.5 px-3 py-2 bg-amber-500/5 dark:bg-amber-400/5 border border-amber-500/10 dark:border-amber-400/10 rounded-xl text-[10px] text-amber-600 dark:text-amber-400 font-medium">
-                         The challenge period has ended. The system is waiting for both participants to complete their final synchronization. Payouts will be processed once both sync, or automatically shortly.
-                       </div>
-                     )}
+                      {challengeItem.status === "completed" ? (
+                        <div className="mt-1.5 px-3 py-2 bg-blue-500/5 dark:bg-blue-400/5 border border-blue-500/10 dark:border-blue-400/10 rounded-xl text-[11px] font-semibold text-blue-600 dark:text-blue-400 flex items-center justify-between shadow-sm">
+                          <span>
+                            {challengeItem.creator.score === challengeItem.opponent.score ? (
+                              "Battle Ended: It's a Tie! Stakes refunded to both wallets."
+                            ) : (isCreator ? challengeItem.creator.score > challengeItem.opponent.score : challengeItem.opponent.score > challengeItem.creator.score) ? (
+                              "Battle Ended: You Won! Winnings credited to your wallet."
+                            ) : (
+                              "Battle Ended: Opponent Won. Better luck next time!"
+                            )}
+                          </span>
+                          <span className="text-[9px] uppercase font-bold tracking-wider opacity-85 shrink-0">Resolved</span>
+                        </div>
+                      ) : challengeItem.endDate && new Date(challengeItem.endDate) < new Date() ? (
+                        <div className="mt-1.5 px-3 py-2 bg-amber-500/5 dark:bg-amber-400/5 border border-amber-500/10 dark:border-amber-400/10 rounded-xl text-[10px] text-amber-600 dark:text-amber-400 font-medium">
+                          The challenge period has ended. The system is waiting for both participants to complete their final synchronization. Payouts will be processed once both sync, or automatically shortly.
+                        </div>
+                      ) : null}
 
                   </div>
                 </div>

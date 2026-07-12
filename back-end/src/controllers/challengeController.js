@@ -379,8 +379,12 @@ const getActiveChallenges = async (req, res) => {
     // Resolve any expired ones first
     await autoResolveChallenges(userId);
 
+    const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
     const active = await Challenge.find({
-      status: "active",
+      $or: [
+        { status: "active" },
+        { status: "completed", updatedAt: { $gte: oneDayAgo } }
+      ],
       $or: [{ creatorId: userId }, { opponentId: userId }]
     })
       .populate("creatorId", "name streak")
@@ -411,6 +415,7 @@ const getActiveChallenges = async (req, res) => {
         currentDay,
         startDate: ch.startDate,
         endDate: ch.endDate,
+        status: ch.status,
         userRole,
         creator: {
           name: ch.creatorId.name,
