@@ -207,7 +207,8 @@ const getMe = async (req, res) => {
       platform: l.platform,
       username: l.username,
       isVerified: l.isVerified,
-      verificationToken: l.verificationToken
+      verificationToken: l.verificationToken,
+      badges: l.badges || []
     }));
 
     // Check dynamic achievements and write notifications if earned

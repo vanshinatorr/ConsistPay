@@ -45,6 +45,16 @@ const platformLinkageSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+    badges: [
+      {
+        id: { type: String },
+        name: { type: String },
+        shortName: { type: String },
+        hoverText: { type: String },
+        icon: { type: String },
+        creationDate: { type: String }
+      }
+    ],
   },
   { timestamps: true }
 );

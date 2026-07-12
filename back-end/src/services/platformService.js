@@ -105,6 +105,16 @@ class PlatformService {
     linkage.mediumSolved = mediumAc ? mediumAc.count : 0;
     linkage.hardSolved = hardAc ? hardAc.count : 0;
 
+    // Fetch badges for LeetCode
+    if (platform === "LeetCode") {
+      try {
+        const badges = await LeetCodeProvider.fetchUserBadges(linkage.username);
+        linkage.badges = badges;
+      } catch (badgeErr) {
+        console.warn("[PlatformService] Failed to fetch LeetCode badges during verification:", badgeErr.message);
+      }
+    }
+
     linkage.isVerified = true;
     linkage.verifiedAt = new Date();
     await linkage.save();
@@ -189,6 +199,16 @@ class PlatformService {
         linkage.easySolved = easyAc ? easyAc.count : (platform === "GeeksforGeeks" || platform === "GFG" ? (allAc ? allAc.count : 0) : 0);
         linkage.mediumSolved = mediumAc ? mediumAc.count : 0;
         linkage.hardSolved = hardAc ? hardAc.count : 0;
+
+        // Fetch and cache badges for LeetCode
+        if (platform === "LeetCode") {
+          try {
+            const badges = await LeetCodeProvider.fetchUserBadges(linkage.username);
+            linkage.badges = badges;
+          } catch (badgeErr) {
+            console.warn("[PlatformService] Failed to fetch LeetCode badges during daily sync:", badgeErr.message);
+          }
+        }
 
         await linkage.save();
       } catch (err) {
@@ -339,6 +359,7 @@ class PlatformService {
       verificationToken: linkage.verificationToken,
       verifiedAt: linkage.verifiedAt,
       totalSolved: linkage.totalSolved || 0,
+      badges: linkage.badges || [],
     };
   }
 

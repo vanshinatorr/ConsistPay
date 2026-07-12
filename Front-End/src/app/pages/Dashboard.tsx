@@ -944,6 +944,7 @@ export function Dashboard() {
                 totalSolved={userData?.totalSolved ?? 0}
                 totalProblemsSolved={userData?.totalProblemsSolved ?? 0}
                 dailyCommitment={userData?.dailyCommitment ?? 5}
+                linkedPlatforms={userData?.linkedPlatforms ?? []}
               />
             </div>
           </div>

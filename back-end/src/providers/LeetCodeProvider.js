@@ -195,6 +195,34 @@ class LeetCodeProvider {
   }
 
   /**
+   * Fetch a user's earned badges from LeetCode
+   */
+  async fetchUserBadges(username) {
+    const query = `
+      query userBadges($username: String!) {
+        matchedUser(username: $username) {
+          badges {
+            id
+            name
+            shortName
+            hoverText
+            icon
+            creationDate
+          }
+        }
+      }
+    `;
+    try {
+      const data = await this._makeGraphQLRequest(query, { username });
+      if (!data.matchedUser) return [];
+      return data.matchedUser.badges || [];
+    } catch (e) {
+      console.error("[LeetCodeProvider] Failed to fetch user badges:", e.message);
+      return [];
+    }
+  }
+
+  /**
    * Converts a date object to date string format (YYYY-MM-DD) localized to the user timezone
    */
   _getLocalDateString(date, timeZone) {
