@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { 
   ChevronLeft, ChevronRight, LogOut, Sparkles,
-  Menu, X, Loader2
+  Menu, X, Loader2, PanelLeftOpen, PanelLeftClose
 } from "lucide-react";
 
 // 1. Dashboard Custom Icon
@@ -225,30 +225,50 @@ export function Sidebar() {
 
       <div className="flex flex-col gap-5.5 relative z-10">
         {/* Brand Header */}
-        <div className={`flex items-center justify-between border-b border-zinc-250 dark:border-white/[0.04] pb-4.5 min-h-[48px] ${isCollapsed ? "justify-center" : ""}`}>
-          <Link to="/dashboard" className="flex items-center gap-3 shrink-0 group/brand">
-            <div className="w-7.5 h-7.5 rounded-xl bg-gradient-to-tr from-violet-500/10 to-emerald-500/10 border border-zinc-200 dark:border-white/[0.08] flex items-center justify-center shrink-0 shadow-sm transition-all duration-300 group-hover/brand:border-violet-500/30">
-              <img
-                src="/logo/brand-logo.png"
-                alt="ConsistPay Logo"
-                className="h-4 w-auto object-contain select-none transition-transform duration-300 group-hover/brand:scale-105"
-              />
-            </div>
-            
-            {!isCollapsed && (
-              <div className="flex flex-col animate-in fade-in duration-200 justify-center">
-                <span className="text-sm font-black tracking-tight text-zinc-900 dark:text-white leading-none">
-                  Consist<span className="text-emerald-400">Pay</span>
-                </span>
-              </div>
-            )}
-          </Link>
+        <div className={`flex items-center border-b border-zinc-250 dark:border-white/[0.04] pb-4.5 min-h-[48px] ${
+          isCollapsed ? "justify-center" : "justify-between"
+        }`}>
+          {isCollapsed ? (
+            <button 
+              onClick={() => setIsCollapsed(false)}
+              className="p-1.5 rounded-lg bg-zinc-200/50 dark:bg-white/5 hover:bg-zinc-200 dark:hover:bg-white/10 text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-all cursor-pointer shadow-sm active:scale-95 shrink-0"
+              title="Expand Sidebar"
+            >
+              <PanelLeftOpen className="w-4 h-4" />
+            </button>
+          ) : (
+            <>
+              <Link to="/dashboard" className="flex items-center gap-3 shrink-0 group/brand animate-in fade-in duration-200">
+                <div className="w-7.5 h-7.5 rounded-xl bg-gradient-to-tr from-violet-500/10 to-emerald-500/10 border border-zinc-200 dark:border-white/[0.08] flex items-center justify-center shrink-0 shadow-sm transition-all duration-300 group-hover/brand:border-violet-500/30">
+                  <img
+                    src="/logo/brand-logo.png"
+                    alt="ConsistPay Logo"
+                    className="h-4 w-auto object-contain select-none transition-transform duration-300 group-hover/brand:scale-105"
+                  />
+                </div>
+                
+                <div className="flex flex-col justify-center">
+                  <span className="text-sm font-black tracking-tight text-zinc-900 dark:text-white leading-none">
+                    Consist<span className="text-emerald-400">Pay</span>
+                  </span>
+                </div>
+              </Link>
+
+              <button 
+                onClick={() => setIsCollapsed(true)}
+                className="hidden md:block p-1.5 rounded-lg bg-zinc-100 dark:bg-white/5 hover:bg-zinc-200 dark:hover:bg-white/10 text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-all cursor-pointer shadow-sm active:scale-95 shrink-0"
+                title="Collapse Sidebar"
+              >
+                <PanelLeftClose className="w-4 h-4" />
+              </button>
+            </>
+          )}
 
           {/* Close button for Mobile drawer only */}
           {isMobileOpen && (
             <button 
               onClick={() => setIsMobileOpen(false)}
-              className="md:hidden p-1.5 rounded-lg hover:bg-white/5 text-zinc-400 hover:text-white cursor-pointer"
+              className="md:hidden p-1.5 rounded-lg hover:bg-white/5 text-zinc-450 hover:text-white cursor-pointer"
             >
               <X className="w-4 h-4" />
             </button>
@@ -330,15 +350,6 @@ export function Sidebar() {
             </span>
           </button>
         </div>
-
-        {/* Collapse Toggle Chevron button (Desktop only) */}
-        <button
-          onClick={() => setIsCollapsed(!isCollapsed)}
-          className="hidden md:flex items-center justify-center p-2 rounded-xl border border-white/[0.04] bg-white/[0.01] hover:bg-white/[0.04] text-zinc-400 hover:text-white transition-all cursor-pointer shadow-md active:scale-95 shrink-0"
-          title={isCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
-        >
-          {isCollapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
-        </button>
       </div>
     </div>
   );
