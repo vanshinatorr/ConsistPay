@@ -21,6 +21,11 @@ const withdrawalSchema = new mongoose.Schema(
       enum: ["pending", "completed", "failed"],
       default: "pending",
     },
+    walletType: {
+      type: String,
+      enum: ["consistency", "battle"],
+      default: "consistency",
+    },
   },
   { timestamps: true }
 );

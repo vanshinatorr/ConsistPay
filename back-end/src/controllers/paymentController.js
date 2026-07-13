@@ -408,6 +408,7 @@ const withdrawFunds = async (req, res) => {
       userId,
       amount: amountVal,
       upiId,
+      walletType: type,
       status: "pending"
     });
 

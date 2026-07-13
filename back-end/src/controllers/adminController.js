@@ -229,4 +229,95 @@ const dismissBetaRequest = async (req, res) => {
   }
 };
 
-module.exports = { getAdminStats, getBetaRequests, dismissBetaRequest };
+const getAdminWithdrawals = async (req, res) => {
+  try {
+    const withdrawals = await Withdrawal.find({})
+      .populate("userId", "name email")
+      .sort({ createdAt: -1 });
+    res.status(200).json(withdrawals);
+  } catch (error) {
+    console.error("Error fetching admin withdrawals:", error);
+    res.status(500).json({ message: error.message });
+  }
+};
+
+const approveWithdrawal = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const withdrawal = await Withdrawal.findById(id);
+    if (!withdrawal) {
+      return res.status(404).json({ message: "Withdrawal request not found." });
+    }
+    if (withdrawal.status !== "pending") {
+      return res.status(400).json({ message: "Withdrawal request is already resolved." });
+    }
+    withdrawal.status = "completed";
+    await withdrawal.save();
+
+    // Create a notification for the user
+    const Notification = require("../models/Notification");
+    await Notification.create({
+      userId: withdrawal.userId,
+      title: "Withdrawal Completed",
+      desc: `Your withdrawal of ₹${withdrawal.amount} has been successfully sent to UPI: ${withdrawal.upiId}.`,
+      type: "wallet",
+      read: false
+    });
+
+    res.status(200).json({ message: "Withdrawal approved successfully.", withdrawal });
+  } catch (error) {
+    console.error("Error approving withdrawal:", error);
+    res.status(500).json({ message: error.message });
+  }
+};
+
+const rejectWithdrawal = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const withdrawal = await Withdrawal.findById(id);
+    if (!withdrawal) {
+      return res.status(404).json({ message: "Withdrawal request not found." });
+    }
+    if (withdrawal.status !== "pending") {
+      return res.status(400).json({ message: "Withdrawal request is already resolved." });
+    }
+    withdrawal.status = "failed";
+    await withdrawal.save();
+
+    // Refund the amount to user's wallet
+    const User = require("../models/User");
+    const user = await User.findById(withdrawal.userId);
+    if (user) {
+      if (withdrawal.walletType === "battle") {
+        user.battleBalance += withdrawal.amount;
+      } else {
+        user.balance += withdrawal.amount;
+      }
+      await user.save();
+    }
+
+    // Create notification
+    const Notification = require("../models/Notification");
+    await Notification.create({
+      userId: withdrawal.userId,
+      title: "Withdrawal Failed",
+      desc: `Your withdrawal request of ₹${withdrawal.amount} failed. Funds have been refunded to your wallet.`,
+      type: "wallet",
+      read: false
+    });
+
+    res.status(200).json({ message: "Withdrawal rejected successfully and funds refunded.", withdrawal });
+  } catch (error) {
+    console.error("Error rejecting withdrawal:", error);
+    res.status(500).json({ message: error.message });
+  }
+};
+
+module.exports = { 
+  getAdminStats, 
+  getBetaRequests, 
+  dismissBetaRequest, 
+  getAdminWithdrawals, 
+  approveWithdrawal, 
+  rejectWithdrawal 
+};

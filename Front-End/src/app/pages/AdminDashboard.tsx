@@ -118,9 +118,15 @@ const MOCK_BETA_REQUESTS = [
   { _id: "mock-beta-5", userId: { name: "Karan Johar", email: "karan.johar@gmail.com" }, category: "Cycling", createdAt: new Date(Date.now() - 2 * 24 * 3600 * 1000).toISOString() }
 ];
 
+const MOCK_WITHDRAWALS = [
+  { _id: "mock-w-1", userId: { name: "Keshav Sharma", email: "keshav@gmail.com" }, amount: 200, upiId: "keshav@ybl", walletType: "battle", status: "pending", createdAt: new Date(Date.now() - 3600 * 1000 * 2).toISOString() },
+  { _id: "mock-w-2", userId: { name: "Vansh Vijay", email: "vanshvijay9784@gmail.com" }, amount: 50, upiId: "vansh@axl", walletType: "consistency", status: "completed", createdAt: new Date(Date.now() - 3600 * 1000 * 24).toISOString() },
+  { _id: "mock-w-3", userId: { name: "Jay Kumar", email: "jaykumar@gmail.com" }, amount: 100, upiId: "jay@paytm", walletType: "battle", status: "failed", createdAt: new Date(Date.now() - 3600 * 1000 * 48).toISOString() }
+];
+
 export function AdminDashboard() {
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState<"overview" | "growth" | "users" | "platform" | "health" | "beta" | "reserved">("overview");
+  const [activeTab, setActiveTab] = useState<"overview" | "growth" | "users" | "platform" | "health" | "beta" | "withdrawals">("overview");
   const [timeFilter, setTimeFilter] = useState<"today" | "7d" | "30d" | "90d">("7d");
   
   // 3-State Admin Console Mode: default is day_demo (Mock Data) on load/refresh!
@@ -168,6 +174,11 @@ export function AdminDashboard() {
   const [betaRequests, setBetaRequests] = useState<any[]>([]);
   const [betaLoading, setBetaLoading] = useState(false);
 
+  // Withdrawals states
+  const [withdrawals, setWithdrawals] = useState<any[]>([]);
+  const [withdrawalsLoading, setWithdrawalsLoading] = useState(false);
+  const [demoWithdrawals, setDemoWithdrawals] = useState<any[]>(MOCK_WITHDRAWALS);
+
   // Live activity timeline state
   const [activities, setActivities] = useState<ActivityLog[]>([]);
 
@@ -175,8 +186,10 @@ export function AdminDashboard() {
   const activeStats = isDemoMode ? MOCK_STATS : stats;
   const activeActivities = isDemoMode ? MOCK_STATS.activityFeed : activities;
   const activeBetaRequests = isDemoMode ? MOCK_BETA_REQUESTS : betaRequests;
+  const activeWithdrawals = isDemoMode ? demoWithdrawals : withdrawals;
   const activeStatsLoading = isDemoMode ? false : statsLoading;
   const activeBetaLoading = isDemoMode ? false : betaLoading;
+  const activeWithdrawalsLoading = isDemoMode ? false : withdrawalsLoading;
 
   // 1. Authenticate user role
   useEffect(() => {
@@ -268,6 +281,77 @@ export function AdminDashboard() {
         setBetaRequests(prev => prev.filter(r => r._id !== id));
       } else {
         alert("Failed to dismiss request.");
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const fetchWithdrawals = async () => {
+    try {
+      setWithdrawalsLoading(true);
+      const res = await fetch(`${API}/api/admin/withdrawals`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setWithdrawals(data);
+      }
+    } catch (err) {
+      console.error("Failed to fetch withdrawals:", err);
+    } finally {
+      setWithdrawalsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (activeTab === "withdrawals" && token && isUserAdmin) {
+      fetchWithdrawals();
+    }
+  }, [activeTab, token, isUserAdmin]);
+
+  const handleApproveWithdrawal = async (id: string) => {
+    if (isDemoMode) {
+      setDemoWithdrawals(prev => prev.map(w => w._id === id ? { ...w, status: "completed" } : w));
+      return;
+    }
+    if (!window.confirm("Are you sure you want to APPROVE this withdrawal? The transaction should be sent manually to their UPI ID.")) {
+      return;
+    }
+    try {
+      const res = await fetch(`${API}/api/admin/withdrawals/${id}/approve`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (res.ok) {
+        fetchWithdrawals();
+      } else {
+        const data = await res.json();
+        alert(data.message || "Failed to approve withdrawal.");
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleRejectWithdrawal = async (id: string) => {
+    if (isDemoMode) {
+      setDemoWithdrawals(prev => prev.map(w => w._id === id ? { ...w, status: "failed" } : w));
+      return;
+    }
+    if (!window.confirm("Are you sure you want to REJECT this withdrawal? The funds will be automatically refunded to their wallet.")) {
+      return;
+    }
+    try {
+      const res = await fetch(`${API}/api/admin/withdrawals/${id}/reject`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (res.ok) {
+        fetchWithdrawals();
+      } else {
+        const data = await res.json();
+        alert(data.message || "Failed to reject withdrawal.");
       }
     } catch (err) {
       console.error(err);
@@ -417,7 +501,7 @@ export function AdminDashboard() {
               { id: "platform", label: "Platform & Wallet", icon: Coins },
               { id: "health", label: "System Health", icon: Server },
               { id: "beta", label: "Beta Requests", icon: BookOpen },
-              { id: "reserved", label: "Reserved Sections", icon: DollarSign }
+              { id: "withdrawals", label: "Withdrawals", icon: DollarSign }
             ].map(tab => {
               const Icon = tab.icon;
               const active = activeTab === tab.id;
@@ -866,37 +950,109 @@ export function AdminDashboard() {
                 </div>
               )}
 
-              {/* TAB 6: FUTURE RESERVED SECTIONS */}
-              {activeTab === "reserved" && (
+              {/* TAB 6: WITHDRAWALS MANAGEMENT */}
+              {activeTab === "withdrawals" && (
                 <div className="space-y-6 animate-in fade-in duration-300">
-                  <h3 className={`text-sm font-bold uppercase tracking-wider ${isDark ? "text-white" : "text-zinc-900"}`}>Series-A Roadmap</h3>
-                  
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {[
-                      { title: "Institutional Payouts", desc: "Integrate college and incubation analytics tracking.", icon: BookOpen },
-                      { title: "Subscription Metrics", desc: "Monitor Pro plans, billing cycles, and MRR growth.", icon: DollarSign },
-                      { title: "Incubation Analytics", desc: "Cohort analysis dashboards for incubation centers.", icon: Briefcase },
-                      { title: "Referrals & Network Hooks", desc: "Viral loop metrics and peer referral coin payouts.", icon: HelpCircle }
-                    ].map((res, i) => {
-                      const Icon = res.icon;
-                      return (
-                        <div key={i} className={`border rounded-2xl p-6 flex flex-col justify-between opacity-60 hover:opacity-90 transition-all select-none min-h-[140px] ${
-                          isDark ? "bg-[#0C0C0F]/50 border-dashed border-white/[0.06]" : "bg-white border-dashed border-zinc-250 shadow-[0_1px_3px_rgba(0,0,0,0.01)]"
-                        }`}>
-                          <div className="flex items-center justify-between">
-                            <span className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider">Placeholder Slot</span>
-                            <div className={`p-1.5 border rounded-lg ${isDark ? "bg-white/[0.02] border-white/[0.04] text-zinc-500" : "bg-zinc-50 border-zinc-200 text-zinc-400"}`}>
-                              <Icon className="w-3.5 h-3.5" />
-                            </div>
-                          </div>
-                          <div className="space-y-1 mt-4">
-                            <h5 className={`font-bold text-xs leading-none ${isDark ? "text-white" : "text-zinc-900"}`}>{res.title}</h5>
-                            <p className={`text-[10px] leading-relaxed mt-1 ${isDark ? "text-zinc-550" : "text-zinc-450"}`}>{res.desc}</p>
-                          </div>
-                        </div>
-                      );
-                    })}
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h3 className={`text-sm font-bold uppercase tracking-wider ${isDark ? "text-white" : "text-zinc-900"}`}>
+                        Withdrawal Requests
+                      </h3>
+                      <p className={`text-[10px] mt-0.5 ${isDark ? "text-zinc-550" : "text-zinc-450"}`}>
+                        Process pending user withdrawals and handle payouts directly.
+                      </p>
+                    </div>
                   </div>
+
+                  {activeWithdrawalsLoading ? (
+                    <div className="py-8 text-center text-xs text-zinc-550 animate-pulse">Loading withdrawal transactions...</div>
+                  ) : activeWithdrawals.length === 0 ? (
+                    <div className={`border rounded-2xl p-8 text-center text-xs font-semibold ${
+                      isDark ? "bg-[#0C0C0F]/50 border-white/[0.04] text-zinc-500" : "bg-white border-zinc-200 text-zinc-450 shadow-sm"
+                    }`}>
+                      No withdrawal requests found in database.
+                    </div>
+                  ) : (
+                    <div className={`border rounded-2xl overflow-hidden ${
+                      isDark ? "bg-[#0C0C0F]/30 border-white/[0.04]" : "bg-white border-zinc-200 shadow-sm"
+                    }`}>
+                      <div className="overflow-x-auto">
+                        <table className="w-full text-left border-collapse">
+                          <thead>
+                            <tr className={`border-b text-[10px] uppercase font-bold tracking-wider ${
+                              isDark ? "border-white/[0.04] bg-[#0E0E12] text-zinc-500" : "border-zinc-200 bg-zinc-50/50 text-zinc-450"
+                            }`}>
+                              <th className="py-3 px-4">User</th>
+                              <th className="py-3 px-4">Amount</th>
+                              <th className="py-3 px-4">Wallet</th>
+                              <th className="py-3 px-4">UPI ID</th>
+                              <th className="py-3 px-4">Date</th>
+                              <th className="py-3 px-4">Status</th>
+                              <th className="py-3 px-4 text-right">Actions</th>
+                            </tr>
+                          </thead>
+                          <tbody className="divide-y divide-zinc-200 dark:divide-white/[0.04] text-xs">
+                            {activeWithdrawals.map((w) => (
+                              <tr key={w._id} className={isDark ? "hover:bg-white/[0.01]" : "hover:bg-zinc-50/30"}>
+                                <td className="py-3.5 px-4">
+                                  <div className={`font-bold ${isDark ? "text-zinc-200" : "text-zinc-800"}`}>{w.userId?.name}</div>
+                                  <div className={`text-[10px] ${isDark ? "text-zinc-550" : "text-zinc-450"}`}>{w.userId?.email}</div>
+                                </td>
+                                <td className={`py-3.5 px-4 font-mono font-bold ${isDark ? "text-white" : "text-zinc-900"}`}>
+                                  ₹{w.amount}
+                                </td>
+                                <td className="py-3.5 px-4 uppercase font-semibold text-[10px] text-zinc-500 dark:text-zinc-450">
+                                  {w.walletType || "consistency"}
+                                </td>
+                                <td className={`py-3.5 px-4 font-mono ${isDark ? "text-zinc-350" : "text-zinc-650"}`}>
+                                  {w.upiId}
+                                </td>
+                                <td className={`py-3.5 px-4 ${isDark ? "text-zinc-455" : "text-zinc-500"}`}>
+                                  {new Date(w.createdAt).toLocaleDateString("en-US", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })}
+                                </td>
+                                <td className="py-3.5 px-4">
+                                  <span className={`text-[9px] px-2 py-0.5 rounded-full font-bold uppercase flex items-center gap-1 w-fit ${
+                                    w.status === "completed" 
+                                      ? "text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 border border-emerald-500/20"
+                                      : w.status === "failed"
+                                      ? "text-red-555 bg-red-500/10 border border-red-500/20"
+                                      : "text-amber-500 bg-amber-500/10 border border-amber-500/20"
+                                  }`}>
+                                    <span className={`w-1 h-1 rounded-full ${
+                                      w.status === "completed" ? "bg-emerald-600 dark:bg-emerald-400" : w.status === "failed" ? "bg-red-500" : "bg-amber-400"
+                                    }`} />
+                                    {w.status}
+                                  </span>
+                                </td>
+                                <td className="py-3.5 px-4 text-right">
+                                  {w.status === "pending" ? (
+                                    <div className="flex items-center justify-end gap-1.5">
+                                      <button
+                                        onClick={() => handleApproveWithdrawal(w._id)}
+                                        className="h-7 px-2.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-[10px] font-bold transition-all shadow-sm shadow-emerald-500/10 cursor-pointer"
+                                      >
+                                        Approve
+                                      </button>
+                                      <button
+                                        onClick={() => handleRejectWithdrawal(w._id)}
+                                        className="h-7 px-2.5 bg-red-650 hover:bg-red-500 text-white border border-transparent rounded-lg text-[10px] font-bold transition-all shadow-sm shadow-red-500/10 cursor-pointer"
+                                      >
+                                        Reject
+                                      </button>
+                                    </div>
+                                  ) : (
+                                    <span className={`text-[10px] font-semibold ${isDark ? "text-zinc-600" : "text-zinc-400"}`}>
+                                      Processed
+                                    </span>
+                                  )}
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
             </>

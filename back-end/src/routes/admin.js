@@ -1,6 +1,13 @@
 const express = require("express");
 const router = express.Router();
-const { getAdminStats, getBetaRequests, dismissBetaRequest } = require("../controllers/adminController");
+const { 
+  getAdminStats, 
+  getBetaRequests, 
+  dismissBetaRequest,
+  getAdminWithdrawals,
+  approveWithdrawal,
+  rejectWithdrawal
+} = require("../controllers/adminController");
 const { protect } = require("../middleware/authMiddleware");
 
 // Custom admin protect middleware
@@ -15,5 +22,10 @@ const adminProtect = (req, res, next) => {
 router.get("/stats", protect, adminProtect, getAdminStats);
 router.get("/beta-requests", protect, adminProtect, getBetaRequests);
 router.delete("/beta-requests/:id", protect, adminProtect, dismissBetaRequest);
+
+// Withdrawal management endpoints
+router.get("/withdrawals", protect, adminProtect, getAdminWithdrawals);
+router.post("/withdrawals/:id/approve", protect, adminProtect, approveWithdrawal);
+router.post("/withdrawals/:id/reject", protect, adminProtect, rejectWithdrawal);
 
 module.exports = router;
