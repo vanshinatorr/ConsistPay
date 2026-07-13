@@ -143,12 +143,12 @@ export function AdminDashboard() {
   }, [theme]);
 
   const handleToggleState = () => {
-    if (adminState === "day_real") {
-      setAdminState("day_demo");
-    } else if (adminState === "day_demo") {
+    if (adminState === "day_demo") {
+      setAdminState("day_real");
+    } else if (adminState === "day_real") {
       setAdminState("dark_real");
     } else {
-      setAdminState("day_real");
+      setAdminState("day_demo");
     }
   };
   
