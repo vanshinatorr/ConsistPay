@@ -174,25 +174,23 @@ export function WithdrawModal({
           <button
             type="button"
             onClick={() => { setWalletType("consistency"); setAmount(""); setError(""); setSuccess(false); }}
-            className={`py-2 px-3 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
+            className={`py-2 px-3 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center justify-center ${
               walletType === "consistency" 
                 ? "bg-white dark:bg-white/10 text-zinc-900 dark:text-white border border-zinc-200 dark:border-white/[0.08] shadow-sm" 
-                : "text-zinc-500 hover:text-zinc-800 dark:text-zinc-450 dark:hover:text-zinc-200"
+                : "text-zinc-500 hover:text-zinc-800 dark:text-zinc-455 dark:hover:text-zinc-200"
             }`}
           >
-            <Zap className={`w-3.5 h-3.5 ${walletType === "consistency" ? "text-amber-500" : "text-zinc-400"}`} />
             Habits Wallet (₹{consistencyBalance})
           </button>
           <button
             type="button"
             onClick={() => { setWalletType("battle"); setAmount(""); setError(""); setSuccess(false); }}
-            className={`py-2 px-3 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
+            className={`py-2 px-3 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center justify-center ${
               walletType === "battle" 
                 ? "bg-white dark:bg-white/10 text-zinc-900 dark:text-white border border-zinc-200 dark:border-white/[0.08] shadow-sm" 
-                : "text-zinc-500 hover:text-zinc-800 dark:text-zinc-450 dark:hover:text-zinc-200"
+                : "text-zinc-500 hover:text-zinc-800 dark:text-zinc-455 dark:hover:text-zinc-200"
             }`}
           >
-            <Swords className={`w-3.5 h-3.5 ${walletType === "battle" ? "text-violet-500 dark:text-violet-400" : "text-zinc-400"}`} />
             Battle Wallet (₹{battleBalance})
           </button>
         </div>
