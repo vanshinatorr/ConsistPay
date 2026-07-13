@@ -375,36 +375,20 @@ export function AdminDashboard() {
           {/* Right Header items: Theme toggle and overrides */}
           <div className="flex items-center gap-4">
             
-            {/* 3-State Mode Toggle (Day/Real -> Day/Demo -> Dark/Real) */}
+            {/* Stealth 3-State Mode Toggle (Day/Real -> Day/Demo -> Dark/Real) */}
             <button
               onClick={handleToggleState}
-              className={`px-3 py-1.5 rounded-xl border transition-all cursor-pointer flex items-center gap-2 ${
+              className={`p-2 rounded-xl border transition-all cursor-pointer flex items-center justify-center ${
                 isDark 
                   ? "border-white/[0.08] bg-[#121216] hover:bg-white/5 text-zinc-400" 
                   : "border-zinc-200 bg-white hover:bg-zinc-50 text-zinc-650 shadow-sm"
               }`}
-              title="Toggle Day Mode / Demo Mode / Dark Mode"
+              title="Toggle Theme"
             >
-              {adminState === "day_real" && (
-                <>
-                  <Sun className="w-4 h-4 text-amber-500 animate-spin-slow" />
-                  <span className="text-[10px] font-bold text-zinc-700">Day •</span>
-                </>
-              )}
-              {adminState === "day_demo" && (
-                <>
-                  <div className="relative flex items-center justify-center shrink-0">
-                    <Sun className="w-4 h-4 text-amber-500" />
-                    <span className="absolute -top-1 -right-1.5 text-[7px] font-black bg-violet-600 text-white px-0.5 rounded-full scale-75">⚡</span>
-                  </div>
-                  <span className="text-[10px] font-bold text-violet-600 animate-pulse">Day (Demo)</span>
-                </>
-              )}
-              {adminState === "dark_real" && (
-                <>
-                  <Moon className="w-4 h-4 text-violet-400" />
-                  <span className="text-[10px] font-bold text-zinc-400">Dark •</span>
-                </>
+              {isDark ? (
+                <Moon className="w-4 h-4 text-violet-600" />
+              ) : (
+                <Sun className="w-4 h-4 text-amber-500" />
               )}
             </button>
 
