@@ -122,12 +122,16 @@ export function AdminDashboard() {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<"overview" | "growth" | "users" | "platform" | "health" | "beta" | "reserved">("overview");
   const [timeFilter, setTimeFilter] = useState<"today" | "7d" | "30d" | "90d">("7d");
-  const [isDemoMode, setIsDemoMode] = useState(false);
   
-  // Theme state (persisted in localStorage!)
-  const [theme, setTheme] = useState<"dark" | "light">(() => {
-    return (localStorage.getItem("admin_theme") || localStorage.getItem("app_theme") as "dark" | "light") || "dark";
+  // 3-State Admin Console Mode: day_real -> day_demo -> dark_real
+  const [adminState, setAdminState] = useState<"day_real" | "day_demo" | "dark_real">(() => {
+    const savedTheme = localStorage.getItem("admin_theme") || "dark";
+    return savedTheme === "light" ? "day_real" : "dark_real";
   });
+
+  const isDark = adminState === "dark_real";
+  const isDemoMode = adminState === "day_demo";
+  const theme = isDark ? "dark" : "light";
 
   // Persist theme choice and update document class
   useEffect(() => {
@@ -140,6 +144,16 @@ export function AdminDashboard() {
       document.documentElement.classList.remove("dark");
     }
   }, [theme]);
+
+  const handleToggleState = () => {
+    if (adminState === "day_real") {
+      setAdminState("day_demo");
+    } else if (adminState === "day_demo") {
+      setAdminState("dark_real");
+    } else {
+      setAdminState("day_real");
+    }
+  };
   
   // Authorization states
   const [userData, setUserData] = useState<any>(null);
@@ -263,23 +277,7 @@ export function AdminDashboard() {
     }
   };
 
-  // Simulator helper to show off live updates to investors
-  const handleSimulateEvent = () => {
-    const names = ["Aarav", "Meera", "Rohan", "Sneha", "Karan", "Tanvi"];
-    const problems = ["3Sum Closest", "Merge Intervals", "Valid Parentheses", "LRU Cache", "Group Anagrams"];
-    const randomName = names[Math.floor(Math.random() * names.length)];
-    
-    const newLog: ActivityLog = {
-      id: `sim-${Date.now()}`,
-      time: "Just now",
-      user: randomName,
-      event: `Solved "${problems[Math.floor(Math.random() * problems.length)]}"`,
-      detail: "Verified on LeetCode • +50 Coins",
-      type: "solve"
-    };
-    
-    setActivities(prev => [newLog, ...prev.slice(0, 7)]);
-  };
+
 
   if (authLoading) {
     return (
@@ -344,7 +342,6 @@ export function AdminDashboard() {
   const areaPath = points.length > 0 ? `${linePath} L 100 100 L 0 100 Z` : "M 0 100";
 
   // Dynamic theming helper values
-  const isDark = theme === "dark";
 
   return (
     <div className={`min-h-screen flex flex-col font-sans select-none antialiased transition-colors duration-300 ${
@@ -381,20 +378,36 @@ export function AdminDashboard() {
           {/* Right Header items: Theme toggle and overrides */}
           <div className="flex items-center gap-4">
             
-            {/* Theme Toggle Switch */}
+            {/* 3-State Mode Toggle (Day/Real -> Day/Demo -> Dark/Real) */}
             <button
-              onClick={() => setTheme(isDark ? "light" : "dark")}
-              className={`p-2 rounded-xl border transition-all cursor-pointer flex items-center justify-center ${
+              onClick={handleToggleState}
+              className={`px-3 py-1.5 rounded-xl border transition-all cursor-pointer flex items-center gap-2 ${
                 isDark 
                   ? "border-white/[0.08] bg-[#121216] hover:bg-white/5 text-zinc-400" 
-                  : "border-zinc-200 bg-white hover:bg-zinc-50 text-zinc-600 shadow-sm"
+                  : "border-zinc-200 bg-white hover:bg-zinc-50 text-zinc-650 shadow-sm"
               }`}
-              title={isDark ? "Switch to Light Mode" : "Switch to Dark Mode"}
+              title="Toggle Day Mode / Demo Mode / Dark Mode"
             >
-              {isDark ? (
-                <Sun className="w-4 h-4 text-amber-400" />
-              ) : (
-                <Moon className="w-4 h-4 text-violet-600" />
+              {adminState === "day_real" && (
+                <>
+                  <Sun className="w-4 h-4 text-amber-500 animate-spin-slow" />
+                  <span className="text-[10px] font-bold text-zinc-700">Day (Real)</span>
+                </>
+              )}
+              {adminState === "day_demo" && (
+                <>
+                  <div className="relative flex items-center justify-center shrink-0">
+                    <Sun className="w-4 h-4 text-amber-500" />
+                    <span className="absolute -top-1 -right-1.5 text-[7px] font-black bg-violet-600 text-white px-0.5 rounded-full scale-75">⚡</span>
+                  </div>
+                  <span className="text-[10px] font-bold text-violet-600 animate-pulse">Day (Demo)</span>
+                </>
+              )}
+              {adminState === "dark_real" && (
+                <>
+                  <Moon className="w-4 h-4 text-violet-400" />
+                  <span className="text-[10px] font-bold text-zinc-400">Dark (Real)</span>
+                </>
               )}
             </button>
 
@@ -447,49 +460,6 @@ export function AdminDashboard() {
               );
             })}
           </nav>
-
-          {/* Interactive Live Live Event simulator */}
-          <div className={`border rounded-2xl p-4 space-y-3.5 transition-colors duration-300 ${
-            isDark ? "bg-gradient-to-b from-zinc-950 to-[#0F0F12] border-white/[0.04]" : "bg-gradient-to-b from-white to-zinc-50 border-zinc-200/60 shadow-[0_1px_3px_rgba(0,0,0,0.01)]"
-          }`}>
-            <div className="flex items-center justify-between">
-              <h4 className={`text-xs font-bold ${isDark ? "text-zinc-350" : "text-zinc-700"}`}>Live Demo Controller</h4>
-              <span className={`text-[8px] font-bold px-1.5 py-0.5 rounded border tracking-wider uppercase ${
-                isDemoMode 
-                  ? "bg-amber-500/10 text-amber-500 border-amber-500/25 animate-pulse" 
-                  : "bg-emerald-500/10 text-emerald-500 border-emerald-500/25"
-              }`}>
-                {isDemoMode ? "Mocked" : "Live DB"}
-              </span>
-            </div>
-            
-            <p className={`text-[10px] leading-relaxed ${isDark ? "text-zinc-550" : "text-zinc-450"}`}>
-              Toggle high-fidelity mock data (60+ active users) or simulate individual solve logs.
-            </p>
-
-            <div className="flex flex-col gap-2 pt-1">
-              <button
-                onClick={() => setIsDemoMode(!isDemoMode)}
-                className={`w-full h-9 rounded-lg text-xs font-bold flex items-center justify-center gap-2 cursor-pointer transition-all border ${
-                  isDemoMode
-                    ? "bg-amber-500 hover:bg-amber-600 text-black border-transparent"
-                    : isDark
-                    ? "bg-white/5 hover:bg-white/10 text-white border-white/[0.04]"
-                    : "bg-zinc-100 hover:bg-zinc-200 text-zinc-800 border-zinc-200"
-                }`}
-              >
-                ⚡ {isDemoMode ? "Switch to Live DB Data" : "Load 60+ Mock Users"}
-              </button>
-
-              <button
-                onClick={handleSimulateEvent}
-                className="w-full h-9 bg-violet-600 hover:bg-violet-500 text-white rounded-lg text-xs font-semibold flex items-center justify-center gap-2 cursor-pointer transition-all shadow-md shadow-violet-500/10 disabled:opacity-50"
-                disabled={isDemoMode}
-              >
-                <Play className="w-3 h-3 fill-white" /> Simulate Solve Event
-              </button>
-            </div>
-          </div>
         </div>
 
         {/* Right Content Pane */}
