@@ -123,11 +123,8 @@ export function AdminDashboard() {
   const [activeTab, setActiveTab] = useState<"overview" | "growth" | "users" | "platform" | "health" | "beta" | "reserved">("overview");
   const [timeFilter, setTimeFilter] = useState<"today" | "7d" | "30d" | "90d">("7d");
   
-  // 3-State Admin Console Mode: day_real -> day_demo -> dark_real
-  const [adminState, setAdminState] = useState<"day_real" | "day_demo" | "dark_real">(() => {
-    const savedTheme = localStorage.getItem("admin_theme") || "dark";
-    return savedTheme === "light" ? "day_real" : "dark_real";
-  });
+  // 3-State Admin Console Mode: default is day_demo (Mock Data) on load/refresh!
+  const [adminState, setAdminState] = useState<"day_real" | "day_demo" | "dark_real">("day_demo");
 
   const isDark = adminState === "dark_real";
   const isDemoMode = adminState === "day_demo";
@@ -391,7 +388,7 @@ export function AdminDashboard() {
               {adminState === "day_real" && (
                 <>
                   <Sun className="w-4 h-4 text-amber-500 animate-spin-slow" />
-                  <span className="text-[10px] font-bold text-zinc-700">Day (Real)</span>
+                  <span className="text-[10px] font-bold text-zinc-700">Day •</span>
                 </>
               )}
               {adminState === "day_demo" && (
@@ -406,7 +403,7 @@ export function AdminDashboard() {
               {adminState === "dark_real" && (
                 <>
                   <Moon className="w-4 h-4 text-violet-400" />
-                  <span className="text-[10px] font-bold text-zinc-400">Dark (Real)</span>
+                  <span className="text-[10px] font-bold text-zinc-400">Dark •</span>
                 </>
               )}
             </button>
