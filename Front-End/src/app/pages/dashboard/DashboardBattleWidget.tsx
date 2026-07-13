@@ -258,22 +258,25 @@ export function DashboardBattleWidget({ onRefreshRequest }: DashboardBattleWidge
                             {challengeItem.duration}-Day Challenge
                           </span>
                         </div>
-                        <h4 className="text-sm font-extrabold text-zinc-800 dark:text-white tracking-tight">
-                          {isTie 
-                            ? `You and ${oppData.name || "Opponent"} matched scores!` 
-                            : iWon 
-                            ? `You defeated ${oppData.name || "Opponent"}!` 
-                            : `${oppData.name || "Opponent"} won the battle.`}
+                        <h4 className="text-sm font-extrabold text-zinc-800 dark:text-white tracking-tight flex flex-wrap items-center gap-x-2 gap-y-0.5">
+                          <span>
+                            {isTie 
+                              ? `You and ${oppData.name || "Opponent"} matched scores!` 
+                              : iWon 
+                              ? `You defeated ${oppData.name || "Opponent"}!` 
+                              : `${oppData.name || "Opponent"} won the battle.`}
+                          </span>
+                          <span className="hidden sm:inline text-zinc-200 dark:text-white/10 font-normal">|</span>
+                          <span className="text-[11px] text-zinc-550 dark:text-zinc-400 font-medium">
+                            Final Score: <span className="font-semibold text-zinc-700 dark:text-zinc-200">{myData.score}/{challengeItem.duration}</span> vs <span className="font-semibold text-zinc-700 dark:text-zinc-200">{oppData.score}/{challengeItem.duration}</span>
+                          </span>
                         </h4>
-                        <p className="text-[11px] text-zinc-500 dark:text-zinc-400 mb-1.5">
-                          Final Score: <span className="font-semibold text-zinc-700 dark:text-zinc-200">{myData.score}/{challengeItem.duration}</span> vs <span className="font-semibold text-zinc-700 dark:text-zinc-200">{oppData.score}/{challengeItem.duration}</span>
-                        </p>
-                        <p className="text-[10.5px] italic text-blue-600/80 dark:text-blue-400/80 font-medium pt-1.5 border-t border-blue-500/10 dark:border-blue-500/5 max-w-sm sm:max-w-md md:max-w-lg leading-relaxed animate-fade-in">
+                        <p className="text-[11px] font-semibold text-blue-600/90 dark:text-blue-400/80 tracking-tight leading-relaxed pt-0.5">
                           {isTie 
-                            ? "“Iron sharpens iron. Your collective consistency remains unbroken.”" 
+                            ? "Iron sharpens iron. Your collective consistency remains unbroken." 
                             : iWon 
-                            ? "“Greatness is built in the daily grind. You stayed committed when it mattered.”" 
-                            : "“Habits aren’t broken by a single miss; they are rebuilt by showing up next time.”"}
+                            ? "Greatness is built in the daily grind. You stayed committed when it mattered." 
+                            : "Habits aren’t broken by a single miss; they are rebuilt by showing up next time."}
                         </p>
                       </div>
                     </div>
