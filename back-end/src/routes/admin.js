@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { getAdminStats } = require("../controllers/adminController");
+const { getAdminStats, getBetaRequests, dismissBetaRequest } = require("../controllers/adminController");
 const { protect } = require("../middleware/authMiddleware");
 
 // Custom admin protect middleware
@@ -13,5 +13,7 @@ const adminProtect = (req, res, next) => {
 };
 
 router.get("/stats", protect, adminProtect, getAdminStats);
+router.get("/beta-requests", protect, adminProtect, getBetaRequests);
+router.delete("/beta-requests/:id", protect, adminProtect, dismissBetaRequest);
 
 module.exports = router;

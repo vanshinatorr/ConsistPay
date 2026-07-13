@@ -32,7 +32,7 @@ interface ActivityLog {
 
 export function AdminDashboard() {
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState<"overview" | "growth" | "users" | "platform" | "health" | "reserved">("overview");
+  const [activeTab, setActiveTab] = useState<"overview" | "growth" | "users" | "platform" | "health" | "beta" | "reserved">("overview");
   const [timeFilter, setTimeFilter] = useState<"today" | "7d" | "30d" | "90d">("7d");
   
   // Theme state (persisted in localStorage!)
@@ -63,6 +63,10 @@ export function AdminDashboard() {
 
   const API = import.meta.env.VITE_API_URL;
   const token = localStorage.getItem("token") || "";
+
+  // Beta Requests states
+  const [betaRequests, setBetaRequests] = useState<any[]>([]);
+  const [betaLoading, setBetaLoading] = useState(false);
 
   // Live activity timeline state
   const [activities, setActivities] = useState<ActivityLog[]>([]);
@@ -119,6 +123,49 @@ export function AdminDashboard() {
       fetchStats();
     }
   }, [token, isUserAdmin, isAdminOverride]);
+
+  // Fetch Beta access requests
+  const fetchBetaRequests = async () => {
+    try {
+      setBetaLoading(true);
+      const res = await fetch(`${API}/api/admin/beta-requests`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setBetaRequests(data);
+      }
+    } catch (err) {
+      console.error("Failed to fetch beta requests:", err);
+    } finally {
+      setBetaLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (activeTab === "beta" && token && isUserAdmin) {
+      fetchBetaRequests();
+    }
+  }, [activeTab, token, isUserAdmin]);
+
+  const handleDismissBeta = async (id: string) => {
+    if (!window.confirm("Are you sure you want to dismiss/approve this request?")) {
+      return;
+    }
+    try {
+      const res = await fetch(`${API}/api/admin/beta-requests/${id}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (res.ok) {
+        setBetaRequests(prev => prev.filter(r => r._id !== id));
+      } else {
+        alert("Failed to dismiss request.");
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   // Simulator helper to show off live updates to investors
   const handleSimulateEvent = () => {
@@ -279,6 +326,7 @@ export function AdminDashboard() {
               { id: "users", label: "User Analytics", icon: Users },
               { id: "platform", label: "Platform & Wallet", icon: Coins },
               { id: "health", label: "System Health", icon: Server },
+              { id: "beta", label: "Beta Requests", icon: BookOpen },
               { id: "reserved", label: "Reserved Sections", icon: DollarSign }
             ].map(tab => {
               const Icon = tab.icon;
@@ -662,6 +710,85 @@ export function AdminDashboard() {
                       </div>
                     ))}
                   </div>
+                </div>
+              )}
+
+              {/* TAB: BETA REQUESTS */}
+              {activeTab === "beta" && (
+                <div className="space-y-6 animate-in fade-in duration-300">
+                  <div className="flex justify-between items-center">
+                    <div>
+                      <h3 className={`text-base font-extrabold tracking-tight ${isDark ? "text-white" : "text-zinc-900"}`}>
+                        Early Access Beta Enrollments
+                      </h3>
+                      <p className={`text-xs ${isDark ? "text-zinc-550" : "text-zinc-400"}`}>
+                        Manage and approve user requests for upcoming modules (Fitness, Study, etc.)
+                      </p>
+                    </div>
+                  </div>
+
+                  {betaLoading ? (
+                    <div className="text-center py-12 text-zinc-500 text-xs">
+                      Loading beta requests...
+                    </div>
+                  ) : betaRequests.length === 0 ? (
+                    <div className={`border rounded-2xl p-12 text-center text-xs text-zinc-500 transition-colors duration-300 ${
+                      isDark ? "bg-[#0C0C0F] border-white/[0.04]" : "bg-white border-zinc-200/80"
+                    }`}>
+                      No pending beta enrollments found.
+                    </div>
+                  ) : (
+                    <div className={`border rounded-2xl overflow-hidden transition-colors duration-300 ${
+                      isDark ? "bg-[#0C0C0F] border-white/[0.04]" : "bg-white border-zinc-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.015)]"
+                    }`}>
+                      <table className="w-full text-xs text-left border-collapse">
+                        <thead>
+                          <tr className={`border-b transition-colors duration-300 ${
+                            isDark ? "border-white/[0.04] bg-white/[0.01]" : "border-zinc-200/80 bg-zinc-50"
+                          }`}>
+                            <th className={`p-4 font-bold ${isDark ? "text-zinc-400" : "text-zinc-500"}`}>User Info</th>
+                            <th className={`p-4 font-bold ${isDark ? "text-zinc-400" : "text-zinc-500"}`}>Requested Category</th>
+                            <th className={`p-4 font-bold text-center ${isDark ? "text-zinc-400" : "text-zinc-500"}`}>Date Requested</th>
+                            <th className={`p-4 font-bold text-right ${isDark ? "text-zinc-400" : "text-zinc-500"}`}>Action</th>
+                          </tr>
+                        </thead>
+                        <tbody className={`divide-y ${isDark ? "divide-white/[0.04]" : "divide-zinc-150"}`}>
+                          {betaRequests.map((req) => (
+                            <tr key={req._id} className={`transition-all duration-200 ${isDark ? "hover:bg-white/[0.01]" : "hover:bg-zinc-50/50"}`}>
+                              <td className="p-4">
+                                <p className={`font-semibold ${isDark ? "text-white" : "text-zinc-900"}`}>{req.userId?.name || "Deleted User"}</p>
+                                <p className="text-[10px] text-zinc-500">{req.userId?.email || ""}</p>
+                              </td>
+                              <td className="p-4">
+                                <span className={`text-[10px] font-extrabold uppercase tracking-widest border px-2.5 py-0.5 rounded-full ${
+                                  isDark ? "text-violet-400 border-violet-500/20 bg-violet-500/10" : "text-violet-750 border-violet-200 bg-violet-50"
+                                }`}>
+                                  {req.category}
+                                </span>
+                              </td>
+                              <td className="p-4 text-center font-mono text-[10px]">
+                                {new Date(req.createdAt).toLocaleDateString("en-IN", {
+                                  day: "numeric",
+                                  month: "short",
+                                  year: "numeric",
+                                  hour: "2-digit",
+                                  minute: "2-digit"
+                                })}
+                              </td>
+                              <td className="p-4 text-right">
+                                <button
+                                  onClick={() => handleDismissBeta(req._id)}
+                                  className="px-3 py-1.5 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 rounded-lg text-[10px] font-bold border border-emerald-500/20 transition-all cursor-pointer active:scale-95 shadow-sm"
+                                >
+                                  Grant & Resolve
+                                </button>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
                 </div>
               )}
 

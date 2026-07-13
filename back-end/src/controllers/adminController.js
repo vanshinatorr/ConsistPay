@@ -119,11 +119,12 @@ const getAdminStats = async (req, res) => {
 
     const feedEvents = [];
     latestSubmissions.forEach(sub => {
+      if (!sub.userId) return; // Skip if user is null/deleted
       feedEvents.push({
         id: `sub-${sub._id}`,
         time: formatTimeAgo(sub.createdAt),
         rawTime: sub.createdAt,
-        user: sub.userId?.name || "Anonymous",
+        user: sub.userId.name || "Anonymous",
         event: `Solved "${sub.problemTitle || "DSA Problem"}"`,
         detail: `Verified on ${sub.platform} • +50 Coins`,
         type: "solve"
@@ -131,11 +132,12 @@ const getAdminStats = async (req, res) => {
     });
 
     latestLinkages.forEach(link => {
+      if (!link.userId) return; // Skip if user is null/deleted
       feedEvents.push({
         id: `link-${link._id}`,
         time: formatTimeAgo(link.createdAt),
         rawTime: link.createdAt,
-        user: link.userId?.name || "Anonymous",
+        user: link.userId.name || "Anonymous",
         event: `Connected ${link.platform}`,
         detail: `Profile: @${link.platformUsername}`,
         type: "link"
@@ -143,6 +145,7 @@ const getAdminStats = async (req, res) => {
     });
 
     latestUsers.forEach(u => {
+      if (!u) return;
       feedEvents.push({
         id: `user-${u._id}`,
         time: formatTimeAgo(u.createdAt),
@@ -198,4 +201,32 @@ const getAdminStats = async (req, res) => {
   }
 };
 
-module.exports = { getAdminStats };
+const getBetaRequests = async (req, res) => {
+  try {
+    const BetaAccessRequest = require("../models/BetaAccessRequest");
+    const requests = await BetaAccessRequest.find({})
+      .populate("userId", "name email")
+      .sort({ createdAt: -1 });
+
+    // Filter out requests where user is null (deleted users)
+    const validRequests = requests.filter(r => r.userId !== null);
+    res.status(200).json(validRequests);
+  } catch (error) {
+    console.error("Error fetching admin beta requests:", error);
+    res.status(500).json({ message: error.message });
+  }
+};
+
+const dismissBetaRequest = async (req, res) => {
+  try {
+    const BetaAccessRequest = require("../models/BetaAccessRequest");
+    const { id } = req.params;
+    await BetaAccessRequest.findByIdAndDelete(id);
+    res.status(200).json({ message: "Beta request resolved successfully." });
+  } catch (error) {
+    console.error("Error dismissing beta request:", error);
+    res.status(500).json({ message: error.message });
+  }
+};
+
+module.exports = { getAdminStats, getBetaRequests, dismissBetaRequest };
