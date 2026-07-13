@@ -231,7 +231,7 @@ export function Sidebar() {
           {isCollapsed ? (
             <button 
               onClick={() => setIsCollapsed(false)}
-              className="p-1.5 rounded-lg bg-zinc-200/50 dark:bg-white/5 hover:bg-zinc-200 dark:hover:bg-white/10 text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-all cursor-pointer shadow-sm active:scale-95 shrink-0"
+              className="p-1.5 rounded-lg bg-transparent hover:bg-zinc-150 dark:hover:bg-white/5 text-zinc-400 hover:text-zinc-700 dark:text-zinc-500 dark:hover:text-white transition-all cursor-pointer active:scale-95 shrink-0"
               title="Expand Sidebar"
             >
               <PanelLeftOpen className="w-4 h-4" />
@@ -256,7 +256,7 @@ export function Sidebar() {
 
               <button 
                 onClick={() => setIsCollapsed(true)}
-                className="hidden md:block p-1.5 rounded-lg bg-zinc-100 dark:bg-white/5 hover:bg-zinc-200 dark:hover:bg-white/10 text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-all cursor-pointer shadow-sm active:scale-95 shrink-0"
+                className="hidden md:block p-1.5 rounded-lg bg-transparent hover:bg-zinc-150 dark:hover:bg-white/5 text-zinc-400 hover:text-zinc-700 dark:text-zinc-500 dark:hover:text-white transition-all cursor-pointer active:scale-95 shrink-0"
                 title="Collapse Sidebar"
               >
                 <PanelLeftClose className="w-4 h-4" />
