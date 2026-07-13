@@ -265,8 +265,15 @@ export function DashboardBattleWidget({ onRefreshRequest }: DashboardBattleWidge
                             ? `You defeated ${oppData.name || "Opponent"}!` 
                             : `${oppData.name || "Opponent"} won the battle.`}
                         </h4>
-                        <p className="text-[11px] text-zinc-500 dark:text-zinc-400">
+                        <p className="text-[11px] text-zinc-500 dark:text-zinc-400 mb-1.5">
                           Final Score: <span className="font-semibold text-zinc-700 dark:text-zinc-200">{myData.score}/{challengeItem.duration}</span> vs <span className="font-semibold text-zinc-700 dark:text-zinc-200">{oppData.score}/{challengeItem.duration}</span>
+                        </p>
+                        <p className="text-[10.5px] italic text-blue-600/80 dark:text-blue-400/80 font-medium pt-1.5 border-t border-blue-500/10 dark:border-blue-500/5 max-w-sm sm:max-w-md md:max-w-lg leading-relaxed animate-fade-in">
+                          {isTie 
+                            ? "“Iron sharpens iron. Your collective consistency remains unbroken.”" 
+                            : iWon 
+                            ? "“Greatness is built in the daily grind. You stayed committed when it mattered.”" 
+                            : "“Habits aren’t broken by a single miss; they are rebuilt by showing up next time.”"}
                         </p>
                       </div>
                     </div>
