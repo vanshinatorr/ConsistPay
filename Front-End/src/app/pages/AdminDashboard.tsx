@@ -37,7 +37,7 @@ const MOCK_STATS = {
     dau: 28,
     wau: 52,
     mau: 64,
-    newUsersToday: 8,
+    newUsersToday: 2,
     newUsersThisWeek: 18,
     activeStreaks: 34,
     averageStreak: 6.4,
