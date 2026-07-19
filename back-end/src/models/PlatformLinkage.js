@@ -55,6 +55,7 @@ const platformLinkageSchema = new mongoose.Schema(
         creationDate: { type: String }
       }
     ],
+    lastSyncedAt: { type: Date, default: null },
   },
   { timestamps: true }
 );

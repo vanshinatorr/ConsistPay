@@ -152,6 +152,17 @@ class PlatformService {
       throw new Error(`No verified ${platform} profile connected to this account.`);
     }
 
+    // Cooldown verification (30 seconds) to prevent external API rate-limiting and server spamming
+    const now = new Date();
+    const cooldownMs = 30000; // 30 seconds
+    if (linkage.lastSyncedAt) {
+      const timeElapsed = now.getTime() - new Date(linkage.lastSyncedAt).getTime();
+      if (timeElapsed < cooldownMs) {
+        const remainingSec = Math.ceil((cooldownMs - timeElapsed) / 1000);
+        throw new Error(`Sync requested too quickly. Please wait ${remainingSec} second(s) before retrying.`);
+      }
+    }
+
     const provider = getProvider(platform);
 
     let solveStatus = { solvedToday: false, solvedCount: 0, problems: [], allSubmissions: [] };
@@ -342,6 +353,9 @@ class PlatformService {
         "streak"
       );
     }
+
+    linkage.lastSyncedAt = new Date();
+    await linkage.save();
 
     return {
       solvedToday: postSyncCount > 0,

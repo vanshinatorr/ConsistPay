@@ -25,6 +25,7 @@ const userSchema = new mongoose.Schema(
     bonusCredited: { type: Boolean, default: false },
     avatar: { type: String, default: "" },
     lastGraceCoinEarnedMonth: { type: String, default: "" },
+    syncLockedUntil: { type: Date, default: null },
   },
   { timestamps: true }
 );

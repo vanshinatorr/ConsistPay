@@ -18,8 +18,6 @@ const createNotification = async (userId, title, message, type = "system") => {
   }
 };
 
-const activeSyncs = new Set();
-
 const syncUserStreak = async (userOrId) => {
   try {
     let user;
@@ -33,19 +31,43 @@ const syncUserStreak = async (userOrId) => {
 
     const userIdStr = user._id.toString();
 
-    // If another request is currently synchronizing this user, wait for it to complete
-    if (activeSyncs.has(userIdStr)) {
-      for (let i = 0; i < 30; i++) {
-        await new Promise((resolve) => setTimeout(resolve, 100));
-        if (!activeSyncs.has(userIdStr)) {
-          // Refetch and return the updated user object from the DB
-          return await User.findById(user._id);
-        }
+    // Distributed lock check: If another process/request is currently syncing this user, wait
+    let lockActained = false;
+    let dbUser = user;
+
+    for (let i = 0; i < 30; i++) {
+      const now = new Date();
+      const lockDurationMs = 15000; // 15 seconds lock window
+      const lockedUser = await User.findOneAndUpdate(
+        {
+          _id: user._id,
+          $or: [
+            { syncLockedUntil: { $exists: false } },
+            { syncLockedUntil: null },
+            { syncLockedUntil: { $lt: now } }
+          ]
+        },
+        { $set: { syncLockedUntil: new Date(now.getTime() + lockDurationMs) } },
+        { returnDocument: 'after' }
+      );
+
+      if (lockedUser) {
+        lockActained = true;
+        dbUser = lockedUser;
+        break;
       }
-      return user; // Fallback
+      
+      // Wait 200ms before retrying
+      await new Promise((resolve) => setTimeout(resolve, 200));
     }
 
-    activeSyncs.add(userIdStr);
+    if (!lockActained) {
+      console.warn(`[StreakHelper] Sync lock timeout for user: ${userIdStr}. Proceeding with current DB snapshot.`);
+      // Refetch current database state as fallback
+      return await User.findById(user._id);
+    }
+
+    user = dbUser;
 
     try {
       let hasChanges = false;
@@ -334,7 +356,9 @@ const syncUserStreak = async (userOrId) => {
 
       return user;
     } finally {
-      activeSyncs.delete(userIdStr);
+      await User.updateOne({ _id: user._id }, { $set: { syncLockedUntil: null } }).catch(err => {
+        console.error(`[StreakHelper] Failed to release sync lock for user ${userIdStr}:`, err.message);
+      });
     }
   } catch (error) {
     console.error("Error in syncUserStreak helper:", error);

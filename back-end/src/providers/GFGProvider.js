@@ -82,7 +82,11 @@ class GFGProvider {
 
     // Retrieve old solved count to determine if they solved any new problems
     const PlatformLinkage = require("../models/PlatformLinkage");
-    const linkage = await PlatformLinkage.findOne({ username, platform: "GeeksforGeeks", isVerified: true });
+    const linkage = await PlatformLinkage.findOne({ 
+      username, 
+      platform: { $in: ["GeeksforGeeks", "GFG"] }, 
+      isVerified: true 
+    });
     const oldSolvedCount = linkage ? linkage.totalSolved : 0;
 
     const now = mockDate ? new Date(mockDate) : new Date();
