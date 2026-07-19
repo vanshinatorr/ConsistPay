@@ -63,6 +63,10 @@ try {
 
   const isMock = razorpay_order_id && razorpay_order_id.startsWith("mock_");
 
+  if (isMock && process.env.NODE_ENV === "production") {
+    return res.status(403).json({ message: "Bypassing payments is forbidden in production." });
+  }
+
   if (!isMock) {
     const keySecret = process.env.RAZORPAY_KEY_SECRET;
     if (!keySecret) {
@@ -342,6 +346,10 @@ const verifyTopup = async (req, res) => {
     } = req.body;
 
     const isMock = razorpay_order_id && razorpay_order_id.startsWith("mock_");
+
+    if (isMock && process.env.NODE_ENV === "production") {
+      return res.status(403).json({ message: "Bypassing payments is forbidden in production." });
+    }
 
     if (!isMock) {
       const keySecret = process.env.RAZORPAY_KEY_SECRET;
