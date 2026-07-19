@@ -4,6 +4,9 @@ const path = require("path");
 const dotenv = require("dotenv");
 dotenv.config({ path: path.join(__dirname, "../.env") });
 
+const connectDB = require("./config/db");
+connectDB();
+
 const app = express();
 
 // Middleware

@@ -1,12 +1,9 @@
 const path = require("path");
 require("dotenv").config({ path: path.join(__dirname, "../.env") });
 const app = require("./app");
-const connectDB = require("./config/db");
 const { expirePendingChallenges } = require("./controllers/challengeController");
 
 const PORT = process.env.PORT || 8000;
-
-connectDB();
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
