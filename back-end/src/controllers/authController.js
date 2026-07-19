@@ -39,8 +39,23 @@ const generateTempToken = (data) => jwt.sign(data, process.env.JWT_SECRET, { exp
  */
 const sendOtp = async (req, res) => {
   try {
-    const { identifier } = req.body;
+    let { identifier } = req.body;
     if (!identifier) return res.status(400).json({ message: "Email or Phone is required" });
+
+    identifier = identifier.trim();
+    if (identifier.includes('@')) {
+      identifier = identifier.toLowerCase();
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(identifier)) {
+        return res.status(400).json({ message: "Invalid email format" });
+      }
+    } else {
+      identifier = identifier.replace(/[\s\-\(\)]/g, "");
+      const phoneRegex = /^\+?[1-9][0-9]{9,14}$/;
+      if (!phoneRegex.test(identifier)) {
+        return res.status(400).json({ message: "Invalid phone number format. Must contain 10-15 digits." });
+      }
+    }
 
     const isEmail = identifier.includes('@');
     const otp = generateOTP();
@@ -120,7 +135,15 @@ const sendOtp = async (req, res) => {
  */
 const verifyOtp = async (req, res) => {
   try {
-    const { identifier, otp } = req.body;
+    let { identifier, otp } = req.body;
+    if (!identifier || !otp) return res.status(400).json({ message: "Identifier and OTP are required" });
+
+    identifier = identifier.trim();
+    if (identifier.includes('@')) {
+      identifier = identifier.toLowerCase();
+    } else {
+      identifier = identifier.replace(/[\s\-\(\)]/g, "");
+    }
     
     const otpRecord = await Otp.findOne({ identifier });
     if (!otpRecord) return res.status(400).json({ message: "OTP expired or invalid" });
@@ -199,10 +222,11 @@ const googleAuth = async (req, res) => {
     if (!payload || !payload.email) return res.status(400).json({ message: "Invalid Google token payload" });
 
     const { email, name, sub: googleId, picture } = payload;
+    const emailNormalized = email.toLowerCase().trim();
 
     let user = await User.findOne({ googleId });
     if (!user) {
-      user = await User.findOne({ email });
+      user = await User.findOne({ email: emailNormalized });
     }
 
     if (user) {
@@ -221,7 +245,7 @@ const googleAuth = async (req, res) => {
       });
     } else {
       // New User via Google
-      const tempToken = generateTempToken({ identifier: email, type: "google", googleId, name, picture });
+      const tempToken = generateTempToken({ identifier: emailNormalized, type: "google", googleId, name, picture });
       return res.status(200).json({
         isNewUser: true,
         tempToken,
@@ -297,11 +321,11 @@ const completeSignup = async (req, res) => {
     };
 
     if (decoded.type === "email") {
-      newUser.email = decoded.identifier;
+      newUser.email = decoded.identifier.toLowerCase().trim();
     } else if (decoded.type === "phone") {
-      newUser.phone = decoded.identifier;
+      newUser.phone = decoded.identifier.trim().replace(/[\s\-\(\)]/g, "");
     } else if (decoded.type === "google") {
-      newUser.email = decoded.identifier;
+      newUser.email = decoded.identifier.toLowerCase().trim();
       newUser.googleId = decoded.googleId;
     }
 
