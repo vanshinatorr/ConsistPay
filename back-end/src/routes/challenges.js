@@ -12,6 +12,18 @@ const {
 } = require("../controllers/challengeController");
 const { protect } = require("../middleware/authMiddleware");
 
+const runChallengeExpiry = async (req, res, next) => {
+  try {
+    const { expirePendingChallenges } = require("../controllers/challengeController");
+    expirePendingChallenges().catch(err => console.error("[Lazy Expiry Error]:", err));
+  } catch (err) {
+    console.error("[Lazy Expiry Middleware Error]:", err);
+  }
+  next();
+};
+
+router.use(runChallengeExpiry);
+
 router.post("/create", protect, createChallenge);
 router.post("/cancel-pending", protect, cancelPendingChallenge);
 router.get("/pending", protect, getPendingChallenge);
