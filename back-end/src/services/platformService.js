@@ -228,6 +228,10 @@ class PlatformService {
     const isCompletelyExpired = graceEnd && now > graceEnd;
 
     if (isCompletelyExpired) {
+      if (userObj.plan === "pro") {
+        userObj.plan = "free";
+        await userObj.save();
+      }
       const Challenge = require("../models/Challenge");
       const activeChallenge = await Challenge.findOne({
         status: "active",

@@ -200,7 +200,10 @@ const googleAuth = async (req, res) => {
 
     const { email, name, sub: googleId, picture } = payload;
 
-    let user = await User.findOne({ email });
+    let user = await User.findOne({ googleId });
+    if (!user) {
+      user = await User.findOne({ email });
+    }
 
     if (user) {
       // Link Google Account if not linked
@@ -272,6 +275,12 @@ const completeSignup = async (req, res) => {
       decoded = jwt.verify(tempToken, process.env.JWT_SECRET);
     } catch (e) {
       return res.status(400).json({ message: "Session expired. Please try again." });
+    }
+
+    // Validate username format
+    const regex = /^[a-zA-Z0-9_]{3,15}$/;
+    if (!regex.test(username)) {
+      return res.status(400).json({ message: "Must be 3-15 chars, letters/numbers/_ only." });
     }
 
     // Double check username availability

@@ -123,6 +123,7 @@ const syncUserStreak = async (userOrId) => {
       let unprotectedMisses = 0; // Recalculated from 0 inside the day-by-day loop
       let maxStreak = user.maxStreak || 0;
       let earnedGraceCoinThisStreak = false;
+      const pendingNotifications = [];
 
       // Iterate day-by-day from registration/onboarding start until today
       const dateCursor = new Date(startCursor.getTime());
@@ -140,6 +141,19 @@ const syncUserStreak = async (userOrId) => {
           currentStreak += 1;
           if (currentStreak > maxStreak) {
             maxStreak = currentStreak;
+          }
+
+          // Check 15-day streak increments (Pro plan, max once per calendar month) inside the day-by-day progression
+          const currentMonthStr = cursorStr.substring(0, 7);
+          if (currentStreak % 15 === 0 && currentStreak > 0 && user.plan === "pro" && user.lastGraceCoinEarnedMonth !== currentMonthStr) {
+            graceCoins += 1;
+            user.lastGraceCoinEarnedMonth = currentMonthStr;
+            pendingNotifications.push({
+              title: "Grace Coin Unlocked",
+              desc: `Congratulations on hitting a ${currentStreak}-day streak! You've earned 1 Grace Coin.`,
+              type: "streak"
+            });
+            console.log(`[StreakHelper] User earned Grace Coin on date ${cursorStr} for streak ${currentStreak}`);
           }
 
           // Process payout if they had an active plan and it wasn't paid out yet
@@ -243,20 +257,6 @@ const syncUserStreak = async (userOrId) => {
         dateCursor.setUTCDate(dateCursor.getUTCDate() + 1);
       }
 
-      // Check if user hit new streak intervals to reward grace coins (only for today)
-      // Check 15-day streak increments (Pro plan, max once per calendar month)
-      const currentMonthStr = todayStr.substring(0, 7);
-      if (currentStreak % 15 === 0 && currentStreak > 0 && user.plan === "pro" && user.lastGraceCoinEarnedMonth !== currentMonthStr) {
-        graceCoins += 1;
-        user.lastGraceCoinEarnedMonth = currentMonthStr;
-        await createNotification(
-          user._id,
-          "Grace Coin Unlocked",
-          `Congratulations on hitting a ${currentStreak}-day streak! You've earned 1 Grace Coin.`,
-          "streak"
-        );
-      }
-
       // Cap grace coins based on plan and current streak (max 2 for Pro if streak >= 15, otherwise max 1)
       const maxAllowedCoins = (user.plan === "pro" && currentStreak >= 15) ? 2 : 1;
       graceCoins = Math.min(Math.max(graceCoins, 0), maxAllowedCoins);
@@ -291,6 +291,20 @@ const syncUserStreak = async (userOrId) => {
         if (submissionsToDelete.length > 0) {
           await Submission.deleteMany({ _id: { $in: submissionsToDelete } });
           console.log(`[StreakHelper] Cleaned up ${submissionsToDelete.length} conflicting/today missed submissions in DB.`);
+        }
+
+        // Dispatch deferred notifications
+        if (pendingNotifications.length > 0) {
+          const Notification = require("../models/Notification");
+          for (const notif of pendingNotifications) {
+            await Notification.create({
+              userId: user._id,
+              title: notif.title,
+              desc: notif.desc,
+              type: notif.type,
+              read: false
+            });
+          }
         }
       } catch (saveErr) {
         console.error("[StreakHelper] Save/delete phase failed, rolling back modified submissions:", saveErr);

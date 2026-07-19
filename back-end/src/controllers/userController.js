@@ -207,8 +207,7 @@ const getMe = async (req, res) => {
 
     const totalProblemsSolved = await Submission.countDocuments({
       userId: req.user._id,
-      status: "completed",
-      date: { $gte: userJoinedDateStr }
+      status: "completed"
     });
 
     const totalMissed = await Submission.countDocuments(missedQuery);
@@ -240,6 +239,10 @@ const getMe = async (req, res) => {
         graceDaysLeft = Math.max(0, Math.ceil(diffMs / (1000 * 60 * 60 * 24)));
       } else {
         planStatus = "expired";
+        if (user.plan === "pro") {
+          user.plan = "free";
+          await user.save();
+        }
       }
 
       // Check 10% auto-credit check if plan has expired
