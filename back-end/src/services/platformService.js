@@ -233,7 +233,6 @@ class PlatformService {
     }
 
     // Plan expiry validation (mirroring core rules)
-    const now = new Date();
     const planExpiresAt = userObj.planExpiresAt ? new Date(userObj.planExpiresAt) : null;
     const graceEnd = planExpiresAt ? new Date(planExpiresAt.getTime() + 3 * 24 * 60 * 60 * 1000) : null;
     const isCompletelyExpired = graceEnd && now > graceEnd;
@@ -369,7 +368,16 @@ class PlatformService {
    * Get connection linkage details for a user
    */
   async getLinkage(userId, platform) {
-    const linkage = await PlatformLinkage.findOne({ userId, platform });
+    let platformQuery = platform;
+    if (platform.toLowerCase() === "leetcode") {
+      platformQuery = { $regex: new RegExp("^leetcode$", "i") };
+    } else if (platform.toLowerCase() === "geeksforgeeks" || platform.toLowerCase() === "gfg") {
+      platformQuery = { $in: ["GeeksforGeeks", "GFG"] };
+    } else if (platform.toLowerCase() === "code360") {
+      platformQuery = { $regex: new RegExp("^code360$", "i") };
+    }
+
+    const linkage = await PlatformLinkage.findOne({ userId, platform: platformQuery });
     if (!linkage) return null;
     return {
       username: linkage.username,

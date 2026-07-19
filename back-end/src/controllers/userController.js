@@ -212,13 +212,20 @@ const getMe = async (req, res) => {
 
     const totalMissed = await Submission.countDocuments(missedQuery);
 
-    const linkedPlatforms = linkages.map(l => ({
-      platform: l.platform,
-      username: l.username,
-      isVerified: l.isVerified,
-      verificationToken: l.verificationToken,
-      badges: l.badges || []
-    }));
+    const linkedPlatforms = linkages.map(l => {
+      let canonicalPlatform = l.platform;
+      if (l.platform.toLowerCase() === "leetcode") canonicalPlatform = "LeetCode";
+      else if (l.platform.toLowerCase() === "geeksforgeeks" || l.platform.toLowerCase() === "gfg") canonicalPlatform = "GeeksforGeeks";
+      else if (l.platform.toLowerCase() === "code360") canonicalPlatform = "Code360";
+
+      return {
+        platform: canonicalPlatform,
+        username: l.username,
+        isVerified: l.isVerified,
+        verificationToken: l.verificationToken,
+        badges: l.badges || []
+      };
+    });
 
     // Check dynamic achievements and write notifications if earned
     await checkAndNotifyBadges(user, totalSolved, totalMissed, totalProblemsSolved);
