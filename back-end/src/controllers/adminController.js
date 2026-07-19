@@ -32,7 +32,7 @@ const getAdminStats = async (req, res) => {
       User.countDocuments({ streak: { $gt: 0 } }),
       User.countDocuments({ createdAt: { $gte: new Date(Date.now() - 24 * 60 * 60 * 1000) } }),
       User.countDocuments({ createdAt: { $gte: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) } }),
-      Submission.countDocuments({ status: "solved" })
+      Submission.countDocuments({ status: "completed" })
     ]);
 
     // Average Streak length calculation
@@ -91,7 +91,7 @@ const getAdminStats = async (req, res) => {
       const link = platformLinkages.find(l => String(l.userId) === String(u._id));
       return {
         user: u.name,
-        handle: link?.platformUsername || "not-linked",
+        handle: link?.username || "not-linked",
         streak: u.streak,
         solved: link?.totalSolved || 0,
         today: false, // will update dynamically below if they have a solve today
@@ -125,7 +125,7 @@ const getAdminStats = async (req, res) => {
         time: formatTimeAgo(sub.createdAt),
         rawTime: sub.createdAt,
         user: sub.userId.name || "Anonymous",
-        event: `Solved "${sub.problemTitle || "DSA Problem"}"`,
+        event: `Solved "${sub.problemName || "DSA Problem"}"`,
         detail: `Verified on ${sub.platform} • +50 Coins`,
         type: "solve"
       });
@@ -139,7 +139,7 @@ const getAdminStats = async (req, res) => {
         rawTime: link.createdAt,
         user: link.userId.name || "Anonymous",
         event: `Connected ${link.platform}`,
-        detail: `Profile: @${link.platformUsername}`,
+        detail: `Profile: @${link.username}`,
         type: "link"
       });
     });

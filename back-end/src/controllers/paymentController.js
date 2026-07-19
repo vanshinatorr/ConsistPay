@@ -9,6 +9,18 @@ key_id: process.env.RAZORPAY_KEY_ID,
 key_secret: process.env.RAZORPAY_KEY_SECRET,
 });
 
+const timingSafeEqual = (a, b) => {
+  if (typeof a !== "string" || typeof b !== "string") return false;
+  const aBuf = Buffer.from(a, "utf-8");
+  const bBuf = Buffer.from(b, "utf-8");
+  if (aBuf.length !== bBuf.length) {
+    // Perform dummy timing safe comparison to preserve timing behavior
+    crypto.timingSafeEqual(aBuf, aBuf);
+    return false;
+  }
+  return crypto.timingSafeEqual(aBuf, bBuf);
+};
+
 const createOrder = async (req, res) => {
 try {
   const { plan, dailyCommitment, depositAmount } = req.body;
@@ -52,12 +64,16 @@ try {
   const isMock = razorpay_order_id && razorpay_order_id.startsWith("mock_");
 
   if (!isMock) {
+    const keySecret = process.env.RAZORPAY_KEY_SECRET;
+    if (!keySecret) {
+      return res.status(500).json({ message: "Razorpay secret key configuration is missing on the server." });
+    }
     const body = razorpay_order_id + "|" + razorpay_payment_id;
     const expectedSignature = crypto
-      .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET || "mock_secret")
+      .createHmac("sha256", keySecret)
       .update(body)
       .digest("hex");
-    if (expectedSignature !== razorpay_signature) {
+    if (!timingSafeEqual(expectedSignature, razorpay_signature)) {
       return res.status(400).json({ message: "Invalid payment signature" });
     }
   }
@@ -73,6 +89,10 @@ try {
     if (!order || !order.notes) {
       return res.status(400).json({ message: "Razorpay order details not found" });
     }
+    // Verify that this order belongs to the requesting user
+    if (order.notes.userId !== req.user._id.toString()) {
+      return res.status(400).json({ message: "Payment order does not belong to this user." });
+    }
     plan = order.notes.plan;
     dailyCommitment = order.notes.dailyCommitment;
     depositAmount = order.notes.depositAmount;
@@ -82,36 +102,71 @@ try {
     return res.status(400).json({ message: "Invalid order metadata in Razorpay notes" });
   }
 
-  const user = await User.findById(req.user._id);
-  const planLower = plan.toLowerCase();
-  const isRenewal = user.onboardingComplete;
-  const useWalletBalance = req.body.useWalletBalance === true;
-  const depositVal = Number(depositAmount);
-
-  if (useWalletBalance) {
-    const offset = Math.min(user.balance || 0, depositVal);
-    user.balance = (user.balance || 0) - offset;
+  if (!isMock) {
+    const Payment = require("../models/Payment");
+    try {
+      await Payment.create({
+        userId: req.user._id,
+        razorpayOrderId: razorpay_order_id,
+        razorpayPaymentId: razorpay_payment_id,
+        amount: Number(depositAmount),
+        type: "onboarding",
+      });
+    } catch (dbErr) {
+      // If duplicate key error (code 11000), payment has already been processed. Return success (idempotent).
+      if (dbErr.code === 11000) {
+        const user = await User.findById(req.user._id);
+        return res.status(200).json({
+          message: "Payment verified successfully!",
+          plan: user.plan,
+          balance: user.balance,
+          activeDeposit: user.activeDeposit,
+          onboardingComplete: user.onboardingComplete,
+        });
+      }
+      throw dbErr;
+    }
   }
 
-  user.activeDeposit = depositVal;
-  user.plan = planLower;
-  user.dailyCommitment = Number(dailyCommitment);
-  user.onboardingComplete = true;
-  user.onboardingCompletedAt = new Date();
-  user.graceCoins = 1;
-  user.lastGraceCoinEarnedMonth = "";
-  user.planExpiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
-  user.currentCycleUnprotectedMisses = 0;
-  user.bonusCredited = false;
+  try {
+    const user = await User.findById(req.user._id);
+    const planLower = plan.toLowerCase();
+    const isRenewal = user.onboardingComplete;
+    const useWalletBalance = req.body.useWalletBalance === true;
+    const depositVal = Number(depositAmount);
 
-  await user.save();
-  res.status(200).json({
-    message: "Payment verified successfully!",
-    plan: user.plan,
-    balance: user.balance,
-    activeDeposit: user.activeDeposit,
-    onboardingComplete: user.onboardingComplete,
-  });
+    if (useWalletBalance) {
+      const offset = Math.min(user.balance || 0, depositVal);
+      user.balance = (user.balance || 0) - offset;
+    }
+
+    user.activeDeposit = depositVal;
+    user.plan = planLower;
+    user.dailyCommitment = Number(dailyCommitment);
+    user.onboardingComplete = true;
+    user.onboardingCompletedAt = new Date();
+    user.graceCoins = 1;
+    user.lastGraceCoinEarnedMonth = "";
+    user.planExpiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
+    user.currentCycleUnprotectedMisses = 0;
+    user.bonusCredited = false;
+
+    await user.save();
+    res.status(200).json({
+      message: "Payment verified successfully!",
+      plan: user.plan,
+      balance: user.balance,
+      activeDeposit: user.activeDeposit,
+      onboardingComplete: user.onboardingComplete,
+    });
+  } catch (saveErr) {
+    // Rollback payment registration if user document fails to save
+    if (!isMock) {
+      const Payment = require("../models/Payment");
+      await Payment.deleteOne({ razorpayPaymentId: razorpay_payment_id });
+    }
+    throw saveErr;
+  }
 } catch (error) {
   console.log("Verify Error:", error);
   res.status(500).json({ message: error.message });
@@ -120,6 +175,9 @@ try {
 
 const skipPayment = async (req, res) => {
 try {
+  if (process.env.NODE_ENV === "production") {
+    return res.status(403).json({ message: "Bypassing payments is forbidden in production." });
+  }
   const { plan, dailyCommitment, depositAmount } = req.body;
   const user = await User.findById(req.user._id);
   
@@ -286,13 +344,17 @@ const verifyTopup = async (req, res) => {
     const isMock = razorpay_order_id && razorpay_order_id.startsWith("mock_");
 
     if (!isMock) {
+      const keySecret = process.env.RAZORPAY_KEY_SECRET;
+      if (!keySecret) {
+        return res.status(500).json({ message: "Razorpay secret key configuration is missing on the server." });
+      }
       const body = razorpay_order_id + "|" + razorpay_payment_id;
       const expectedSignature = crypto
-        .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET || "mock_secret")
+        .createHmac("sha256", keySecret)
         .update(body)
         .digest("hex");
 
-      if (expectedSignature !== razorpay_signature) {
+      if (!timingSafeEqual(expectedSignature, razorpay_signature)) {
         return res.status(400).json({ message: "Invalid payment signature" });
       }
     }
@@ -306,6 +368,10 @@ const verifyTopup = async (req, res) => {
       if (!order) {
         return res.status(400).json({ message: "Razorpay order not found" });
       }
+      // Verify that this order belongs to the requesting user
+      if (order.notes && order.notes.userId !== req.user._id.toString()) {
+        return res.status(400).json({ message: "Payment order does not belong to this user." });
+      }
       actualAmount = order.amount / 100;
     }
 
@@ -313,14 +379,46 @@ const verifyTopup = async (req, res) => {
       return res.status(400).json({ message: "Invalid order amount recorded in Razorpay" });
     }
 
-    const user = await User.findById(req.user._id);
-    user.battleBalance = (user.battleBalance || 0) + actualAmount;
-    await user.save();
+    if (!isMock) {
+      const Payment = require("../models/Payment");
+      try {
+        await Payment.create({
+          userId: req.user._id,
+          razorpayOrderId: razorpay_order_id,
+          razorpayPaymentId: razorpay_payment_id,
+          amount: actualAmount,
+          type: "topup",
+        });
+      } catch (dbErr) {
+        // If duplicate key error (code 11000), payment has already been processed. Return success (idempotent).
+        if (dbErr.code === 11000) {
+          const user = await User.findById(req.user._id);
+          return res.status(200).json({
+            message: "Top-up successful!",
+            battleBalance: user.battleBalance,
+          });
+        }
+        throw dbErr;
+      }
+    }
 
-    res.status(200).json({
-      message: "Top-up successful!",
-      battleBalance: user.battleBalance,
-    });
+    try {
+      const user = await User.findById(req.user._id);
+      user.battleBalance = (user.battleBalance || 0) + actualAmount;
+      await user.save();
+
+      res.status(200).json({
+        message: "Top-up successful!",
+        battleBalance: user.battleBalance,
+      });
+    } catch (saveErr) {
+      // Rollback payment registration if user document fails to save
+      if (!isMock) {
+        const Payment = require("../models/Payment");
+        await Payment.deleteOne({ razorpayPaymentId: razorpay_payment_id });
+      }
+      throw saveErr;
+    }
   } catch (error) {
     console.log("Verify Top-up Error:", error);
     res.status(500).json({ message: error.message });
@@ -329,6 +427,9 @@ const verifyTopup = async (req, res) => {
 
 const skipTopup = async (req, res) => {
   try {
+    if (process.env.NODE_ENV === "production") {
+      return res.status(403).json({ message: "Bypassing payments is forbidden in production." });
+    }
     const { amount } = req.body;
     if (!amount || amount < 10) {
       return res.status(400).json({ message: "Minimum top-up amount is ₹10." });
@@ -371,9 +472,12 @@ const withdrawFunds = async (req, res) => {
     const userId = req.user._id;
     const Withdrawal = require("../models/Withdrawal");
 
-    const amountVal = Number(amount);
-    if (!amountVal || amountVal <= 0) {
+    const amountVal = parseFloat(Number(amount).toFixed(2));
+    if (isNaN(amountVal) || amountVal <= 0) {
       return res.status(400).json({ message: "Invalid withdrawal amount." });
+    }
+    if (amountVal < 1) {
+      return res.status(400).json({ message: "Minimum withdrawal amount is ₹1." });
     }
     if (!upiId || !upiId.includes("@")) {
       return res.status(400).json({ message: "Please enter a valid UPI ID (e.g. name@upi)." });
@@ -383,7 +487,7 @@ const withdrawFunds = async (req, res) => {
     let updatedUser;
 
     if (type === "battle") {
-      // Atomically check if balance is sufficient and deduct in one step
+      // Atomically check if balance is sufficient and deduct in one step to prevent race conditions
       updatedUser = await User.findOneAndUpdate(
         { _id: userId, battleBalance: { $gte: amountVal } },
         { $inc: { battleBalance: -amountVal } },
@@ -393,7 +497,7 @@ const withdrawFunds = async (req, res) => {
         return res.status(400).json({ message: "Insufficient battle wallet balance." });
       }
     } else {
-      // Atomically check if balance is sufficient and deduct in one step
+      // Atomically check if balance is sufficient and deduct in one step to prevent race conditions
       updatedUser = await User.findOneAndUpdate(
         { _id: userId, balance: { $gte: amountVal } },
         { $inc: { balance: -amountVal } },
@@ -404,29 +508,39 @@ const withdrawFunds = async (req, res) => {
       }
     }
 
-    const withdrawal = await Withdrawal.create({
-      userId,
-      amount: amountVal,
-      upiId,
-      walletType: type,
-      status: "pending"
-    });
+    try {
+      const withdrawal = await Withdrawal.create({
+        userId,
+        amount: amountVal,
+        upiId,
+        walletType: type,
+        status: "pending"
+      });
 
-    const Notification = require("../models/Notification");
-    await Notification.create({
-      userId,
-      title: "Withdrawal Initiated",
-      desc: `Your request to withdraw ₹${amountVal} to UPI: ${upiId} has been received.`,
-      type: "wallet",
-      read: false
-    });
+      const Notification = require("../models/Notification");
+      await Notification.create({
+        userId,
+        title: "Withdrawal Initiated",
+        desc: `Your request to withdraw ₹${amountVal} to UPI: ${upiId} has been received.`,
+        type: "wallet",
+        read: false
+      });
 
-    res.status(200).json({
-      message: "Withdrawal request submitted successfully!",
-      balance: updatedUser.balance,
-      battleBalance: updatedUser.battleBalance,
-      withdrawal
-    });
+      res.status(200).json({
+        message: "Withdrawal request submitted successfully!",
+        balance: updatedUser.balance,
+        battleBalance: updatedUser.battleBalance,
+        withdrawal
+      });
+    } catch (createErr) {
+      // Rollback deduction if DB write fails to maintain database consistency
+      if (type === "battle") {
+        await User.updateOne({ _id: userId }, { $inc: { battleBalance: amountVal } });
+      } else {
+        await User.updateOne({ _id: userId }, { $inc: { balance: amountVal } });
+      }
+      throw createErr;
+    }
   } catch (error) {
     console.error("Withdrawal error:", error);
     res.status(500).json({ message: error.message });

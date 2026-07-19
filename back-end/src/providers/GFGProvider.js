@@ -89,7 +89,7 @@ class GFGProvider {
     const todayStr = this._getLocalDateString(now, targetTimeZone);
 
     if (newSolvedCount > oldSolvedCount) {
-      const diff = newSolvedCount - oldSolvedCount;
+      const diff = Math.min(newSolvedCount - oldSolvedCount, 30);
       const problems = [];
       const allSubmissions = [];
 

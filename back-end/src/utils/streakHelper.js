@@ -75,6 +75,7 @@ const syncUserStreak = async (userOrId) => {
 
       const submissionsToDelete = [];
       let refundedAmount = 0;
+      let refundedGraceCoins = 0;
       const filteredSubmissions = [];
 
       submissions.forEach((sub) => {
@@ -86,19 +87,22 @@ const syncUserStreak = async (userOrId) => {
           if (sub.deductionProcessed) {
             refundedAmount += (user.dailyCommitment || 0);
           }
+          if (sub.graceCoinApplied) {
+            refundedGraceCoins += 1;
+          }
         } else {
           filteredSubmissions.push(sub);
         }
       });
 
       if (submissionsToDelete.length > 0) {
-        await Submission.deleteMany({ _id: { $in: submissionsToDelete } });
-        console.log(`[StreakHelper] Cleaned up ${submissionsToDelete.length} conflicting/today missed submissions. Refunded ₹${refundedAmount} to activeDeposit.`);
         user.activeDeposit = (user.activeDeposit || 0) + refundedAmount;
+        user.graceCoins = (user.graceCoins || 0) + refundedGraceCoins;
         hasChanges = true;
       }
 
       submissions = filteredSubmissions;
+      const modifiedSubmissions = [];
       const submissionsMap = new Map();
 
       submissions.forEach((sub) => {
@@ -157,16 +161,23 @@ const syncUserStreak = async (userOrId) => {
               activeDeposit -= payoutAmount;
               balance += payoutAmount;
               sub.payoutProcessed = true;
-              await sub.save();
-              console.log(`[StreakHelper] Payout of ₹${payoutAmount} credited retroactively for date ${cursorStr}`);
+              modifiedSubmissions.push({
+                sub,
+                originalPayout: false,
+                originalDeduction: sub.deductionProcessed,
+                originalGrace: sub.graceCoinApplied,
+                isNew: false
+              });
+              console.log(`[StreakHelper] Payout of ₹${payoutAmount} deferred retroactively for date ${cursorStr}`);
             }
           }
         } else {
           // Missed this day
           if (cursorStr !== todayStr) {
             let missedSub = sub;
+            let isNewSub = false;
             if (!missedSub) {
-              missedSub = await Submission.create({
+              missedSub = new Submission({
                 userId: user._id,
                 problemName: "No Submission",
                 platform: "Unknown",
@@ -178,6 +189,7 @@ const syncUserStreak = async (userOrId) => {
                 graceCoinApplied: false
               });
               submissionsMap.set(cursorStr, missedSub);
+              isNewSub = true;
             }
 
             // Process stake deduction and grace coin application if they had an active plan on this date and it wasn't processed yet
@@ -196,9 +208,24 @@ const syncUserStreak = async (userOrId) => {
                   missedSub.graceCoinApplied = false;
                 }
                 
-                await missedSub.save();
-                console.log(`[StreakHelper] Stake deduction of ₹${deduction} executed retroactively for missed date ${cursorStr}`);
+                modifiedSubmissions.push({
+                  sub: missedSub,
+                  originalPayout: missedSub.payoutProcessed,
+                  originalDeduction: false,
+                  originalGrace: false,
+                  isNew: isNewSub
+                });
+                console.log(`[StreakHelper] Stake deduction of ₹${deduction} deferred retroactively for missed date ${cursorStr}`);
               }
+            } else if (isNewSub) {
+              // If it's a new sub but no balance adjustment was made, we still need to save it to DB
+              modifiedSubmissions.push({
+                sub: missedSub,
+                originalPayout: false,
+                originalDeduction: false,
+                originalGrace: false,
+                isNew: true
+              });
             }
 
             // Streak breaking / grace coin logic based on graceCoinApplied
@@ -212,8 +239,8 @@ const syncUserStreak = async (userOrId) => {
           }
         }
 
-        // Increment cursor by 1 day
-        dateCursor.setDate(dateCursor.getDate() + 1);
+        // Increment cursor by 1 day (using UTC to prevent timezone/DST offset shifting)
+        dateCursor.setUTCDate(dateCursor.getUTCDate() + 1);
       }
 
       // Check if user hit new streak intervals to reward grace coins (only for today)
@@ -234,24 +261,61 @@ const syncUserStreak = async (userOrId) => {
       const maxAllowedCoins = (user.plan === "pro" && currentStreak >= 15) ? 2 : 1;
       graceCoins = Math.min(Math.max(graceCoins, 0), maxAllowedCoins);
 
-      // Save changes if there's any state delta
-      if (
-        hasChanges ||
-        user.streak !== currentStreak ||
-        user.graceCoins !== graceCoins ||
-        user.activeDeposit !== activeDeposit ||
-        user.balance !== balance ||
-        user.currentCycleUnprotectedMisses !== unprotectedMisses ||
-        user.maxStreak !== maxStreak
-      ) {
-        user.streak = currentStreak;
-        user.graceCoins = graceCoins;
-        user.activeDeposit = activeDeposit;
-        user.balance = balance;
-        user.currentCycleUnprotectedMisses = unprotectedMisses;
-        user.maxStreak = maxStreak;
-        await user.save();
-        console.log(`[StreakHelper] Recalculated state for user ${user._id}: streak=${currentStreak}, balance=₹${balance}, activeDeposit=₹${activeDeposit}`);
+      try {
+        // Save modified submissions
+        for (const item of modifiedSubmissions) {
+          await item.sub.save();
+        }
+
+        // Save changes if there's any state delta
+        if (
+          hasChanges ||
+          user.streak !== currentStreak ||
+          user.graceCoins !== graceCoins ||
+          user.activeDeposit !== activeDeposit ||
+          user.balance !== balance ||
+          user.currentCycleUnprotectedMisses !== unprotectedMisses ||
+          user.maxStreak !== maxStreak
+        ) {
+          user.streak = currentStreak;
+          user.graceCoins = graceCoins;
+          user.activeDeposit = activeDeposit;
+          user.balance = balance;
+          user.currentCycleUnprotectedMisses = unprotectedMisses;
+          user.maxStreak = maxStreak;
+          await user.save();
+          console.log(`[StreakHelper] Recalculated state for user ${user._id}: streak=${currentStreak}, balance=₹${balance}, activeDeposit=₹${activeDeposit}`);
+        }
+
+        // Deletions are executed after successful user state persistence to avoid refund loss inconsistencies
+        if (submissionsToDelete.length > 0) {
+          await Submission.deleteMany({ _id: { $in: submissionsToDelete } });
+          console.log(`[StreakHelper] Cleaned up ${submissionsToDelete.length} conflicting/today missed submissions in DB.`);
+        }
+      } catch (saveErr) {
+        console.error("[StreakHelper] Save/delete phase failed, rolling back modified submissions:", saveErr);
+        // Rollback already persisted submissions
+        for (const item of modifiedSubmissions) {
+          try {
+            if (item.isNew) {
+              await Submission.deleteOne({ _id: item.sub._id });
+            } else {
+              await Submission.updateOne(
+                { _id: item.sub._id },
+                { 
+                  $set: { 
+                    payoutProcessed: item.originalPayout,
+                    deductionProcessed: item.originalDeduction,
+                    graceCoinApplied: item.originalGrace
+                  } 
+                }
+              );
+            }
+          } catch (rollbackErr) {
+            console.error("[StreakHelper] Rollback failed for submission document:", item.sub._id, rollbackErr);
+          }
+        }
+        throw saveErr;
       }
 
       return user;

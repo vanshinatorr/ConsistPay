@@ -23,15 +23,7 @@ const generateInviteCode = async () => {
 const countCompletedSubmissions = async (userId, startDate, endDate, duration) => {
   if (!startDate || !endDate) return 0;
   const startStr = new Date(startDate).toLocaleDateString("en-CA", { timeZone: "Asia/Kolkata" });
-  
-  let endStr;
-  if (duration) {
-    const startObj = new Date(startDate);
-    const endObj = new Date(startObj.getTime() + (duration - 1) * 24 * 60 * 60 * 1000);
-    endStr = endObj.toLocaleDateString("en-CA", { timeZone: "Asia/Kolkata" });
-  } else {
-    endStr = new Date(endDate).toLocaleDateString("en-CA", { timeZone: "Asia/Kolkata" });
-  }
+  const endStr = new Date(endDate).toLocaleDateString("en-CA", { timeZone: "Asia/Kolkata" });
   
   const result = await Submission.aggregate([
     {
@@ -117,75 +109,94 @@ const autoResolveChallenges = async (userId) => {
 
       const challengeName = `${challenge.duration}-Day Consistency Challenge`;
 
-      if (creatorScore > opponentScore) {
-        // Creator wins atomically
-        await User.updateOne(
-          { _id: challenge.creatorId },
-          { $inc: { battleBalance: challenge.stake * 2 } }
-        );
+      let payoutExecuted = false;
+      try {
+        if (creatorScore > opponentScore) {
+          // Creator wins atomically
+          await User.updateOne(
+            { _id: challenge.creatorId },
+            { $inc: { battleBalance: challenge.stake * 2 } }
+          );
+          payoutExecuted = true;
 
-        // Send notifications
-        await Notification.create([
-          {
-            userId: challenge.creatorId,
-            title: "Battle Won",
-            desc: `You won the ${challengeName} against ${opponent.name}! ₹${challenge.stake * 2} has been added to your wallet.`,
-            type: "battle"
-          },
-          {
-            userId: challenge.opponentId,
-            title: "Battle Ended",
-            desc: `${creator.name} won the ${challengeName} with a higher consistency score. Better luck next time!`,
-            type: "battle"
-          }
-        ]);
-        console.log(`Creator ${creator.email} won stakes: +₹${challenge.stake * 2}`);
-      } else if (opponentScore > creatorScore) {
-        // Opponent wins atomically
-        await User.updateOne(
-          { _id: challenge.opponentId },
-          { $inc: { battleBalance: challenge.stake * 2 } }
-        );
+          // Send notifications
+          await Notification.create([
+            {
+              userId: challenge.creatorId,
+              title: "Battle Won",
+              desc: `You won the ${challengeName} against ${opponent.name}! ₹${challenge.stake * 2} has been added to your wallet.`,
+              type: "battle"
+            },
+            {
+              userId: challenge.opponentId,
+              title: "Battle Ended",
+              desc: `${creator.name} won the ${challengeName} with a higher consistency score. Better luck next time!`,
+              type: "battle"
+            }
+          ]);
+          console.log(`Creator ${creator.email} won stakes: +₹${challenge.stake * 2}`);
+        } else if (opponentScore > creatorScore) {
+          // Opponent wins atomically
+          await User.updateOne(
+            { _id: challenge.opponentId },
+            { $inc: { battleBalance: challenge.stake * 2 } }
+          );
+          payoutExecuted = true;
 
-        // Send notifications
-        await Notification.create([
-          {
-            userId: challenge.opponentId,
-            title: "Battle Won",
-            desc: `You won the ${challengeName} against ${creator.name}! ₹${challenge.stake * 2} has been added to your wallet.`,
-            type: "battle"
-          },
-          {
-            userId: challenge.creatorId,
-            title: "Battle Ended",
-            desc: `${opponent.name} won the ${challengeName} with a higher consistency score. Better luck next time!`,
-            type: "battle"
+          // Send notifications
+          await Notification.create([
+            {
+              userId: challenge.opponentId,
+              title: "Battle Won",
+              desc: `You won the ${challengeName} against ${creator.name}! ₹${challenge.stake * 2} has been added to your wallet.`,
+              type: "battle"
+            },
+            {
+              userId: challenge.creatorId,
+              title: "Battle Ended",
+              desc: `${opponent.name} won the ${challengeName} with a higher consistency score. Better luck next time!`,
+              type: "battle"
+            }
+          ]);
+          console.log(`Opponent ${opponent.email} won stakes: +₹${challenge.stake * 2}`);
+        } else {
+          // Tie - Refund stakes atomically with rollback safety
+          await User.updateOne({ _id: challenge.creatorId }, { $inc: { battleBalance: challenge.stake } });
+          try {
+            await User.updateOne({ _id: challenge.opponentId }, { $inc: { battleBalance: challenge.stake } });
+          } catch (tieErr) {
+            // Rollback creator refund if opponent refund fails
+            await User.updateOne({ _id: challenge.creatorId }, { $inc: { battleBalance: -challenge.stake } });
+            throw tieErr;
           }
-        ]);
-        console.log(`Opponent ${opponent.email} won stakes: +₹${challenge.stake * 2}`);
-      } else {
-        // Tie - Refund stakes atomically
-        await Promise.all([
-          User.updateOne({ _id: challenge.creatorId }, { $inc: { battleBalance: challenge.stake } }),
-          User.updateOne({ _id: challenge.opponentId }, { $inc: { battleBalance: challenge.stake } })
-        ]);
+          payoutExecuted = true;
 
-        // Send notifications
-        await Notification.create([
-          {
-            userId: challenge.creatorId,
-            title: "Battle Tied",
-            desc: `The ${challengeName} against ${opponent.name} ended in a tie. Your stake of ₹${challenge.stake} has been refunded to your wallet.`,
-            type: "battle"
-          },
-          {
-            userId: challenge.opponentId,
-            title: "Battle Tied",
-            desc: `The ${challengeName} against ${creator.name} ended in a tie. Your stake of ₹${challenge.stake} has been refunded to your wallet.`,
-            type: "battle"
-          }
-        ]);
-        console.log("Challenge tied. Stakes refunded to both.");
+          // Send notifications
+          await Notification.create([
+            {
+              userId: challenge.creatorId,
+              title: "Battle Tied",
+              desc: `The ${challengeName} against ${opponent.name} ended in a tie. Your stake of ₹${challenge.stake} has been refunded to your wallet.`,
+              type: "battle"
+            },
+            {
+              userId: challenge.opponentId,
+              title: "Battle Tied",
+              desc: `The ${challengeName} against ${creator.name} ended in a tie. Your stake of ₹${challenge.stake} has been refunded to your wallet.`,
+              type: "battle"
+            }
+          ]);
+          console.log("Challenge tied. Stakes refunded to both.");
+        }
+      } catch (payoutErr) {
+        console.error(`[Resolution Payout] Payout failed for challenge ${challenge._id}:`, payoutErr);
+        if (!payoutExecuted) {
+          // Only rollback challenge status to active if the balance update did not execute yet
+          await Challenge.updateOne({ _id: challenge._id }, { $set: { status: "active" } });
+        } else {
+          console.warn(`[Resolution Payout Warning] Balance updates completed, but subsequent notification logs failed for challenge: ${challenge._id}`);
+        }
+        continue;
       }
     } catch (err) {
       console.error(`Error resolving challenge ${challenge._id}:`, err.message);
@@ -229,34 +240,43 @@ const createChallenge = async (req, res) => {
     const entryFee = 19;
     const totalCost = stakeVal + entryFee;
 
-    if (user.battleBalance < totalCost) {
-      const deficit = totalCost - user.battleBalance;
-      return res.status(400).json({ message: `Insufficient balance. You need ₹${deficit} more to lock this commitment.` });
-    }
-
-    // Deduct from battle wallet atomically
-    await User.updateOne(
-      { _id: userId },
-      { $inc: { battleBalance: -totalCost } }
+    // Deduct from battle wallet atomically and check balance to prevent race conditions (double spending)
+    const updatedUser = await User.findOneAndUpdate(
+      { _id: userId, battleBalance: { $gte: totalCost } },
+      { $inc: { battleBalance: -totalCost } },
+      { new: true }
     );
 
-    const inviteCode = await generateInviteCode();
+    if (!updatedUser) {
+      return res.status(400).json({ message: "Insufficient balance to lock this commitment." });
+    }
 
-    const challenge = await Challenge.create({
-      creatorId: userId,
-      duration,
-      stake: stakeVal,
-      entryFee,
-      inviteCode,
-      status: "pending"
-    });
+    let challenge;
+    try {
+      const inviteCode = await generateInviteCode();
+      challenge = await Challenge.create({
+        creatorId: userId,
+        duration,
+        stake: stakeVal,
+        entryFee,
+        inviteCode,
+        status: "pending"
+      });
+    } catch (createErr) {
+      // Rollback deduction if challenge creation fails to maintain database consistency
+      await User.updateOne(
+        { _id: userId },
+        { $inc: { battleBalance: totalCost } }
+      );
+      throw createErr;
+    }
 
     console.log("Challenge created in DB:", challenge);
 
     res.status(201).json({
       message: "Challenge created successfully!",
       inviteCode: challenge.inviteCode,
-      battleBalance: user.battleBalance - totalCost,
+      battleBalance: updatedUser.battleBalance,
       challengeId: challenge._id
     });
   } catch (error) {
@@ -314,8 +334,15 @@ const joinChallenge = async (req, res) => {
       return res.status(403).json({ message: "Only Pro users can join custom challenges." });
     }
 
-    if (user.battleBalance < totalCost) {
-      return res.status(400).json({ message: `Insufficient balance. Required: ₹${totalCost}, Available: ₹${user.battleBalance}.` });
+    // Deduct from opponent's battle wallet atomically first to prevent race conditions (double spending)
+    const updatedUser = await User.findOneAndUpdate(
+      { _id: userId, battleBalance: { $gte: totalCost } },
+      { $inc: { battleBalance: -totalCost } },
+      { new: true }
+    );
+
+    if (!updatedUser) {
+      return res.status(400).json({ message: `Insufficient balance. Required: ₹${totalCost}` });
     }
 
     // Start Challenge Dates (Current local date)
@@ -323,12 +350,16 @@ const joinChallenge = async (req, res) => {
 
     // Calculate endDate as 23:59:59 on the last calendar day (Asia/Kolkata timezone)
     // Inclusive of the start day (e.g. if started on July 12 for 7 days, it ends July 18 at 23:59:59)
-    const endDayObj = new Date(startDate.getTime());
-    endDayObj.setDate(endDayObj.getDate() + (challenge.duration - 1));
-    const year = endDayObj.getFullYear();
-    const month = endDayObj.getMonth();
-    const date = endDayObj.getDate();
-    const endDateStr = `${year}-${String(month + 1).padStart(2, "0")}-${String(date).padStart(2, "0")}T23:59:59+05:30`;
+    const kolkataTodayStr = startDate.toLocaleDateString("en-CA", { timeZone: "Asia/Kolkata" });
+    const [startYear, startMonth, startDay] = kolkataTodayStr.split("-").map(Number);
+    // Create a date in UTC representing the start day in India
+    const startKolkata = new Date(Date.UTC(startYear, startMonth - 1, startDay));
+    // Add days
+    const endKolkata = new Date(startKolkata.getTime() + (challenge.duration - 1) * 24 * 60 * 60 * 1000);
+    const endYear = endKolkata.getUTCFullYear();
+    const endMonth = endKolkata.getUTCMonth() + 1;
+    const endDateVal = endKolkata.getUTCDate();
+    const endDateStr = `${endYear}-${String(endMonth).padStart(2, "0")}-${String(endDateVal).padStart(2, "0")}T23:59:59+05:30`;
     const endDate = new Date(endDateStr);
 
     // Atomically transition the challenge status to prevent race conditions
@@ -346,20 +377,19 @@ const joinChallenge = async (req, res) => {
     );
 
     if (!lockedChallenge) {
-      return res.status(400).json({ message: "This battle invitation has already been accepted by another participant." });
+      // Rollback deduction if challenge has already been accepted or cancelled
+      await User.updateOne(
+        { _id: userId },
+        { $inc: { battleBalance: totalCost } }
+      );
+      return res.status(400).json({ message: "This battle invitation has already been accepted or cancelled by another participant." });
     }
-
-    // Deduct from battle wallet atomically
-    await User.updateOne(
-      { _id: userId },
-      { $inc: { battleBalance: -totalCost } }
-    );
 
     const creator = await User.findById(challenge.creatorId);
 
     res.status(200).json({
       message: "Challenge joined successfully!",
-      battleBalance: user.battleBalance - totalCost,
+      battleBalance: updatedUser.battleBalance,
       challengeId: challenge._id,
       opponent: {
         name: creator.name,
@@ -415,8 +445,10 @@ const getActiveChallenges = async (req, res) => {
       const opponentScore = await countCompletedSubmissions(ch.opponentId._id, ch.startDate, ch.endDate, ch.duration);
 
       // Days elapsed (at least 1) based on calendar days in Asia/Kolkata timezone
-      const d1 = new Date(ch.startDate.toLocaleDateString("en-US", { timeZone: "Asia/Kolkata" }));
-      const d2 = new Date(now.toLocaleDateString("en-US", { timeZone: "Asia/Kolkata" }));
+      const d1Str = ch.startDate.toLocaleDateString("en-CA", { timeZone: "Asia/Kolkata" });
+      const d2Str = now.toLocaleDateString("en-CA", { timeZone: "Asia/Kolkata" });
+      const d1 = new Date(d1Str + "T00:00:00Z");
+      const d2 = new Date(d2Str + "T00:00:00Z");
       const diffDays = Math.round((d2.getTime() - d1.getTime()) / (1000 * 60 * 60 * 24));
       const currentDay = Math.min(ch.duration, Math.max(1, diffDays + 1));
 
@@ -529,8 +561,10 @@ const getChallengeById = async (req, res) => {
 
     let currentDay = 1;
     if ((ch.status === "active" || ch.status === "completed") && ch.startDate) {
-      const d1 = new Date(ch.startDate.toLocaleDateString("en-US", { timeZone: "Asia/Kolkata" }));
-      const d2 = new Date(new Date().toLocaleDateString("en-US", { timeZone: "Asia/Kolkata" }));
+      const d1Str = ch.startDate.toLocaleDateString("en-CA", { timeZone: "Asia/Kolkata" });
+      const d2Str = new Date().toLocaleDateString("en-CA", { timeZone: "Asia/Kolkata" });
+      const d1 = new Date(d1Str + "T00:00:00Z");
+      const d2 = new Date(d2Str + "T00:00:00Z");
       const diffDays = Math.round((d2.getTime() - d1.getTime()) / (1000 * 60 * 60 * 24));
       currentDay = Math.min(ch.duration, Math.max(1, diffDays + 1));
     }
@@ -608,8 +642,12 @@ const getChallengeById = async (req, res) => {
       for (const sub of subs) {
         const isSubCreator = sub.userId.toString() === ch.creatorId._id.toString();
         const solverName = isSubCreator ? ch.creatorId.name : (ch.opponentId ? ch.opponentId.name : "Opponent");
-        const diffTime = new Date(sub.createdAt).getTime() - start.getTime();
-        const dayNumber = Math.max(1, Math.min(ch.duration, Math.floor(diffTime / (1000 * 60 * 60 * 24)) + 1));
+        const subDateStr = new Date(sub.createdAt).toLocaleDateString("en-CA", { timeZone: "Asia/Kolkata" });
+        const startStrVal = new Date(ch.startDate).toLocaleDateString("en-CA", { timeZone: "Asia/Kolkata" });
+        const fd1 = new Date(startStrVal + "T00:00:00Z");
+        const fd2 = new Date(subDateStr + "T00:00:00Z");
+        const fDiffDays = Math.round((fd2.getTime() - fd1.getTime()) / (1000 * 60 * 60 * 24));
+        const dayNumber = Math.max(1, Math.min(ch.duration, fDiffDays + 1));
 
         feed.push({
           id: sub._id,
@@ -683,11 +721,20 @@ const cancelPendingChallenge = async (req, res) => {
 
     const refundAmount = pendingChallenge.stake + pendingChallenge.entryFee;
 
-    // Atomically increment user balance
-    await User.updateOne(
-      { _id: userId },
-      { $inc: { battleBalance: refundAmount } }
-    );
+    try {
+      // Atomically increment user balance
+      await User.updateOne(
+        { _id: userId },
+        { $inc: { battleBalance: refundAmount } }
+      );
+    } catch (refundErr) {
+      // Rollback status to pending to maintain database consistency if the update fails
+      await Challenge.updateOne(
+        { _id: pendingChallenge._id },
+        { $set: { status: "pending" } }
+      );
+      throw refundErr;
+    }
 
     const user = await User.findById(userId);
 
@@ -726,11 +773,17 @@ const expirePendingChallenges = async () => {
       );
 
       if (lockedChallenge) {
-        // Refund the creator atomically
-        await User.updateOne(
-          { _id: ch.creatorId },
-          { $inc: { battleBalance: ch.stake + ch.entryFee } }
-        );
+        try {
+          // Refund the creator atomically
+          await User.updateOne(
+            { _id: ch.creatorId },
+            { $inc: { battleBalance: ch.stake + ch.entryFee } }
+          );
+        } catch (refundErr) {
+          console.error(`[Cron Expiry] Failed to refund creator ${ch.creatorId} for challenge ${ch._id}:`, refundErr);
+          // Rollback status to pending to maintain database consistency if update fails
+          await Challenge.updateOne({ _id: ch._id }, { $set: { status: "pending" } });
+        }
       }
     }
     

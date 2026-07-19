@@ -431,6 +431,9 @@ const getLeaderboard = async (req, res) => {
 };
 const addBattleFunds = async (req, res) => {
   try {
+    if (process.env.NODE_ENV === "production") {
+      return res.status(403).json({ message: "Forbidden in production environment." });
+    }
     const { amount } = req.body;
     const amountVal = parseInt(amount);
     if (isNaN(amountVal) || amountVal <= 0) {
