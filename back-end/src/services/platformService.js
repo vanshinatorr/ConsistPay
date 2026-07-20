@@ -395,9 +395,6 @@ class PlatformService {
   async deleteLinkage(userId, platform) {
     const linkage = await PlatformLinkage.findOne({ userId, platform });
     if (linkage) {
-      if (linkage.isVerified) {
-        throw new Error("Cannot delete a verified profile linkage.");
-      }
       await PlatformLinkage.deleteOne({ _id: linkage._id });
     }
     return { message: "Linkage cleared successfully." };

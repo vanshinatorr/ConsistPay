@@ -129,9 +129,27 @@ const syncUserStreak = async (userOrId) => {
 
       submissions.forEach((sub) => {
         const existing = submissionsMap.get(sub.date);
-        // Prioritize completed submissions on the same date
-        if (!existing || (existing.status !== "completed" && sub.status === "completed")) {
+        if (!existing) {
           submissionsMap.set(sub.date, sub);
+        } else {
+          // 1. Completed takes precedence over missed
+          if (existing.status !== "completed" && sub.status === "completed") {
+            submissionsMap.set(sub.date, sub);
+          } 
+          // 2. If both are completed, prioritize the one that has already been paid out
+          else if (existing.status === "completed" && sub.status === "completed") {
+            if (!existing.payoutProcessed && sub.payoutProcessed) {
+              submissionsMap.set(sub.date, sub);
+            }
+          }
+          // 3. If both are missed, prioritize the one that has already been processed (deducted or grace)
+          else if (existing.status === "missed" && sub.status === "missed") {
+            if (!existing.deductionProcessed && sub.deductionProcessed) {
+              submissionsMap.set(sub.date, sub);
+            } else if (!existing.graceCoinApplied && sub.graceCoinApplied) {
+              submissionsMap.set(sub.date, sub);
+            }
+          }
         }
       });
 
