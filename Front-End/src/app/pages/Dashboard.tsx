@@ -874,8 +874,8 @@ export function Dashboard() {
             </div>
           </div>
 
-          {/* Row 2: Challenge a Friend Widget */}
-          <DashboardBattleWidget onRefreshRequest={fetchUserData} />
+          {/* Row 2: Challenge a Friend Widget (Only rendered on home if user has an active challenge) */}
+          <DashboardBattleWidget onRefreshRequest={fetchUserData} hideEmptyState={true} />
 
           {/* Row 3: Top Widgets Row (Consistency Wallet Card prominent on mobile) */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch mb-6">
@@ -886,8 +886,8 @@ export function Dashboard() {
                 onboardingComplete={true}
               />
             </div>
-            {/* Column 2 - Consistency Wallet Card (Core feature centered and prominent with direct Sync & Timer tools) */}
-            <div className="col-span-1 lg:col-span-7">
+            {/* Column 2 - Consistency Wallet Card (Desktop Only) */}
+            <div className="hidden lg:block lg:col-span-7">
               <WalletCard
                 plan={userData?.plan}
                 monthlyBudget={monthlyBudget}
@@ -925,6 +925,89 @@ export function Dashboard() {
                 onboardingComplete={true}
               />
             </div>
+          </div>
+
+          {/* Mobile Only Structure (Intentional, Handcrafted, Low Cognitive Load) */}
+          <div className="block lg:hidden space-y-6 mb-6">
+            
+            {/* Today's Status Banner & Sync Countdown */}
+            <div className={`p-4 rounded-xl border flex items-center justify-between transition-all duration-300 ${
+              todaySubmission?.count > 0
+                ? "bg-emerald-500/[0.03] border-emerald-500/10 text-emerald-600 dark:text-emerald-400"
+                : "bg-yellow-500/[0.03] border-yellow-500/10 text-yellow-600 dark:text-yellow-400"
+            }`}>
+              <div className="flex items-center gap-2">
+                <div className={`w-2 h-2 rounded-full ${todaySubmission?.count > 0 ? "bg-emerald-500" : "bg-yellow-500 animate-pulse"}`} />
+                <span className="text-xs font-bold uppercase tracking-wider">
+                  {todaySubmission?.count > 0 ? "Daily Solve Verified" : "Solve Pending"}
+                </span>
+              </div>
+              {!(todaySubmission?.count > 0) && timeLeft && (
+                <span className="text-[10px] font-mono opacity-80">
+                  {timeLeft.h}h {timeLeft.m}m left
+                </span>
+              )}
+            </div>
+
+            {/* Primary CTA: Sync Button */}
+            <div>
+              <button
+                onClick={handleSync}
+                disabled={syncLoading || todaySubmission?.count > 0}
+                className={`w-full py-4 px-4 rounded-xl text-xs font-extrabold transition-all flex items-center justify-center gap-2 border select-none cursor-pointer ${
+                  todaySubmission?.count > 0
+                    ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-400 cursor-not-allowed"
+                    : syncLoading
+                    ? "bg-zinc-800 border-zinc-700 text-zinc-400 cursor-wait"
+                    : "bg-white text-zinc-950 border-zinc-200 hover:bg-zinc-50 dark:bg-white dark:text-zinc-950 dark:hover:bg-zinc-100 shadow-sm active:scale-95"
+                }`}
+              >
+                {syncLoading ? (
+                  <>
+                    <div className="w-3.5 h-3.5 border-2 border-zinc-400 border-t-transparent rounded-full animate-spin" />
+                    <span>Syncing Solve Progress...</span>
+                  </>
+                ) : todaySubmission?.count > 0 ? (
+                  <>
+                    <Check className="w-4 h-4 text-emerald-400 animate-bounce" />
+                    <span>Streak Secured for Today</span>
+                  </>
+                ) : (
+                  <span>Sync Progress Now</span>
+                )}
+              </button>
+              {submitError && (
+                <p className="text-[11px] text-red-500 mt-2 text-center font-medium">{submitError}</p>
+              )}
+            </div>
+
+            {/* Mini Wallet Summary (Consolidated Cash Card) */}
+            <div className="bg-zinc-50 dark:bg-black/30 border border-zinc-200 dark:border-white/[0.03] rounded-xl p-4 flex items-center justify-between hover:border-zinc-300 dark:hover:border-white/[0.06] transition-all duration-200 shadow-md">
+              <div>
+                <span className="text-[9px] text-zinc-500 dark:text-zinc-400 font-extrabold uppercase tracking-widest block">
+                  Withdrawable Wallet
+                </span>
+                <span className="text-2xl font-black text-zinc-900 dark:text-white mt-1 block">
+                  ₹{userData ? Math.round(userData.balance) : "0"}
+                </span>
+              </div>
+              {userData && userData.balance > 0 ? (
+                <button
+                  onClick={() => {
+                    const event = new CustomEvent("open-withdraw-modal", { detail: { walletType: "consistency" } });
+                    window.dispatchEvent(event);
+                  }}
+                  className="px-4 py-2 bg-white text-zinc-900 border border-zinc-200 hover:bg-zinc-50 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-100 text-xs font-bold rounded-lg transition-all cursor-pointer shadow-sm active:scale-95 shrink-0"
+                >
+                  Withdraw
+                </button>
+              ) : (
+                <span className="text-[9px] text-zinc-500 dark:text-zinc-550 font-bold bg-zinc-150 dark:bg-white/[0.01] border border-zinc-200 dark:border-white/[0.03] px-2.5 py-1.5 rounded-md select-none shrink-0">
+                  Empty
+                </span>
+              )}
+            </div>
+
           </div>
 
           {/* Row 5: Lower Workspace Area (Recent Solves visible on mobile, Leaderboard & Achievements Desktop-Only) */}
