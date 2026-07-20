@@ -185,7 +185,7 @@ export function Notifications() {
               <img
                 src="/logo/brand-logo.png"
                 alt="ConsistPay Logo"
-                className="h-8 w-auto object-contain select-none"
+                className="h-8 w-auto object-contain select-none hidden dark:block"
               />
               <span className="text-lg font-bold text-zinc-900 dark:text-white">
                 Consist<span className="text-emerald-600 dark:text-emerald-400">Pay</span>

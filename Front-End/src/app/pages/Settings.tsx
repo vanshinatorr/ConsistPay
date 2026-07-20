@@ -225,7 +225,7 @@ export function Settings() {
               <img
                 src="/logo/brand-logo.png"
                 alt="ConsistPay Logo"
-                className="h-8 w-auto object-contain select-none"
+                className="h-8 w-auto object-contain select-none hidden dark:block"
               />
               <span className="text-lg font-bold text-zinc-900 dark:text-white">
                 Consist<span className="text-emerald-600 dark:text-emerald-400">Pay</span>
@@ -348,12 +348,12 @@ export function Settings() {
                       { label: "Email", value: email, setter: setEmail, type: "email" },
                     ].map(({ label, value, setter, type }) => (
                       <div key={label}>
-                        <label className="block text-sm text-zinc-400 mb-2">{label}</label>
+                        <label className="block text-xs font-bold text-zinc-450 dark:text-zinc-400 mb-1.5 uppercase tracking-wider">{label}</label>
                         <input
                           type={type}
                           value={value}
                           onChange={(e) => setter(e.target.value)}
-                          className="w-full px-4 py-3 bg-white/5 border border-white/[0.04] rounded-xl text-white placeholder:text-zinc-600 focus:outline-none focus:border-violet-500/50 transition-all"
+                          className="w-full px-4 py-2.5 bg-zinc-50 dark:bg-black/30 border border-zinc-200 dark:border-white/[0.06] rounded-xl text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-650 focus:outline-none focus:border-violet-500/40 focus:ring-1 focus:ring-violet-500/10 transition-all"
                         />
                       </div>
                     ))}
@@ -522,13 +522,13 @@ export function Settings() {
                       { label: "Confirm New Password", value: confirmPassword, setter: setConfirmPassword },
                     ].map(({ label, value, setter }) => (
                       <div key={label}>
-                        <label className="block text-sm text-zinc-400 mb-2">{label}</label>
+                        <label className="block text-xs font-bold text-zinc-450 dark:text-zinc-400 mb-1.5 uppercase tracking-wider">{label}</label>
                         <input
                           type="password"
                           value={value}
                           onChange={(e) => setter(e.target.value)}
                           placeholder="••••••••"
-                          className="w-full px-4 py-3 bg-white/5 border border-white/[0.04] rounded-xl text-white placeholder:text-zinc-600 focus:outline-none focus:border-violet-500/50 transition-all"
+                          className="w-full px-4 py-2.5 bg-zinc-50 dark:bg-black/30 border border-zinc-200 dark:border-white/[0.06] rounded-xl text-zinc-900 dark:text-white placeholder-zinc-450 dark:placeholder-zinc-650 focus:outline-none focus:border-violet-500/40 focus:ring-1 focus:ring-violet-500/10 transition-all"
                         />
                       </div>
                     ))}

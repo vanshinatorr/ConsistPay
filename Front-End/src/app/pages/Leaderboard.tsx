@@ -140,7 +140,7 @@ export function Leaderboard() {
               <img
                 src="/logo/brand-logo.png"
                 alt="ConsistPay Logo"
-                className="h-8 w-auto object-contain select-none"
+                className="h-8 w-auto object-contain select-none hidden dark:block"
               />
               <span className="text-lg font-bold text-zinc-900 dark:text-white">
                 Consist<span className="text-emerald-600 dark:text-emerald-400">Pay</span>
@@ -379,7 +379,7 @@ export function Leaderboard() {
                     key={user._id}
                     className={`grid grid-cols-12 items-center px-6 py-3.5 transition-all
                       ${user.isCurrentUser
-                        ? "bg-violet-500/[0.04] border-l-2 border-l-violet-500"
+                        ? "bg-violet-500/[0.04] dark:bg-violet-500/[0.08] border-l-2 border-l-violet-500 shadow-sm"
                         : "hover:bg-zinc-50/50 dark:hover:bg-white/[0.01]"
                       }`}
                   >

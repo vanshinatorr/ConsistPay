@@ -199,17 +199,13 @@ export function Sidebar() {
       <Link
         key={item.label}
         to={item.path}
-        className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-[11.5px] font-semibold tracking-wide transition-all duration-150 group relative ${
+        className={`flex items-center gap-3 px-3.5 py-2 rounded-xl text-xs font-medium transition-all duration-150 group relative ${
           active 
-            ? "bg-zinc-200/55 dark:bg-white/[0.035] text-zinc-900 dark:text-white" 
-            : "text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 hover:bg-zinc-100/50 dark:hover:text-zinc-200 dark:hover:bg-white/[0.015]"
+            ? "bg-zinc-200/80 dark:bg-white/[0.05] text-zinc-950 dark:text-white shadow-sm" 
+            : "text-zinc-500 dark:text-zinc-450 hover:text-zinc-900 dark:hover:text-zinc-250 hover:bg-zinc-100/50 dark:hover:bg-white/[0.015]"
         }`}
       >
-        {active && (
-          <span className="absolute left-0 top-2.5 bottom-2.5 w-[2px] bg-violet-500 dark:bg-violet-400 rounded-r shadow-[0_0_8px_rgba(139,92,246,0.6)]" />
-        )}
-
-        <IconComponent className={`w-4 h-4 shrink-0 transition-transform ${active ? "text-violet-600 dark:text-violet-400" : "text-zinc-500 dark:text-zinc-400 group-hover:text-zinc-700 dark:group-hover:text-zinc-300"}`} />
+        <IconComponent className={`w-4 h-4 shrink-0 transition-transform ${active ? "text-zinc-900 dark:text-white" : "text-zinc-400 dark:text-zinc-500 group-hover:text-zinc-700 dark:group-hover:text-zinc-300"}`} />
         
         <span className={`transition-all duration-300 whitespace-nowrap overflow-hidden ${
           isCollapsed ? "opacity-0 w-0 invisible" : "opacity-100 w-auto visible"
@@ -306,18 +302,14 @@ export function Sidebar() {
               <Link
                 key={item.label}
                 to={item.path}
-                className={`flex items-center justify-between gap-3 px-3 py-2.5 rounded-lg text-[11.5px] font-semibold tracking-wide transition-all duration-150 group relative ${
+                className={`flex items-center justify-between gap-3 px-3.5 py-2 rounded-xl text-xs font-medium transition-all duration-150 group relative ${
                   active 
-                    ? "bg-zinc-200/55 dark:bg-white/[0.035] text-zinc-900 dark:text-white" 
-                    : "text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 hover:bg-zinc-100/50 dark:hover:text-zinc-200 dark:hover:bg-white/[0.015]"
+                    ? "bg-zinc-200/80 dark:bg-white/[0.05] text-zinc-950 dark:text-white shadow-sm" 
+                    : "text-zinc-500 dark:text-zinc-450 hover:text-zinc-900 dark:hover:text-zinc-250 hover:bg-zinc-100/50 dark:hover:bg-white/[0.015]"
                 }`}
               >
-                {active && (
-                  <span className="absolute left-0 top-2.5 bottom-2.5 w-[2px] bg-violet-500 dark:bg-violet-400 rounded-r shadow-[0_0_8px_rgba(139,92,246,0.6)]" />
-                )}
-
                 <div className="flex items-center gap-3">
-                  <IconComponent className={`w-4 h-4 shrink-0 transition-transform ${active ? "text-violet-600 dark:text-violet-400" : "text-zinc-500 dark:text-zinc-400 group-hover:text-zinc-700 dark:group-hover:text-zinc-300"}`} />
+                  <IconComponent className={`w-4 h-4 shrink-0 transition-transform ${active ? "text-zinc-900 dark:text-white" : "text-zinc-400 dark:text-zinc-500 group-hover:text-zinc-700 dark:group-hover:text-zinc-300"}`} />
                   
                   {!isCollapsed && (
                     <span className="transition-all duration-300 whitespace-nowrap overflow-hidden">
@@ -350,7 +342,7 @@ export function Sidebar() {
 
           <button
             onClick={handleLogout}
-            className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-[11.5px] font-semibold tracking-wide text-rose-400/80 hover:text-rose-450 hover:bg-rose-550/5 transition-all duration-150 border border-transparent w-full text-left cursor-pointer group"
+            className="flex items-center gap-3 px-3.5 py-2 rounded-xl text-xs font-medium text-rose-550 hover:bg-rose-550/5 transition-all duration-150 w-full text-left cursor-pointer group"
             title={isCollapsed ? "Log Out" : undefined}
           >
             <LogOut className="w-4 h-4 shrink-0 transition-transform group-hover:translate-x-0.5" />
