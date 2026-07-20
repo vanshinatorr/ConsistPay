@@ -141,6 +141,15 @@ export function Sidebar() {
 
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [isDark, setIsDark] = useState(() => document.documentElement.classList.contains("dark"));
+
+  useEffect(() => {
+    const observer = new MutationObserver(() => {
+      setIsDark(document.documentElement.classList.contains("dark"));
+    });
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
+    return () => observer.disconnect();
+  }, []);
 
   const handleLogout = () => {
     setShowLogoutConfirm(true);
@@ -238,18 +247,20 @@ export function Sidebar() {
             </button>
           ) : (
             <>
-              <Link to="/dashboard" className="flex items-center gap-3 shrink-0 group/brand animate-in fade-in duration-200">
-                <div className="w-7.5 h-7.5 rounded-xl bg-gradient-to-tr from-violet-500/10 to-emerald-500/10 border border-zinc-200 dark:border-white/[0.08] flex items-center justify-center shrink-0 shadow-sm transition-all duration-300 group-hover/brand:border-violet-500/30">
-                  <img
-                    src="/logo/brand-logo.png"
-                    alt="ConsistPay Logo"
-                    className="h-4 w-auto object-contain select-none transition-transform duration-300 group-hover/brand:scale-105"
-                  />
-                </div>
+              <Link to="/dashboard" className="flex items-center gap-2 shrink-0 group/brand animate-in fade-in duration-200 select-none">
+                {isDark && (
+                  <div className="w-7.5 h-7.5 rounded-xl bg-gradient-to-tr from-violet-500/10 to-emerald-500/10 border border-zinc-200 dark:border-white/[0.08] flex items-center justify-center shrink-0 shadow-sm transition-all duration-300 group-hover/brand:border-violet-500/30">
+                    <img
+                      src="/logo/brand-logo.png"
+                      alt="ConsistPay Logo"
+                      className="h-4 w-auto object-contain select-none transition-transform duration-300 group-hover/brand:scale-105"
+                    />
+                  </div>
+                )}
                 
                 <div className="flex flex-col justify-center">
                   <span className="text-sm font-black tracking-tight text-zinc-900 dark:text-white leading-none">
-                    Consist<span className="text-emerald-400">Pay</span>
+                    Consist<span className="text-emerald-600 dark:text-emerald-400">Pay</span>
                   </span>
                 </div>
               </Link>

@@ -110,72 +110,67 @@ export function WalletCard({
 
         {/* ─── 2-COLUMN MAIN CONTENT GRID ─── */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5 flex-1 mt-4 relative z-10 overflow-hidden">
-          
-          {/* ════ LEFT COLUMN: STAKES & CASH WALLET ════ */}
           <div className="flex flex-col justify-between h-full gap-3">
             
-            {/* 1. Withdrawable Balance Card */}
-            <div className="bg-zinc-50 dark:bg-black/30 border border-zinc-200 dark:border-white/[0.03] rounded-xl py-3 px-4 flex items-center justify-between hover:border-zinc-300 dark:hover:border-white/[0.06] transition-all duration-200 shadow-md">
-              <div>
-                <span className="text-[9.5px] text-zinc-500 dark:text-zinc-400 font-bold uppercase tracking-widest block">
-                  Withdrawable Balance
-                </span>
-                <span className="text-3xl font-bold text-zinc-800 dark:text-white tracking-tight mt-1 block">
-                  <span className="text-zinc-400 dark:text-zinc-500 text-2xl font-light mr-0.5">₹</span>
-                  {onboardingComplete ? Math.round(balance) : "0"}
-                </span>
-                <span className="text-[10px] text-zinc-500 dark:text-zinc-450 block mt-1 leading-normal font-normal">
-                  Funds secured from completed commitments.
-                </span>
+            {/* Consolidated Wallet Card */}
+            <div className="bg-zinc-50 dark:bg-black/30 border border-zinc-200 dark:border-white/[0.03] rounded-xl p-4 flex flex-col justify-between h-full hover:border-zinc-300 dark:hover:border-white/[0.06] transition-all duration-200 shadow-md">
+              {/* Withdrawable Top Section */}
+              <div className="flex items-center justify-between pb-3 border-b border-zinc-200 dark:border-white/[0.04]">
+                <div>
+                  <span className="text-[9px] text-zinc-550 dark:text-zinc-400 font-extrabold uppercase tracking-widest block">
+                    Withdrawable Balance
+                  </span>
+                  <span className="text-3xl font-black text-zinc-900 dark:text-white tracking-tight mt-1.5 block">
+                    <span className="text-zinc-400 dark:text-zinc-500 font-light mr-0.5">₹</span>
+                    {onboardingComplete ? Math.round(balance) : "0"}
+                  </span>
+                </div>
+                {onboardingComplete && balance > 0 ? (
+                  <button
+                    onClick={() => {
+                      const event = new CustomEvent("open-withdraw-modal", { detail: { walletType: "consistency" } });
+                      window.dispatchEvent(event);
+                    }}
+                    className="px-3.5 py-2 bg-white text-zinc-900 border border-zinc-200 hover:bg-zinc-50 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-100 text-xs font-bold rounded-lg transition-all cursor-pointer shadow-sm active:scale-95 shrink-0"
+                  >
+                    Withdraw
+                  </button>
+                ) : (
+                  <span className="text-[9px] text-zinc-500 dark:text-zinc-550 font-bold bg-zinc-150 dark:bg-white/[0.01] border border-zinc-200 dark:border-white/[0.03] px-2.5 py-1.5 rounded-md select-none shrink-0">
+                    Empty
+                  </span>
+                )}
               </div>
-              {onboardingComplete && balance > 0 ? (
-                <button
-                  onClick={() => {
-                    const event = new CustomEvent("open-withdraw-modal", { detail: { walletType: "consistency" } });
-                    window.dispatchEvent(event);
-                  }}
-                  className="px-4 py-2 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-100 text-xs font-bold rounded-lg transition-all cursor-pointer shadow-sm active:scale-95 shrink-0"
-                >
-                  Withdraw
-                </button>
-              ) : (
-                <span className="text-[9px] text-zinc-500 dark:text-zinc-550 font-bold bg-zinc-150 dark:bg-white/[0.01] border border-zinc-200 dark:border-white/[0.03] px-2.5 py-1.5 rounded-md select-none shrink-0">
-                  Empty Wallet
-                </span>
-              )}
-            </div>
 
-            {/* 2. Money At Stake Card */}
-            <div className="bg-zinc-50 dark:bg-black/30 border border-zinc-200 dark:border-white/[0.03] rounded-xl py-3 px-4 flex-1 flex flex-col justify-center hover:border-zinc-300 dark:hover:border-white/[0.06] transition-all duration-200 shadow-md">
-              <span className="text-[9.5px] text-zinc-550 dark:text-zinc-400 uppercase tracking-widest font-bold block">
-                Money At Stake
-              </span>
-              <span className="text-2xl font-bold text-zinc-800 dark:text-white tracking-tight mt-1 block">
-                <span className="text-zinc-400 dark:text-zinc-500 text-xl font-light mr-0.5">₹</span>
-                {onboardingComplete ? Math.round(activeDeposit) : "0"}
-              </span>
-              <span className="text-[11px] text-zinc-500 dark:text-zinc-455 block mt-1 leading-normal font-normal">
-                Missed days forfeit ₹{onboardingComplete ? dailyCommitment : 0} from this pool.
-              </span>
-            </div>
+              {/* Locked Stake & Month-End Payout Split Row */}
+              <div className="grid grid-cols-2 gap-3 pt-3">
+                {/* Locked Stake */}
+                <div className="border-r border-zinc-200 dark:border-white/[0.04] pr-2">
+                  <span className="text-[8.5px] text-zinc-500 dark:text-zinc-500 font-extrabold uppercase tracking-wider block">
+                    Locked Stake
+                  </span>
+                  <span className="text-lg font-bold text-zinc-800 dark:text-zinc-100 mt-1 block">
+                    ₹{onboardingComplete ? Math.round(activeDeposit) : "0"}
+                  </span>
+                  <span className="text-[9px] text-zinc-455 dark:text-zinc-500 block mt-0.5 font-normal leading-tight">
+                    Forfeits ₹{onboardingComplete ? dailyCommitment : 0}/miss.
+                  </span>
+                </div>
 
-            {/* 3. Month-end Payout Preview Card (Gold theme) */}
-            <div className="bg-amber-500/[0.03] dark:bg-amber-500/[0.01] border border-amber-200 dark:border-amber-500/10 rounded-xl py-3 px-4 flex-1 flex flex-col justify-center hover:border-amber-400 dark:hover:border-amber-500/20 transition-all duration-200 shadow-md">
-              <div className="flex items-center gap-1.5 text-amber-600 dark:text-amber-400/90">
-                <Coins className="w-4 h-4" />
-                <span className="text-[9.5px] font-bold uppercase tracking-widest block">
-                  Month-end Payout Preview
-                </span>
+                {/* Month-End Payout Preview */}
+                <div className="pl-1">
+                  <span className="text-[8.5px] text-zinc-500 dark:text-zinc-500 font-extrabold uppercase tracking-wider block">
+                    Payout Preview
+                  </span>
+                  <span className="text-lg font-bold text-zinc-800 dark:text-zinc-100 mt-1 block">
+                    ₹{onboardingComplete ? completedDays * dailyCommitment : 0}
+                  </span>
+                  <span className="text-[9px] text-zinc-455 dark:text-zinc-500 block mt-0.5 font-normal leading-tight">
+                    {Math.max(30 - (completedDays + missedDays), 0)} days remaining.
+                  </span>
+                </div>
               </div>
-              <span className="text-2xl font-bold text-amber-600 dark:text-amber-400 tracking-tight mt-1 block">
-                <span className="text-amber-600/60 dark:text-amber-600/60 text-xl font-light mr-0.5">₹</span>
-                {onboardingComplete ? completedDays * dailyCommitment : 0}
-              </span>
-              <span className="text-[11px] text-zinc-500 dark:text-zinc-450 block mt-1 leading-normal font-normal">
-                {Math.max(30 - (completedDays + missedDays), 0)} days left — keep submitting!
-              </span>
             </div>
-
           </div>
 
           {/* ════ RIGHT COLUMN: VERIFICATION HUB & STREAKS ════ */}

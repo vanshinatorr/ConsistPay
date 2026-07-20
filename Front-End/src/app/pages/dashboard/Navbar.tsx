@@ -67,20 +67,39 @@ export function Navbar({ initials, plan = "free", avatar, isAvatarUrl }: NavbarP
         const data = await res.json();
         setNotifications(data);
 
-        // Confetti trigger for unread won battles
+        // Confetti trigger for achievements (never repeats on refresh/page reload)
         if (Array.isArray(data)) {
-          const unreadWins = data.filter((n: any) => !n.read && n.type === "battle" && (n.title === "Battle Won" || n.title === "Battle Tied"));
+          const achievementTitles = [
+            "battle won", "battle tied", "grace coin unlocked", 
+            "withdrawal completed", "withdrawal initiated", "verification completed", 
+            "profile verified", "badge unlocked", "achievement unlocked", "new badge"
+          ];
+          const unreadAchievements = data.filter((n: any) => {
+            if (n.read) return false;
+            const t = (n.title || "").toLowerCase();
+            return achievementTitles.some(title => t.includes(title));
+          });
+
+          const celebratedStr = localStorage.getItem("consistpay_celebrated_notifs") || "[]";
+          let celebratedList: string[] = [];
+          try {
+            celebratedList = JSON.parse(celebratedStr);
+          } catch(e) {
+            celebratedList = [];
+          }
+          const celebratedSet = new Set(celebratedList);
           let triggeredAny = false;
 
-          unreadWins.forEach((n: any) => {
+          unreadAchievements.forEach((n: any) => {
             const idStr = n._id || n.id;
-            if (idStr && !processedConfettiNotifs.current.has(idStr)) {
-              processedConfettiNotifs.current.add(idStr);
+            if (idStr && !celebratedSet.has(idStr)) {
+              celebratedSet.add(idStr);
               triggeredAny = true;
             }
           });
 
           if (triggeredAny) {
+            localStorage.setItem("consistpay_celebrated_notifs", JSON.stringify(Array.from(celebratedSet)));
             setTimeout(() => {
               confetti({ particleCount: 80, spread: 60, origin: { x: 0.2, y: 0.6 } });
               confetti({ particleCount: 80, spread: 60, origin: { x: 0.8, y: 0.6 } });
@@ -203,15 +222,17 @@ export function Navbar({ initials, plan = "free", avatar, isAvatarUrl }: NavbarP
 
               <Link
                 to="/dashboard"
-                className="flex items-center gap-2.5 shrink-0"
+                className="flex items-center gap-2 shrink-0 select-none"
               >
-                <img
-                  src="/logo/brand-logo.png"
-                  alt="ConsistPay Logo"
-                  className="h-7.5 w-auto object-contain select-none"
-                />
-                <span className="hidden sm:block text-base font-extrabold tracking-tight text-white">
-                  Consist<span className="text-emerald-400">Pay</span>
+                {theme === "dark" && (
+                  <img
+                    src="/logo/brand-logo.png"
+                    alt="ConsistPay Logo"
+                    className="h-7 w-auto object-contain select-none"
+                  />
+                )}
+                <span className="text-base font-extrabold tracking-tight text-zinc-900 dark:text-white">
+                  Consist<span className="text-emerald-600 dark:text-emerald-400">Pay</span>
                 </span>
               </Link>
             </div>

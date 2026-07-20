@@ -105,6 +105,7 @@ interface ConsistencyCalendarProps {
   onPrevMonth: () => void;
   onNextMonth: () => void;
   isNextDisabled: boolean;
+  isMobileCompact?: boolean;
 }
 
 export function ConsistencyCalendar({
@@ -114,6 +115,7 @@ export function ConsistencyCalendar({
   onPrevMonth,
   onNextMonth,
   isNextDisabled,
+  isMobileCompact = false,
 }: ConsistencyCalendarProps) {
   const firstYear = yearMonths[0]?.name.split(" ")[1] || "";
   const lastYear = yearMonths[yearMonths.length - 1]?.name.split(" ")[1] || "";
@@ -127,27 +129,38 @@ export function ConsistencyCalendar({
 
         <div className="relative bg-white dark:bg-[#0F0F13] border border-zinc-200 dark:border-white/[0.04] rounded-2xl p-4 flex flex-col justify-between h-full shadow-lg transition-all">
           
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-[10px] font-bold text-zinc-550 dark:text-zinc-400 font-mono tracking-wider select-none">
-              {yearLabel}
-            </span>
-            <div className="flex items-center gap-1">
-              <button
-                onClick={onPrevMonth}
-                className="p-1 rounded bg-zinc-100 dark:bg-white/5 border border-zinc-200 dark:border-white/[0.04] hover:bg-zinc-200 dark:hover:bg-white/10 transition-colors text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white"
-              >
-                <ChevronLeft className="w-3.5 h-3.5" />
-              </button>
-
-              <button
-                onClick={onNextMonth}
-                disabled={isNextDisabled}
-                className="p-1 rounded bg-zinc-100 dark:bg-white/5 border border-zinc-200 dark:border-white/[0.04] hover:bg-zinc-200 dark:hover:bg-white/10 transition-colors text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white disabled:opacity-30 disabled:pointer-events-none"
-              >
-                <ChevronRight className="w-3.5 h-3.5" />
-              </button>
+          {isMobileCompact ? (
+            <div className="flex items-center justify-between mb-1">
+              <span className="text-[9px] font-bold text-zinc-500 uppercase tracking-widest font-mono select-none">
+                Consistency Grid (Last 30 Days)
+              </span>
+              <span className="text-[9px] text-zinc-400 font-bold bg-white/5 border border-white/5 px-2 py-0.5 rounded select-none">
+                View Full
+              </span>
             </div>
-          </div>
+          ) : (
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-[10px] font-bold text-zinc-550 dark:text-zinc-400 font-mono tracking-wider select-none">
+                {yearLabel}
+              </span>
+              <div className="flex items-center gap-1">
+                <button
+                  onClick={(e) => { e.stopPropagation(); onPrevMonth(); }}
+                  className="p-1 rounded bg-zinc-100 dark:bg-white/5 border border-zinc-200 dark:border-white/[0.04] hover:bg-zinc-200 dark:hover:bg-white/10 transition-colors text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white"
+                >
+                  <ChevronLeft className="w-3.5 h-3.5" />
+                </button>
+
+                <button
+                  onClick={(e) => { e.stopPropagation(); onNextMonth(); }}
+                  disabled={isNextDisabled}
+                  className="p-1 rounded bg-zinc-100 dark:bg-white/5 border border-zinc-200 dark:border-white/[0.04] hover:bg-zinc-200 dark:hover:bg-white/10 transition-colors text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white disabled:opacity-30 disabled:pointer-events-none"
+                >
+                  <ChevronRight className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            </div>
+          )}
 
           <div className={`overflow-x-auto pt-6 pb-2 transition-all duration-500 flex-1 flex items-center justify-start lg:justify-center ${!onboardingComplete ? 'opacity-30 grayscale pointer-events-none' : ''}`}>
             <div className="flex gap-2.5 min-w-max px-4 lg:px-6">

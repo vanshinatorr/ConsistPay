@@ -1,4 +1,4 @@
-import { AlertTriangle, BarChart3, Flame, TrendingDown, Target } from "lucide-react";
+import { AlertTriangle, BarChart3, Flame, TrendingDown, Target, X } from "lucide-react";
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
@@ -84,6 +84,7 @@ export function Dashboard() {
   const [activeMobileTab, setActiveMobileTab] = useState<"today" | "analytics" | "activity">("today");
   const [showWithdrawModal, setShowWithdrawModal] = useState(false);
   const [withdrawWalletType, setWithdrawWalletType] = useState<"consistency" | "battle">("consistency");
+  const [showCalendarModal, setShowCalendarModal] = useState(false);
 
   const [leaderboardLoading, setLeaderboardLoading] = useState(true);
   const [userRank, setUserRank] = useState<number>(1);
@@ -838,6 +839,8 @@ export function Dashboard() {
                 completedDays={userData?.totalProblemsSolved ?? 0}
                 consistencyScore={consistencyScore}
                 onboardingComplete={true}
+                activeDeposit={userData?.activeDeposit ?? 0}
+                balance={userData?.balance ?? 0}
               />
             </div>
             {/* Desktop Only Calendar */}
@@ -851,22 +854,40 @@ export function Dashboard() {
                 isNextDisabled={isNextDisabled}
               />
             </div>
+
+            {/* Mobile Heatmap (Last 30 days) */}
+            <div className="block lg:hidden lg:col-span-1 mt-2">
+              <div 
+                onClick={() => setShowCalendarModal(true)}
+                className="cursor-pointer"
+              >
+                <ConsistencyCalendar
+                  yearMonths={yearMonths.slice(-1)}
+                  onboardingComplete={true}
+                  dayLabels={dayLabels}
+                  onPrevMonth={handlePrevMonth}
+                  onNextMonth={handleNextMonth}
+                  isNextDisabled={isNextDisabled}
+                  isMobileCompact={true}
+                />
+              </div>
+            </div>
           </div>
 
           {/* Row 2: Challenge a Friend Widget */}
           <DashboardBattleWidget onRefreshRequest={fetchUserData} />
 
-          {/* Row 3: Top Widgets Row (Platforms Connect, Consistency Wallet, Versus Card + DSA Solves Stack) */}
+          {/* Row 3: Top Widgets Row (Consistency Wallet Card prominent on mobile) */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch mb-6">
-            {/* Column 1 - Platforms Connect Widget */}
-            <div className="lg:col-span-2">
+            {/* Column 1 - Platforms Connect Widget (Desktop Only) */}
+            <div className="hidden lg:block lg:col-span-2">
               <PlatformsWidget
                 onLinkageChanged={fetchUserData}
                 onboardingComplete={true}
               />
             </div>
             {/* Column 2 - Consistency Wallet Card (Core feature centered and prominent with direct Sync & Timer tools) */}
-            <div className="lg:col-span-7">
+            <div className="col-span-1 lg:col-span-7">
               <WalletCard
                 plan={userData?.plan}
                 monthlyBudget={monthlyBudget}
@@ -891,8 +912,8 @@ export function Dashboard() {
                 syncLogs={syncLogs}
               />
             </div>
-            {/* Column 3 - Versus Card & DSA Solves Card Stack */}
-            <div className="lg:col-span-3 flex flex-col gap-6">
+            {/* Column 3 - Versus Card & DSA Solves Card Stack (Desktop Only) */}
+            <div className="hidden lg:flex lg:col-span-3 flex-col gap-6">
               <VersusCard
                 plan={userData?.plan}
                 battleBalance={userData?.battleBalance ?? 0}
@@ -906,15 +927,15 @@ export function Dashboard() {
             </div>
           </div>
 
-          {/* Row 5: Lower Workspace Area (Recent Solves, Leaderboard, and Achievements side-by-side in 1 line) */}
+          {/* Row 5: Lower Workspace Area (Recent Solves visible on mobile, Leaderboard & Achievements Desktop-Only) */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch">
             {/* Column 1 - Recent Solves */}
-            <div className="lg:col-span-1">
+            <div className="col-span-1 lg:col-span-1">
               <RecentSolves recentSolves={recentSolves} />
             </div>
 
-            {/* Column 2 - Leaderboard Rank */}
-            <div className="lg:col-span-1">
+            {/* Column 2 - Leaderboard Rank (Desktop Only) */}
+            <div className="hidden lg:block lg:col-span-1">
               <LeaderboardRankCard
                 rank={userRank}
                 totalUsers={totalUsers}
@@ -923,8 +944,8 @@ export function Dashboard() {
               />
             </div>
 
-            {/* Column 3 - Achievements Awards */}
-            <div className="lg:col-span-1">
+            {/* Column 3 - Achievements Awards (Desktop Only) */}
+            <div className="hidden lg:block lg:col-span-1">
               <AwardsCard
                 streak={userData?.streak ?? 0}
                 maxStreak={userData?.maxStreak ?? 0}
@@ -941,17 +962,7 @@ export function Dashboard() {
             </div>
           </div>
 
-          {/* Row 6: Mobile Only Calendar */}
-          <div className="block lg:hidden">
-            <ConsistencyCalendar
-              yearMonths={yearMonths}
-              onboardingComplete={userData?.onboardingComplete ?? true}
-              dayLabels={dayLabels}
-              onPrevMonth={handlePrevMonth}
-              onNextMonth={handleNextMonth}
-              isNextDisabled={isNextDisabled}
-            />
-          </div>
+          {/* Removed full year mobile calendar to prevent vertical scrolling */}
         </div>
 
         {/* Modals */}
@@ -976,11 +987,46 @@ export function Dashboard() {
           />
         )}
 
-        <Footer
-          faqs={faqs}
-          openFaqIndex={openFaqIndex}
-          setOpenFaqIndex={setOpenFaqIndex}
-        />
+        {/* Full Screen Calendar Modal for Mobile */}
+        {showCalendarModal && (
+          <div 
+            className="fixed inset-0 bg-black/80 backdrop-blur-md z-[100] flex items-center justify-center p-4" 
+            onClick={() => setShowCalendarModal(false)}
+          >
+            <div 
+              className="relative w-full max-w-4xl bg-[#0F0F13] border border-white/[0.08] rounded-3xl p-6 shadow-2xl overflow-hidden max-h-[90vh] flex flex-col" 
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex items-center justify-between pb-3 border-b border-white/[0.06] mb-4">
+                <h3 className="text-base font-bold text-white uppercase tracking-wider font-mono">Consistency Calendar</h3>
+                <button 
+                  onClick={() => setShowCalendarModal(false)}
+                  className="p-1 rounded-xl bg-white/5 border border-white/5 text-zinc-400 hover:text-white"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+              <div className="flex-1 overflow-y-auto">
+                <ConsistencyCalendar
+                  yearMonths={yearMonths}
+                  onboardingComplete={true}
+                  dayLabels={dayLabels}
+                  onPrevMonth={handlePrevMonth}
+                  onNextMonth={handleNextMonth}
+                  isNextDisabled={isNextDisabled}
+                />
+              </div>
+            </div>
+          </div>
+        )}
+
+        <div className="hidden md:block">
+          <Footer
+            faqs={faqs}
+            openFaqIndex={openFaqIndex}
+            setOpenFaqIndex={setOpenFaqIndex}
+          />
+        </div>
       </main>
 
       {import.meta.env.DEV && (
