@@ -148,10 +148,15 @@ try {
     user.plan = planLower;
     user.dailyCommitment = Number(dailyCommitment);
     user.onboardingComplete = true;
-    user.onboardingCompletedAt = new Date();
+    if (!user.onboardingCompletedAt) {
+      user.onboardingCompletedAt = new Date();
+    }
     user.graceCoins = 1;
     user.lastGraceCoinEarnedMonth = "";
-    user.planExpiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
+    const currentExpiry = user.planExpiresAt && new Date(user.planExpiresAt) > new Date()
+      ? new Date(user.planExpiresAt)
+      : new Date();
+    user.planExpiresAt = new Date(currentExpiry.getTime() + 30 * 24 * 60 * 60 * 1000);
     user.currentCycleUnprotectedMisses = 0;
     user.bonusCredited = false;
 
@@ -199,10 +204,15 @@ try {
   user.plan = planLower;
   user.dailyCommitment = Number(dailyCommitment);
   user.onboardingComplete = true;
-  user.onboardingCompletedAt = new Date();
+  if (!user.onboardingCompletedAt) {
+    user.onboardingCompletedAt = new Date();
+  }
   user.graceCoins = 1;
   user.lastGraceCoinEarnedMonth = "";
-  user.planExpiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
+  const currentExpiry = user.planExpiresAt && new Date(user.planExpiresAt) > new Date()
+    ? new Date(user.planExpiresAt)
+    : new Date();
+  user.planExpiresAt = new Date(currentExpiry.getTime() + 30 * 24 * 60 * 60 * 1000);
   user.currentCycleUnprotectedMisses = 0;
   user.bonusCredited = false;
 
