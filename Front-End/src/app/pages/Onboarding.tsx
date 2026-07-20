@@ -38,6 +38,38 @@ export function Onboarding() {
     setError("");
   }, [step]);
 
+  useEffect(() => {
+    const checkOnboardStatus = async () => {
+      if (!token) {
+        navigate("/login");
+        return;
+      }
+      const cached = localStorage.getItem("consistpay_user_data");
+      if (cached) {
+        const user = JSON.parse(cached);
+        if (user.onboardingComplete) {
+          navigate("/dashboard", { replace: true });
+          return;
+        }
+      }
+      try {
+        const res = await fetch(`${API}/api/users/me`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        if (res.ok) {
+          const data = await res.json();
+          if (data.onboardingComplete) {
+            localStorage.setItem("consistpay_user_data", JSON.stringify(data));
+            navigate("/dashboard", { replace: true });
+          }
+        }
+      } catch (err) {
+        console.error("Failed to check onboarding status:", err);
+      }
+    };
+    checkOnboardStatus();
+  }, [token, API, navigate]);
+
   const handleNext = () => setStep((s) => s + 1);
   const handleBack = () => setStep((s) => s - 1);
 

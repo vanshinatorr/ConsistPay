@@ -901,7 +901,7 @@ export function Dashboard() {
           </div>
 
           {/* Row 2: Challenge a Friend Widget (Only rendered on home if user has an active challenge) */}
-          <DashboardBattleWidget onRefreshRequest={fetchUserData} hideEmptyState={true} />
+          <DashboardBattleWidget onRefreshRequest={fetchUserData} />
 
           {/* Row 3: Top Widgets Row (Consistency Wallet Card prominent on mobile) */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch mb-6">

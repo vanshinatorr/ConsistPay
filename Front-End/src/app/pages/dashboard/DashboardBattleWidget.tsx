@@ -420,7 +420,7 @@ export function DashboardBattleWidget({ onRefreshRequest, hideEmptyState = false
       ) : (
         /* Empty State */
         (!pendingChallenge && !hideEmptyState) && (
-          <div className="relative rounded-2xl border border-zinc-200 dark:border-white/[0.03] bg-gradient-to-r from-violet-950/5 via-white to-white dark:from-violet-950/10 dark:via-[#0C0D15]/90 dark:to-[#0C0D15]/90 p-4 md:py-3.5 md:px-5 overflow-hidden flex flex-col md:flex-row items-center justify-between gap-4 group shadow-md dark:shadow-xl">
+          <div className="relative rounded-2xl border border-zinc-200 dark:border-white/[0.03] bg-gradient-to-r from-violet-950/5 via-white to-white dark:from-violet-950/10 dark:via-[#0C0D15]/90 dark:to-[#0C0D15]/90 p-4 md:py-3.5 md:px-5 overflow-hidden hidden lg:flex flex-col md:flex-row items-center justify-between gap-4 group shadow-md dark:shadow-xl">
             {/* Decorative background grid and glow */}
             <div className="absolute inset-0 bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:14px_24px] pointer-events-none" />
             <div className="absolute -left-20 -top-20 w-52 h-52 bg-violet-500/10 rounded-full blur-[80px] pointer-events-none" />
