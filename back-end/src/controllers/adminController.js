@@ -244,15 +244,14 @@ const getAdminWithdrawals = async (req, res) => {
 const approveWithdrawal = async (req, res) => {
   try {
     const { id } = req.params;
-    const withdrawal = await Withdrawal.findById(id);
+    const withdrawal = await Withdrawal.findOneAndUpdate(
+      { _id: id, status: "pending" },
+      { $set: { status: "completed" } },
+      { new: true }
+    );
     if (!withdrawal) {
-      return res.status(404).json({ message: "Withdrawal request not found." });
+      return res.status(400).json({ message: "Withdrawal request not found or already resolved." });
     }
-    if (withdrawal.status !== "pending") {
-      return res.status(400).json({ message: "Withdrawal request is already resolved." });
-    }
-    withdrawal.status = "completed";
-    await withdrawal.save();
 
     // Create a notification for the user
     const Notification = require("../models/Notification");
@@ -274,15 +273,14 @@ const approveWithdrawal = async (req, res) => {
 const rejectWithdrawal = async (req, res) => {
   try {
     const { id } = req.params;
-    const withdrawal = await Withdrawal.findById(id);
+    const withdrawal = await Withdrawal.findOneAndUpdate(
+      { _id: id, status: "pending" },
+      { $set: { status: "failed" } },
+      { new: true }
+    );
     if (!withdrawal) {
-      return res.status(404).json({ message: "Withdrawal request not found." });
+      return res.status(400).json({ message: "Withdrawal request not found or already resolved." });
     }
-    if (withdrawal.status !== "pending") {
-      return res.status(400).json({ message: "Withdrawal request is already resolved." });
-    }
-    withdrawal.status = "failed";
-    await withdrawal.save();
 
     // Refund the amount to user's wallet
     const User = require("../models/User");
