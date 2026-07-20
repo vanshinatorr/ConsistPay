@@ -311,6 +311,29 @@ const completeSignup = async (req, res) => {
     const usernameExists = await User.findOne({ username: username.toLowerCase() });
     if (usernameExists) return res.status(400).json({ message: "Username already taken" });
 
+    // Prevent duplicate user registrations on retry
+    let existingQuery = null;
+    const normalizedIdentifier = decoded.identifier ? decoded.identifier.toLowerCase().trim() : "";
+    if (decoded.type === "email" || decoded.type === "google") {
+      existingQuery = { email: normalizedIdentifier };
+    } else if (decoded.type === "phone") {
+      existingQuery = { phone: decoded.identifier.trim().replace(/[\s\-\(\)]/g, "") };
+    }
+
+    if (existingQuery) {
+      const userExists = await User.findOne(existingQuery);
+      if (userExists) {
+        return res.status(400).json({ message: "An account is already registered with this email/phone." });
+      }
+    }
+
+    if (decoded.type === "google" && decoded.googleId) {
+      const googleUserExists = await User.findOne({ googleId: decoded.googleId });
+      if (googleUserExists) {
+        return res.status(400).json({ message: "An account is already registered with this Google ID." });
+      }
+    }
+
     // Build new user object
     const newUser = {
       name: name.trim(),
