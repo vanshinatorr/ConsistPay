@@ -3,6 +3,13 @@
  * extracting DSA topics, estimation of difficulty, recommendations, and motivational quotes.
  */
 
+/**
+ * Helper to dynamically classify any DSA problem based on its title keywords.
+ * Extracts appropriate category topic, difficulty tier, recommendation guides, 
+ * and positive reinforcement quotes for consistency tracking logs.
+ * @param {string} problemName - The title of the solved DSA problem.
+ * @returns {object} Object containing topic, difficulty, recommendation, and motivationLine fields.
+ */
 const getLocalFallbackDetails = (problemName) => {
   const name = (problemName || "").toLowerCase();
   let topic = "General DSA";

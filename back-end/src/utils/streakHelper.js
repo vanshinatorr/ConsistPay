@@ -2,7 +2,14 @@ const mongoose = require("mongoose");
 const User = require("../models/User");
 const Submission = require("../models/Submission");
 
-// Helper to create notifications
+/**
+ * Creates and saves a notification document for the user.
+ * @param {string|mongoose.Types.ObjectId} userId - Target user ID.
+ * @param {string} title - Notification title header.
+ * @param {string} message - Notification detailed description body.
+ * @param {string} [type="system"] - Categorized notification group (e.g. system, streak, battle, wallet).
+ * @returns {Promise<void>}
+ */
 const createNotification = async (userId, title, message, type = "system") => {
   try {
     const Notification = require("../models/Notification");
@@ -18,6 +25,14 @@ const createNotification = async (userId, title, message, type = "system") => {
   }
 };
 
+/**
+ * Main retroactive streak calculation and wallet balance payout/penalty engine.
+ * Sequentially computes and reconciles daily streaks, grace coin consumption, 
+ * stake deductions, and payout credits from onboarding registration date until today.
+ * Enforces atomic database distributed locking during sync window execution.
+ * @param {string|mongoose.Types.ObjectId|object} userOrId - Mongoose User document or User ID string.
+ * @returns {Promise<object|null>} The updated Mongoose User document or null.
+ */
 const syncUserStreak = async (userOrId) => {
   try {
     let user;
