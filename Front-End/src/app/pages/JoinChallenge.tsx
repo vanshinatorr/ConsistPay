@@ -287,9 +287,13 @@ export function JoinChallenge() {
                     <span>Winner takes the <strong className="text-yellow-600 dark:text-yellow-400 font-bold">₹{challengeData.stake * 2}</strong> pool</span>
                   </li>
                 </ul>
-              </div>
-
             </div>
+
+            {error && (
+              <div className="p-4 bg-red-500/10 border border-red-500/20 text-red-455 text-xs rounded-xl text-center font-medium">
+                {error}
+              </div>
+            )}
 
             {/* CTAs */}
             <div className="flex flex-col sm:flex-row gap-3 pt-2">

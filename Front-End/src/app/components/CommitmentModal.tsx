@@ -121,7 +121,7 @@ export function CommitmentModal({ isOpen, onClose, onComplete, currentBalance = 
               throw new Error(verifyData.message || "Payment verification failed.");
             }
           } catch (err: any) {
-            setError(err.message || "Something went wrong verifying payment.");
+            setError(err.message || "We encountered a network error while verifying your payment. Please do not close the window, and try again.");
           } finally {
             setLoading(false);
           }
@@ -224,7 +224,7 @@ export function CommitmentModal({ isOpen, onClose, onComplete, currentBalance = 
           <img
                 src="/logo/brand-logo.png"
                 alt="ConsistPay Logo"
-                className="h-8 w-auto object-contain select-none"
+                className="h-8 w-auto object-contain select-none hidden dark:block"
               />
               <span className="text-lg font-bold text-white">
                 Consist<span className="text-emerald-400">Pay</span> Setup

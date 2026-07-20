@@ -474,7 +474,7 @@ export function Dashboard() {
   const handleSync = async () => {
     const verifiedPlatforms = (userData as any)?.linkedPlatforms?.filter((p: any) => p.isVerified).map((p: any) => p.platform) || [];
     if (verifiedPlatforms.length === 0) {
-      setSubmitError("No verified coding profiles connected. Please connect LeetCode or GeeksforGeeks on the right sidebar first!");
+      setSubmitError("No verified coding profiles connected. Please link LeetCode or GeeksforGeeks in Settings first!");
       return;
     }
 
@@ -700,6 +700,32 @@ export function Dashboard() {
         <div className="text-center">
           <div className="w-12 h-12 border-2 border-violet-500 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
           <p className="text-zinc-400 text-sm">Loading your dashboard...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!userData) {
+    return (
+      <div className="min-h-screen bg-[#06070D] flex flex-col items-center justify-center text-white p-4">
+        <div className="max-w-md w-full bg-[#0F1018] border border-white/[0.04] rounded-3xl p-8 text-center space-y-6">
+          <div className="flex justify-center">
+            <div className="p-3.5 bg-red-500/10 border border-red-500/20 rounded-2xl text-red-400">
+              <AlertTriangle className="w-8 h-8" />
+            </div>
+          </div>
+          <h2 className="text-2xl font-bold tracking-tight">Failed to Sync Account</h2>
+          <p className="text-zinc-400 text-sm leading-relaxed">
+            ConsistPay was unable to establish a secure database connection to fetch your workspace state. Please verify your internet connection.
+          </p>
+          <div className="pt-2">
+            <button
+              onClick={() => window.location.reload()}
+              className="w-full py-3.5 rounded-xl font-bold bg-white text-zinc-950 hover:bg-zinc-150 transition-all cursor-pointer shadow-md active:scale-95"
+            >
+              Retry Connection
+            </button>
+          </div>
         </div>
       </div>
     );

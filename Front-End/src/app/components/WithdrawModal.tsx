@@ -127,7 +127,7 @@ export function WithdrawModal({
       if (onSuccess) onSuccess();
       fetchWithdrawalsHistory();
     } catch (err: any) {
-      setError(err.message || "Something went wrong.");
+      setError(err.message || "We encountered a network error while submitting your withdrawal. Please verify your connection and try again.");
     } finally {
       setLoading(false);
     }
