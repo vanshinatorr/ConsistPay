@@ -151,7 +151,7 @@ try {
     if (!user.onboardingCompletedAt) {
       user.onboardingCompletedAt = new Date();
     }
-    user.graceCoins = 1;
+    user.graceCoins = Math.max(user.graceCoins || 0, 1);
     user.lastGraceCoinEarnedMonth = "";
     const currentExpiry = user.planExpiresAt && new Date(user.planExpiresAt) > new Date()
       ? new Date(user.planExpiresAt)
@@ -207,7 +207,7 @@ try {
   if (!user.onboardingCompletedAt) {
     user.onboardingCompletedAt = new Date();
   }
-  user.graceCoins = 1;
+  user.graceCoins = Math.max(user.graceCoins || 0, 1);
   user.lastGraceCoinEarnedMonth = "";
   const currentExpiry = user.planExpiresAt && new Date(user.planExpiresAt) > new Date()
     ? new Date(user.planExpiresAt)
