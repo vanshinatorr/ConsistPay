@@ -89,15 +89,26 @@ export function Pricing() {
 
             {/* Navigation */}
             <div className="flex items-center gap-6">
-              <Link to="/login" className="text-sm text-zinc-400 hover:text-white transition-colors">
-                Log in
-              </Link>
-              <Link
-                to="/signup"
-                className="px-5 py-2.5 bg-gradient-to-r from-violet-500 to-purple-600 hover:from-violet-400 hover:to-purple-500 text-white text-sm font-semibold rounded-lg transition-all duration-300 shadow-lg shadow-violet-500/30"
-              >
-                Get Started
-              </Link>
+              {token ? (
+                <Link
+                  to="/dashboard"
+                  className="px-5 py-2.5 bg-gradient-to-r from-violet-500 to-purple-600 hover:from-violet-400 hover:to-purple-500 text-white text-sm font-semibold rounded-lg transition-all duration-300 shadow-lg shadow-violet-500/30 cursor-pointer"
+                >
+                  Dashboard
+                </Link>
+              ) : (
+                <>
+                  <Link to="/login" className="text-sm text-zinc-400 hover:text-white transition-colors">
+                    Log in
+                  </Link>
+                  <Link
+                    to="/signup"
+                    className="px-5 py-2.5 bg-gradient-to-r from-violet-500 to-purple-600 hover:from-violet-400 hover:to-purple-500 text-white text-sm font-semibold rounded-lg transition-all duration-300 shadow-lg shadow-violet-500/30"
+                  >
+                    Get Started
+                  </Link>
+                </>
+              )}
             </div>
           </div>
         </div>

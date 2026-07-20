@@ -243,7 +243,7 @@ export function Settings() {
 
           {/* Sidebar */}
           <div className="lg:col-span-1">
-            <div className="bg-white/5 border border-white/[0.04] rounded-2xl p-2 space-y-1">
+            <div className="flex lg:flex-col overflow-x-auto lg:overflow-x-visible no-scrollbar -mx-4 px-4 lg:mx-0 lg:px-0 gap-1.5 lg:gap-1 p-2 bg-white/5 border border-white/[0.04] rounded-2xl space-y-0 lg:space-y-1 mb-2 lg:mb-0 select-none">
               {sections.map(({ key, label, icon: Icon }) => (
                 <button
                   key={key}
@@ -251,27 +251,25 @@ export function Settings() {
                     setActiveSection(key as Section);
                     setErrorMsg(""); // Clear errors on tab switch
                   }}
-                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all text-left
+                  className={`flex items-center gap-2 lg:gap-3 px-3.5 py-2.5 lg:px-4 lg:py-3 rounded-xl text-xs lg:text-sm font-medium transition-all text-left whitespace-nowrap shrink-0 cursor-pointer
                     ${activeSection === key
                       ? "bg-violet-500/20 border border-violet-500/30 text-violet-300"
                       : "text-zinc-400 hover:text-white hover:bg-white/5"
                     }`}
                 >
-                  <Icon className="w-4 h-4" />
+                  <Icon className="w-3.5 h-3.5 lg:w-4 lg:h-4" />
                   {label}
                 </button>
               ))}
 
               {/* Logout */}
-              <div className="pt-2 mt-2 border-t border-white/[0.04]">
-                <button
-                  onClick={handleLogout}
-                  className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-red-400 hover:bg-red-500/10 transition-all"
-                >
-                  <LogOut className="w-4 h-4" />
-                  Logout
-                </button>
-              </div>
+              <button
+                onClick={handleLogout}
+                className="flex items-center gap-2 lg:gap-3 px-3.5 py-2.5 lg:px-4 lg:py-3 rounded-xl text-xs lg:text-sm font-medium text-red-400 hover:bg-red-500/10 transition-all whitespace-nowrap shrink-0 lg:w-full lg:pt-3 lg:mt-2 lg:border-t lg:border-white/[0.04] cursor-pointer"
+              >
+                <LogOut className="w-3.5 h-3.5 lg:w-4 lg:h-4" />
+                Logout
+              </button>
             </div>
           </div>
 

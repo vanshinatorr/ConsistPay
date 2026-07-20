@@ -316,14 +316,14 @@ export function Leaderboard() {
         )}
 
         {/* Tabs & Search Bar integrated Row */}
-        <div className="flex items-center justify-between border-b border-white/[0.04] mb-5 gap-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-white/[0.04] pb-2.5 sm:pb-0 mb-5 gap-3">
           {/* Tabs */}
           <div className="flex gap-6">
             {tabs.map(({ key, label }) => (
               <button
                 key={key}
                 onClick={() => setActiveTab(key)}
-                className={`pb-3 text-xs font-bold uppercase tracking-wider transition-all relative cursor-pointer
+                className={`pb-3 sm:pb-3 text-xs font-bold uppercase tracking-wider transition-all relative cursor-pointer
                   ${activeTab === key ? "text-violet-400 font-extrabold" : "text-zinc-500 hover:text-zinc-300"}`}
               >
                 {label}
@@ -335,8 +335,8 @@ export function Leaderboard() {
           </div>
 
           {/* Search bar */}
-          <div className="relative w-48 sm:w-64 pb-2">
-            <Search className="absolute left-2.5 top-[38%] -translate-y-1/2 w-3.5 h-3.5 text-zinc-500" />
+          <div className="relative w-full sm:w-48 md:w-64 mb-1.5 sm:mb-0">
+            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-zinc-500" />
             <input
               type="text"
               placeholder="Search..."
@@ -347,7 +347,7 @@ export function Leaderboard() {
             {searchQuery && (
               <button 
                 onClick={() => setSearchQuery("")}
-                className="absolute right-2.5 top-[38%] -translate-y-1/2 text-zinc-500 hover:text-zinc-950 dark:hover:text-white text-xs cursor-pointer"
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-zinc-950 dark:hover:text-white text-xs cursor-pointer"
               >
                 Clear
               </button>

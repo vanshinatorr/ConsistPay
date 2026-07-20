@@ -142,7 +142,10 @@ export function RootLayout() {
       {showSidebar && (
         <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-[#0F0F13]/85 backdrop-blur-xl border-t border-white/[0.04] pb-6 pt-3 px-6 flex justify-around items-center shadow-[0_-10px_25px_rgba(0,0,0,0.5)]">
           {tabs.map((tab) => {
-            const isActive = path === tab.path || (tab.path !== "/dashboard" && path.startsWith(tab.path.substring(0, 5)));
+            const isActive = 
+              path === tab.path || 
+              (tab.path === "/create-challenge" && (path.startsWith("/create-challenge") || path.startsWith("/battle") || path.startsWith("/join-challenge"))) ||
+              (tab.path !== "/dashboard" && tab.path !== "/create-challenge" && path.startsWith(tab.path.substring(0, 5)));
             const IconComponent = tab.Icon;
             return (
               <Link
