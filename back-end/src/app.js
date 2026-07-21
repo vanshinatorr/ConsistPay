@@ -73,4 +73,13 @@ app.use("/api/notifications", notificationRoutes);
 const adminRoutes = require("./routes/admin");
 app.use("/api/admin", adminRoutes);
 
+// Catch-all JSON Error Handling Middleware (SaaS Production Resilience)
+app.use((err, req, res, next) => {
+  console.error("Unhandled API Error:", err);
+  res.status(err.status || 500).json({
+    message: err.message || "An unexpected server error occurred.",
+    error: process.env.NODE_ENV === "development" ? err.stack : {}
+  });
+});
+
 module.exports = app;
