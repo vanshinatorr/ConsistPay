@@ -1,9 +1,9 @@
-import { Code2, ArrowLeft, User, Lock, CreditCard, Bell, Shield, ChevronRight, Check, LogOut, Loader2, Link2 } from "lucide-react";
+import { Code2, ArrowLeft, User, Lock, CreditCard, Bell, Shield, ChevronRight, Check, LogOut, Loader2, Link2, History } from "lucide-react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { PlatformsManager } from "../components/PlatformsManager";
 
-type Section = "account" | "commitment" | "platforms" | "security" | "notifications" | "plan";
+type Section = "account" | "commitment" | "platforms" | "security" | "notifications" | "plan" | "history";
 
 export function Settings() {
   const navigate = useNavigate();
@@ -54,6 +54,58 @@ export function Settings() {
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+
+  const [recentSolves, setRecentSolves] = useState<any[]>([]);
+  const [historyLoading, setHistoryLoading] = useState(false);
+
+  useEffect(() => {
+    if (activeSection !== "history" || !token) return;
+    const fetchHistory = async () => {
+      setHistoryLoading(true);
+      try {
+        const res = await fetch(`${API}/api/submissions/my`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        if (res.ok) {
+          const data = await res.json();
+          const completedSolves = data.filter((sub: any) => sub.status === "completed" && sub.problemName !== "No Submission");
+          const formatted = completedSolves.map((sub: any) => {
+            const date = new Date(sub.createdAt || sub.date);
+            const now = new Date();
+            const diffMs = now.getTime() - date.getTime();
+            const diffHrs = Math.floor(diffMs / (1000 * 60 * 60));
+            const diffDays = Math.floor(diffHrs / 24);
+
+            let timeStr = "";
+            if (diffHrs < 1) timeStr = "Just now";
+            else if (diffHrs < 24) timeStr = `${diffHrs}h ago`;
+            else if (diffDays === 1) timeStr = "Yesterday";
+            else timeStr = `${diffDays}d ago`;
+
+            let plat = sub.platform;
+            if (plat === "LeetCode") plat = "LC";
+            else if (plat === "Code360") plat = "C360";
+
+            return {
+              platform: plat || "Unknown",
+              name: sub.problemName || "Unknown Problem",
+              difficulty: sub.difficulty || "Medium",
+              topic: sub.topic || "General",
+              time: timeStr,
+              date: date.toLocaleDateString("en-US", { day: "numeric", month: "short", year: "numeric" }),
+              rawDate: sub.createdAt || sub.date
+            };
+          });
+          setRecentSolves(formatted);
+        }
+      } catch (err) {
+        console.error("Error fetching solve history:", err);
+      } finally {
+        setHistoryLoading(false);
+      }
+    };
+    fetchHistory();
+  }, [activeSection, API, token]);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -188,6 +240,7 @@ export function Settings() {
     { key: "account", label: "Account", icon: User },
     { key: "commitment", label: "Commitment", icon: CreditCard },
     { key: "platforms", label: "Connected Platforms", icon: Link2 },
+    { key: "history", label: "Solve History", icon: History },
     { key: "notifications", label: "Notifications", icon: Bell },
     { key: "security", label: "Security", icon: Lock },
     { key: "plan", label: "Plan & Billing", icon: Shield },
@@ -673,6 +726,75 @@ export function Settings() {
                       )}
                     </div>
                   </div>
+                </div>
+              </div>
+            )}
+
+            {/* ── SOLVE HISTORY ── */}
+            {activeSection === "history" && (
+              <div className="relative animate-in fade-in duration-300">
+                <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-violet-500/10 rounded-2xl blur-xl opacity-60 pointer-events-none" />
+                <div className="relative bg-white/5 backdrop-blur-xl border border-white/[0.04] rounded-2xl p-6">
+                  <div className="flex items-center gap-2 mb-6">
+                    <History className="w-5 h-5 text-blue-400" />
+                    <h2 className="text-lg font-bold">Solve History</h2>
+                  </div>
+
+                  {historyLoading ? (
+                    <div className="py-12 text-center text-zinc-400 flex flex-col items-center justify-center gap-2">
+                      <Loader2 className="w-6 h-6 text-blue-400 animate-spin" />
+                      <span className="text-xs">Loading verified history...</span>
+                    </div>
+                  ) : recentSolves.length === 0 ? (
+                    <div className="py-16 text-center text-zinc-500 border border-dashed border-white/5 rounded-xl">
+                      <Code2 className="w-8 h-8 text-zinc-650 mx-auto mb-2" />
+                      <p className="text-xs font-semibold">No submissions found</p>
+                      <p className="text-[10px] text-zinc-500 mt-1">Connect your coding profiles on dashboard to sync solved problems.</p>
+                    </div>
+                  ) : (
+                    <div className="space-y-3 max-h-[500px] overflow-y-auto pr-1 no-scrollbar">
+                      {recentSolves.map((solve, index) => {
+                        const plat = solve.platform.toLowerCase();
+                        let iconText = solve.platform;
+                        let iconColor = "text-zinc-400 bg-white/5 border-white/10";
+                        if (plat === "lc" || plat === "leetcode") {
+                          iconColor = "text-[#FFA116] bg-[#FFA116]/10 border-[#FFA116]/20";
+                          iconText = "LC";
+                        } else if (plat === "gfg" || plat === "geeksforgeeks") {
+                          iconColor = "text-[#2F8D46] bg-[#2F8D46]/10 border-[#2F8D46]/20";
+                          iconText = "GFG";
+                        } else if (plat === "c360" || plat === "code360") {
+                          iconColor = "text-[#E07A5F] bg-[#E07A5F]/10 border-[#E07A5F]/20";
+                          iconText = "C360";
+                        }
+
+                        let diffColor = "text-orange-400 bg-orange-500/10 border-orange-500/20";
+                        if (solve.difficulty === "Easy") diffColor = "text-emerald-400 bg-emerald-500/10 border-emerald-500/20";
+                        else if (solve.difficulty === "Hard") diffColor = "text-red-400 bg-red-500/10 border-red-500/20";
+
+                        return (
+                          <div key={index} className="flex items-center justify-between p-3.5 bg-white/[0.02] border border-white/[0.04] rounded-xl hover:bg-white/[0.04] hover:border-white/[0.08] transition-all">
+                            <div className="flex items-center gap-3">
+                              <div className={`w-8 h-8 rounded-lg flex items-center justify-center font-black text-[10px] border shrink-0 ${iconColor}`}>
+                                {iconText}
+                              </div>
+                              <div className="truncate pr-2 max-w-[160px] sm:max-w-xs text-left">
+                                <h4 className="text-xs font-bold text-zinc-205 truncate">{solve.name}</h4>
+                                <span className="text-[9.5px] text-zinc-500 font-bold uppercase tracking-wider block mt-0.5">{solve.topic}</span>
+                              </div>
+                            </div>
+
+                            <div className="flex items-center gap-3 shrink-0">
+                              <span className={`text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded border ${diffColor}`}>
+                                {solve.difficulty}
+                              </span>
+                              <span className="text-[10px] text-zinc-500 font-bold">{solve.time}</span>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
                 </div>
               </div>
             )}

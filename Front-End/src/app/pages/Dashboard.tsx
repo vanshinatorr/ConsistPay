@@ -881,22 +881,17 @@ export function Dashboard() {
               />
             </div>
 
-            {/* Mobile Heatmap (Last 30 days) */}
+            {/* Mobile Heatmap (Full Year Grid) */}
             <div className="block lg:hidden lg:col-span-1 mt-2">
-              <div 
-                onClick={() => setShowCalendarModal(true)}
-                className="cursor-pointer"
-              >
-                <ConsistencyCalendar
-                  yearMonths={yearMonths.slice(-1)}
-                  onboardingComplete={true}
-                  dayLabels={dayLabels}
-                  onPrevMonth={handlePrevMonth}
-                  onNextMonth={handleNextMonth}
-                  isNextDisabled={isNextDisabled}
-                  isMobileCompact={true}
-                />
-              </div>
+              <ConsistencyCalendar
+                yearMonths={yearMonths}
+                onboardingComplete={true}
+                dayLabels={dayLabels}
+                onPrevMonth={handlePrevMonth}
+                onNextMonth={handleNextMonth}
+                isNextDisabled={isNextDisabled}
+                isMobileCompact={false}
+              />
             </div>
           </div>
 
@@ -1007,39 +1002,69 @@ export function Dashboard() {
               )}
             </div>
 
-            {/* Mini Wallet Summary (Consolidated Cash Card) */}
-            <div className="bg-zinc-50 dark:bg-black/30 border border-zinc-200 dark:border-white/[0.03] rounded-xl p-4 flex items-center justify-between hover:border-zinc-300 dark:hover:border-white/[0.06] transition-all duration-200 shadow-md">
-              <div>
-                <span className="text-[9px] text-zinc-500 dark:text-zinc-400 font-extrabold uppercase tracking-widest block">
-                  Withdrawable Wallet
-                </span>
-                <span className="text-2xl font-black text-zinc-900 dark:text-white mt-1 block">
-                  ₹{userData ? Math.round(userData.balance) : "0"}
-                </span>
+            {/* Mini Wallet Summary (Consolidated Cash Card with Expanded Details) */}
+            <div className="bg-zinc-50 dark:bg-black/35 border border-zinc-200 dark:border-white/[0.03] rounded-2xl p-5 hover:border-zinc-300 dark:hover:border-white/[0.06] transition-all duration-200 shadow-md">
+              <div className="flex items-center justify-between pb-3.5 border-b border-zinc-200 dark:border-white/[0.04] mb-3.5">
+                <div>
+                  <span className="text-[9.5px] text-zinc-500 dark:text-zinc-400 font-extrabold uppercase tracking-widest block">
+                    Withdrawable Wallet
+                  </span>
+                  <span className="text-2xl font-black text-zinc-900 dark:text-white mt-1 block">
+                    ₹{userData ? Math.round(userData.balance) : "0"}
+                  </span>
+                </div>
+                {userData && userData.balance > 0 ? (
+                  <button
+                    onClick={() => {
+                      const event = new CustomEvent("open-withdraw-modal", { detail: { walletType: "consistency" } });
+                      window.dispatchEvent(event);
+                    }}
+                    className="px-4 py-2 bg-white text-zinc-900 border border-zinc-200 hover:bg-zinc-50 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-100 text-xs font-bold rounded-lg transition-all cursor-pointer shadow-sm active:scale-95 shrink-0"
+                  >
+                    Withdraw
+                  </button>
+                ) : (
+                  <span className="text-[9px] text-zinc-500 dark:text-zinc-550 font-bold bg-zinc-150 dark:bg-white/[0.01] border border-zinc-200 dark:border-white/[0.03] px-2.5 py-1.5 rounded-md select-none shrink-0">
+                    Empty
+                  </span>
+                )}
               </div>
-              {userData && userData.balance > 0 ? (
-                <button
-                  onClick={() => {
-                    const event = new CustomEvent("open-withdraw-modal", { detail: { walletType: "consistency" } });
-                    window.dispatchEvent(event);
-                  }}
-                  className="px-4 py-2 bg-white text-zinc-900 border border-zinc-200 hover:bg-zinc-50 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-100 text-xs font-bold rounded-lg transition-all cursor-pointer shadow-sm active:scale-95 shrink-0"
-                >
-                  Withdraw
-                </button>
-              ) : (
-                <span className="text-[9px] text-zinc-500 dark:text-zinc-550 font-bold bg-zinc-150 dark:bg-white/[0.01] border border-zinc-200 dark:border-white/[0.03] px-2.5 py-1.5 rounded-md select-none shrink-0">
-                  Empty
-                </span>
-              )}
+
+              {/* Wallet Details split metrics row */}
+              <div className="grid grid-cols-2 gap-4">
+                {/* Money At Stake */}
+                <div className="border-r border-zinc-200 dark:border-white/[0.04] pr-2">
+                  <span className="text-[9px] text-zinc-500 dark:text-zinc-400 font-extrabold uppercase tracking-wider block">
+                    Money At Stake
+                  </span>
+                  <span className="text-base font-bold text-zinc-800 dark:text-zinc-100 mt-1 block">
+                    ₹{userData ? Math.round(userData.activeDeposit) : "0"}
+                  </span>
+                  <span className="text-[9px] text-zinc-400 dark:text-zinc-500 block mt-0.5 font-normal leading-tight">
+                    Forfeits ₹{userData?.dailyCommitment || 5}/miss.
+                  </span>
+                </div>
+
+                {/* Month-End Payout Preview */}
+                <div className="pl-1">
+                  <span className="text-[9px] text-zinc-500 dark:text-zinc-400 font-extrabold uppercase tracking-wider block">
+                    Payout Preview
+                  </span>
+                  <span className="text-base font-bold text-amber-500 dark:text-amber-400 mt-1 block">
+                    ₹{userData ? (userData.totalSolved || 0) * (userData.dailyCommitment || 5) : "0"}
+                  </span>
+                  <span className="text-[9px] text-zinc-400 dark:text-zinc-500 block mt-0.5 font-normal leading-tight">
+                    Keep submitting!
+                  </span>
+                </div>
+              </div>
             </div>
 
           </div>
 
-          {/* Row 5: Lower Workspace Area (Recent Solves visible on mobile, Leaderboard & Achievements Desktop-Only) */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch">
-            {/* Column 1 - Recent Solves */}
-            <div className="col-span-1 lg:col-span-1">
+            {/* Column 1 - Recent Solves (Desktop Only) */}
+            <div className="hidden lg:block lg:col-span-1">
               <RecentSolves recentSolves={recentSolves} />
             </div>
 
