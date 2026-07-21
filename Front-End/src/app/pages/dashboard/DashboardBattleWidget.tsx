@@ -9,11 +9,20 @@ interface DashboardBattleWidgetProps {
 
 export function DashboardBattleWidget({ onRefreshRequest, hideEmptyState = false }: DashboardBattleWidgetProps) {
   const navigate = useNavigate();
-  const [activeChallenges, setActiveChallenges] = useState<any[]>([]);
-  const [pendingChallenge, setPendingChallenge] = useState<any | null>(null);
+  const [activeChallenges, setActiveChallenges] = useState<any[]>(() => {
+    const cached = localStorage.getItem("consistpay_active_challenges");
+    return cached ? JSON.parse(cached) : [];
+  });
+  const [pendingChallenge, setPendingChallenge] = useState<any | null>(() => {
+    const cached = localStorage.getItem("consistpay_pending_challenge");
+    return cached ? JSON.parse(cached) : null;
+  });
   const [timeLeft, setTimeLeft] = useState<number>(0);
   const [copied, setCopied] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(() => {
+    const isFetched = localStorage.getItem("consistpay_challenges_fetched");
+    return isFetched !== "true";
+  });
 
   const API_URL = import.meta.env.VITE_API_URL;
   const token = localStorage.getItem("token") || "";
@@ -27,8 +36,10 @@ export function DashboardBattleWidget({ onRefreshRequest, hideEmptyState = false
       if (pendingRes.ok) {
         const pendingData = await pendingRes.json();
         setPendingChallenge(pendingData);
+        localStorage.setItem("consistpay_pending_challenge", JSON.stringify(pendingData));
       } else {
         setPendingChallenge(null);
+        localStorage.removeItem("consistpay_pending_challenge");
       }
 
       // 2. Fetch active challenges
@@ -38,7 +49,10 @@ export function DashboardBattleWidget({ onRefreshRequest, hideEmptyState = false
       if (activeRes.ok) {
         const activeData = await activeRes.json();
         setActiveChallenges(activeData);
+        localStorage.setItem("consistpay_active_challenges", JSON.stringify(activeData));
       }
+
+      localStorage.setItem("consistpay_challenges_fetched", "true");
     } catch (err) {
       console.error("Failed to fetch challenges on dashboard widget:", err);
     } finally {
@@ -97,6 +111,7 @@ export function DashboardBattleWidget({ onRefreshRequest, hideEmptyState = false
       });
       if (res.ok) {
         setPendingChallenge(null);
+        localStorage.removeItem("consistpay_pending_challenge");
         fetchChallenges();
         if (onRefreshRequest) onRefreshRequest();
       } else {
