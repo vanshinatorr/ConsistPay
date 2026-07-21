@@ -40,7 +40,9 @@ const generateTempToken = (data) => jwt.sign(data, process.env.JWT_SECRET, { exp
 const sendOtp = async (req, res) => {
   try {
     let { identifier } = req.body;
-    if (!identifier) return res.status(400).json({ message: "Email or Phone is required" });
+    if (!identifier || typeof identifier !== "string") {
+      return res.status(400).json({ message: "Email or Phone is required and must be a string" });
+    }
 
     identifier = identifier.trim();
     if (identifier.includes('@')) {
@@ -136,7 +138,9 @@ const sendOtp = async (req, res) => {
 const verifyOtp = async (req, res) => {
   try {
     let { identifier, otp } = req.body;
-    if (!identifier || !otp) return res.status(400).json({ message: "Identifier and OTP are required" });
+    if (!identifier || !otp || typeof identifier !== "string" || typeof otp !== "string") {
+      return res.status(400).json({ message: "Identifier and OTP are required and must be strings" });
+    }
 
     identifier = identifier.trim();
     if (identifier.includes('@')) {
@@ -290,8 +294,11 @@ const checkUsername = async (req, res) => {
 const completeSignup = async (req, res) => {
   try {
     const { tempToken, name, username } = req.body;
-    if (!tempToken || !name || !username) {
-      return res.status(400).json({ message: "Missing required fields" });
+    if (
+      !tempToken || !name || !username ||
+      typeof tempToken !== "string" || typeof name !== "string" || typeof username !== "string"
+    ) {
+      return res.status(400).json({ message: "Missing required fields and parameters must be strings" });
     }
 
     let decoded;
