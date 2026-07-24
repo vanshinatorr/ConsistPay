@@ -165,10 +165,10 @@ export function Profile() {
         <div className="relative">
           <div className="absolute inset-0 bg-gradient-to-br from-violet-500/20 to-emerald-500/20 rounded-2xl blur-xl opacity-60" />
           <div className="relative bg-[#0F0F13] border border-white/[0.04] rounded-2xl p-6">
-            <div className="flex items-start justify-between mb-6">
-              <div className="flex items-center gap-4">
+            <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 mb-6">
+              <div className="flex items-center gap-4 min-w-0">
                 {/* Avatar */}
-                <div className="relative">
+                <div className="relative shrink-0">
                   {isAvatarUrl ? (
                     <img 
                       src={avatar} 
@@ -187,10 +187,10 @@ export function Profile() {
                   )}
                 </div>
 
-                <div>
-                  <h1 className="text-2xl font-bold">{userData.name}</h1>
-                  <p className="text-zinc-400 text-sm">@{username}</p>
-                  <div className="flex items-center gap-2 mt-2">
+                <div className="min-w-0 flex-1">
+                  <h1 className="text-2xl font-bold truncate">{userData.name}</h1>
+                  <p className="text-zinc-400 text-sm truncate">@{username}</p>
+                  <div className="flex flex-wrap items-center gap-2 mt-2">
                     {userData?.plan?.toLowerCase() === "pro" ? (
                       <span className="text-xs bg-violet-500/20 border border-violet-500/30 text-violet-300 px-2 py-0.5 rounded-full font-semibold flex items-center gap-1">
                         Pro
@@ -207,7 +207,7 @@ export function Profile() {
 
               <button 
                 onClick={() => setIsAvatarModalOpen(true)}
-                className="flex items-center gap-2 px-3 py-2 bg-white/5 border border-white/[0.04] rounded-lg hover:bg-white/10 transition-all text-sm text-zinc-400"
+                className="flex items-center justify-center gap-2 px-3 py-2 bg-white/5 border border-white/[0.04] rounded-lg hover:bg-white/10 transition-all text-sm text-zinc-400 w-full sm:w-auto"
               >
                 <Edit3 className="w-4 h-4" />
                 Edit
@@ -241,7 +241,7 @@ export function Profile() {
               Performance Stats
             </h2>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {[
                 { label: "Current Streak", value: `${currentStreak} days`, icon: Flame, color: "text-orange-400", iconColor: "text-orange-400 bg-orange-500/10 border-orange-500/20" },
                 { label: "Longest Streak", value: `${longestStreak} days`, icon: Zap, color: "text-yellow-400", iconColor: "text-yellow-400 bg-yellow-500/10 border-yellow-500/20" },

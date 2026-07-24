@@ -143,10 +143,10 @@ export function WithdrawModal({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-[100] flex items-start md:items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-in fade-in duration-200 overflow-y-auto py-8">
       <div className="absolute inset-0" onClick={handleLocalClose} />
       
-      <div className="relative bg-white dark:bg-[#0C0D15]/95 border border-zinc-200 dark:border-white/[0.08] rounded-3xl p-6 w-full max-w-lg shadow-[0_20px_50px_rgba(0,0,0,0.06)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.5)] animate-in zoom-in-95 duration-200 flex flex-col max-h-[90vh] overflow-hidden">
+      <div className="relative my-auto bg-white dark:bg-[#0C0D15]/95 border border-zinc-200 dark:border-white/[0.08] rounded-3xl p-6 w-full max-w-lg shadow-[0_20px_50px_rgba(0,0,0,0.06)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.5)] animate-in zoom-in-95 duration-200 flex flex-col max-h-[90vh] overflow-hidden">
         {/* Ambient top light */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-40 h-2 bg-gradient-to-r from-emerald-500/20 to-teal-500/20 blur-md pointer-events-none" />
         

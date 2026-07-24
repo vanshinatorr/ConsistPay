@@ -290,7 +290,7 @@ export function Notifications() {
                           )}
                           <button
                             onClick={(e) => { e.stopPropagation(); deleteNotif(notifId); }}
-                            className="opacity-0 group-hover:opacity-100 p-1.5 rounded-lg hover:bg-white/10 transition-all"
+                            className="opacity-100 lg:opacity-0 lg:group-hover:opacity-100 p-1.5 rounded-lg hover:bg-white/10 transition-all"
                           >
                             <Trash2 className="w-4 h-4 text-zinc-500 hover:text-red-400" />
                           </button>

@@ -120,8 +120,8 @@ export function WalletCard({
                 <span className="text-[9.5px] text-zinc-500 dark:text-zinc-400 font-bold uppercase tracking-widest block">
                   Withdrawable Balance
                 </span>
-                <span className="text-3xl font-bold text-zinc-800 dark:text-white tracking-tight mt-1 block">
-                  <span className="text-zinc-400 dark:text-zinc-500 text-2xl font-light mr-0.5">₹</span>
+                <span className="text-xl sm:text-2xl lg:text-3xl font-bold text-zinc-800 dark:text-white tracking-tight mt-1 block">
+                  <span className="text-zinc-400 dark:text-zinc-500 text-lg sm:text-xl lg:text-2xl font-light mr-0.5">₹</span>
                   {onboardingComplete ? Math.round(balance) : "0"}
                 </span>
                 <span className="text-[10px] text-zinc-500 dark:text-zinc-450 block mt-1 leading-normal font-normal">
@@ -150,8 +150,8 @@ export function WalletCard({
               <span className="text-[9.5px] text-zinc-550 dark:text-zinc-400 uppercase tracking-widest font-bold block">
                 Money At Stake
               </span>
-              <span className="text-2xl font-bold text-zinc-800 dark:text-white tracking-tight mt-1 block">
-                <span className="text-zinc-400 dark:text-zinc-500 text-xl font-light mr-0.5">₹</span>
+              <span className="text-lg sm:text-xl lg:text-2xl font-bold text-zinc-800 dark:text-white tracking-tight mt-1 block">
+                <span className="text-zinc-400 dark:text-zinc-500 text-base sm:text-lg lg:text-xl font-light mr-0.5">₹</span>
                 {onboardingComplete ? Math.round(activeDeposit) : "0"}
               </span>
               <span className="text-[11px] text-zinc-500 dark:text-zinc-455 block mt-1 leading-normal font-normal">
@@ -167,8 +167,8 @@ export function WalletCard({
                   Month-end Payout Preview
                 </span>
               </div>
-              <span className="text-2xl font-bold text-amber-600 dark:text-amber-400 tracking-tight mt-1 block">
-                <span className="text-amber-600/60 dark:text-amber-600/60 text-xl font-light mr-0.5">₹</span>
+              <span className="text-lg sm:text-xl lg:text-2xl font-bold text-amber-600 dark:text-amber-400 tracking-tight mt-1 block">
+                <span className="text-amber-600/60 dark:text-amber-600/60 text-base sm:text-lg lg:text-xl font-light mr-0.5">₹</span>
                 {onboardingComplete ? completedDays * dailyCommitment : 0}
               </span>
               <span className="text-[11px] text-zinc-500 dark:text-zinc-450 block mt-1 leading-normal font-normal">

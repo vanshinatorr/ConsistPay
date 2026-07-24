@@ -46,7 +46,7 @@ export function BattleHubModal({ isOpen, onClose, plan = "free" }: BattleHubModa
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-50 flex items-start md:items-center justify-center p-4 animate-in fade-in duration-200 overflow-y-auto py-8">
       {/* Backdrop */}
       <div 
         className="absolute inset-0 bg-black/80 backdrop-blur-sm transition-opacity duration-300"
@@ -54,7 +54,7 @@ export function BattleHubModal({ isOpen, onClose, plan = "free" }: BattleHubModa
       />
 
       {/* Modal Container */}
-      <div className="relative w-full max-w-[1150px] bg-[#0A0A0C] border border-white/10 rounded-3xl overflow-hidden shadow-2xl flex flex-col max-h-[90vh] animate-in fade-in zoom-in-95 duration-200">
+      <div className="relative my-auto w-full max-w-[1150px] bg-[#0A0A0C] border border-white/10 rounded-3xl overflow-hidden shadow-2xl flex flex-col max-h-[90vh] animate-in fade-in zoom-in-95 duration-200">
         
         {/* Glow Effects */}
         <div className="absolute top-0 left-1/4 w-96 h-96 bg-violet-500/10 rounded-full blur-[100px] pointer-events-none" />

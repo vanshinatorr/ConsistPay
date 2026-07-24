@@ -209,7 +209,7 @@ export function CommitmentModal({ isOpen, onClose, onComplete, currentBalance = 
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 overflow-y-auto bg-black/60 backdrop-blur-md">
+    <div className="fixed inset-0 z-[100] flex items-start md:items-center justify-center p-4 sm:p-6 overflow-y-auto bg-black/60 backdrop-blur-md">
       
       {/* Background Decorative Ambient Blobs */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
@@ -217,7 +217,7 @@ export function CommitmentModal({ isOpen, onClose, onComplete, currentBalance = 
         <div className="absolute bottom-[-10%] left-[-10%] w-[500px] h-[500px] bg-emerald-500/5 rounded-full blur-[140px]" />
       </div>
 
-      <div className={`w-full relative z-10 my-auto transition-all duration-300 ${step === 3 || step === 5 ? "max-w-4xl" : "max-w-2xl"}`}>
+      <div className={`w-full relative z-10 my-4 md:my-auto transition-all duration-300 ${step === 3 || step === 5 ? "max-w-4xl" : "max-w-2xl"}`}>
         
         {/* Top Header Logo */}
         <div className="flex items-center justify-center gap-2.5 mb-8">
@@ -270,16 +270,14 @@ export function CommitmentModal({ isOpen, onClose, onComplete, currentBalance = 
               <AlertTriangle className="w-5 h-5 shrink-0 mt-0.5" />
               <span>{error}</span>
             </div>
-          )}
-
-          {/* ──────────────── STEP 1: WELCOME SCREEN ──────────────── */}
+          )}          {/* ──────────────── STEP 1: WELCOME SCREEN ──────────────── */}
           {step === 1 && (
             <div className="space-y-6 animate-in fade-in duration-500">
               <div className="text-center space-y-3">
-                <h1 className="text-3xl font-bold tracking-tight text-white leading-tight">
+                <h1 className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight text-white leading-tight">
                   Build coding consistency that actually lasts.
                 </h1>
-                <p className="text-zinc-400 text-sm md:text-base leading-relaxed max-w-lg mx-auto">
+                <p className="text-zinc-405 text-xs sm:text-sm md:text-base leading-relaxed max-w-lg mx-auto">
                   Daily proof tracking, accountability challenges, and refundable commitment systems designed for placement preparation.
                 </p>
               </div>
@@ -330,8 +328,8 @@ export function CommitmentModal({ isOpen, onClose, onComplete, currentBalance = 
           {step === 2 && (
             <div className="space-y-6 animate-in fade-in duration-500">
               <div className="space-y-2">
-                <h2 className="text-xl font-bold text-white">How ConsistPay Works</h2>
-                <p className="text-zinc-400 text-xs">A psychology-backed accountability system built for placement prep.</p>
+                <h2 className="text-lg sm:text-xl font-bold text-white">How ConsistPay Works</h2>
+                <p className="text-zinc-405 text-xs">A psychology-backed accountability system built for placement prep.</p>
               </div>
 
               {/* Step Timeline */}
@@ -420,11 +418,111 @@ export function CommitmentModal({ isOpen, onClose, onComplete, currentBalance = 
           {step === 3 && (
             <div className="space-y-5 animate-in fade-in duration-500 text-left">
               <div className="space-y-1">
-                <h2 className="text-xl md:text-2xl font-bold text-white tracking-tight">Choose Your Accountability Tier</h2>
+                <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-white tracking-tight">Choose Your Accountability Tier</h2>
                 <p className="text-zinc-405 text-xs">Select how you want to build consistency. Pro tier is highly recommended for serious preparation.</p>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-5 pt-1">
+              {/* Mobile Plan Selector (Segmented Tabs) */}
+              <div className="flex lg:hidden bg-zinc-900/60 p-1 rounded-xl border border-white/[0.04] mb-3 select-none">
+                <button
+                  type="button"
+                  onClick={() => setPlan("Free")}
+                  className={`flex-1 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer ${
+                    plan === "Free" ? "bg-white/10 text-white shadow" : "text-zinc-550"
+                  }`}
+                >
+                  Free Plan
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setPlan("Pro")}
+                  className={`flex-1 py-1.5 text-xs font-semibold rounded-lg transition-all flex items-center justify-center gap-1 cursor-pointer ${
+                    plan === "Pro" ? "bg-violet-600 text-white shadow" : "text-zinc-550"
+                  }`}
+                >
+                  <Sparkles className="w-3 h-3" />
+                  Pro Plan (Recommended)
+                </button>
+              </div>
+
+              {/* Mobile Card Rendering */}
+              <div className="block lg:hidden">
+                {plan === "Free" ? (
+                  <div className="p-4 rounded-2xl border border-zinc-800 bg-white/[0.01] text-left space-y-4 shadow-xl">
+                    <div>
+                      <h3 className="font-bold text-white text-base tracking-tight">Basic Accountability</h3>
+                      <p className="text-xs text-zinc-400 mt-1 leading-relaxed">
+                        Habit logging and basic streak tracking for routine builders.
+                      </p>
+                    </div>
+                    <ul className="space-y-2 pt-1 text-xs text-zinc-300">
+                      <li className="flex items-center gap-2">
+                        <div className="w-4 h-4 rounded-full bg-zinc-850 flex items-center justify-center shrink-0">
+                          <Check className="w-3 h-3 text-zinc-400" />
+                        </div>
+                        <span>1 Daily verification submission</span>
+                      </li>
+                      <li className="flex items-center gap-2">
+                        <div className="w-4 h-4 rounded-full bg-zinc-850 flex items-center justify-center shrink-0">
+                          <Check className="w-3 h-3 text-zinc-400" />
+                        </div>
+                        <span>Basic consistency calendar</span>
+                      </li>
+                      <li className="flex items-center gap-2">
+                        <div className="w-4 h-4 rounded-full bg-zinc-850 flex items-center justify-center shrink-0">
+                          <Check className="w-3 h-3 text-zinc-400" />
+                        </div>
+                        <span>1 grace coin to protect streak</span>
+                      </li>
+                    </ul>
+                    <div className="border-t border-white/[0.04] pt-3 flex justify-between items-center">
+                      <span className="text-xs font-semibold text-zinc-350">Free Forever</span>
+                      <span className="text-[10px] text-emerald-400 font-bold uppercase tracking-wider">Active</span>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="p-4 rounded-2xl border border-violet-500/30 bg-violet-955/5 text-left space-y-4 relative overflow-hidden shadow-xl">
+                    <div className="absolute top-0 right-0 bg-violet-600 text-white text-[8px] font-bold px-3 py-1 uppercase tracking-wider rounded-bl-lg">
+                      RECOMMENDED
+                    </div>
+                    <div>
+                      <h3 className="font-bold text-white text-base tracking-tight">Premium Prep Mode</h3>
+                      <p className="text-xs text-zinc-300 mt-1 leading-relaxed">
+                        Complete feature set designed for placement preparation.
+                      </p>
+                    </div>
+                    <ul className="space-y-2 pt-1 text-xs text-zinc-300">
+                      <li className="flex items-center gap-2 font-semibold text-emerald-400">
+                        <div className="w-4 h-4 rounded-full bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center shrink-0">
+                          <TrendingUp className="w-3 h-3 text-emerald-400" />
+                        </div>
+                        <span>+10% Cash Streak Payout Bonus</span>
+                      </li>
+                      <li className="flex items-center gap-2 text-violet-300">
+                        <div className="w-4 h-4 rounded-full bg-violet-500/10 border border-violet-500/20 flex items-center justify-center shrink-0">
+                          <Users className="w-3 h-3 text-violet-450" />
+                        </div>
+                        <span>Join PvP battles & Challenges</span>
+                      </li>
+                      <li className="flex items-center gap-2">
+                        <div className="w-4 h-4 rounded-full bg-violet-500/10 border border-violet-500/20 flex items-center justify-center shrink-0">
+                          <Zap className="w-3 h-3 text-violet-400" />
+                        </div>
+                        <span>Double Grace Coins (milestones)</span>
+                      </li>
+                    </ul>
+                    <div className="border-t border-white/[0.04] pt-3 space-y-2">
+                      <div className="flex justify-between items-center w-full">
+                        <span className="text-xs font-semibold text-violet-405">₹49 setup + deposit</span>
+                        <span className="text-[10px] text-violet-400 font-bold uppercase tracking-wider">Active</span>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Desktop Dual Cards Layout */}
+              <div className="hidden lg:grid lg:grid-cols-2 gap-5 pt-1">
                 {/* Free Card */}
                 <button
                   onClick={() => setPlan("Free")}
@@ -572,74 +670,74 @@ export function CommitmentModal({ isOpen, onClose, onComplete, currentBalance = 
 
           {/* ──────────────── STEP 4: SELECT COMMITMENT ──────────────── */}
           {step === 4 && (
-            <div className="space-y-6 animate-in fade-in duration-500 text-left">
-              <div className="space-y-2">
-                <h2 className="text-2xl md:text-3xl font-bold text-white tracking-tight">Select Daily Commitment</h2>
-                <p className="text-zinc-405 text-sm">Choose the stake that will keep you accountable every single day.</p>
+            <div className="space-y-4 sm:space-y-6 animate-in fade-in duration-500 text-left">
+              <div className="space-y-1">
+                <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-white tracking-tight">Select Daily Commitment</h2>
+                <p className="text-zinc-405 text-xs">Choose the stake that will keep you accountable every single day.</p>
               </div>
 
-              <div className="grid grid-cols-1 gap-4 pt-2">
+              <div className="grid grid-cols-1 gap-3 sm:gap-4 pt-1">
                 <button
                   onClick={() => setAmount(5)}
-                  className={`p-5 rounded-2xl border text-left transition-all flex items-center gap-5 ${
+                  className={`p-3.5 sm:p-5 rounded-2xl border text-left transition-all flex items-center gap-3 sm:gap-5 ${
                     amount === 5
                       ? "border-zinc-700 bg-white/[0.02] ring-2 ring-zinc-500/10"
                       : "border-white/[0.04] bg-white/[0.01] hover:border-zinc-700"
                   }`}
                 >
-                  <div className="w-12 h-12 rounded-xl bg-[#131316] border border-white/[0.04] flex items-center justify-center font-bold text-zinc-300 text-xl shrink-0">
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-[#131316] border border-white/[0.04] flex items-center justify-center font-bold text-zinc-300 text-lg sm:text-xl shrink-0">
                     ₹5
                   </div>
-                  <div>
-                    <h4 className="text-base font-semibold text-white">Casual Consistency</h4>
-                    <p className="text-xs text-zinc-400 mt-1">₹150 refundable deposit pool. Great for building routine.</p>
+                  <div className="min-w-0 flex-1">
+                    <h4 className="text-sm sm:text-base font-semibold text-white">Casual Consistency</h4>
+                    <p className="text-[11px] sm:text-xs text-zinc-400 mt-0.5 leading-tight">₹150 refundable deposit pool. Great for building routine.</p>
                   </div>
-                  <span className="ml-auto text-xs text-zinc-500 font-medium uppercase tracking-wider">/ day</span>
+                  <span className="ml-auto text-xs text-zinc-500 font-medium uppercase tracking-wider shrink-0">/ day</span>
                 </button>
 
                 <button
                   onClick={() => setAmount(20)}
-                  className={`p-5 rounded-2xl border text-left relative flex items-center gap-5 overflow-hidden ${
+                  className={`p-3.5 sm:p-5 rounded-2xl border text-left relative flex items-center gap-3 sm:gap-5 overflow-hidden ${
                     amount === 20
-                      ? "border-violet-500 bg-violet-950/10 ring-2 ring-violet-500/20"
+                      ? "border-violet-500 bg-violet-955/10 ring-2 ring-violet-500/20"
                       : "border-white/[0.04] bg-white/[0.01] hover:border-violet-500/20"
                   }`}
                 >
-                  <div className="absolute top-0 right-0 bg-violet-600 text-white text-[8px] font-bold px-3 py-0.5 uppercase tracking-widest rounded-bl-lg shadow-sm">
+                  <div className="absolute top-0 right-0 bg-violet-600 text-white text-[7px] sm:text-[8px] font-bold px-2 sm:px-3 py-0.5 uppercase tracking-widest rounded-bl-lg shadow-sm">
                     POPULAR
                   </div>
-                  <div className="w-12 h-12 rounded-xl bg-violet-500/10 border border-violet-500/20 flex items-center justify-center font-bold text-violet-400 text-xl shrink-0">
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-violet-500/10 border border-violet-500/20 flex items-center justify-center font-bold text-violet-400 text-lg sm:text-xl shrink-0">
                     ₹20
                   </div>
-                  <div>
-                    <h4 className="text-base font-semibold text-white flex items-center gap-2">
+                  <div className="min-w-0 flex-1">
+                    <h4 className="text-sm sm:text-base font-semibold text-white flex items-center gap-2">
                       Serious Placement Prep
                     </h4>
-                    <p className="text-xs text-zinc-300 mt-1">₹600 refundable deposit pool. Keep your focus locked.</p>
+                    <p className="text-[11px] sm:text-xs text-zinc-300 mt-0.5 leading-tight">₹600 refundable deposit pool. Keep your focus locked.</p>
                   </div>
-                  <span className="ml-auto text-xs text-zinc-400 font-medium uppercase tracking-wider">/ day</span>
+                  <span className="ml-auto text-xs text-zinc-405 font-medium uppercase tracking-wider shrink-0">/ day</span>
                 </button>
 
                 <button
                   onClick={() => setAmount(50)}
-                  className={`p-5 rounded-2xl border text-left transition-all flex items-center gap-5 ${
+                  className={`p-3.5 sm:p-5 rounded-2xl border text-left transition-all flex items-center gap-3 sm:gap-5 ${
                     amount === 50
                       ? "border-emerald-500 bg-emerald-955/10"
                       : "border-zinc-800 bg-[#0C0C10] hover:border-emerald-500/20"
                   }`}
                 >
-                  <div className="w-12 h-12 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center font-bold text-emerald-400 text-xl shrink-0">
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center font-bold text-emerald-400 text-lg sm:text-xl shrink-0">
                     ₹50
                   </div>
-                  <div>
-                    <h4 className="text-base font-semibold text-white">High Accountability Mode</h4>
-                    <p className="text-xs text-zinc-300 mt-1">₹1,500 refundable deposit pool. Maximum dedication.</p>
+                  <div className="min-w-0 flex-1">
+                    <h4 className="text-sm sm:text-base font-semibold text-white">High Accountability Mode</h4>
+                    <p className="text-[11px] sm:text-xs text-zinc-300 mt-0.5 leading-tight">₹1,500 refundable deposit pool. Maximum dedication.</p>
                   </div>
-                  <span className="ml-auto text-xs text-zinc-550 font-medium uppercase tracking-wider">/ day</span>
+                  <span className="ml-auto text-xs text-zinc-550 font-medium uppercase tracking-wider shrink-0">/ day</span>
                 </button>
               </div>
 
-              <div className="p-4 rounded-xl bg-zinc-900 border border-zinc-800 text-xs leading-relaxed text-zinc-400">
+              <div className="p-3 sm:p-4 rounded-xl bg-zinc-900 border border-zinc-800 text-xs leading-relaxed text-zinc-400">
                 Having "skin in the game" psychologically increases consistency by up to 3x. Your deposit is fully returned if you maintain your commitment.
               </div>
 
@@ -664,13 +762,13 @@ export function CommitmentModal({ isOpen, onClose, onComplete, currentBalance = 
           {step === 5 && (
             <div className="space-y-4 animate-in fade-in duration-500 text-left">
               <div className="space-y-1">
-                <h2 className="text-xl md:text-2xl font-extrabold text-white tracking-tight">Review Your Commitment Challenge</h2>
+                <h2 className="text-lg sm:text-xl md:text-2xl font-extrabold text-white tracking-tight">Review Your Commitment Challenge</h2>
                 <p className="text-zinc-405 text-xs">Verify your 30-day program specifications before checkout.</p>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-5 items-stretch pt-1">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 items-stretch pt-1">
                 {/* Left Side: Summary Table */}
-                <div className="bg-[#0C0C10] border border-zinc-800 rounded-2xl p-5 flex flex-col justify-between space-y-4">
+                <div className="bg-[#0C0C10] border border-zinc-800 rounded-2xl p-4 sm:p-5 flex flex-col justify-between space-y-4">
                   <div className="space-y-2.5">
                     <h3 className="font-bold text-white text-sm border-b border-zinc-800/80 pb-2">Challenge Details</h3>
                     <div className="flex justify-between items-center text-xs border-b border-zinc-800/60 pb-2">
@@ -814,8 +912,8 @@ export function CommitmentModal({ isOpen, onClose, onComplete, currentBalance = 
               ) : (
                 <>
                   <div className="space-y-1">
-                    <h3 className="text-xl md:text-2xl font-bold text-white tracking-tight">Secure Checkout</h3>
-                    <p className="text-xs text-zinc-405 leading-relaxed">
+                    <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-white tracking-tight">Secure Checkout</h3>
+                    <p className="text-zinc-405 text-xs leading-relaxed">
                       Complete your payment securely. Your refundable deposit will be returned after 30 days of consistency.
                     </p>
                   </div>

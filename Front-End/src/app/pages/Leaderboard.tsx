@@ -358,7 +358,7 @@ export function Leaderboard() {
         {/* Leaderboard Table Container */}
         <div className="relative bg-white dark:bg-[#0F0F13] border border-zinc-200 dark:border-white/[0.04] rounded-2xl overflow-hidden shadow-md dark:shadow-2xl flex flex-col">
           {/* Table Header */}
-          <div className="grid grid-cols-12 px-6 py-3 border-b border-zinc-200 dark:border-white/[0.04] text-[10px] font-black text-zinc-500 uppercase tracking-widest bg-zinc-50/50 dark:bg-white/[0.01]">
+          <div className="grid grid-cols-12 px-3 sm:px-6 py-3 border-b border-zinc-200 dark:border-white/[0.04] text-[10px] font-black text-zinc-500 uppercase tracking-widest bg-zinc-50/50 dark:bg-white/[0.01]">
             <div className="col-span-2">Rank</div>
             <div className="col-span-5">Developer</div>
             <div className="col-span-3">Streak</div>
@@ -377,7 +377,7 @@ export function Leaderboard() {
                 return (
                   <div
                     key={user._id}
-                    className={`grid grid-cols-12 items-center px-6 py-3.5 transition-all
+                    className={`grid grid-cols-12 items-center px-3 sm:px-6 py-3.5 transition-all
                       ${user.isCurrentUser
                         ? "bg-violet-500/[0.04] dark:bg-violet-500/[0.08] border-l-2 border-l-violet-500 shadow-sm"
                         : "hover:bg-zinc-50/50 dark:hover:bg-white/[0.01]"
@@ -385,7 +385,7 @@ export function Leaderboard() {
                   >
                     {/* Rank */}
                     <div className="col-span-2">
-                      <div className={`w-6 h-6 flex items-center justify-center font-black text-[10px] rounded-lg border
+                      <div className={`w-5.5 h-5.5 sm:w-6 sm:h-6 flex items-center justify-center font-black text-[10px] rounded-lg border
                         ${user.rank === 1 ? "bg-yellow-500/10 border-yellow-500/20 text-yellow-550 dark:text-yellow-400" : ""}
                         ${user.rank === 2 ? "bg-zinc-400/10 border-zinc-400/20 text-zinc-600 dark:text-zinc-305" : ""}
                         ${user.rank === 3 ? "bg-orange-500/10 border-orange-500/20 text-orange-600 dark:text-orange-400" : ""}
@@ -396,24 +396,24 @@ export function Leaderboard() {
                     </div>
 
                     {/* Developer Info */}
-                    <div className="col-span-5 flex items-center gap-3">
+                    <div className="col-span-5 flex items-center gap-1.5 sm:gap-3 min-w-0">
                       <AvatarRenderer 
                         avatar={user.avatar} 
-                        className="w-9 h-9 rounded-full flex items-center justify-center font-bold text-xs shrink-0" 
+                        className="w-7 h-7 sm:w-9 sm:h-9 rounded-full flex items-center justify-center font-bold text-[10px] sm:text-xs shrink-0" 
                         colorClass={user.isCurrentUser ? "from-emerald-400 to-emerald-600" : avatarColors[index % avatarColors.length]}
                       />
-                      <div className="truncate pr-2">
-                        <div className="flex items-center gap-1.5">
+                      <div className="truncate pr-1">
+                        <div className="flex items-center gap-1">
                           <span className={`font-semibold text-xs truncate ${user.isCurrentUser ? "text-violet-605 dark:text-violet-300" : "text-zinc-700 dark:text-zinc-205"}`}>
                             {user.username || user.name}
                           </span>
                           {user.plan?.toLowerCase() === "pro" && (
-                            <span className="bg-violet-500/10 dark:bg-violet-500/20 border border-violet-200 dark:border-violet-500/30 text-violet-600 dark:text-violet-300 text-[8px] font-black px-1.5 py-0.2 rounded uppercase tracking-wider shrink-0">
+                            <span className="bg-violet-500/10 dark:bg-violet-500/20 border border-violet-200 dark:border-violet-500/30 text-violet-600 dark:text-violet-300 text-[7px] sm:text-[8px] font-black px-1 py-0.2 rounded uppercase shrink-0">
                               PRO
                             </span>
                           )}
                           {user.isCurrentUser && (
-                            <span className="text-[8px] bg-emerald-500/10 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-305 border border-emerald-200 dark:border-emerald-500/20 px-1.5 py-0.2 rounded font-bold shrink-0">
+                            <span className="text-[7px] sm:text-[8px] bg-emerald-500/10 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-305 border border-emerald-200 dark:border-emerald-500/20 px-1 py-0.2 rounded font-bold shrink-0">
                               YOU
                             </span>
                           )}
@@ -422,16 +422,16 @@ export function Leaderboard() {
                     </div>
 
                     {/* Streak */}
-                    <div className="col-span-3 flex items-center gap-1.5">
-                      <Flame className={`w-3.5 h-3.5 ${user.streak > 0 ? "text-orange-500 animate-pulse" : "text-zinc-400 dark:text-zinc-600"}`} />
-                      <span className={`text-xs ${user.streak > 0 ? "text-zinc-700 dark:text-zinc-200" : "text-zinc-400 dark:text-zinc-550 font-medium"}`}>
+                    <div className="col-span-3 flex items-center gap-1">
+                      <Flame className={`w-3 h-3 sm:w-3.5 sm:h-3.5 ${user.streak > 0 ? "text-orange-500 animate-pulse" : "text-zinc-400 dark:text-zinc-600"}`} />
+                      <span className={`text-[11px] sm:text-xs ${user.streak > 0 ? "text-zinc-700 dark:text-zinc-200" : "text-zinc-400 dark:text-zinc-550 font-medium"}`}>
                         {user.streak || 0}d
                       </span>
                     </div>
 
                     {/* Value */}
                     <div className="col-span-2 text-right">
-                      <div className={`font-bold text-xs ${isTopThree ? "text-zinc-800 dark:text-white" : "text-zinc-650 dark:text-zinc-300"}`}>
+                      <div className={`font-bold text-[11px] sm:text-xs ${isTopThree ? "text-zinc-800 dark:text-white" : "text-zinc-650 dark:text-zinc-300"}`}>
                         {getValue(user)}
                       </div>
                     </div>
@@ -443,10 +443,10 @@ export function Leaderboard() {
 
           {/* Sticky Current User placement row */}
           {currentUser && (
-            <div className="border-t border-zinc-200 dark:border-white/[0.06] bg-white dark:bg-[#121217]/95 backdrop-blur-md px-6 py-3 flex items-center justify-between z-20 shadow-[0_-5px_20px_rgba(0,0,0,0.02)] dark:shadow-[0_-5px_20px_rgba(0,0,0,0.3)]">
-              <div className="flex items-center gap-3">
-                <span className="text-[8px] font-black text-zinc-500 uppercase tracking-widest">Your Position</span>
-                <div className="bg-violet-500/10 border border-violet-500/20 text-violet-605 dark:text-violet-300 font-extrabold px-2 py-0.5 rounded-lg text-xs">
+            <div className="border-t border-zinc-200 dark:border-white/[0.06] bg-white dark:bg-[#121217]/95 backdrop-blur-md px-3 sm:px-6 py-3 flex items-center justify-between z-20 shadow-[0_-5px_20px_rgba(0,0,0,0.02)] dark:shadow-[0_-5px_20px_rgba(0,0,0,0.3)] gap-2">
+              <div className="flex items-center gap-1.5 sm:gap-3 min-w-0">
+                <span className="text-[8px] font-black text-zinc-500 uppercase tracking-widest hidden sm:inline-block">Your Position</span>
+                <div className="bg-violet-500/10 border border-violet-500/20 text-violet-605 dark:text-violet-300 font-extrabold px-2 py-0.5 rounded-lg text-xs shrink-0">
                   #{currentUser.rank}
                 </div>
                 <AvatarRenderer 
@@ -461,7 +461,7 @@ export function Leaderboard() {
                   </span>
                 )}
               </div>
-              <div className="flex items-center gap-5">
+              <div className="flex items-center gap-2.5 sm:gap-5">
                 <div className="flex items-center gap-1.5">
                   <Flame className="w-3.5 h-3.5 text-orange-455" />
                   <span className="text-xs text-zinc-600 dark:text-zinc-300 font-medium">{currentUser.streak}d</span>

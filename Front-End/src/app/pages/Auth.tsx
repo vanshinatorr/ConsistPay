@@ -247,7 +247,7 @@ export function Auth() {
       </div>
 
       {/* RIGHT SIDE - Auth Box */}
-      <div className="w-full lg:w-1/2 flex flex-col justify-center items-center p-6 relative z-10">
+      <div className="w-full lg:w-1/2 flex flex-col justify-start lg:justify-center items-center py-12 px-4 sm:p-6 relative z-10">
         
         {/* Ambient glow behind card */}
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[450px] h-[450px] bg-emerald-500/[0.06] rounded-full blur-[120px] pointer-events-none" />

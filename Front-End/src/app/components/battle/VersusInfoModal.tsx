@@ -7,13 +7,13 @@ interface VersusInfoModalProps {
 
 export default function VersusInfoModal({ onClose }: VersusInfoModalProps) {
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-50 flex items-start md:items-center justify-center p-4 overflow-y-auto py-8">
       <div 
         className="absolute inset-0 bg-black/60 backdrop-blur-sm" 
         onClick={onClose} 
       />
       
-      <div className="relative w-full max-w-2xl bg-[#0D0D0F] border border-white/10 rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200 max-h-[90vh]">
+      <div className="relative my-auto w-full max-w-2xl bg-[#0D0D0F] border border-white/10 rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200 max-h-[90vh]">
         
         {/* Header */}
         <div className="p-6 pb-4 border-b border-white/5 flex items-center justify-between sticky top-0 bg-[#0D0D0F]/90 backdrop-blur-md z-10">

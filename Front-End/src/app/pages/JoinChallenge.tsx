@@ -232,19 +232,19 @@ export function JoinChallenge() {
               <div className="relative bg-[#0F0F13] border border-white/[0.04] rounded-3xl p-6 shadow-2xl flex flex-col justify-between">
                 <div>
                   {/* Visual VS Setup */}
-                  <div className="flex items-center justify-center gap-6 mb-6">
-                    <div className="flex flex-col items-center gap-2">
-                      <div className="w-12 h-12 bg-zinc-200 dark:bg-zinc-800 rounded-full flex items-center justify-center border-2 border-zinc-300 dark:border-zinc-700">
+                  <div className="flex items-center justify-center gap-3 sm:gap-6 mb-6">
+                    <div className="flex flex-col items-center gap-2 min-w-0">
+                      <div className="w-12 h-12 bg-zinc-200 dark:bg-zinc-800 rounded-full flex items-center justify-center border-2 border-zinc-300 dark:border-zinc-700 shrink-0">
                         <User className="w-5 h-5 text-zinc-600 dark:text-zinc-400" />
                       </div>
-                      <span className="text-xs font-bold text-zinc-650 dark:text-zinc-400">YOU (₹{challengeData.stake})</span>
+                      <span className="text-xs font-bold text-zinc-650 dark:text-zinc-400 truncate max-w-[90px] sm:max-w-none">YOU (₹{challengeData.stake})</span>
                     </div>
-                    <div className="text-xs font-black text-emerald-500 italic flex items-center justify-center w-8 h-8 rounded-full bg-emerald-500/10 border border-emerald-500/20 shadow-[0_0_15px_rgba(16,185,129,0.3)]">VS</div>
-                    <div className="flex flex-col items-center gap-2">
-                      <div className="w-12 h-12 bg-gradient-to-br from-violet-500 to-purple-600 rounded-full flex items-center justify-center border-2 border-violet-400/30 text-white font-bold text-lg">
+                    <div className="text-xs font-black text-emerald-500 italic flex items-center justify-center w-8 h-8 rounded-full bg-emerald-500/10 border border-emerald-500/20 shadow-[0_0_15px_rgba(16,185,129,0.3)] shrink-0">VS</div>
+                    <div className="flex flex-col items-center gap-2 min-w-0">
+                      <div className="w-12 h-12 bg-gradient-to-br from-violet-500 to-purple-600 rounded-full flex items-center justify-center border-2 border-violet-400/30 text-white font-bold text-lg shrink-0">
                         {creatorAvatar}
                       </div>
-                      <span className="text-xs font-bold text-violet-600 dark:text-violet-300 uppercase truncate max-w-[100px] text-center">{challengeData.createdBy.split(" ")[0]} (₹{challengeData.stake})</span>
+                      <span className="text-xs font-bold text-violet-600 dark:text-violet-300 uppercase truncate max-w-[90px] sm:max-w-none text-center">{challengeData.createdBy.split(" ")[0]} (₹{challengeData.stake})</span>
                     </div>
                   </div>
 

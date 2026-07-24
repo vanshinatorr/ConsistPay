@@ -114,7 +114,7 @@ export function VersusCard({
                 <Swords className="w-5 h-5 text-indigo-550 dark:text-indigo-455" />
               </div>
               <div>
-                <div className="text-3xl font-extrabold text-zinc-800 dark:text-white tracking-tight leading-none">
+                <div className="text-xl sm:text-2xl lg:text-3xl font-extrabold text-zinc-800 dark:text-white tracking-tight leading-none">
                   ₹{onboardingComplete ? Math.round(battleBalance) : "0"}
                 </div>
                 <p className="text-[10px] text-zinc-500 mt-1.5">

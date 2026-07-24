@@ -45,7 +45,7 @@ export function LeaderboardRankCard({
             <BarChart3 className="w-8 h-8 rotate-90" />
           </div>
           <div>
-            <div className="text-4xl font-extrabold text-zinc-900 dark:text-white tracking-tight leading-none flex items-baseline">
+            <div className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-zinc-900 dark:text-white tracking-tight leading-none flex items-baseline">
               {loading ? (
                 <div className="h-8 w-16 bg-zinc-100 dark:bg-white/5 animate-pulse rounded" />
               ) : !onboardingComplete ? (

@@ -773,12 +773,12 @@ export function Settings() {
                         else if (solve.difficulty === "Hard") diffColor = "text-red-400 bg-red-500/10 border-red-500/20";
 
                         return (
-                          <div key={index} className="flex items-center justify-between p-3.5 bg-white/[0.02] border border-white/[0.04] rounded-xl hover:bg-white/[0.04] hover:border-white/[0.08] transition-all">
-                            <div className="flex items-center gap-3">
+                          <div key={index} className="flex items-center justify-between p-3.5 bg-white/[0.02] border border-white/[0.04] rounded-xl hover:bg-white/[0.04] hover:border-white/[0.08] transition-all gap-2">
+                            <div className="flex items-center gap-3 min-w-0 flex-1">
                               <div className={`w-8 h-8 rounded-lg flex items-center justify-center font-black text-[10px] border shrink-0 ${iconColor}`}>
                                 {iconText}
                               </div>
-                              <div className="truncate pr-2 max-w-[160px] sm:max-w-xs text-left">
+                              <div className="flex-1 min-w-0 pr-2 text-left">
                                 <h4 className="text-xs font-bold text-zinc-205 truncate">{solve.name}</h4>
                                 <span className="text-[9.5px] text-zinc-500 font-bold uppercase tracking-wider block mt-0.5">{solve.topic}</span>
                               </div>

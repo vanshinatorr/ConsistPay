@@ -39,10 +39,10 @@ export function StatsRow({
             </div>
 
             <div className="flex-1 flex flex-col justify-center my-3">
-              <div className="text-4xl font-bold text-zinc-900 dark:text-white tracking-tight leading-none">
+              <div className="text-3xl lg:text-4xl font-bold text-zinc-900 dark:text-white tracking-tight leading-none">
                 {onboardingComplete ? currentStreak : "-"}
               </div>
-              <p className="text-xs text-zinc-550 dark:text-zinc-500 mt-2">
+              <p className="text-xs text-zinc-555 dark:text-zinc-500 mt-2">
                 Active for {currentStreak} day{currentStreak !== 1 ? "s" : ""}
               </p>
             </div>
@@ -66,10 +66,10 @@ export function StatsRow({
             </div>
 
             <div className="flex-1 flex flex-col justify-center my-3">
-              <div className="text-4xl font-bold text-zinc-900 dark:text-white tracking-tight leading-none">
+              <div className="text-3xl lg:text-4xl font-bold text-zinc-900 dark:text-white tracking-tight leading-none">
                 {onboardingComplete ? completedDays : "-"}
               </div>
-              <p className="text-xs text-zinc-550 dark:text-zinc-500 mt-2">
+              <p className="text-xs text-zinc-555 dark:text-zinc-500 mt-2">
                 Lifetime verified solutions
               </p>
             </div>
@@ -93,7 +93,7 @@ export function StatsRow({
             </div>
 
             <div className="flex-1 flex flex-col justify-center my-3">
-              <div className="text-4xl font-bold text-zinc-900 dark:text-white tracking-tight leading-none">
+              <div className="text-3xl lg:text-4xl font-bold text-zinc-900 dark:text-white tracking-tight leading-none">
                 {onboardingComplete ? `${consistencyScore}%` : "-"}
               </div>
               <p className="text-xs text-zinc-550 dark:text-zinc-500 mt-2">

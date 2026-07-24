@@ -142,7 +142,7 @@ export function Onboarding() {
   const depositTotal = amount ? amount * 30 : 0;
 
   return (
-    <div className="min-h-screen text-white flex flex-col items-center justify-center p-6 relative overflow-y-auto" style={{ backgroundColor: "#0F0F13" }}>
+    <div className="min-h-screen text-white flex flex-col items-center justify-start md:justify-center p-4 sm:p-6 relative overflow-y-auto" style={{ backgroundColor: "#0F0F13" }}>
       
       {/* Background Decorative Ambient Blobs */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
@@ -150,7 +150,7 @@ export function Onboarding() {
         <div className="absolute bottom-[-10%] left-[-10%] w-[500px] h-[500px] bg-emerald-500/5 rounded-full blur-[140px]" />
       </div>
 
-      <div className={`w-full relative z-10 my-auto transition-all duration-300 ${step === 3 || step === 5 ? "max-w-4xl" : "max-w-2xl"}`}>
+      <div className={`w-full relative z-10 my-4 md:my-auto transition-all duration-300 ${step === 3 || step === 5 ? "max-w-4xl" : "max-w-2xl"}`}>
         
         {/* Top Header Logo */}
         <div className="flex items-center justify-center gap-2.5 mb-8">
@@ -201,10 +201,10 @@ export function Onboarding() {
           {step === 1 && (
             <div className="space-y-6 animate-in fade-in duration-500">
               <div className="text-center space-y-3">
-                <h1 className="text-3xl font-bold tracking-tight text-white leading-tight">
+                <h1 className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight text-white leading-tight">
                   Build coding consistency that actually lasts.
                 </h1>
-                <p className="text-zinc-400 text-sm md:text-base leading-relaxed max-w-lg mx-auto">
+                <p className="text-zinc-400 text-xs sm:text-sm md:text-base leading-relaxed max-w-lg mx-auto">
                   Daily proof tracking, accountability challenges, and refundable commitment systems designed for placement preparation.
                 </p>
               </div>
@@ -255,7 +255,7 @@ export function Onboarding() {
           {step === 2 && (
             <div className="space-y-6 animate-in fade-in duration-500">
               <div className="space-y-2">
-                <h2 className="text-xl font-bold text-white">How ConsistPay Works</h2>
+                <h2 className="text-lg sm:text-xl font-bold text-white">How ConsistPay Works</h2>
                 <p className="text-zinc-400 text-xs">A psychology-backed accountability system built for placement prep.</p>
               </div>
 
@@ -346,17 +346,17 @@ export function Onboarding() {
           {step === 3 && (
             <div className="space-y-4 animate-in fade-in duration-500 text-left">
               <div className="space-y-1">
-                <h2 className="text-xl md:text-2xl font-bold text-white tracking-tight">Choose Your Accountability Tier</h2>
+                <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-white tracking-tight">Choose Your Accountability Tier</h2>
                 <p className="text-zinc-400 text-xs">Select how you want to build consistency. Pro tier is highly recommended for serious preparation.</p>
               </div>
 
               {/* Mobile Plan Selector (Segmented Tabs) */}
-              <div className="flex md:hidden bg-zinc-900/60 p-1 rounded-xl border border-white/[0.04] mb-4 select-none">
+              <div className="flex lg:hidden bg-zinc-900/60 p-1 rounded-xl border border-white/[0.04] mb-4 select-none">
                 <button
                   type="button"
                   onClick={() => setPlan("Free")}
                   className={`flex-1 py-2 text-xs font-semibold rounded-lg transition-all cursor-pointer ${
-                    plan === "Free" ? "bg-white/10 text-white shadow" : "text-zinc-500"
+                    plan === "Free" ? "bg-white/10 text-white shadow" : "text-zinc-550"
                   }`}
                 >
                   Free Plan
@@ -365,7 +365,7 @@ export function Onboarding() {
                   type="button"
                   onClick={() => setPlan("Pro")}
                   className={`flex-1 py-2 text-xs font-semibold rounded-lg transition-all flex items-center justify-center gap-1 cursor-pointer ${
-                    plan === "Pro" ? "bg-violet-600 text-white shadow" : "text-zinc-500"
+                    plan === "Pro" ? "bg-violet-600 text-white shadow" : "text-zinc-550"
                   }`}
                 >
                   <Sparkles className="w-3.5 h-3.5" />
@@ -374,11 +374,11 @@ export function Onboarding() {
               </div>
 
               {/* Mobile Single Card Render */}
-              <div className="block md:hidden">
+              <div className="block lg:hidden">
                 {plan === "Free" ? (
-                  <div className="p-5 rounded-2xl border border-white/[0.04] bg-white/[0.01] text-left space-y-4 shadow-xl">
+                  <div className="p-4 sm:p-5 rounded-2xl border border-white/[0.04] bg-white/[0.01] text-left space-y-4 shadow-xl">
                     <div>
-                      <h3 className="font-bold text-white text-lg tracking-tight">Basic Accountability</h3>
+                      <h3 className="font-bold text-white text-base sm:text-lg tracking-tight">Basic Accountability</h3>
                       <p className="text-xs text-zinc-400 mt-1 leading-relaxed">
                         Habit logging and basic streak tracking for routine builders.
                       </p>
@@ -398,17 +398,17 @@ export function Onboarding() {
                       </li>
                     </ul>
                     <div className="border-t border-white/[0.04] pt-3 flex justify-between items-center">
-                      <span className="text-sm font-semibold text-zinc-350">Free Forever</span>
-                      <span className="text-xs text-emerald-400 font-semibold uppercase tracking-wider">Active</span>
+                      <span className="text-xs sm:text-sm font-semibold text-zinc-350">Free Forever</span>
+                      <span className="text-[10px] text-emerald-400 font-semibold uppercase tracking-wider">Active</span>
                     </div>
                   </div>
                 ) : (
-                  <div className="p-5 rounded-2xl border border-violet-500/30 bg-violet-500/[0.02] text-left space-y-4 relative overflow-hidden shadow-[0_0_25px_rgba(124,58,237,0.05)]">
+                  <div className="p-4 sm:p-5 rounded-2xl border border-violet-500/30 bg-violet-500/[0.02] text-left space-y-4 relative overflow-hidden shadow-[0_0_25px_rgba(124,58,237,0.05)]">
                     <div className="absolute top-0 right-0 bg-violet-600 text-white text-[8px] font-bold px-3 py-1 uppercase tracking-wider rounded-bl-lg">
                       RECOMMENDED
                     </div>
                     <div>
-                      <h3 className="font-bold text-white text-lg tracking-tight">Premium Prep Mode</h3>
+                      <h3 className="font-bold text-white text-base sm:text-lg tracking-tight">Premium Prep Mode</h3>
                       <p className="text-xs text-zinc-300 mt-1 leading-relaxed">
                         Complete feature set designed for placement preparation.
                       </p>
@@ -433,7 +433,7 @@ export function Onboarding() {
                     </ul>
                     <div className="border-t border-white/[0.04] pt-3 space-y-2">
                       <div className="flex justify-between items-center w-full">
-                        <span className="text-sm font-semibold text-violet-400">₹49 setup + deposit</span>
+                        <span className="text-xs sm:text-sm font-semibold text-violet-400">₹49 setup + deposit</span>
                         <span className="text-[10px] text-violet-400 font-semibold uppercase tracking-wider">Active</span>
                       </div>
                       <div className="text-[10px] text-zinc-400 leading-normal font-medium flex items-center gap-1.5 bg-white/[0.02] border border-white/[0.04] rounded-lg p-2">
@@ -445,13 +445,13 @@ export function Onboarding() {
                 )}
               </div>
 
-              {/* Desktop Dual Cards Compare Layout (md:grid) */}
-              <div className="hidden md:grid md:grid-cols-2 gap-5 pt-1">
+              {/* Desktop Dual Cards Compare Layout (lg:grid) */}
+              <div className="hidden lg:grid lg:grid-cols-2 gap-5 pt-1">
                 {/* Free Card */}
                 <button
                   onClick={() => setPlan("Free")}
                   type="button"
-                  className={`p-4 sm:p-6 rounded-2xl border text-left transition-all duration-300 flex flex-col justify-between min-h-[290px] sm:min-h-[340px] relative overflow-hidden group ${
+                  className={`p-4 sm:p-6 rounded-2xl border text-left transition-all duration-300 flex flex-col justify-between min-h-[300px] sm:min-h-[340px] relative overflow-hidden group ${
                     plan === "Free"
                       ? "border-white/[0.08] bg-white/[0.02] shadow-sm"
                       : "border-white/[0.04] bg-white/[0.01] hover:border-white/[0.08] hover:bg-white/[0.02]"
@@ -578,9 +578,9 @@ export function Onboarding() {
 
           {/* ──────────────── STEP 4: SELECT COMMITMENT ──────────────── */}
           {step === 4 && (
-            <div className="space-y-6 animate-in fade-in duration-500 text-left">
-              <div className="space-y-2">
-                <h2 className="text-xl font-bold text-white">Select Daily Commitment</h2>
+            <div className="space-y-4 animate-in fade-in duration-500 text-left">
+              <div className="space-y-1">
+                <h2 className="text-lg sm:text-xl font-bold text-white">Select Daily Commitment</h2>
                 <p className="text-zinc-400 text-xs">Choose the stake that will keep you accountable every single day.</p>
               </div>
 
@@ -655,13 +655,13 @@ export function Onboarding() {
           {step === 5 && (
             <div className="space-y-4 animate-in fade-in duration-500 text-left">
               <div className="space-y-1">
-                <h2 className="text-xl md:text-2xl font-bold text-white tracking-tight">Review Your Commitment Challenge</h2>
+                <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-white tracking-tight">Review Your Commitment Challenge</h2>
                 <p className="text-zinc-400 text-xs">Verify your 30-day program specifications before checkout.</p>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-5 items-stretch pt-1">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 items-stretch pt-1">
                 {/* Left Side: Summary Table */}
-                <div className="bg-[#0F0F13] border border-white/[0.04] rounded-2xl p-5 flex flex-col justify-between space-y-4">
+                <div className="bg-[#0F0F13] border border-white/[0.04] rounded-2xl p-4 sm:p-5 flex flex-col justify-between space-y-4">
                   <div className="space-y-2.5">
                     <h3 className="font-bold text-white text-sm border-b border-white/[0.04] pb-2">Challenge Details</h3>
                     <div className="flex justify-between items-center text-xs border-b border-white/[0.04] pb-2">
@@ -794,7 +794,7 @@ export function Onboarding() {
                     </div>
                   </div>
                   <div className="space-y-2">
-                    <h3 className="text-xl font-semibold text-white animate-pulse">
+                    <h3 className="text-lg sm:text-xl font-semibold text-white animate-pulse">
                       {processingStep === 1 ? "Connecting to Bank..." : "Verifying Transaction..."}
                     </h3>
                     <p className="text-zinc-500 text-xs uppercase tracking-widest font-mono font-semibold">
@@ -805,8 +805,8 @@ export function Onboarding() {
               ) : (
                 <>
                   <div className="space-y-1">
-                    <h3 className="text-xl md:text-2xl font-bold text-white tracking-tight">Secure Checkout</h3>
-                    <p className="text-xs text-zinc-400 leading-relaxed">
+                    <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-white tracking-tight">Secure Checkout</h3>
+                    <p className="text-zinc-400 text-xs leading-relaxed">
                       Complete your payment securely. Your refundable deposit will be returned after 30 days of consistency.
                     </p>
                   </div>
@@ -829,7 +829,7 @@ export function Onboarding() {
                     </div>
                   )}
 
-                  <div className="p-5 rounded-2xl border border-white/[0.04] bg-[#0F0F13] space-y-3 shadow-inner">
+                  <div className="p-4 sm:p-5 rounded-2xl border border-white/[0.04] bg-[#0F0F13] space-y-3 shadow-inner">
                     <div className="flex items-center justify-between text-xs">
                       <span className="text-zinc-500">Selected Plan</span>
                       <span className="text-white font-semibold capitalize flex items-center gap-1.5">

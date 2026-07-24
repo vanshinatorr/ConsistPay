@@ -368,20 +368,20 @@ export function ActiveBattle() {
                 return (
                   <div 
                     key={dayItem.dayNumber}
-                    className="flex items-center justify-between py-3 px-4 rounded-2xl bg-white/[0.01] hover:bg-white/[0.02] border border-white/5 hover:border-white/10 transition-all"
+                    className="flex items-center justify-between py-3 px-2 sm:px-4 rounded-2xl bg-white/[0.01] hover:bg-white/[0.02] border border-white/5 hover:border-white/10 transition-all gap-1"
                   >
                     {/* Left: You */}
-                    <div className="flex-1 flex items-center gap-3">
+                    <div className="flex-1 flex items-center gap-1.5 sm:gap-3 min-w-0">
                       {renderStatusIcon(myStatus)}
-                      <div className="text-left">
-                        <span className="block text-xs font-bold text-zinc-400">You</span>
+                      <div className="text-left min-w-0 flex-1">
+                        <span className="block text-xs font-bold text-zinc-400 truncate">You</span>
                         {getStatusText(myStatus, myProblem)}
                       </div>
                     </div>
 
                     {/* Middle: Day Circle */}
-                    <div className="w-16 flex items-center justify-center shrink-0">
-                      <div className={`px-3 py-1.5 rounded-full border text-[11px] font-black tracking-wider uppercase
+                    <div className="w-14 sm:w-16 flex items-center justify-center shrink-0">
+                      <div className={`px-2 sm:px-3 py-1.5 rounded-full border text-[10px] sm:text-[11px] font-black tracking-wider uppercase
                         ${dayItem.dayNumber === currentDay ? 'bg-violet-500/10 border-violet-500/30 text-violet-300 animate-pulse' : 
                           dayItem.dayNumber < currentDay ? 'bg-white/5 border-white/10 text-zinc-400' : 'bg-transparent border-dashed border-white/5 text-zinc-600'}`}>
                         D-{dayItem.dayNumber}
@@ -389,10 +389,10 @@ export function ActiveBattle() {
                     </div>
 
                     {/* Right: Opponent */}
-                    <div className="flex-1 flex items-center gap-3 flex-row-reverse text-right">
+                    <div className="flex-1 flex items-center gap-1.5 sm:gap-3 flex-row-reverse text-right min-w-0">
                       {renderStatusIcon(oppStatus)}
-                      <div className="text-right">
-                        <span className="block text-xs font-bold text-zinc-400">{oppData.name}</span>
+                      <div className="text-right min-w-0 flex-1">
+                        <span className="block text-xs font-bold text-zinc-400 truncate">{oppData.name}</span>
                         {getStatusText(oppStatus, oppProblem)}
                       </div>
                     </div>
