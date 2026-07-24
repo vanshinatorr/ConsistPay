@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const connectDB = require("../config/db");
 const Challenge = require("../models/Challenge");
 const User = require("../models/User");
 const Submission = require("../models/Submission");
@@ -761,6 +762,7 @@ const getPendingChallenge = async (req, res) => {
 // EXPIRE PENDING CHALLENGES (Cron Job logic)
 const expirePendingChallenges = async () => {
   try {
+    await connectDB();
     const fiveMinsAgo = new Date(Date.now() - 5 * 60 * 1000);
     const expired = await Challenge.find({ status: "pending", createdAt: { $lt: fiveMinsAgo } });
     
