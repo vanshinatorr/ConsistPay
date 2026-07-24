@@ -6,7 +6,9 @@ const {
   dismissBetaRequest,
   getAdminWithdrawals,
   approveWithdrawal,
-  rejectWithdrawal
+  rejectWithdrawal,
+  getAdminUsers,
+  updateUser
 } = require("../controllers/adminController");
 const { protect } = require("../middleware/authMiddleware");
 
@@ -20,6 +22,8 @@ const adminProtect = (req, res, next) => {
 };
 
 router.get("/stats", protect, adminProtect, getAdminStats);
+router.get("/users", protect, adminProtect, getAdminUsers);
+router.put("/users/:id", protect, adminProtect, updateUser);
 router.get("/beta-requests", protect, adminProtect, getBetaRequests);
 router.delete("/beta-requests/:id", protect, adminProtect, dismissBetaRequest);
 

@@ -119,7 +119,7 @@ const getAdminStats = async (req, res) => {
 
     const feedEvents = [];
     latestSubmissions.forEach(sub => {
-      if (!sub.userId) return; // Skip if user is null/deleted
+      if (!sub.userId || typeof sub.userId !== "object") return; // Skip if null/deleted/unpopulated
       feedEvents.push({
         id: `sub-${sub._id}`,
         time: formatTimeAgo(sub.createdAt),
@@ -132,7 +132,7 @@ const getAdminStats = async (req, res) => {
     });
 
     latestLinkages.forEach(link => {
-      if (!link.userId) return; // Skip if user is null/deleted
+      if (!link.userId || typeof link.userId !== "object") return; // Skip if null/deleted/unpopulated
       feedEvents.push({
         id: `link-${link._id}`,
         time: formatTimeAgo(link.createdAt),
@@ -311,11 +311,81 @@ const rejectWithdrawal = async (req, res) => {
   }
 };
 
+const getAdminUsers = async (req, res) => {
+  try {
+    const { search = "", limit = 20, page = 1 } = req.query;
+    const query = {};
+    if (search) {
+      query.$or = [
+        { name: { $regex: search, $options: "i" } },
+        { email: { $regex: search, $options: "i" } }
+      ];
+    }
+    const total = await User.countDocuments(query);
+    const users = await User.find(query)
+      .sort({ createdAt: -1 })
+      .skip((Number(page) - 1) * Number(limit))
+      .limit(Number(limit));
+    
+    // Fetch platform linkages to match usernames/handles
+    const linkages = await PlatformLinkage.find({ userId: { $in: users.map(u => u._id) } });
+    
+    const usersList = users.map(u => {
+      const link = linkages.find(l => String(l.userId) === String(u._id));
+      return {
+        _id: u._id,
+        name: u.name,
+        email: u.email,
+        handle: link?.username || "not-linked",
+        streak: u.streak || 0,
+        solved: link?.totalSolved || 0,
+        plan: u.plan === "pro" ? "Pro" : "Free",
+        graceCoins: u.graceCoins || 0,
+        battleBalance: u.battleBalance || 0,
+        createdAt: u.createdAt
+      };
+    });
+    
+    res.status(200).json({
+      users: usersList,
+      total,
+      pages: Math.ceil(total / Number(limit))
+    });
+  } catch (error) {
+    console.error("Error fetching admin users list:", error);
+    res.status(500).json({ message: error.message });
+  }
+};
+
+const updateUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { plan, streak, graceCoins, battleBalance } = req.body;
+    
+    const updateData = {};
+    if (plan !== undefined) updateData.plan = plan.toLowerCase();
+    if (streak !== undefined) updateData.streak = Number(streak);
+    if (graceCoins !== undefined) updateData.graceCoins = Number(graceCoins);
+    if (battleBalance !== undefined) updateData.battleBalance = Number(battleBalance);
+    
+    const user = await User.findByIdAndUpdate(id, { $set: updateData }, { new: true });
+    if (!user) {
+      return res.status(404).json({ message: "User not found." });
+    }
+    res.status(200).json({ message: "User updated successfully.", user });
+  } catch (error) {
+    console.error("Error updating user:", error);
+    res.status(500).json({ message: error.message });
+  }
+};
+
 module.exports = { 
   getAdminStats, 
   getBetaRequests, 
   dismissBetaRequest, 
   getAdminWithdrawals, 
   approveWithdrawal, 
-  rejectWithdrawal 
+  rejectWithdrawal,
+  getAdminUsers,
+  updateUser
 };
