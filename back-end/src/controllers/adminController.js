@@ -168,6 +168,26 @@ const getAdminStats = async (req, res) => {
 
     const coinsEarnedToday = solvedTodayUserIds.length * 50;
 
+    // 6. Challenge & Economics Analytics
+    const Challenge = require("../models/Challenge");
+    const [totalChallenges, activeChallengesCount, completedChallengesCount] = await Promise.all([
+      Challenge.countDocuments({}),
+      Challenge.countDocuments({ status: "active" }),
+      Challenge.countDocuments({ status: "completed" })
+    ]);
+
+    const stakeResult = await Challenge.aggregate([
+      { $match: { status: "active" } },
+      { $group: { _id: null, total: { $sum: "$stake" } } }
+    ]);
+    const activeStakesLocked = (stakeResult[0]?.total || 0) * 2; // both creator and opponent stake
+
+    const feesResult = await Challenge.aggregate([
+      { $match: { status: { $in: ["active", "completed"] } } },
+      { $group: { _id: null, total: { $sum: "$entryFee" } } }
+    ]);
+    const totalFeesCollected = (feesResult[0]?.total || 0) * 2; // both players pay fee
+
     res.status(200).json({
       overview: {
         totalUsers,
@@ -191,7 +211,12 @@ const getAdminStats = async (req, res) => {
       wallet: {
         coinsEarnedToday,
         activeDepositPool,
-        payoutReserves: activeDepositPool * 1.5 // Mock prediction factor
+        payoutReserves: activeDepositPool * 1.5,
+        totalChallenges,
+        activeChallenges: activeChallengesCount,
+        completedChallenges: completedChallengesCount,
+        activeStakesLocked,
+        totalFeesCollected
       }
     });
 
@@ -338,10 +363,14 @@ const getAdminUsers = async (req, res) => {
         email: u.email,
         handle: link?.username || "not-linked",
         streak: u.streak || 0,
+        maxStreak: u.maxStreak || 0,
         solved: link?.totalSolved || 0,
         plan: u.plan === "pro" ? "Pro" : "Free",
         graceCoins: u.graceCoins || 0,
+        balance: u.balance || 0,
         battleBalance: u.battleBalance || 0,
+        activeDeposit: u.activeDeposit || 0,
+        role: u.role || "user",
         createdAt: u.createdAt
       };
     });
@@ -360,13 +389,26 @@ const getAdminUsers = async (req, res) => {
 const updateUser = async (req, res) => {
   try {
     const { id } = req.params;
-    const { plan, streak, graceCoins, battleBalance } = req.body;
+    const { 
+      plan, 
+      streak, 
+      maxStreak, 
+      graceCoins, 
+      balance, 
+      battleBalance, 
+      activeDeposit, 
+      role 
+    } = req.body;
     
     const updateData = {};
     if (plan !== undefined) updateData.plan = plan.toLowerCase();
     if (streak !== undefined) updateData.streak = Number(streak);
+    if (maxStreak !== undefined) updateData.maxStreak = Number(maxStreak);
     if (graceCoins !== undefined) updateData.graceCoins = Number(graceCoins);
+    if (balance !== undefined) updateData.balance = Number(balance);
     if (battleBalance !== undefined) updateData.battleBalance = Number(battleBalance);
+    if (activeDeposit !== undefined) updateData.activeDeposit = Number(activeDeposit);
+    if (role !== undefined) updateData.role = role.toLowerCase();
     
     const user = await User.findByIdAndUpdate(id, { $set: updateData }, { new: true });
     if (!user) {
@@ -379,6 +421,18 @@ const updateUser = async (req, res) => {
   }
 };
 
+const syncUserStreakAdmin = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { syncUserStreak } = require("../utils/streakHelper");
+    const user = await syncUserStreak(id);
+    res.status(200).json({ message: "User streak synced successfully.", user });
+  } catch (error) {
+    console.error("Error syncing user streak via admin:", error);
+    res.status(500).json({ message: error.message });
+  }
+};
+
 module.exports = { 
   getAdminStats, 
   getBetaRequests, 
@@ -387,5 +441,6 @@ module.exports = {
   approveWithdrawal, 
   rejectWithdrawal,
   getAdminUsers,
-  updateUser
+  updateUser,
+  syncUserStreakAdmin
 };

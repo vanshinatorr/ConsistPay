@@ -8,7 +8,8 @@ const {
   approveWithdrawal,
   rejectWithdrawal,
   getAdminUsers,
-  updateUser
+  updateUser,
+  syncUserStreakAdmin
 } = require("../controllers/adminController");
 const { protect } = require("../middleware/authMiddleware");
 
@@ -24,6 +25,7 @@ const adminProtect = (req, res, next) => {
 router.get("/stats", protect, adminProtect, getAdminStats);
 router.get("/users", protect, adminProtect, getAdminUsers);
 router.put("/users/:id", protect, adminProtect, updateUser);
+router.post("/users/:id/sync-streak", protect, adminProtect, syncUserStreakAdmin);
 router.get("/beta-requests", protect, adminProtect, getBetaRequests);
 router.delete("/beta-requests/:id", protect, adminProtect, dismissBetaRequest);
 

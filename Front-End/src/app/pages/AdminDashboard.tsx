@@ -193,10 +193,15 @@ export function AdminDashboard() {
   // Edit user state parameters
   const [editingUser, setEditingUser] = useState<any | null>(null);
   const [editStreak, setEditStreak] = useState(0);
+  const [editMaxStreak, setEditMaxStreak] = useState(0);
   const [editCoins, setEditCoins] = useState(0);
+  const [editBalance, setEditBalance] = useState(0);
   const [editBattleBalance, setEditBattleBalance] = useState(0);
+  const [editActiveDeposit, setEditActiveDeposit] = useState(0);
   const [editPlan, setEditPlan] = useState<"Free" | "Pro">("Free");
+  const [editRole, setEditRole] = useState<"User" | "Admin">("User");
   const [updatingUser, setUpdatingUser] = useState(false);
+  const [syncingStreak, setSyncingStreak] = useState(false);
 
   // Conditional state redirection based on Demo Mode toggle
   const activeStats = isDemoMode ? MOCK_STATS : stats;
@@ -337,9 +342,13 @@ export function AdminDashboard() {
     }
     setEditingUser(user);
     setEditStreak(user.streak);
+    setEditMaxStreak(user.maxStreak || 0);
     setEditCoins(user.graceCoins);
+    setEditBalance(user.balance || 0);
     setEditBattleBalance(user.battleBalance);
+    setEditActiveDeposit(user.activeDeposit || 0);
     setEditPlan(user.plan === "Pro" ? "Pro" : "Free");
+    setEditRole(user.role === "admin" ? "Admin" : "User");
   };
 
   const handleSaveUser = async () => {
@@ -355,8 +364,12 @@ export function AdminDashboard() {
         body: JSON.stringify({
           plan: editPlan,
           streak: editStreak,
+          maxStreak: editMaxStreak,
           graceCoins: editCoins,
-          battleBalance: editBattleBalance
+          balance: editBalance,
+          battleBalance: editBattleBalance,
+          activeDeposit: editActiveDeposit,
+          role: editRole
         })
       });
       if (res.ok) {
@@ -371,6 +384,31 @@ export function AdminDashboard() {
       alert("Error updating user.");
     } finally {
       setUpdatingUser(false);
+    }
+  };
+
+  const handleManualSyncStreak = async (userId: string) => {
+    try {
+      setSyncingStreak(true);
+      const res = await fetch(`${API}/api/admin/users/${userId}/sync-streak`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (res.ok) {
+        const data = await res.json();
+        alert(`Successfully synced streak! Current streak: ${data.user.streak} 🔥 (Max: ${data.user.maxStreak})`);
+        setEditStreak(data.user.streak);
+        setEditMaxStreak(data.user.maxStreak || 0);
+        fetchUsers();
+      } else {
+        const data = await res.json();
+        alert(data.message || "Failed to sync user streak.");
+      }
+    } catch (err) {
+      console.error("Streak sync error:", err);
+      alert("Error triggering manual streak sync.");
+    } finally {
+      setSyncingStreak(false);
     }
   };
 
@@ -967,8 +1005,8 @@ export function AdminDashboard() {
                     <div className={`border rounded-2xl p-6 space-y-4 transition-colors duration-300 ${
                       isDark ? "bg-[#0C0C0F] border-white/[0.04]" : "bg-white border-zinc-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.015)]"
                     }`}>
-                      <h4 className={`text-xs font-bold uppercase tracking-wider ${isDark ? "text-zinc-400" : "text-zinc-700"}`}>Distributed Coin Economy</h4>
-                      <div className={`space-y-4 font-mono text-xs ${isDark ? "text-zinc-300" : "text-zinc-755"}`}>
+                      <h4 className={`text-xs font-bold uppercase tracking-wider ${isDark ? "text-zinc-400" : "text-zinc-700"}`}>Platform Economics & Ledger</h4>
+                      <div className={`space-y-3 font-mono text-xs ${isDark ? "text-zinc-300" : "text-zinc-755"}`}>
                         <div className="flex justify-between">
                           <span className="text-zinc-500">Coins Earned Today</span>
                           <span className={`font-bold ${isDark ? "text-white" : "text-zinc-900"}`}>+{activeStats?.wallet?.coinsEarnedToday ?? 0} CP</span>
@@ -976,6 +1014,18 @@ export function AdminDashboard() {
                         <div className="flex justify-between">
                           <span className="text-zinc-500">Active Deposit Pool</span>
                           <span className={`font-bold ${isDark ? "text-white" : "text-zinc-900"}`}>₹{activeStats?.wallet?.activeDepositPool ?? 0}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-zinc-500">Total Battle Challenges</span>
+                          <span className={`font-bold ${isDark ? "text-white" : "text-zinc-900"}`}>{activeStats?.wallet?.totalChallenges ?? 0} ({activeStats?.wallet?.activeChallenges ?? 0} Active / {activeStats?.wallet?.completedChallenges ?? 0} Solved)</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-zinc-500">Active Stakes Locked</span>
+                          <span className={`font-bold text-violet-500`}>₹{activeStats?.wallet?.activeStakesLocked ?? 0}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-zinc-500">Platform Entry Fees Collected</span>
+                          <span className={`font-bold text-emerald-500`}>₹{activeStats?.wallet?.totalFeesCollected ?? 0}</span>
                         </div>
                         <div className={`flex justify-between border-t pt-2 ${isDark ? "border-white/[0.04]" : "border-zinc-200"}`}>
                           <span className="text-zinc-500 font-bold">Payout Reserves (Est)</span>
@@ -1214,88 +1264,187 @@ export function AdminDashboard() {
       {/* 4. Edit User Parameters Drawer/Modal Overlay */}
       {editingUser && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-300">
-          <div className={`w-full max-w-md rounded-3xl border p-6 space-y-6 shadow-2xl relative transition-all duration-300 ${
+          <div className={`w-full max-w-lg rounded-3xl border p-6 space-y-6 shadow-2xl relative transition-all duration-300 max-h-[90vh] overflow-y-auto ${
             isDark ? "bg-[#0E0E12] border-white/[0.04] text-white" : "bg-white border-zinc-200 text-zinc-800"
           }`}>
             <div className="space-y-1">
               <h3 className={`text-base font-bold tracking-tight ${isDark ? "text-white" : "text-zinc-900"}`}>
-                Edit User Settings
+                Advanced Profile Inspector
               </h3>
               <p className={`text-[10px] ${isDark ? "text-zinc-550" : "text-zinc-400"}`}>
-                Update values directly for <b>{editingUser.user || editingUser.name}</b> ({editingUser.email})
+                Direct override settings for <b>{editingUser.user || editingUser.name}</b> ({editingUser.email})
               </p>
             </div>
 
             <div className="space-y-4">
-              {/* Plan Selection */}
-              <div className="space-y-1.5">
-                <label className="text-[10px] font-bold uppercase tracking-wider text-zinc-500">Plan Option</label>
-                <div className="flex gap-2">
-                  {(["Free", "Pro"] as const).map((p) => (
-                    <button
-                      key={p}
-                      type="button"
-                      onClick={() => setEditPlan(p)}
-                      className={`flex-1 py-2 text-xs font-semibold rounded-xl border transition-all cursor-pointer ${
-                        editPlan === p
-                          ? "bg-violet-600 hover:bg-violet-500 text-white-force border-violet-500 shadow-sm"
-                          : isDark
-                          ? "bg-white/[0.01] border-white/[0.04] text-zinc-400 hover:bg-white/5"
-                          : "bg-zinc-50 border-zinc-200 text-zinc-650 hover:bg-zinc-100"
-                      }`}
-                    >
-                      {p}
-                    </button>
-                  ))}
+              
+              {/* Force sync utility */}
+              <div className="pt-1">
+                <button
+                  type="button"
+                  disabled={syncingStreak}
+                  onClick={() => handleManualSyncStreak(editingUser._id)}
+                  className="w-full h-10 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 rounded-xl text-xs font-bold border border-emerald-500/20 transition-all flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-50"
+                >
+                  {syncingStreak ? (
+                    <>
+                      <span className="w-3.5 h-3.5 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin" />
+                      Syncing LeetCode Activity...
+                    </>
+                  ) : (
+                    <>🔄 Trigger Manual Streak Sync Check</>
+                  )}
+                </button>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                {/* Plan Selection */}
+                <div className="space-y-1.5 col-span-1">
+                  <label className="text-[10px] font-bold uppercase tracking-wider text-zinc-500">Plan</label>
+                  <div className="flex gap-2">
+                    {(["Free", "Pro"] as const).map((p) => (
+                      <button
+                        key={p}
+                        type="button"
+                        onClick={() => setEditPlan(p)}
+                        className={`flex-1 py-1.5 text-xs font-semibold rounded-xl border transition-all cursor-pointer ${
+                          editPlan === p
+                            ? "bg-violet-600 hover:bg-violet-500 text-white-force border-violet-500 shadow-sm"
+                            : isDark
+                            ? "bg-white/[0.01] border-white/[0.04] text-zinc-400 hover:bg-white/5"
+                            : "bg-zinc-50 border-zinc-200 text-zinc-650 hover:bg-zinc-100"
+                        }`}
+                      >
+                        {p}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Role Selection */}
+                <div className="space-y-1.5 col-span-1">
+                  <label className="text-[10px] font-bold uppercase tracking-wider text-zinc-500">Role</label>
+                  <div className="flex gap-2">
+                    {(["User", "Admin"] as const).map((r) => (
+                      <button
+                        key={r}
+                        type="button"
+                        onClick={() => setEditRole(r)}
+                        className={`flex-1 py-1.5 text-xs font-semibold rounded-xl border transition-all cursor-pointer ${
+                          editRole === r
+                            ? "bg-violet-600 hover:bg-violet-500 text-white-force border-violet-500 shadow-sm"
+                            : isDark
+                            ? "bg-white/[0.01] border-white/[0.04] text-zinc-400 hover:bg-white/5"
+                            : "bg-zinc-50 border-zinc-200 text-zinc-650 hover:bg-zinc-100"
+                        }`}
+                      >
+                        {r}
+                      </button>
+                    ))}
+                  </div>
                 </div>
               </div>
 
-              {/* Streak Counter */}
-              <div className="space-y-1.5">
-                <label className="text-[10px] font-bold uppercase tracking-wider text-zinc-500">Streak Length (Days)</label>
-                <input
-                  type="number"
-                  min="0"
-                  value={editStreak}
-                  onChange={(e) => setEditStreak(Math.max(0, parseInt(e.target.value) || 0))}
-                  className={`w-full px-4 py-2.5 text-xs rounded-xl border outline-none transition-all ${
-                    isDark 
-                      ? "bg-[#0C0C0F] border-white/[0.08] text-white focus:border-violet-500/50" 
-                      : "bg-white border-zinc-200 text-zinc-800 focus:border-violet-500/50"
-                  }`}
-                />
+              <div className="grid grid-cols-2 gap-4">
+                {/* Streak Counter */}
+                <div className="space-y-1.5 col-span-1">
+                  <label className="text-[10px] font-bold uppercase tracking-wider text-zinc-500">Streak (Days)</label>
+                  <input
+                    type="number"
+                    min="0"
+                    value={editStreak}
+                    onChange={(e) => setEditStreak(Math.max(0, parseInt(e.target.value) || 0))}
+                    className={`w-full px-4 py-2 text-xs rounded-xl border outline-none transition-all ${
+                      isDark 
+                        ? "bg-[#0C0C0F] border-white/[0.08] text-white focus:border-violet-500/50" 
+                        : "bg-white border-zinc-200 text-zinc-800 focus:border-violet-500/50"
+                    }`}
+                  />
+                </div>
+
+                {/* Max Streak Counter */}
+                <div className="space-y-1.5 col-span-1">
+                  <label className="text-[10px] font-bold uppercase tracking-wider text-zinc-500">Max Streak</label>
+                  <input
+                    type="number"
+                    min="0"
+                    value={editMaxStreak}
+                    onChange={(e) => setEditMaxStreak(Math.max(0, parseInt(e.target.value) || 0))}
+                    className={`w-full px-4 py-2 text-xs rounded-xl border outline-none transition-all ${
+                      isDark 
+                        ? "bg-[#0C0C0F] border-white/[0.08] text-white focus:border-violet-500/50" 
+                        : "bg-white border-zinc-200 text-zinc-800 focus:border-violet-500/50"
+                    }`}
+                  />
+                </div>
               </div>
 
-              {/* Grace Coins Counter */}
-              <div className="space-y-1.5">
-                <label className="text-[10px] font-bold uppercase tracking-wider text-zinc-500">Grace Coins</label>
-                <input
-                  type="number"
-                  min="0"
-                  value={editCoins}
-                  onChange={(e) => setEditCoins(Math.max(0, parseInt(e.target.value) || 0))}
-                  className={`w-full px-4 py-2.5 text-xs rounded-xl border outline-none transition-all ${
-                    isDark 
-                      ? "bg-[#0C0C0F] border-white/[0.08] text-white focus:border-violet-500/50" 
-                      : "bg-white border-zinc-200 text-zinc-800 focus:border-violet-500/50"
-                  }`}
-                />
+              <div className="grid grid-cols-2 gap-4">
+                {/* Balance */}
+                <div className="space-y-1.5 col-span-1">
+                  <label className="text-[10px] font-bold uppercase tracking-wider text-zinc-500">Rewards Balance (₹)</label>
+                  <input
+                    type="number"
+                    min="0"
+                    value={editBalance}
+                    onChange={(e) => setEditBalance(Math.max(0, parseFloat(e.target.value) || 0))}
+                    className={`w-full px-4 py-2 text-xs rounded-xl border outline-none transition-all ${
+                      isDark 
+                        ? "bg-[#0C0C0F] border-white/[0.08] text-white focus:border-violet-500/50" 
+                        : "bg-white border-zinc-200 text-zinc-800 focus:border-violet-500/50"
+                    }`}
+                  />
+                </div>
+
+                {/* Battle Balance */}
+                <div className="space-y-1.5 col-span-1">
+                  <label className="text-[10px] font-bold uppercase tracking-wider text-zinc-500">Battle Balance (₹)</label>
+                  <input
+                    type="number"
+                    min="0"
+                    value={editBattleBalance}
+                    onChange={(e) => setEditBattleBalance(Math.max(0, parseFloat(e.target.value) || 0))}
+                    className={`w-full px-4 py-2 text-xs rounded-xl border outline-none transition-all ${
+                      isDark 
+                        ? "bg-[#0C0C0F] border-white/[0.08] text-white focus:border-violet-500/50" 
+                        : "bg-white border-zinc-200 text-zinc-800 focus:border-violet-500/50"
+                    }`}
+                  />
+                </div>
               </div>
 
-              {/* Battle Balance (INR) */}
-              <div className="space-y-1.5">
-                <label className="text-[10px] font-bold uppercase tracking-wider text-zinc-500">Battle Balance (₹)</label>
-                <input
-                  type="number"
-                  min="0"
-                  value={editBattleBalance}
-                  onChange={(e) => setEditBattleBalance(Math.max(0, parseFloat(e.target.value) || 0))}
-                  className={`w-full px-4 py-2.5 text-xs rounded-xl border outline-none transition-all ${
-                    isDark 
-                      ? "bg-[#0C0C0F] border-white/[0.08] text-white focus:border-violet-500/50" 
-                      : "bg-white border-zinc-200 text-zinc-800 focus:border-violet-500/50"
-                  }`}
-                />
+              <div className="grid grid-cols-2 gap-4">
+                {/* Grace Coins Counter */}
+                <div className="space-y-1.5 col-span-1">
+                  <label className="text-[10px] font-bold uppercase tracking-wider text-zinc-500">Grace Coins</label>
+                  <input
+                    type="number"
+                    min="0"
+                    value={editCoins}
+                    onChange={(e) => setEditCoins(Math.max(0, parseInt(e.target.value) || 0))}
+                    className={`w-full px-4 py-2 text-xs rounded-xl border outline-none transition-all ${
+                      isDark 
+                        ? "bg-[#0C0C0F] border-white/[0.08] text-white focus:border-violet-500/50" 
+                        : "bg-white border-zinc-200 text-zinc-800 focus:border-violet-500/50"
+                    }`}
+                  />
+                </div>
+
+                {/* Active Deposit */}
+                <div className="space-y-1.5 col-span-1">
+                  <label className="text-[10px] font-bold uppercase tracking-wider text-zinc-500">Active Deposit (₹)</label>
+                  <input
+                    type="number"
+                    min="0"
+                    value={editActiveDeposit}
+                    onChange={(e) => setEditActiveDeposit(Math.max(0, parseFloat(e.target.value) || 0))}
+                    className={`w-full px-4 py-2 text-xs rounded-xl border outline-none transition-all ${
+                      isDark 
+                        ? "bg-[#0C0C0F] border-white/[0.08] text-white focus:border-violet-500/50" 
+                        : "bg-white border-zinc-200 text-zinc-800 focus:border-violet-500/50"
+                    }`}
+                  />
+                </div>
               </div>
             </div>
 
@@ -1314,7 +1463,7 @@ export function AdminDashboard() {
               </button>
               <button
                 type="button"
-                disabled={updatingUser}
+                disabled={updatingUser || syncingStreak}
                 onClick={handleSaveUser}
                 className="flex-1 py-2.5 bg-violet-600 hover:bg-violet-500 disabled:opacity-50 text-white-force rounded-xl text-xs font-bold transition-all shadow-md shadow-violet-500/10 cursor-pointer flex items-center justify-center gap-1.5"
               >
