@@ -182,14 +182,32 @@ export function AdminDashboard() {
   // Live activity timeline state
   const [activities, setActivities] = useState<ActivityLog[]>([]);
 
+  // Users Analytics dynamic state
+  const [usersList, setUsersList] = useState<any[]>([]);
+  const [usersTotal, setUsersTotal] = useState(0);
+  const [usersPages, setUsersPages] = useState(1);
+  const [usersPage, setUsersPage] = useState(1);
+  const [usersSearch, setUsersSearch] = useState("");
+  const [usersLoading, setUsersLoading] = useState(false);
+
+  // Edit user state parameters
+  const [editingUser, setEditingUser] = useState<any | null>(null);
+  const [editStreak, setEditStreak] = useState(0);
+  const [editCoins, setEditCoins] = useState(0);
+  const [editBattleBalance, setEditBattleBalance] = useState(0);
+  const [editPlan, setEditPlan] = useState<"Free" | "Pro">("Free");
+  const [updatingUser, setUpdatingUser] = useState(false);
+
   // Conditional state redirection based on Demo Mode toggle
   const activeStats = isDemoMode ? MOCK_STATS : stats;
   const activeActivities = isDemoMode ? MOCK_STATS.activityFeed : activities;
+  const activeUserAnalytics = isDemoMode ? MOCK_STATS.userAnalytics : usersList;
   const activeBetaRequests = isDemoMode ? MOCK_BETA_REQUESTS : betaRequests;
   const activeWithdrawals = isDemoMode ? demoWithdrawals : withdrawals;
   const activeStatsLoading = isDemoMode ? false : statsLoading;
   const activeBetaLoading = isDemoMode ? false : betaLoading;
   const activeWithdrawalsLoading = isDemoMode ? false : withdrawalsLoading;
+  const activeUsersLoading = isDemoMode ? false : usersLoading;
 
   // 1. Authenticate user role
   useEffect(() => {
@@ -284,6 +302,75 @@ export function AdminDashboard() {
       }
     } catch (err) {
       console.error(err);
+    }
+  };
+
+  const fetchUsers = async () => {
+    try {
+      setUsersLoading(true);
+      const res = await fetch(`${API}/api/admin/users?search=${encodeURIComponent(usersSearch)}&page=${usersPage}&limit=10`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setUsersList(data.users);
+        setUsersTotal(data.total);
+        setUsersPages(data.pages);
+      }
+    } catch (err) {
+      console.error("Failed to fetch admin users list:", err);
+    } finally {
+      setUsersLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (activeTab === "users" && token && isUserAdmin && !isDemoMode) {
+      fetchUsers();
+    }
+  }, [activeTab, token, isUserAdmin, usersSearch, usersPage, isDemoMode]);
+
+  const handleOpenEditUser = (user: any) => {
+    if (isDemoMode) {
+      alert("Plan updates and parameters editing are disabled in Demo Mode. Toggle to Real Mode (Click Sun/Moon icon in header) to execute live database modifications.");
+      return;
+    }
+    setEditingUser(user);
+    setEditStreak(user.streak);
+    setEditCoins(user.graceCoins);
+    setEditBattleBalance(user.battleBalance);
+    setEditPlan(user.plan === "Pro" ? "Pro" : "Free");
+  };
+
+  const handleSaveUser = async () => {
+    if (!editingUser) return;
+    try {
+      setUpdatingUser(true);
+      const res = await fetch(`${API}/api/admin/users/${editingUser._id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          plan: editPlan,
+          streak: editStreak,
+          graceCoins: editCoins,
+          battleBalance: editBattleBalance
+        })
+      });
+      if (res.ok) {
+        setEditingUser(null);
+        fetchUsers();
+      } else {
+        const data = await res.json();
+        alert(data.message || "Failed to update user.");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Error updating user.");
+    } finally {
+      setUpdatingUser(false);
     }
   };
 
@@ -710,68 +797,131 @@ export function AdminDashboard() {
                   </div>
                 </div>
               )}
-
-              {/* TAB 3: USER ANALYTICS */}
+                {/* TAB 3: USER ANALYTICS */}
               {activeTab === "users" && (
                 <div className="space-y-6 animate-in fade-in duration-300">
-                  <h3 className={`text-sm font-bold uppercase tracking-wider ${isDark ? "text-white" : "text-zinc-900"}`}>Top Performers & Activity Checks</h3>
-                  
-                  <div className={`border rounded-2xl overflow-hidden transition-colors duration-300 ${
-                    isDark ? "bg-[#0C0C0F] border-white/[0.04]" : "bg-white border-zinc-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.015)]"
-                  }`}>
-                    <table className="w-full text-xs text-left border-collapse">
-                      <thead>
-                        <tr className={`border-b transition-colors duration-300 ${
-                          isDark ? "border-white/[0.04] bg-white/[0.01]" : "border-zinc-200/80 bg-zinc-50"
-                        }`}>
-                          <th className={`p-4 font-bold ${isDark ? "text-zinc-400" : "text-zinc-500"}`}>User Name</th>
-                          <th className={`p-4 font-bold text-center ${isDark ? "text-zinc-400" : "text-zinc-500"}`}>LeetCode Username</th>
-                          <th className={`p-4 font-bold text-center ${isDark ? "text-zinc-400" : "text-zinc-500"}`}>Streak</th>
-                          <th className={`p-4 font-bold text-center ${isDark ? "text-zinc-400" : "text-zinc-500"}`}>Total Solved</th>
-                          <th className={`p-4 font-bold text-center ${isDark ? "text-zinc-400" : "text-zinc-500"}`}>Solved Today</th>
-                          <th className={`p-4 font-bold text-center ${isDark ? "text-zinc-400" : "text-zinc-500"}`}>Plan</th>
-                        </tr>
-                      </thead>
-                      <tbody className={`divide-y ${isDark ? "divide-white/[0.04]" : "divide-zinc-150"}`}>
-                        {activeStats?.userAnalytics?.length === 0 ? (
-                          <tr>
-                            <td colSpan={6} className="p-8 text-center text-zinc-500 text-xs">No registered users in database.</td>
-                          </tr>
-                        ) : (
-                          activeStats?.userAnalytics?.map((row: any, idx: number) => (
-                            <tr key={idx} className={`transition-all duration-200 ${isDark ? "hover:bg-white/[0.01]" : "hover:bg-zinc-50/50"}`}>
-                              <td className="p-4">
-                                <p className={`font-semibold ${isDark ? "text-white" : "text-zinc-900"}`}>{row.user}</p>
-                              </td>
-                              <td className="p-4 text-center">
-                                {row.handle === "not-linked" ? (
-                                  <span className="text-zinc-500">Not Linked</span>
-                                ) : (
-                                  <a href={`https://leetcode.com/${row.handle}`} target="_blank" rel="noreferrer" className="text-violet-500 hover:underline inline-flex items-center gap-1 text-[10px]">
-                                    {row.handle} <ExternalLink className="w-2.5 h-2.5" />
-                                  </a>
-                                )}
-                              </td>
-                              <td className={`p-4 text-center font-mono font-bold ${isDark ? "text-white" : "text-zinc-900"}`}>{row.streak} 🔥</td>
-                              <td className="p-4 text-center font-mono font-semibold">{row.solved}</td>
-                              <td className="p-4 text-center">
-                                {row.today ? (
-                                  <span className="text-emerald-500 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-0.5 rounded-full text-[10px] font-bold">Solved</span>
-                                ) : (
-                                  <span className="text-zinc-500 bg-white/[0.02] border border-white/[0.04] px-2.5 py-0.5 rounded-full text-[10px] font-bold">Pending</span>
-                                )}
-                              </td>
-                              <td className="p-4 text-center">
-                                <span className={`text-[10px] font-bold uppercase tracking-wider border px-2 py-0.5 rounded-full ${
-                                  row.plan === "Pro" ? "text-violet-500 border-violet-500/25 bg-violet-500/10" : "text-zinc-500 border-zinc-200 bg-zinc-50"
-                                }`}>{row.plan}</span>
-                              </td>
-                            </tr>
-                          ))
-                        )}
-                      </tbody>
-                    </table>
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div>
+                      <h3 className={`text-sm font-bold uppercase tracking-wider ${isDark ? "text-white" : "text-zinc-900"}`}>User Accounts Dashboard</h3>
+                      <p className={`text-[10px] ${isDark ? "text-zinc-550" : "text-zinc-400"}`}>Search registered profiles and adjust plan configurations.</p>
+                    </div>
+                    
+                    {/* Search bar input */}
+                    <div className="flex gap-2 shrink-0">
+                      <input
+                        type="text"
+                        placeholder="Search by name or email..."
+                        value={usersSearch}
+                        onChange={(e) => {
+                          setUsersSearch(e.target.value);
+                          setUsersPage(1); // reset page on search
+                        }}
+                        className={`px-4 py-2 text-xs rounded-xl border outline-none transition-all ${
+                          isDark 
+                            ? "bg-[#0C0C0F] border-white/[0.08] text-white focus:border-violet-500/50" 
+                            : "bg-white border-zinc-200 text-zinc-800 focus:border-violet-500/50 shadow-sm"
+                        }`}
+                      />
+                    </div>
                   </div>
+
+                  {activeUsersLoading ? (
+                    <div className="py-12 text-center text-xs text-zinc-550 animate-pulse">Loading database profiles...</div>
+                  ) : (
+                    <div className={`border rounded-2xl overflow-hidden transition-colors duration-300 ${
+                      isDark ? "bg-[#0C0C0F] border-white/[0.04] shadow-xl" : "bg-white border-zinc-200/80 shadow-md"
+                    }`}>
+                      <table className="w-full text-xs text-left border-collapse">
+                        <thead>
+                          <tr className={`border-b transition-colors duration-300 ${
+                            isDark ? "border-white/[0.04] bg-white/[0.01]" : "border-zinc-200/80 bg-zinc-50"
+                          }`}>
+                            <th className={`p-4 font-bold ${isDark ? "text-zinc-400" : "text-zinc-500"}`}>User Profile</th>
+                            <th className={`p-4 font-bold text-center ${isDark ? "text-zinc-400" : "text-zinc-500"}`}>LeetCode Username</th>
+                            <th className={`p-4 font-bold text-center ${isDark ? "text-zinc-400" : "text-zinc-500"}`}>Streak</th>
+                            <th className={`p-4 font-bold text-center ${isDark ? "text-zinc-400" : "text-zinc-500"}`}>Total Solved</th>
+                            <th className={`p-4 font-bold text-center ${isDark ? "text-zinc-400" : "text-zinc-500"}`}>Solved Today</th>
+                            <th className={`p-4 font-bold text-center ${isDark ? "text-zinc-400" : "text-zinc-500"}`}>Plan</th>
+                            <th className={`p-4 font-bold text-right ${isDark ? "text-zinc-400" : "text-zinc-500"}`}>Operations</th>
+                          </tr>
+                        </thead>
+                        <tbody className={`divide-y ${isDark ? "divide-white/[0.04]" : "divide-zinc-150"}`}>
+                          {activeUserAnalytics.length === 0 ? (
+                            <tr>
+                              <td colSpan={7} className="p-8 text-center text-zinc-500 text-xs">No registered users in database.</td>
+                            </tr>
+                          ) : (
+                            activeUserAnalytics.map((row: any, idx: number) => (
+                              <tr key={row._id || idx} className={`transition-all duration-200 ${isDark ? "hover:bg-white/[0.01]" : "hover:bg-zinc-50/50"}`}>
+                                <td className="p-4">
+                                  <p className={`font-semibold ${isDark ? "text-white" : "text-zinc-900"}`}>{row.user || row.name}</p>
+                                  {row.email && <p className="text-[10px] text-zinc-500 mt-0.5">{row.email}</p>}
+                                </td>
+                                <td className="p-4 text-center">
+                                  {row.handle === "not-linked" ? (
+                                    <span className="text-zinc-500">Not Linked</span>
+                                  ) : (
+                                    <a href={`https://leetcode.com/${row.handle}`} target="_blank" rel="noreferrer" className="text-violet-500 hover:underline inline-flex items-center gap-1 text-[10px]">
+                                      {row.handle} <ExternalLink className="w-2.5 h-2.5" />
+                                    </a>
+                                  )}
+                                </td>
+                                <td className={`p-4 text-center font-mono font-bold ${isDark ? "text-white" : "text-zinc-900"}`}>{row.streak} 🔥</td>
+                                <td className="p-4 text-center font-mono font-semibold">{row.solved}</td>
+                                <td className="p-4 text-center">
+                                  {row.today ? (
+                                    <span className="text-emerald-500 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-0.5 rounded-full text-[10px] font-bold">Solved</span>
+                                  ) : (
+                                    <span className="text-zinc-500 bg-white/[0.02] border border-white/[0.04] px-2.5 py-0.5 rounded-full text-[10px] font-bold">Pending</span>
+                                  )}
+                                </td>
+                                <td className="p-4 text-center">
+                                  <span className={`text-[10px] font-bold uppercase tracking-wider border px-2 py-0.5 rounded-full ${
+                                    row.plan === "Pro" ? "text-violet-500 border-violet-500/25 bg-violet-500/10" : "text-zinc-500 border-zinc-200 bg-zinc-50"
+                                  }`}>{row.plan}</span>
+                                </td>
+                                <td className="p-4 text-right">
+                                  <button
+                                    onClick={() => handleOpenEditUser(row)}
+                                    className="px-2.5 py-1.5 bg-violet-500/10 hover:bg-violet-500/20 text-violet-500 dark:text-violet-400 rounded-lg text-[10px] font-bold border border-violet-500/20 transition-all cursor-pointer active:scale-95 shadow-sm"
+                                  >
+                                    Edit Settings
+                                  </button>
+                                </td>
+                              </tr>
+                            ))
+                          )}
+                        </tbody>
+                      </table>
+
+                      {/* Pagination Controls */}
+                      {!isDemoMode && usersPages > 1 && (
+                        <div className={`p-4 flex items-center justify-between border-t transition-colors duration-300 ${
+                          isDark ? "border-white/[0.04] bg-white/[0.01]" : "border-zinc-200 bg-zinc-50/50"
+                        }`}>
+                          <span className="text-[10px] text-zinc-500">
+                            Showing page <b>{usersPage}</b> of <b>{usersPages}</b> ({usersTotal} users total)
+                          </span>
+                          <div className="flex gap-2">
+                            <button
+                              disabled={usersPage <= 1}
+                              onClick={() => setUsersPage(prev => Math.max(1, prev - 1))}
+                              className="px-3 py-1.5 border border-zinc-200 dark:border-white/[0.04] hover:bg-zinc-100 dark:hover:bg-white/5 disabled:opacity-50 text-[10px] font-bold rounded-lg transition-all cursor-pointer"
+                            >
+                              Prev
+                            </button>
+                            <button
+                              disabled={usersPage >= usersPages}
+                              onClick={() => setUsersPage(prev => Math.min(usersPages, prev + 1))}
+                              className="px-3 py-1.5 border border-zinc-200 dark:border-white/[0.04] hover:bg-zinc-100 dark:hover:bg-white/5 disabled:opacity-50 text-[10px] font-bold rounded-lg transition-all cursor-pointer"
+                            >
+                              Next
+                            </button>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
               )}
 
@@ -995,8 +1145,8 @@ export function AdminDashboard() {
                             {activeWithdrawals.map((w) => (
                               <tr key={w._id} className={isDark ? "hover:bg-white/[0.01]" : "hover:bg-zinc-50/30"}>
                                 <td className="py-3.5 px-4">
-                                  <div className={`font-bold ${isDark ? "text-zinc-200" : "text-zinc-800"}`}>{w.userId?.name}</div>
-                                  <div className={`text-[10px] ${isDark ? "text-zinc-550" : "text-zinc-450"}`}>{w.userId?.email}</div>
+                                  <div className={`font-bold ${isDark ? "text-zinc-200" : "text-zinc-800"}`}>{w.userId?.name || "Deleted User"}</div>
+                                  <div className={`text-[10px] ${isDark ? "text-zinc-550" : "text-zinc-450"}`}>{w.userId?.email || "N/A"}</div>
                                 </td>
                                 <td className={`py-3.5 px-4 font-mono font-bold ${isDark ? "text-white" : "text-zinc-900"}`}>
                                   ₹{w.amount}
@@ -1060,6 +1210,120 @@ export function AdminDashboard() {
 
         </div>
       </main>
+
+      {/* 4. Edit User Parameters Drawer/Modal Overlay */}
+      {editingUser && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-300">
+          <div className={`w-full max-w-md rounded-3xl border p-6 space-y-6 shadow-2xl relative transition-all duration-300 ${
+            isDark ? "bg-[#0E0E12] border-white/[0.04] text-white" : "bg-white border-zinc-200 text-zinc-800"
+          }`}>
+            <div className="space-y-1">
+              <h3 className={`text-base font-bold tracking-tight ${isDark ? "text-white" : "text-zinc-900"}`}>
+                Edit User Settings
+              </h3>
+              <p className={`text-[10px] ${isDark ? "text-zinc-550" : "text-zinc-400"}`}>
+                Update values directly for <b>{editingUser.user || editingUser.name}</b> ({editingUser.email})
+              </p>
+            </div>
+
+            <div className="space-y-4">
+              {/* Plan Selection */}
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-bold uppercase tracking-wider text-zinc-500">Plan Option</label>
+                <div className="flex gap-2">
+                  {(["Free", "Pro"] as const).map((p) => (
+                    <button
+                      key={p}
+                      type="button"
+                      onClick={() => setEditPlan(p)}
+                      className={`flex-1 py-2 text-xs font-semibold rounded-xl border transition-all cursor-pointer ${
+                        editPlan === p
+                          ? "bg-violet-600 hover:bg-violet-500 text-white-force border-violet-500 shadow-sm"
+                          : isDark
+                          ? "bg-white/[0.01] border-white/[0.04] text-zinc-400 hover:bg-white/5"
+                          : "bg-zinc-50 border-zinc-200 text-zinc-650 hover:bg-zinc-100"
+                      }`}
+                    >
+                      {p}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Streak Counter */}
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-bold uppercase tracking-wider text-zinc-500">Streak Length (Days)</label>
+                <input
+                  type="number"
+                  min="0"
+                  value={editStreak}
+                  onChange={(e) => setEditStreak(Math.max(0, parseInt(e.target.value) || 0))}
+                  className={`w-full px-4 py-2.5 text-xs rounded-xl border outline-none transition-all ${
+                    isDark 
+                      ? "bg-[#0C0C0F] border-white/[0.08] text-white focus:border-violet-500/50" 
+                      : "bg-white border-zinc-200 text-zinc-800 focus:border-violet-500/50"
+                  }`}
+                />
+              </div>
+
+              {/* Grace Coins Counter */}
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-bold uppercase tracking-wider text-zinc-500">Grace Coins</label>
+                <input
+                  type="number"
+                  min="0"
+                  value={editCoins}
+                  onChange={(e) => setEditCoins(Math.max(0, parseInt(e.target.value) || 0))}
+                  className={`w-full px-4 py-2.5 text-xs rounded-xl border outline-none transition-all ${
+                    isDark 
+                      ? "bg-[#0C0C0F] border-white/[0.08] text-white focus:border-violet-500/50" 
+                      : "bg-white border-zinc-200 text-zinc-800 focus:border-violet-500/50"
+                  }`}
+                />
+              </div>
+
+              {/* Battle Balance (INR) */}
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-bold uppercase tracking-wider text-zinc-500">Battle Balance (₹)</label>
+                <input
+                  type="number"
+                  min="0"
+                  value={editBattleBalance}
+                  onChange={(e) => setEditBattleBalance(Math.max(0, parseFloat(e.target.value) || 0))}
+                  className={`w-full px-4 py-2.5 text-xs rounded-xl border outline-none transition-all ${
+                    isDark 
+                      ? "bg-[#0C0C0F] border-white/[0.08] text-white focus:border-violet-500/50" 
+                      : "bg-white border-zinc-200 text-zinc-800 focus:border-violet-500/50"
+                  }`}
+                />
+              </div>
+            </div>
+
+            <div className="flex gap-3 pt-2">
+              <button
+                type="button"
+                disabled={updatingUser}
+                onClick={() => setEditingUser(null)}
+                className={`flex-1 py-2.5 rounded-xl text-xs font-bold border transition-all cursor-pointer ${
+                  isDark
+                    ? "border-white/[0.04] hover:bg-white/5 text-zinc-400"
+                    : "border-zinc-200 hover:bg-zinc-50 text-zinc-650"
+                }`}
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                disabled={updatingUser}
+                onClick={handleSaveUser}
+                className="flex-1 py-2.5 bg-violet-600 hover:bg-violet-500 disabled:opacity-50 text-white-force rounded-xl text-xs font-bold transition-all shadow-md shadow-violet-500/10 cursor-pointer flex items-center justify-center gap-1.5"
+              >
+                {updatingUser ? "Saving..." : "Save Changes"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
