@@ -6,7 +6,7 @@ export function HeroNew() {
   const navigate = useNavigate();
 
   return (
-    <section className="relative px-6 pt-6 pb-20 md:pt-8 md:pb-28 overflow-hidden w-full bg-white dark:bg-[#000000] border-b border-zinc-200 dark:border-white/[0.04]">
+    <section className="relative px-6 pt-6 pb-12 md:pt-8 md:pb-28 overflow-hidden w-full bg-white dark:bg-[#000000] border-b border-zinc-200 dark:border-white/[0.04]">
       {/* Subtle backing glow for the mockup card to add 3D depth */}
       <div className="absolute right-0 top-1/4 w-[40rem] h-[40rem] bg-emerald-500/[0.02] rounded-full blur-[140px] pointer-events-none z-0" />
 
@@ -33,12 +33,12 @@ export function HeroNew() {
             </h1>
 
             {/* Subtext */}
-            <p className="text-base sm:text-lg text-zinc-650 dark:text-zinc-300 mb-10 leading-relaxed max-w-lg font-normal">
+            <p className="text-base sm:text-lg text-zinc-650 dark:text-zinc-300 mb-6 md:mb-10 leading-relaxed max-w-lg font-normal">
               The ultimate accountability platform for placement preparation. Auto-sync your profiles, commit a daily refundable stake, and earn rewards funded by those who break their streaks.
             </p>
 
             {/* CTA Buttons */}
-            <div className="flex flex-col sm:flex-row gap-4 mb-10">
+            <div className="flex flex-col sm:flex-row gap-4 mb-6 md:mb-10">
               <button
                 onClick={() => navigate("/auth")}
                 className="group px-7 py-3.5 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-550 hover:to-indigo-550 text-white-force dark:from-white dark:to-white dark:text-zinc-950 dark:border-transparent dark:hover:from-zinc-100 dark:hover:to-zinc-100 font-semibold rounded-xl transition-all duration-200 flex items-center justify-center gap-2 active:scale-[0.98] cursor-pointer shadow-[0_1px_2px_rgba(99,102,241,0.2),0_4px_12px_rgba(99,102,241,0.1)] hover:-translate-y-0.5 hover:shadow-[0_4px_16px_rgba(99,102,241,0.2),0_1px_3px_rgba(99,102,241,0.1)]"

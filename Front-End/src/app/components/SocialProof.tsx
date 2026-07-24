@@ -9,7 +9,7 @@ export function SocialProof() {
   ];
 
   return (
-    <section className="relative z-20 w-full overflow-hidden bg-white dark:bg-[#090A0E] py-20 md:py-24 border-b border-zinc-200 dark:border-white/[0.04]">
+    <section className="relative z-20 w-full overflow-hidden bg-white dark:bg-[#090A0E] py-12 md:py-24 border-b border-zinc-200 dark:border-white/[0.04]">
       {/* Premium subtle grid texture background */}
       <div className="absolute inset-0 bg-[linear-gradient(rgba(0,0,0,0.005)_1px,transparent_1px),linear-gradient(90deg,rgba(0,0,0,0.005)_1px,transparent_1px)] dark:bg-[linear-gradient(rgba(255,255,255,0.006)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.006)_1px,transparent_1px)] bg-[size:32px_32px] pointer-events-none opacity-40 dark:opacity-45" />
 
@@ -27,9 +27,9 @@ export function SocialProof() {
         </div>
 
         {/* High-Typography Stats Row */}
-        <div className="w-full grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-zinc-200 dark:divide-white/[0.04] py-8 border-t border-b border-zinc-200 dark:border-white/[0.04] items-center">
+        <div className="w-full grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-zinc-200 dark:divide-white/[0.04] py-2 md:py-8 border-t border-b border-zinc-200 dark:border-white/[0.04] items-center">
           {stats.map((stat, index) => (
-            <div key={index} className="flex flex-col items-center justify-center py-6 md:py-4 relative z-10 group">
+            <div key={index} className="flex flex-col items-center justify-center py-4 md:py-4 relative z-10 group">
               <div className="text-5xl md:text-6xl font-black bg-gradient-to-b from-zinc-900 to-zinc-600 dark:from-white dark:to-zinc-300 bg-clip-text text-transparent tracking-tight mb-2 transition-transform duration-300 group-hover:scale-[1.02] select-none">
                 {stat.value}
               </div>
@@ -41,7 +41,7 @@ export function SocialProof() {
         </div>
         
         {/* Grayscale Infrastructure Badges */}
-        <div className="mt-12 flex flex-col items-center justify-center">
+        <div className="mt-6 md:mt-12 flex flex-col items-center justify-center">
           <span className="text-[9px] font-bold text-zinc-500 dark:text-zinc-500 uppercase tracking-widest mb-4">
             Security & Integration Partners
           </span>

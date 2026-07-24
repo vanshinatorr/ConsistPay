@@ -27,12 +27,12 @@ export function MascotSection() {
   ];
 
   return (
-    <section className="px-6 py-20 md:py-24 relative overflow-hidden bg-white dark:bg-[#090A0E] w-full border-b border-zinc-200 dark:border-white/[0.04]">
+    <section className="px-6 py-12 md:py-24 relative overflow-hidden bg-white dark:bg-[#090A0E] w-full border-b border-zinc-200 dark:border-white/[0.04]">
       <div className="max-w-6xl mx-auto relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-[1.15fr_1.2fr] gap-16 items-start">
           
           {/* Left Column: Mascot + Interactive Estimator */}
-          <div className="flex flex-col items-center justify-center select-none w-full sticky top-24">
+          <div className="flex flex-col items-center justify-center select-none w-full lg:sticky lg:top-24">
             
             {/* Mascot Visual */}
             <div className="relative flex flex-col items-center justify-center mb-8">

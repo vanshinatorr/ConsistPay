@@ -126,7 +126,7 @@ export function Landing() {
         <SocialProof />
 
         {/* Section 5: Pre-Footer CTA */}
-        <div className="py-20 md:py-28 relative overflow-hidden bg-white dark:bg-[#000000] border-b border-zinc-200 dark:border-white/[0.04]">
+        <div className="py-12 md:py-28 relative overflow-hidden bg-white dark:bg-[#000000] border-b border-zinc-200 dark:border-white/[0.04]">
           <div className="max-w-4xl mx-auto px-6 relative z-10 text-center">
             <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight mb-6 text-zinc-900 dark:text-white">
               Ready to Lock in Your Daily Discipline?

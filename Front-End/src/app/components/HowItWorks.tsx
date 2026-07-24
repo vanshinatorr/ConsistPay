@@ -44,14 +44,14 @@ export function HowItWorks() {
   ];
 
   return (
-    <section id="how-it-works" className="px-6 py-20 md:py-24 relative overflow-hidden bg-white dark:bg-[#000000] w-full border-b border-zinc-200 dark:border-white/[0.04]">
+    <section id="how-it-works" className="px-6 py-12 md:py-24 relative overflow-hidden bg-white dark:bg-[#000000] w-full border-b border-zinc-200 dark:border-white/[0.04]">
       {/* Soft backing glow behind the interactive tabs widget to create depth */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-emerald-500/[0.01] rounded-full blur-[120px] pointer-events-none z-0" />
 
       <div className="max-w-6xl mx-auto relative z-10">
         
         {/* Header */}
-        <div className="text-center mb-16">
+        <div className="text-center mb-8 md:mb-16">
           <span className="text-[10px] font-bold text-zinc-650 dark:text-zinc-400 uppercase tracking-widest px-3 py-1.5 rounded-lg bg-zinc-100 dark:bg-white/[0.02] border border-zinc-200 dark:border-white/[0.06] mb-4 inline-block font-mono">
             Interactive Showcase
           </span>
@@ -64,7 +64,7 @@ export function HowItWorks() {
         </div>
 
         {/* Tab Row Selector */}
-        <div className="flex justify-center border-b border-zinc-200 dark:border-white/[0.04] mb-12 max-w-xl mx-auto">
+        <div className="flex justify-center border-b border-zinc-200 dark:border-white/[0.04] mb-6 md:mb-12 max-w-xl mx-auto">
           <div className="flex gap-2 w-full p-1 bg-zinc-100 dark:bg-white/[0.005] border border-zinc-200 dark:border-white/[0.03] rounded-2xl">
             {tabs.map((t) => {
               const Icon = t.icon;
@@ -141,7 +141,7 @@ export function HowItWorks() {
                     
                     <div className="space-y-2.5">
                       <span className="text-[10px] text-zinc-500 uppercase tracking-wider block">Linked User Profiles</span>
-                      <div className="flex flex-col sm:flex-row gap-2">
+                      <div className="flex flex-wrap gap-2">
                         <span className="text-xs font-semibold text-zinc-700 dark:text-zinc-300 px-3 py-1.5 bg-amber-500/5 dark:bg-amber-500/5 border border-amber-500/20 dark:border-amber-500/10 rounded-lg flex items-center gap-2">
                           <span className="w-1.5 h-1.5 rounded-full bg-amber-500" /> LeetCode: demouser
                         </span>
