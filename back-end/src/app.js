@@ -45,6 +45,10 @@ app.get("/", (req, res) => {
   res.json({ message: "ConsistPay backend is live! 🚀" });
 });
 
+// Favicon handlers (avoids DB connection overhead and Vercel 404 warnings)
+app.get("/favicon.ico", (req, res) => res.status(204).end());
+app.get("/favicon.png", (req, res) => res.status(204).end());
+
 // Apply DB connection guarantee middleware to all API routes
 app.use(dbMiddleware);
 
