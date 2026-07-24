@@ -4,8 +4,7 @@ const path = require("path");
 const dotenv = require("dotenv");
 dotenv.config({ path: path.join(__dirname, "../.env") });
 
-const connectDB = require("./config/db");
-connectDB();
+const dbMiddleware = require("./middleware/dbMiddleware");
 
 const app = express();
 
@@ -45,6 +44,9 @@ app.use(express.urlencoded({ limit: "10mb", extended: true }));
 app.get("/", (req, res) => {
   res.json({ message: "ConsistPay backend is live! 🚀" });
 });
+
+// Apply DB connection guarantee middleware to all API routes
+app.use(dbMiddleware);
 
 // Routes
 const authRoutes = require("./routes/auth");
