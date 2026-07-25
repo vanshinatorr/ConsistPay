@@ -257,21 +257,29 @@ export function WalletCard({
                       <button
                         type="button"
                         onClick={handleSync}
-                        disabled={syncLoading || hasSolvedToday}
+                        disabled={syncLoading}
                         className={`h-8 px-3.5 rounded-lg font-bold text-xs transition-all duration-300 flex items-center gap-1.5 cursor-pointer border ${
-                          hasSolvedToday
-                            ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-700 dark:text-emerald-400 cursor-default"
-                            : syncLoading
-                            ? "bg-zinc-100 dark:bg-white/[0.02] border-zinc-200 dark:border-white/[0.04] text-zinc-500 dark:text-zinc-555 cursor-not-allowed"
+                          syncLoading
+                            ? "bg-zinc-100 dark:bg-white/[0.02] border-zinc-200 dark:border-white/[0.04] text-zinc-500 dark:text-zinc-555 cursor-wait"
+                            : hasSolvedToday
+                            ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-500/20 active:scale-95 shadow-sm"
                             : "bg-violet-50 hover:bg-violet-100 text-violet-750 border-violet-200 dark:bg-white dark:text-zinc-950 dark:border-white dark:hover:bg-zinc-200 active:scale-95 shadow-sm hover:scale-[1.01]"
                         }`}
                       >
-                        {hasSolvedToday ? (
-                          <>Synced</>
+                        {syncLoading ? (
+                          <>
+                            <RefreshCw className="w-3 h-3 animate-spin" />
+                            Verifying...
+                          </>
+                        ) : hasSolvedToday ? (
+                          <>
+                            <RefreshCw className="w-3 h-3 text-emerald-600 dark:text-emerald-400" />
+                            Re-sync
+                          </>
                         ) : (
                           <>
-                            <RefreshCw className={`w-3 h-3 ${syncLoading ? "animate-spin text-zinc-550" : "text-violet-700 dark:text-zinc-950"}`} />
-                            {syncLoading ? "Verifying..." : "Sync Solves"}
+                            <RefreshCw className="w-3 h-3 text-violet-700 dark:text-zinc-950" />
+                            Sync Solves
                           </>
                         )}
                       </button>
