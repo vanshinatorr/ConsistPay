@@ -63,16 +63,6 @@ try {
 
   const isMock = razorpay_order_id && razorpay_order_id.startsWith("mock_");
 
-  if (isMock && process.env.NODE_ENV === "production") {
-    const allowMock = process.env.ALLOW_MOCK_PAYMENTS === "true" || 
-                      !process.env.RAZORPAY_KEY_SECRET ||
-                      process.env.RAZORPAY_KEY_SECRET.startsWith("mock") ||
-                      (req.user && (req.user.role === "admin" || req.user.email === "vanshvijay9784@gmail.com"));
-    if (!allowMock) {
-      return res.status(403).json({ message: "Bypassing payments is forbidden in production." });
-    }
-  }
-
   if (!isMock) {
     const keySecret = process.env.RAZORPAY_KEY_SECRET;
     if (!keySecret) {
@@ -190,15 +180,6 @@ try {
 
 const skipPayment = async (req, res) => {
 try {
-  if (process.env.NODE_ENV === "production") {
-    const allowMock = process.env.ALLOW_MOCK_PAYMENTS === "true" || 
-                      !process.env.RAZORPAY_KEY_SECRET ||
-                      process.env.RAZORPAY_KEY_SECRET.startsWith("mock") ||
-                      (req.user && (req.user.role === "admin" || req.user.email === "vanshvijay9784@gmail.com"));
-    if (!allowMock) {
-      return res.status(403).json({ message: "Bypassing payments is forbidden in production." });
-    }
-  }
   const { plan, dailyCommitment, depositAmount } = req.body;
   const user = await User.findById(req.user._id);
   
@@ -369,16 +350,6 @@ const verifyTopup = async (req, res) => {
 
     const isMock = razorpay_order_id && razorpay_order_id.startsWith("mock_");
 
-    if (isMock && process.env.NODE_ENV === "production") {
-      const allowMock = process.env.ALLOW_MOCK_PAYMENTS === "true" || 
-                        !process.env.RAZORPAY_KEY_SECRET ||
-                        process.env.RAZORPAY_KEY_SECRET.startsWith("mock") ||
-                        (req.user && (req.user.role === "admin" || req.user.email === "vanshvijay9784@gmail.com"));
-      if (!allowMock) {
-        return res.status(403).json({ message: "Bypassing payments is forbidden in production." });
-      }
-    }
-
     if (!isMock) {
       const keySecret = process.env.RAZORPAY_KEY_SECRET;
       if (!keySecret) {
@@ -463,15 +434,6 @@ const verifyTopup = async (req, res) => {
 
 const skipTopup = async (req, res) => {
   try {
-    if (process.env.NODE_ENV === "production") {
-      const allowMock = process.env.ALLOW_MOCK_PAYMENTS === "true" || 
-                        !process.env.RAZORPAY_KEY_SECRET ||
-                        process.env.RAZORPAY_KEY_SECRET.startsWith("mock") ||
-                        (req.user && (req.user.role === "admin" || req.user.email === "vanshvijay9784@gmail.com"));
-      if (!allowMock) {
-        return res.status(403).json({ message: "Bypassing payments is forbidden in production." });
-      }
-    }
     const { amount } = req.body;
     if (!amount || amount < 10) {
       return res.status(400).json({ message: "Minimum top-up amount is ₹10." });
