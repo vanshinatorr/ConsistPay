@@ -143,12 +143,14 @@ export function TodaysChallenge({
                   disabled={syncLoading}
                   className={`h-9 px-4 rounded-xl font-bold text-xs transition-all duration-300 flex items-center gap-1.5 cursor-pointer border ${
                     syncLoading
-                      ? "bg-white/[0.02] border-white/[0.04] text-zinc-600"
+                      ? "bg-white/[0.02] border-white/[0.04] text-zinc-600 cursor-wait"
+                      : hasSolvedToday
+                      ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-450 hover:bg-emerald-500/20 active:scale-98"
                       : "bg-white text-black hover:bg-zinc-200 border-white active:scale-98"
                   }`}
                 >
-                  <RefreshCw className={`w-3.5 h-3.5 ${syncLoading ? "animate-spin text-zinc-500" : "text-emerald-500"}`} />
-                  {syncLoading ? "Syncing..." : "Sync solves"}
+                  <RefreshCw className={`w-3.5 h-3.5 ${syncLoading ? "animate-spin text-zinc-550" : hasSolvedToday ? "text-emerald-400" : "text-zinc-600"}`} />
+                  {syncLoading ? "Syncing..." : hasSolvedToday ? "Re-sync solves" : "Sync solves"}
                 </button>
               ) : (
                 <div className="h-9 px-4.5 bg-white/[0.02] border border-white/[0.04] text-zinc-500 rounded-xl font-bold text-[10px] flex items-center justify-center select-none cursor-not-allowed">
