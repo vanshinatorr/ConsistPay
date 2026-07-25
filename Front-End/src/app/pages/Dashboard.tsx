@@ -974,12 +974,12 @@ export function Dashboard() {
             <div>
               <button
                 onClick={handleSync}
-                disabled={syncLoading || todaySubmission?.count > 0}
+                disabled={syncLoading}
                 className={`w-full py-4 px-4 rounded-xl text-xs font-extrabold transition-all flex items-center justify-center gap-2 border select-none cursor-pointer ${
-                  todaySubmission?.count > 0
-                    ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-400 cursor-not-allowed"
-                    : syncLoading
+                  syncLoading
                     ? "bg-zinc-800 border-zinc-700 text-zinc-400 cursor-wait"
+                    : todaySubmission?.count > 0
+                    ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-400 hover:bg-emerald-500/20 shadow-sm active:scale-95"
                     : "bg-white text-zinc-950 border-zinc-200 hover:bg-zinc-50 dark:bg-white dark:text-zinc-950 dark:hover:bg-zinc-100 shadow-sm active:scale-95"
                 }`}
               >
@@ -990,8 +990,8 @@ export function Dashboard() {
                   </>
                 ) : todaySubmission?.count > 0 ? (
                   <>
-                    <Check className="w-4 h-4 text-emerald-400 animate-bounce" />
-                    <span>Streak Secured for Today</span>
+                    <Check className="w-4 h-4 text-emerald-400" />
+                    <span>Streak Secured (Tap to Re-sync)</span>
                   </>
                 ) : (
                   <span>Sync Progress Now</span>
