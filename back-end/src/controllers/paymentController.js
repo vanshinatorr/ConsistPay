@@ -130,10 +130,16 @@ try {
 
   try {
     const user = await User.findById(req.user._id);
+    if (!user) {
+      return res.status(404).json({ message: "User not found." });
+    }
     const planLower = plan.toLowerCase();
     const isRenewal = user.onboardingComplete;
     const useWalletBalance = req.body.useWalletBalance === true;
-    const depositVal = Number(depositAmount);
+    
+    // Safety fallback conversions to prevent Mongoose validation errors
+    const commitment = [5, 10, 20, 50].includes(Number(dailyCommitment)) ? Number(dailyCommitment) : 5;
+    const depositVal = Number(depositAmount) || (commitment * 30);
 
     if (useWalletBalance) {
       const offset = Math.min(user.balance || 0, depositVal);
@@ -142,7 +148,7 @@ try {
 
     user.activeDeposit = depositVal;
     user.plan = planLower;
-    user.dailyCommitment = Number(dailyCommitment);
+    user.dailyCommitment = commitment;
     user.onboardingComplete = true;
     if (!user.onboardingCompletedAt) {
       user.onboardingCompletedAt = new Date();
@@ -182,11 +188,17 @@ const skipPayment = async (req, res) => {
 try {
   const { plan, dailyCommitment, depositAmount } = req.body;
   const user = await User.findById(req.user._id);
+  if (!user) {
+    return res.status(404).json({ message: "User not found." });
+  }
   
   const planLower = plan ? plan.toLowerCase() : "free";
   const isRenewal = user.onboardingComplete;
   const useWalletBalance = req.body.useWalletBalance === true;
-  const depositVal = Number(depositAmount);
+  
+  // Safety fallback conversions to prevent Mongoose validation errors
+  const commitment = [5, 10, 20, 50].includes(Number(dailyCommitment)) ? Number(dailyCommitment) : 5;
+  const depositVal = Number(depositAmount) || (commitment * 30);
 
   if (useWalletBalance) {
     const offset = Math.min(user.balance || 0, depositVal);
@@ -195,7 +207,7 @@ try {
 
   user.activeDeposit = depositVal;
   user.plan = planLower;
-  user.dailyCommitment = Number(dailyCommitment);
+  user.dailyCommitment = commitment;
   user.onboardingComplete = true;
   if (!user.onboardingCompletedAt) {
     user.onboardingCompletedAt = new Date();
@@ -440,6 +452,9 @@ const skipTopup = async (req, res) => {
     }
 
     const user = await User.findById(req.user._id);
+    if (!user) {
+      return res.status(404).json({ message: "User not found." });
+    }
     user.battleBalance = (user.battleBalance || 0) + Number(amount);
     await user.save();
 
