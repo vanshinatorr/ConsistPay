@@ -462,6 +462,7 @@ const getEmailLogs = async (req, res) => {
       templateType: log.templateType,
       status: log.status,
       errorMessage: log.errorMessage,
+      body: log.body || "",
       createdAt: log.createdAt,
       timeAgo: formatTimeAgo(log.createdAt)
     }));

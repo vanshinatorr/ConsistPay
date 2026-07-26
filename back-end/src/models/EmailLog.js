@@ -12,6 +12,7 @@ const emailLogSchema = new mongoose.Schema(
     },
     status: { type: String, enum: ["sent", "failed"], required: true },
     errorMessage: { type: String, default: "" },
+    body: { type: String, default: "" },
   },
   { timestamps: true }
 );

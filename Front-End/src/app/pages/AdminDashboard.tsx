@@ -141,6 +141,7 @@ export function AdminDashboard() {
   const [showCustomEmailModal, setShowCustomEmailModal] = useState<boolean>(false);
   const [customEmail, setCustomEmail] = useState({ toEmail: "", subject: "", body: "" });
   const [customEmailSending, setCustomEmailSending] = useState<boolean>(false);
+  const [activePreviewEmail, setActivePreviewEmail] = useState<any | null>(null);
   
   // 3-State Admin Console Mode: default is day_demo (Mock Data) on load/refresh!
   const [adminState, setAdminState] = useState<"day_real" | "day_demo" | "dark_real">("day_demo");
@@ -1435,6 +1436,7 @@ export function AdminDashboard() {
                                 <th className="py-3 px-4">Subject</th>
                                 <th className="py-3 px-4">Status</th>
                                 <th className="py-3 px-4">Sent Time</th>
+                                <th className="py-3 px-4 text-right">Actions</th>
                               </tr>
                             </thead>
                             <tbody>
@@ -1491,6 +1493,19 @@ export function AdminDashboard() {
                                   </td>
                                   <td className="py-3.5 px-4 text-zinc-500 dark:text-zinc-500 font-mono text-[10px]" title={new Date(log.createdAt).toLocaleString()}>
                                     {log.timeAgo}
+                                  </td>
+                                  <td className="py-3.5 px-4 text-right">
+                                    <button
+                                      disabled={!log.body}
+                                      onClick={() => setActivePreviewEmail(log)}
+                                      className={`h-7 px-2.5 rounded-lg text-[10px] font-bold transition-all shadow-sm cursor-pointer ${
+                                        !log.body
+                                          ? isDark ? "bg-[#0C0C0F] border border-white/[0.02] text-zinc-700 cursor-not-allowed" : "bg-zinc-50 border border-zinc-150 text-zinc-350 cursor-not-allowed"
+                                          : isDark ? "bg-white/5 hover:bg-white/10 text-white shadow-white/5" : "bg-zinc-100 hover:bg-zinc-200 text-zinc-700 shadow-zinc-200/50"
+                                      }`}
+                                    >
+                                      {log.body ? "View Mail" : "No Body"}
+                                    </button>
                                   </td>
                                 </tr>
                               ))}
@@ -1845,6 +1860,58 @@ export function AdminDashboard() {
               </button>
             </div>
           </form>
+        </div>
+      )}
+
+      {/* 6. Outbound Message Inspector / Email Preview Modal */}
+      {activePreviewEmail && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-300">
+          <div className={`w-full max-w-2xl rounded-3xl border p-6 space-y-4 shadow-2xl relative transition-all duration-300 flex flex-col h-[85vh] ${
+            isDark ? "bg-[#0E0E12] border-white/[0.04] text-white" : "bg-white border-zinc-200 text-zinc-800"
+          }`}>
+            <div className="flex items-center justify-between border-b pb-3 border-white/[0.04] dark:border-white/[0.04] border-zinc-150">
+              <div className="space-y-0.5">
+                <h3 className={`text-base font-bold tracking-tight ${isDark ? "text-white" : "text-zinc-900"}`}>
+                  Outbound Message Inspector
+                </h3>
+                <p className={`text-[10px] ${isDark ? "text-zinc-555" : "text-zinc-400"}`}>
+                  To: <b>{activePreviewEmail.email}</b> • Subject: <i>{activePreviewEmail.subject}</i>
+                </p>
+              </div>
+              <button
+                onClick={() => setActivePreviewEmail(null)}
+                className={`h-7 w-7 rounded-lg flex items-center justify-center border text-xs font-bold transition-all cursor-pointer ${
+                  isDark ? "border-white/[0.08] hover:bg-white/5 text-zinc-400" : "border-zinc-200 hover:bg-zinc-50 text-zinc-500"
+                }`}
+              >
+                ✕
+              </button>
+            </div>
+
+            {/* Rendered Email Frame */}
+            <div className="flex-1 rounded-2xl overflow-hidden border border-white/[0.04] dark:border-white/[0.04] border-zinc-150 bg-[#0B0B0F]">
+              <iframe
+                title="Email Preview"
+                srcDoc={activePreviewEmail.body}
+                sandbox="allow-popups"
+                className="w-full h-full border-none bg-transparent"
+              />
+            </div>
+
+            <div className="flex justify-end pt-1">
+              <button
+                type="button"
+                onClick={() => setActivePreviewEmail(null)}
+                className={`px-5 py-2.5 rounded-xl text-xs font-bold border transition-all cursor-pointer ${
+                  isDark
+                    ? "border-white/[0.04] hover:bg-white/5 text-zinc-400"
+                    : "border-zinc-200 hover:bg-zinc-50 text-zinc-650"
+                }`}
+              >
+                Close Inspector
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>

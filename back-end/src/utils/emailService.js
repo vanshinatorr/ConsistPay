@@ -12,7 +12,7 @@ const transporter = nodemailer.createTransport({
 });
 
 // Helper to log email outcomes to database (Success and Failure logs)
-const logEmailOutcome = async (email, subject, templateType, status, errorMessage = "") => {
+const logEmailOutcome = async (email, subject, templateType, status, errorMessage = "", body = "") => {
   try {
     const user = await User.findOne({ email: email.toLowerCase() });
     await EmailLog.create({
@@ -22,6 +22,7 @@ const logEmailOutcome = async (email, subject, templateType, status, errorMessag
       templateType,
       status,
       errorMessage: errorMessage || "",
+      body: body || "",
     });
     console.log(`[EmailLog] Logged outcome: ${templateType} -> ${status} to ${email}`);
   } catch (err) {
@@ -114,11 +115,11 @@ const sendWelcomeEmail = async (email, name) => {
       subject,
       html,
     });
-    await logEmailOutcome(email, subject, type, "sent");
+    await logEmailOutcome(email, subject, type, "sent", "", html);
     console.log(`[EmailService] Welcome email sent to ${email}`);
   } catch (err) {
     console.error(`[EmailService] Welcome email failed:`, err.message);
-    await logEmailOutcome(email, subject, type, "failed", err.message);
+    await logEmailOutcome(email, subject, type, "failed", err.message, html);
   }
 };
 
@@ -144,11 +145,11 @@ const sendSetupReminderEmail = async (email, name) => {
       subject,
       html,
     });
-    await logEmailOutcome(email, subject, type, "sent");
+    await logEmailOutcome(email, subject, type, "sent", "", html);
     console.log(`[EmailService] Setup reminder email sent to ${email}`);
   } catch (err) {
     console.error(`[EmailService] Setup reminder email failed:`, err.message);
-    await logEmailOutcome(email, subject, type, "failed", err.message);
+    await logEmailOutcome(email, subject, type, "failed", err.message, html);
   }
 };
 
@@ -177,11 +178,11 @@ const sendVerificationNudgeEmail = async (email, name, platform, verificationTok
       subject,
       html,
     });
-    await logEmailOutcome(email, subject, type, "sent");
+    await logEmailOutcome(email, subject, type, "sent", "", html);
     console.log(`[EmailService] Verification nudge sent to ${email}`);
   } catch (err) {
     console.error(`[EmailService] Verification nudge failed:`, err.message);
-    await logEmailOutcome(email, subject, type, "failed", err.message);
+    await logEmailOutcome(email, subject, type, "failed", err.message, html);
   }
 };
 
@@ -216,11 +217,11 @@ const sendContractActivatedEmail = async (email, name, plan, dailyCommitment, ac
       subject,
       html,
     });
-    await logEmailOutcome(email, subject, type, "sent");
+    await logEmailOutcome(email, subject, type, "sent", "", html);
     console.log(`[EmailService] Contract activation email sent to ${email}`);
   } catch (err) {
     console.error(`[EmailService] Contract activation email failed:`, err.message);
-    await logEmailOutcome(email, subject, type, "failed", err.message);
+    await logEmailOutcome(email, subject, type, "failed", err.message, html);
   }
 };
 
@@ -248,11 +249,11 @@ const sendStreakWarningEmail = async (email, name, dailyCommitment) => {
       subject,
       html,
     });
-    await logEmailOutcome(email, subject, type, "sent");
+    await logEmailOutcome(email, subject, type, "sent", "", html);
     console.log(`[EmailService] Daily streak warning sent to ${email}`);
   } catch (err) {
     console.error(`[EmailService] Daily streak warning failed:`, err.message);
-    await logEmailOutcome(email, subject, type, "failed", err.message);
+    await logEmailOutcome(email, subject, type, "failed", err.message, html);
   }
 };
 
@@ -295,11 +296,11 @@ const sendDeductionEmail = async (email, name, dailyCommitment, remainingDeposit
       subject,
       html,
     });
-    await logEmailOutcome(email, subject, type, "sent");
+    await logEmailOutcome(email, subject, type, "sent", "", html);
     console.log(`[EmailService] Deduction/Protection email sent to ${email}`);
   } catch (err) {
     console.error(`[EmailService] Deduction email failed:`, err.message);
-    await logEmailOutcome(email, subject, type, "failed", err.message);
+    await logEmailOutcome(email, subject, type, "failed", err.message, html);
   }
 };
 
@@ -325,11 +326,11 @@ const sendLowBalanceEmail = async (email, name, activeDeposit, dailyCommitment) 
       subject,
       html,
     });
-    await logEmailOutcome(email, subject, type, "sent");
+    await logEmailOutcome(email, subject, type, "sent", "", html);
     console.log(`[EmailService] Low balance email sent to ${email}`);
   } catch (err) {
     console.error(`[EmailService] Low balance email failed:`, err.message);
-    await logEmailOutcome(email, subject, type, "failed", err.message);
+    await logEmailOutcome(email, subject, type, "failed", err.message, html);
   }
 };
 
@@ -357,11 +358,11 @@ const sendMilestoneEmail = async (email, name, streak, securedBalance) => {
       subject,
       html,
     });
-    await logEmailOutcome(email, subject, type, "sent");
+    await logEmailOutcome(email, subject, type, "sent", "", html);
     console.log(`[EmailService] Milestone email sent to ${email}`);
   } catch (err) {
     console.error(`[EmailService] Milestone email failed:`, err.message);
-    await logEmailOutcome(email, subject, type, "failed", err.message);
+    await logEmailOutcome(email, subject, type, "failed", err.message, html);
   }
 };
 
@@ -387,11 +388,11 @@ const sendDormancyEmail = async (email, name) => {
       subject,
       html,
     });
-    await logEmailOutcome(email, subject, type, "sent");
+    await logEmailOutcome(email, subject, type, "sent", "", html);
     console.log(`[EmailService] Dormancy email sent to ${email}`);
   } catch (err) {
     console.error(`[EmailService] Dormancy email failed:`, err.message);
-    await logEmailOutcome(email, subject, type, "failed", err.message);
+    await logEmailOutcome(email, subject, type, "failed", err.message, html);
   }
 };
 
@@ -411,11 +412,11 @@ const sendCustomDirectEmail = async (email, name, subject, bodyContent) => {
       subject,
       html,
     });
-    await logEmailOutcome(email, subject, type, "sent");
+    await logEmailOutcome(email, subject, type, "sent", "", html);
     console.log(`[EmailService] Custom direct email sent to ${email}`);
   } catch (err) {
     console.error(`[EmailService] Custom direct email failed:`, err.message);
-    await logEmailOutcome(email, subject, type, "failed", err.message);
+    await logEmailOutcome(email, subject, type, "failed", err.message, html);
     throw err;
   }
 };
