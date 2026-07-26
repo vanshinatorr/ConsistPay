@@ -163,6 +163,15 @@ try {
     user.bonusCredited = false;
 
     await user.save();
+
+    // Trigger asynchronous Contract Activated Email in background
+    if (user.email) {
+      const { sendContractActivatedEmail } = require("../utils/emailService");
+      sendContractActivatedEmail(user.email, user.name, user.plan, user.dailyCommitment, user.activeDeposit, user.planExpiresAt).catch(err =>
+        console.error("[Contract Email Background Error]:", err.message)
+      );
+    }
+
     res.status(200).json({
       message: "Payment verified successfully!",
       plan: user.plan,
@@ -222,6 +231,14 @@ try {
   user.bonusCredited = false;
 
   await user.save();
+
+  // Trigger asynchronous Contract Activated Email in background
+  if (user.email) {
+    const { sendContractActivatedEmail } = require("../utils/emailService");
+    sendContractActivatedEmail(user.email, user.name, user.plan, user.dailyCommitment, user.activeDeposit, user.planExpiresAt).catch(err =>
+      console.error("[Contract Email Background Error]:", err.message)
+    );
+  }
   
   res.status(200).json({
     message: "Payment successful!",

@@ -366,6 +366,14 @@ const completeSignup = async (req, res) => {
 
     const user = await User.create(newUser);
 
+    // Trigger asynchronous Welcome Email in background
+    if (user.email) {
+      const { sendWelcomeEmail } = require("../utils/emailService");
+      sendWelcomeEmail(user.email, user.name).catch(err => 
+        console.error("[Welcome Email Background Error]:", err.message)
+      );
+    }
+
     res.status(201).json({
       _id: user._id,
       name: user.name,

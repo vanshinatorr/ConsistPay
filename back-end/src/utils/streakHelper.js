@@ -316,6 +316,27 @@ const syncUserStreak = async (userOrId) => {
       const maxAllowedCoins = (user.plan === "pro" && currentStreak >= 15) ? 2 : 1;
       graceCoins = Math.min(Math.max(graceCoins, 0), maxAllowedCoins);
 
+      // Analyze new state differences before saving to determine email triggers
+      let newMissDeduction = false;
+      let newMissProtected = false;
+      for (const item of modifiedSubmissions) {
+        if (item.sub.status === "missed" && !item.originalDeduction) {
+          if (item.sub.graceCoinApplied) {
+            newMissProtected = true;
+          } else {
+            newMissDeduction = true;
+          }
+        }
+      }
+
+      const wasOriginalLowBalance = (user.activeDeposit || 0) < ((user.dailyCommitment || 0) * 2);
+      const isNowLowBalance = activeDeposit < ((user.dailyCommitment || 0) * 2);
+      const shouldSendLowBalance = isNowLowBalance && !wasOriginalLowBalance && activeDeposit > 0;
+
+      const streakIncreased = currentStreak > (user.streak || 0);
+      const isMilestone = [7, 15, 30].includes(currentStreak);
+      const shouldSendMilestone = streakIncreased && isMilestone;
+
       try {
         // Save modified submissions
         for (const item of modifiedSubmissions) {
@@ -340,6 +361,27 @@ const syncUserStreak = async (userOrId) => {
           user.maxStreak = maxStreak;
           await user.save();
           console.log(`[StreakHelper] Recalculated state for user ${user._id}: streak=${currentStreak}, balance=₹${balance}, activeDeposit=₹${activeDeposit}`);
+
+          // Trigger email notifications asynchronously in the background
+          if (user.email) {
+            const { sendDeductionEmail, sendLowBalanceEmail, sendMilestoneEmail } = require("./emailService");
+            
+            if (newMissDeduction || newMissProtected) {
+              sendDeductionEmail(user.email, user.name, user.dailyCommitment, activeDeposit, graceCoins, newMissProtected).catch(err =>
+                console.error("[EmailService Miss Background Error]:", err.message)
+              );
+            }
+            if (shouldSendLowBalance) {
+              sendLowBalanceEmail(user.email, user.name, activeDeposit, user.dailyCommitment).catch(err =>
+                console.error("[EmailService Low Balance Background Error]:", err.message)
+              );
+            }
+            if (shouldSendMilestone) {
+              sendMilestoneEmail(user.email, user.name, currentStreak, balance).catch(err =>
+                console.error("[EmailService Milestone Background Error]:", err.message)
+              );
+            }
+          }
         }
 
         // Deletions are executed after successful user state persistence to avoid refund loss inconsistencies

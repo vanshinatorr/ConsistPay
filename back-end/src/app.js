@@ -79,6 +79,9 @@ app.use("/api/notifications", notificationRoutes);
 const adminRoutes = require("./routes/admin");
 app.use("/api/admin", adminRoutes);
 
+const cronRoutes = require("./routes/cron");
+app.use("/api/crons", cronRoutes);
+
 // Catch-all JSON Error Handling Middleware (SaaS Production Resilience)
 app.use((err, req, res, next) => {
   console.error("Unhandled API Error:", err);

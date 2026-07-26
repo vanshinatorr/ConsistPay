@@ -63,6 +63,16 @@ class PlatformService {
       });
     }
 
+    // Trigger asynchronous Verification Nudge Email in background
+    User.findById(userId).then(user => {
+      if (user && user.email) {
+        const { sendVerificationNudgeEmail } = require("../utils/emailService");
+        sendVerificationNudgeEmail(user.email, user.name, platform, verificationToken).catch(err =>
+          console.error("[Verification Email Background Error]:", err.message)
+        );
+      }
+    }).catch(err => console.error("[Verification Email Fetch User Error]:", err.message));
+
     return {
       username: linkage.username,
       platform: linkage.platform,
