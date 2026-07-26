@@ -142,6 +142,8 @@ export function AdminDashboard() {
   const [customEmail, setCustomEmail] = useState({ toEmail: "", subject: "", body: "" });
   const [customEmailSending, setCustomEmailSending] = useState<boolean>(false);
   const [activePreviewEmail, setActivePreviewEmail] = useState<any | null>(null);
+  const [allEmailUsers, setAllEmailUsers] = useState<any[]>([]);
+  const [userEmailSearch, setUserEmailSearch] = useState<string>("");
   
   // 3-State Admin Console Mode: default is day_demo (Mock Data) on load/refresh!
   const [adminState, setAdminState] = useState<"day_real" | "day_demo" | "dark_real">("day_demo");
@@ -497,6 +499,29 @@ export function AdminDashboard() {
       fetchEmailLogs();
     }
   }, [activeTab, token, isUserAdmin, emailLogsPage, emailLogsSearch, isDemoMode]);
+
+  // Fetch all registered users for the email recipient dropdown
+  const fetchAllEmailUsers = async () => {
+    if (isDemoMode || !token) return;
+    try {
+      const res = await fetch(`${API}/api/admin/users?limit=100&page=1`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setAllEmailUsers((data.users || []).filter((u: any) => u.email && u.onboardingComplete));
+      }
+    } catch (err) {
+      console.error("Failed to fetch users for email dropdown:", err);
+    }
+  };
+
+  useEffect(() => {
+    if (showCustomEmailModal) {
+      fetchAllEmailUsers();
+      setUserEmailSearch("");
+    }
+  }, [showCustomEmailModal]);
 
   const handleSendCustomEmail = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -1786,21 +1811,85 @@ export function AdminDashboard() {
             </div>
 
             <div className="space-y-4">
-              {/* Recipient */}
+              {/* Recipient — Registered Users Only Dropdown */}
               <div className="space-y-1.5">
-                <label className="text-[10px] font-bold uppercase tracking-wider text-zinc-500">Recipient Email</label>
+                <label className="text-[10px] font-bold uppercase tracking-wider text-zinc-500">
+                  Recipient <span className="text-violet-400 normal-case font-semibold">(Registered Users Only)</span>
+                </label>
+                {/* Search filter */}
                 <input
-                  type="email"
-                  required
-                  placeholder="e.g. user@gmail.com"
-                  value={customEmail.toEmail}
-                  onChange={(e) => setCustomEmail(prev => ({ ...prev, toEmail: e.target.value }))}
-                  className={`w-full px-4 py-2.5 text-xs rounded-xl border outline-none transition-all ${
-                    isDark 
-                      ? "bg-[#0C0C0F] border-white/[0.08] text-white focus:border-violet-500/50" 
-                      : "bg-white border-zinc-200 text-zinc-800 focus:border-violet-500/50"
+                  type="text"
+                  placeholder="Search by name or email..."
+                  value={userEmailSearch}
+                  onChange={(e) => setUserEmailSearch(e.target.value)}
+                  className={`w-full px-4 py-2 text-xs rounded-xl border outline-none transition-all mb-1 ${
+                    isDark
+                      ? "bg-[#0C0C0F] border-white/[0.08] text-white focus:border-violet-500/50 placeholder:text-zinc-600"
+                      : "bg-white border-zinc-200 text-zinc-800 focus:border-violet-500/50 placeholder:text-zinc-400"
                   }`}
                 />
+                {/* Users list */}
+                <div className={`rounded-xl border max-h-40 overflow-y-auto ${
+                  isDark ? "border-white/[0.08] bg-[#0C0C0F]" : "border-zinc-200 bg-white"
+                }`}>
+                  {allEmailUsers.length === 0 ? (
+                    <div className="px-4 py-3 text-xs text-zinc-500 text-center">Loading users...</div>
+                  ) : (
+                    allEmailUsers
+                      .filter((u: any) =>
+                        !userEmailSearch ||
+                        u.name?.toLowerCase().includes(userEmailSearch.toLowerCase()) ||
+                        u.email?.toLowerCase().includes(userEmailSearch.toLowerCase())
+                      )
+                      .map((u: any) => (
+                        <button
+                          key={u._id}
+                          type="button"
+                          onClick={() => {
+                            setCustomEmail(prev => ({ ...prev, toEmail: u.email }));
+                            setUserEmailSearch("");
+                          }}
+                          className={`w-full flex items-center gap-3 px-4 py-2.5 text-left transition-colors border-b last:border-b-0 ${
+                            customEmail.toEmail === u.email
+                              ? isDark
+                                ? "bg-violet-900/30 border-white/[0.06]"
+                                : "bg-violet-50 border-zinc-100"
+                              : isDark
+                                ? "border-white/[0.04] hover:bg-white/[0.04]"
+                                : "border-zinc-100 hover:bg-zinc-50"
+                          }`}
+                        >
+                          <div className={`w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-bold flex-shrink-0 ${
+                            customEmail.toEmail === u.email ? "bg-violet-600 text-white" : isDark ? "bg-white/10 text-zinc-400" : "bg-zinc-100 text-zinc-600"
+                          }`}>
+                            {u.name?.charAt(0).toUpperCase()}
+                          </div>
+                          <div className="min-w-0">
+                            <div className={`text-xs font-semibold truncate ${isDark ? "text-white" : "text-zinc-800"}`}>{u.name}</div>
+                            <div className="text-[10px] text-zinc-500 truncate">{u.email}</div>
+                          </div>
+                          {customEmail.toEmail === u.email && (
+                            <div className="ml-auto text-violet-500 text-xs">✓</div>
+                          )}
+                        </button>
+                      ))
+                  )}
+                  {allEmailUsers.length > 0 &&
+                    allEmailUsers.filter((u: any) =>
+                      !userEmailSearch ||
+                      u.name?.toLowerCase().includes(userEmailSearch.toLowerCase()) ||
+                      u.email?.toLowerCase().includes(userEmailSearch.toLowerCase())
+                    ).length === 0 && (
+                      <div className="px-4 py-3 text-xs text-zinc-500 text-center">No users match your search.</div>
+                    )
+                  }
+                </div>
+                {customEmail.toEmail && (
+                  <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-emerald-500/10 border border-emerald-500/20 mt-1">
+                    <span className="text-emerald-400 text-xs">✓</span>
+                    <span className="text-xs text-emerald-400 font-medium truncate">{customEmail.toEmail}</span>
+                  </div>
+                )}
               </div>
 
               {/* Subject */}
