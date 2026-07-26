@@ -9,7 +9,8 @@ const {
   rejectWithdrawal,
   getAdminUsers,
   updateUser,
-  syncUserStreakAdmin
+  syncUserStreakAdmin,
+  getEmailLogs
 } = require("../controllers/adminController");
 const { protect } = require("../middleware/authMiddleware");
 
@@ -33,5 +34,8 @@ router.delete("/beta-requests/:id", protect, adminProtect, dismissBetaRequest);
 router.get("/withdrawals", protect, adminProtect, getAdminWithdrawals);
 router.post("/withdrawals/:id/approve", protect, adminProtect, approveWithdrawal);
 router.post("/withdrawals/:id/reject", protect, adminProtect, rejectWithdrawal);
+
+// Email logs tracking endpoint
+router.get("/email-logs", protect, adminProtect, getEmailLogs);
 
 module.exports = router;

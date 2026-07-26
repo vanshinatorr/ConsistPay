@@ -17,7 +17,8 @@ import {
   CheckCircle,
   ShieldAlert,
   Sun,
-  Moon
+  Moon,
+  Mail
 } from "lucide-react";
 
 // Types
@@ -126,8 +127,15 @@ const MOCK_WITHDRAWALS = [
 
 export function AdminDashboard() {
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState<"overview" | "growth" | "users" | "platform" | "health" | "beta" | "withdrawals">("overview");
+  const [activeTab, setActiveTab] = useState<"overview" | "growth" | "users" | "platform" | "health" | "beta" | "withdrawals" | "emails">("overview");
   const [timeFilter, setTimeFilter] = useState<"today" | "7d" | "30d" | "90d">("7d");
+
+  // Email logs state variables
+  const [emailLogs, setEmailLogs] = useState<any[]>([]);
+  const [emailLogsSearch, setEmailLogsSearch] = useState<string>("");
+  const [emailLogsPage, setEmailLogsPage] = useState<number>(1);
+  const [emailLogsTotalPages, setEmailLogsTotalPages] = useState<number>(1);
+  const [emailLogsLoading, setEmailLogsLoading] = useState<boolean>(false);
   
   // 3-State Admin Console Mode: default is day_demo (Mock Data) on load/refresh!
   const [adminState, setAdminState] = useState<"day_real" | "day_demo" | "dark_real">("day_demo");
@@ -435,6 +443,55 @@ export function AdminDashboard() {
     }
   }, [activeTab, token, isUserAdmin]);
 
+  const fetchEmailLogs = async () => {
+    if (isDemoMode) {
+      // Mock logs for Demo Mode
+      setEmailLogs([
+        {
+          _id: "demo1",
+          email: "vanshvijay9784@gmail.com",
+          subject: "Commitment issues? We got you. 😉",
+          templateType: "welcome",
+          status: "sent",
+          errorMessage: "",
+          timeAgo: "2m ago"
+        },
+        {
+          _id: "demo2",
+          email: "vansh.23bcon0734@jecrcu.edu.in",
+          subject: "Your code is feeling ghosted... (and ₹20 is at stake) 💀",
+          templateType: "streak_warning",
+          status: "failed",
+          errorMessage: "Invalid login: 535-5.7.8 Username and Password not accepted.",
+          timeAgo: "15m ago"
+        }
+      ]);
+      setEmailLogsTotalPages(1);
+      return;
+    }
+    try {
+      setEmailLogsLoading(true);
+      const res = await fetch(`${API}/api/admin/email-logs?page=${emailLogsPage}&search=${emailLogsSearch}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setEmailLogs(data.logs || []);
+        setEmailLogsTotalPages(data.pagination?.totalPages || 1);
+      }
+    } catch (err) {
+      console.error("Failed to fetch email logs:", err);
+    } finally {
+      setEmailLogsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (activeTab === "emails" && token && isUserAdmin) {
+      fetchEmailLogs();
+    }
+  }, [activeTab, token, isUserAdmin, emailLogsPage, emailLogsSearch, isDemoMode]);
+
   const handleApproveWithdrawal = async (id: string) => {
     if (isDemoMode) {
       setDemoWithdrawals(prev => prev.map(w => w._id === id ? { ...w, status: "completed" } : w));
@@ -626,7 +683,8 @@ export function AdminDashboard() {
               { id: "platform", label: "Platform & Wallet", icon: Coins },
               { id: "health", label: "System Health", icon: Server },
               { id: "beta", label: "Beta Requests", icon: BookOpen },
-              { id: "withdrawals", label: "Withdrawals", icon: DollarSign }
+              { id: "withdrawals", label: "Withdrawals", icon: DollarSign },
+              { id: "emails", label: "Email Logs", icon: Mail }
             ].map(tab => {
               const Icon = tab.icon;
               const active = activeTab === tab.id;
@@ -1251,6 +1309,161 @@ export function AdminDashboard() {
                           </tbody>
                         </table>
                       </div>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* TAB 7: EMAIL OPERATIONS LEDGER */}
+              {activeTab === "emails" && (
+                <div className="space-y-6 animate-in fade-in duration-300">
+                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div>
+                      <h3 className={`text-sm font-bold uppercase tracking-wider ${isDark ? "text-white" : "text-zinc-900"}`}>
+                        Email Dispatch Logs
+                      </h3>
+                      <p className={`text-[10px] mt-0.5 ${isDark ? "text-zinc-555" : "text-zinc-455"}`}>
+                        Monitor outbound transactional lifecycle emails, delivery status, and SMTP error codes.
+                      </p>
+                    </div>
+
+                    {/* Search Field */}
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="text"
+                        placeholder="Search by email..."
+                        value={emailLogsSearch}
+                        onChange={(e) => {
+                          setEmailLogsSearch(e.target.value);
+                          setEmailLogsPage(1);
+                        }}
+                        className={`h-9 px-3.5 rounded-xl text-xs font-semibold border outline-none transition-all w-60 ${
+                          isDark
+                            ? "bg-[#0C0C0F] border-white/[0.04] text-white focus:border-violet-500/50"
+                            : "bg-white border-zinc-200 text-zinc-800 focus:border-violet-500"
+                        }`}
+                      />
+                    </div>
+                  </div>
+
+                  {emailLogsLoading ? (
+                    <div className="py-8 text-center text-xs text-zinc-550 animate-pulse">Loading email logs ledger...</div>
+                  ) : emailLogs.length === 0 ? (
+                    <div className={`border rounded-2xl p-8 text-center text-xs font-semibold ${
+                      isDark ? "bg-[#0C0C0F]/50 border-white/[0.04] text-zinc-500" : "bg-white border-zinc-200 text-zinc-450 shadow-sm"
+                    }`}>
+                      No email log entries found in database.
+                    </div>
+                  ) : (
+                    <div className="space-y-4">
+                      <div className={`border rounded-2xl overflow-hidden ${
+                        isDark ? "bg-[#0C0C0F]/30 border-white/[0.04]" : "bg-white border-zinc-200 shadow-sm"
+                      }`}>
+                        <div className="overflow-x-auto">
+                          <table className="w-full text-left border-collapse">
+                            <thead>
+                              <tr className={`border-b text-[10px] font-bold uppercase tracking-wider ${
+                                isDark ? "border-white/[0.04] bg-white/[0.01] text-zinc-500" : "border-zinc-150 bg-zinc-50 text-zinc-455"
+                              }`}>
+                                <th className="py-3 px-4">Recipient</th>
+                                <th className="py-3 px-4">Category</th>
+                                <th className="py-3 px-4">Subject</th>
+                                <th className="py-3 px-4">Status</th>
+                                <th className="py-3 px-4">Sent Time</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {emailLogs.map((log) => (
+                                <tr
+                                  key={log._id}
+                                  className={`border-b text-xs transition-colors hover:bg-zinc-50/20 dark:hover:bg-white/[0.005] ${
+                                    isDark ? "border-white/[0.03] text-zinc-300" : "border-zinc-150 text-zinc-750"
+                                  }`}
+                                >
+                                  <td className="py-3.5 px-4 font-semibold">
+                                    <div className="flex flex-col">
+                                      <span>{log.userId?.name || "Draft User"}</span>
+                                      <span className={`text-[10px] font-mono ${isDark ? "text-zinc-555" : "text-zinc-455"}`}>{log.email}</span>
+                                    </div>
+                                  </td>
+                                  <td className="py-3.5 px-4">
+                                    <span className={`px-2 py-0.5 rounded-full text-[10px] font-extrabold uppercase ${
+                                      log.templateType === "otp"
+                                        ? "bg-amber-500/10 text-amber-500"
+                                        : log.templateType === "welcome"
+                                        ? "bg-blue-500/10 text-blue-500"
+                                        : log.templateType === "streak_warning"
+                                        ? "bg-violet-500/10 text-violet-500"
+                                        : log.templateType === "deduction"
+                                        ? "bg-red-500/10 text-red-500"
+                                        : "bg-zinc-500/10 text-zinc-400"
+                                    }`}>
+                                      {log.templateType.replace("_", " ")}
+                                    </span>
+                                  </td>
+                                  <td className="py-3.5 px-4 max-w-[200px] truncate" title={log.subject}>
+                                    {log.subject}
+                                  </td>
+                                  <td className="py-3.5 px-4">
+                                    {log.status === "sent" ? (
+                                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+                                        <span className="w-1 h-1 bg-emerald-500 rounded-full" />
+                                        Sent
+                                      </span>
+                                    ) : (
+                                      <div className="flex flex-col">
+                                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-red-500/10 text-red-500 w-fit">
+                                          <span className="w-1 h-1 bg-red-500 rounded-full" />
+                                          Failed
+                                        </span>
+                                        {log.errorMessage && (
+                                          <span className="text-[9px] text-red-400 mt-1 max-w-[180px] break-words font-mono leading-tight bg-red-500/5 p-1 rounded border border-red-500/10">
+                                            {log.errorMessage}
+                                          </span>
+                                        )}
+                                      </div>
+                                    )}
+                                  </td>
+                                  <td className="py-3.5 px-4 text-zinc-500 dark:text-zinc-500 font-mono text-[10px]" title={new Date(log.createdAt).toLocaleString()}>
+                                    {log.timeAgo}
+                                  </td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+
+                      {/* Pagination Controls */}
+                      {emailLogsTotalPages > 1 && (
+                        <div className="flex items-center justify-between pt-2">
+                          <button
+                            disabled={emailLogsPage === 1}
+                            onClick={() => setEmailLogsPage(prev => prev - 1)}
+                            className={`h-8 px-3.5 rounded-xl text-xs font-bold border transition-all cursor-pointer ${
+                              emailLogsPage === 1
+                                ? isDark ? "bg-[#0C0C0F] border-white/[0.02] text-zinc-700 cursor-not-allowed" : "bg-zinc-50 border-zinc-150 text-zinc-350 cursor-not-allowed"
+                                : isDark ? "bg-white/5 hover:bg-white/10 border-white/[0.04] text-white active:scale-95" : "bg-white hover:bg-zinc-50 border-zinc-200 text-zinc-700 active:scale-95 shadow-sm"
+                            }`}
+                          >
+                            Previous
+                          </button>
+                          <span className={`text-[10px] font-bold ${isDark ? "text-zinc-555" : "text-zinc-500"}`}>
+                            Page {emailLogsPage} of {emailLogsTotalPages}
+                          </span>
+                          <button
+                            disabled={emailLogsPage === emailLogsTotalPages}
+                            onClick={() => setEmailLogsPage(prev => prev + 1)}
+                            className={`h-8 px-3.5 rounded-xl text-xs font-bold border transition-all cursor-pointer ${
+                              emailLogsPage === emailLogsTotalPages
+                                ? isDark ? "bg-[#0C0C0F] border-white/[0.02] text-zinc-700 cursor-not-allowed" : "bg-zinc-50 border-zinc-150 text-zinc-350 cursor-not-allowed"
+                                : isDark ? "bg-white/5 hover:bg-white/10 border-white/[0.04] text-white active:scale-95" : "bg-white hover:bg-zinc-50 border-zinc-200 text-zinc-700 active:scale-95 shadow-sm"
+                            }`}
+                          >
+                            Next
+                          </button>
+                        </div>
+                      )}
                     </div>
                   )}
                 </div>

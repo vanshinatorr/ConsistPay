@@ -104,14 +104,24 @@ const sendOtp = async (req, res) => {
           </div>
         `;
 
-        await transporter.sendMail({
-          from: `"ConsistPay" <${process.env.EMAIL_USER}>`,
-          to: identifier,
-          subject: `${otp} is your ConsistPay verification code`,
-          text: `Your ConsistPay verification code is: ${otp}. It is valid for 5 minutes.`,
-          html: emailHtml
-        });
-        console.log(`[AUTH] Sent real email OTP to ${identifier}`);
+        const emailSubject = `${otp} is your ConsistPay verification code`;
+        try {
+          await transporter.sendMail({
+            from: `"ConsistPay" <${process.env.EMAIL_USER}>`,
+            to: identifier,
+            subject: emailSubject,
+            text: `Your ConsistPay verification code is: ${otp}. It is valid for 5 minutes.`,
+            html: emailHtml
+          });
+          console.log(`[AUTH] Sent real email OTP to ${identifier}`);
+          const { logEmailOutcome } = require("../utils/emailService");
+          await logEmailOutcome(identifier, emailSubject, "otp", "sent");
+        } catch (mailErr) {
+          console.error(`[AUTH] Failed to send email OTP:`, mailErr.message);
+          const { logEmailOutcome } = require("../utils/emailService");
+          await logEmailOutcome(identifier, emailSubject, "otp", "failed", mailErr.message);
+          return res.status(500).json({ message: "Failed to send verification email. Please check credentials." });
+        }
       } else {
         // Fallback for development without SMTP setup
         console.log(`[AUTH MOCK] OTP for ${identifier} is ${otp}`);

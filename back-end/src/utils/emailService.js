@@ -1,4 +1,6 @@
 const nodemailer = require("nodemailer");
+const EmailLog = require("../models/EmailLog");
+const User = require("../models/User");
 
 // Initialize Nodemailer SMTP Transporter
 const transporter = nodemailer.createTransport({
@@ -8,6 +10,24 @@ const transporter = nodemailer.createTransport({
     pass: process.env.EMAIL_PASS,
   },
 });
+
+// Helper to log email outcomes to database (Success and Failure logs)
+const logEmailOutcome = async (email, subject, templateType, status, errorMessage = "") => {
+  try {
+    const user = await User.findOne({ email: email.toLowerCase() });
+    await EmailLog.create({
+      userId: user ? user._id : null,
+      email: email.toLowerCase(),
+      subject,
+      templateType,
+      status,
+      errorMessage: errorMessage || "",
+    });
+    console.log(`[EmailLog] Logged outcome: ${templateType} -> ${status} to ${email}`);
+  } catch (err) {
+    console.error(`[EmailLog] Logging failed:`, err.message);
+  }
+};
 
 // Standard HTML wrapper for emails (Premium Dark Mode SaaS Styling)
 const wrapHTMLContent = (title, headerText, bodyText, buttonText = "", buttonUrl = "") => {
@@ -71,6 +91,8 @@ const wrapHTMLContent = (title, headerText, bodyText, buttonText = "", buttonUrl
 
 // 1. Send Welcome Email
 const sendWelcomeEmail = async (email, name) => {
+  const subject = "Commitment issues? We got you.";
+  const type = "welcome";
   try {
     const html = wrapHTMLContent(
       "Welcome to ConsistPay",
@@ -87,19 +109,23 @@ const sendWelcomeEmail = async (email, name) => {
     );
 
     await transporter.sendMail({
-      from: '"ConsistPay" <vanshvijay9784@gmail.com>',
+      from: `"ConsistPay" <${process.env.EMAIL_USER || "vanshvijay9784@gmail.com"}>`,
       to: email,
-      subject: "Commitment issues? We got you.",
+      subject,
       html,
     });
+    await logEmailOutcome(email, subject, type, "sent");
     console.log(`[EmailService] Welcome email sent to ${email}`);
   } catch (err) {
     console.error(`[EmailService] Welcome email failed:`, err.message);
+    await logEmailOutcome(email, subject, type, "failed", err.message);
   }
 };
 
 // 2. Send Setup Reminder Email (24h Inactivity)
 const sendSetupReminderEmail = async (email, name) => {
+  const subject = "Don't leave your coding goals on read.";
+  const type = "setup_reminder";
   try {
     const html = wrapHTMLContent(
       "Setup Pending",
@@ -113,19 +139,23 @@ const sendSetupReminderEmail = async (email, name) => {
     );
 
     await transporter.sendMail({
-      from: '"ConsistPay" <vanshvijay9784@gmail.com>',
+      from: `"ConsistPay" <${process.env.EMAIL_USER || "vanshvijay9784@gmail.com"}>`,
       to: email,
-      subject: "Don't leave your coding goals on read.",
+      subject,
       html,
     });
+    await logEmailOutcome(email, subject, type, "sent");
     console.log(`[EmailService] Setup reminder email sent to ${email}`);
   } catch (err) {
     console.error(`[EmailService] Setup reminder email failed:`, err.message);
+    await logEmailOutcome(email, subject, type, "failed", err.message);
   }
 };
 
 // 3. Send Profile Verification Nudge Email
 const sendVerificationNudgeEmail = async (email, name, platform, verificationToken) => {
+  const subject = "One tiny detail is missing... ⏳";
+  const type = "verification_nudge";
   try {
     const html = wrapHTMLContent(
       "Verification Code",
@@ -142,19 +172,23 @@ const sendVerificationNudgeEmail = async (email, name, platform, verificationTok
     );
 
     await transporter.sendMail({
-      from: '"ConsistPay" <vanshvijay9784@gmail.com>',
+      from: `"ConsistPay" <${process.env.EMAIL_USER || "vanshvijay9784@gmail.com"}>`,
       to: email,
-      subject: "One tiny detail is missing... ⏳",
+      subject,
       html,
     });
+    await logEmailOutcome(email, subject, type, "sent");
     console.log(`[EmailService] Verification nudge sent to ${email}`);
   } catch (err) {
     console.error(`[EmailService] Verification nudge failed:`, err.message);
+    await logEmailOutcome(email, subject, type, "failed", err.message);
   }
 };
 
 // 4. Send Contract Activated Email
 const sendContractActivatedEmail = async (email, name, plan, dailyCommitment, activeDeposit, expiryDate) => {
+  const subject = "Your consistency contract is active. 💳";
+  const type = "contract_activated";
   try {
     const formattedExpiry = new Date(expiryDate).toLocaleDateString("en-US", {
       year: "numeric",
@@ -177,19 +211,23 @@ const sendContractActivatedEmail = async (email, name, plan, dailyCommitment, ac
     );
 
     await transporter.sendMail({
-      from: '"ConsistPay" <vanshvijay9784@gmail.com>',
+      from: `"ConsistPay" <${process.env.EMAIL_USER || "vanshvijay9784@gmail.com"}>`,
       to: email,
-      subject: "Your consistency contract is active. 💳",
+      subject,
       html,
     });
+    await logEmailOutcome(email, subject, type, "sent");
     console.log(`[EmailService] Contract activation email sent to ${email}`);
   } catch (err) {
     console.error(`[EmailService] Contract activation email failed:`, err.message);
+    await logEmailOutcome(email, subject, type, "failed", err.message);
   }
 };
 
 // 5. Send Daily Streak Warning Email
 const sendStreakWarningEmail = async (email, name, dailyCommitment) => {
+  const subject = "Quick coding check-in (before midnight collects the tax) ⏳";
+  const type = "streak_warning";
   try {
     const html = wrapHTMLContent(
       "Streak Warning",
@@ -205,25 +243,27 @@ const sendStreakWarningEmail = async (email, name, dailyCommitment) => {
     );
 
     await transporter.sendMail({
-      from: '"ConsistPay" <vanshvijay9784@gmail.com>',
+      from: `"ConsistPay" <${process.env.EMAIL_USER || "vanshvijay9784@gmail.com"}>`,
       to: email,
-      subject: `Quick coding check-in (before midnight collects the tax) ⏳`,
+      subject,
       html,
     });
+    await logEmailOutcome(email, subject, type, "sent");
     console.log(`[EmailService] Daily streak warning sent to ${email}`);
   } catch (err) {
     console.error(`[EmailService] Daily streak warning failed:`, err.message);
+    await logEmailOutcome(email, subject, type, "failed", err.message);
   }
 };
 
 // 6. Send Deduction Email (Rollover Miss)
 const sendDeductionEmail = async (email, name, dailyCommitment, remainingDeposit, graceCoins = 0, isProtected = false) => {
+  const subject = isProtected ? "Streak Protected! 🛡️" : "Oof. Yesterday was a slip. 💸";
+  const type = "deduction";
   try {
     let html;
-    let subject;
     
     if (isProtected) {
-      subject = "Streak Protected! 🛡️";
       html = wrapHTMLContent(
         "Streak Protected",
         "Your streak is safe! 🛡️",
@@ -235,7 +275,6 @@ const sendDeductionEmail = async (email, name, dailyCommitment, remainingDeposit
         "https://consistpay.tech/dashboard"
       );
     } else {
-      subject = "Oof. Yesterday was a slip. 💸";
       html = wrapHTMLContent(
         "Deduction Notification",
         "We had to collect the consistency tax.",
@@ -251,19 +290,23 @@ const sendDeductionEmail = async (email, name, dailyCommitment, remainingDeposit
     }
 
     await transporter.sendMail({
-      from: '"ConsistPay" <vanshvijay9784@gmail.com>',
+      from: `"ConsistPay" <${process.env.EMAIL_USER || "vanshvijay9784@gmail.com"}>`,
       to: email,
       subject,
       html,
     });
+    await logEmailOutcome(email, subject, type, "sent");
     console.log(`[EmailService] Deduction/Protection email sent to ${email}`);
   } catch (err) {
     console.error(`[EmailService] Deduction email failed:`, err.message);
+    await logEmailOutcome(email, subject, type, "failed", err.message);
   }
 };
 
 // 7. Send Low Deposit Warning Email
 const sendLowBalanceEmail = async (email, name, activeDeposit, dailyCommitment) => {
+  const subject = "Your deposit is running low. ⚠️";
+  const type = "low_balance";
   try {
     const html = wrapHTMLContent(
       "Low Deposit Warning",
@@ -277,23 +320,27 @@ const sendLowBalanceEmail = async (email, name, activeDeposit, dailyCommitment) 
     );
 
     await transporter.sendMail({
-      from: '"ConsistPay" <vanshvijay9784@gmail.com>',
+      from: `"ConsistPay" <${process.env.EMAIL_USER || "vanshvijay9784@gmail.com"}>`,
       to: email,
-      subject: "Your deposit is running low. ⚠️",
+      subject,
       html,
     });
+    await logEmailOutcome(email, subject, type, "sent");
     console.log(`[EmailService] Low balance email sent to ${email}`);
   } catch (err) {
     console.error(`[EmailService] Low balance email failed:`, err.message);
+    await logEmailOutcome(email, subject, type, "failed", err.message);
   }
 };
 
 // 8. Send Streak Milestone Celebration
 const sendMilestoneEmail = async (email, name, streak, securedBalance) => {
+  const subject = `${streak} days of pure focus. You're in the zone. 🚀`;
+  const type = "milestone";
   try {
     const html = wrapHTMLContent(
       "Milestone Celebration",
-      `${streak} days of pure focus. You're in the zone. 🚀`,
+      subject,
       `Hey ${name || "there"},<br><br>
        You just hit a <b>${streak}-day coding streak!</b> That's a massive achievement of showing up, compiling code, and building your habit.<br><br>
        Here is your ledger progress:<br>
@@ -305,23 +352,27 @@ const sendMilestoneEmail = async (email, name, streak, securedBalance) => {
     );
 
     await transporter.sendMail({
-      from: '"ConsistPay" <vanshvijay9784@gmail.com>',
+      from: `"ConsistPay" <${process.env.EMAIL_USER || "vanshvijay9784@gmail.com"}>`,
       to: email,
-      subject: `${streak} days of pure focus. You're in the zone. 🚀`,
+      subject,
       html,
     });
+    await logEmailOutcome(email, subject, type, "sent");
     console.log(`[EmailService] Milestone email sent to ${email}`);
   } catch (err) {
     console.error(`[EmailService] Milestone email failed:`, err.message);
+    await logEmailOutcome(email, subject, type, "failed", err.message);
   }
 };
 
 // 9. Send Dormancy Re-engagement Email
 const sendDormancyEmail = async (email, name) => {
+  const subject = "Coding is a muscle. Let's do 1 easy solve today. 🕸️";
+  const type = "dormancy";
   try {
     const html = wrapHTMLContent(
       "Dormancy Re-engagement",
-      "Coding is a muscle. Let's do 1 easy solve today. 🕸️",
+      subject,
       `Hey ${name || "there"},<br><br>
        It's been 7 days since your last activity on ConsistPay.<br><br>
        Streaks are built one day at a time, but they are also rebuilt that way. You don't have to solve a hard problem today—just go to LeetCode, pick an easy one, compile, and sync it.<br><br>
@@ -331,14 +382,16 @@ const sendDormancyEmail = async (email, name) => {
     );
 
     await transporter.sendMail({
-      from: '"ConsistPay" <vanshvijay9784@gmail.com>',
+      from: `"ConsistPay" <${process.env.EMAIL_USER || "vanshvijay9784@gmail.com"}>`,
       to: email,
-      subject: "Coding is a muscle. Let's do 1 easy solve today. 🕸️",
+      subject,
       html,
     });
+    await logEmailOutcome(email, subject, type, "sent");
     console.log(`[EmailService] Dormancy email sent to ${email}`);
   } catch (err) {
     console.error(`[EmailService] Dormancy email failed:`, err.message);
+    await logEmailOutcome(email, subject, type, "failed", err.message);
   }
 };
 
@@ -352,4 +405,5 @@ module.exports = {
   sendLowBalanceEmail,
   sendMilestoneEmail,
   sendDormancyEmail,
+  logEmailOutcome,
 };

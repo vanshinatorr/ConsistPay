@@ -433,6 +433,54 @@ const syncUserStreakAdmin = async (req, res) => {
   }
 };
 
+const getEmailLogs = async (req, res) => {
+  try {
+    const page = Math.max(1, Number(req.query.page) || 1);
+    const limit = Math.max(1, Number(req.query.limit) || 25);
+    const search = req.query.search ? req.query.search.trim().toLowerCase() : "";
+
+    const query = {};
+    if (search) {
+      query.email = { $regex: search, $options: "i" };
+    }
+
+    const EmailLog = require("../models/EmailLog");
+    const [logs, total] = await Promise.all([
+      EmailLog.find(query)
+        .sort({ createdAt: -1 })
+        .skip((page - 1) * limit)
+        .limit(limit)
+        .populate("userId", "name username avatar"),
+      EmailLog.countDocuments(query),
+    ]);
+
+    const formattedLogs = logs.map(log => ({
+      _id: log._id,
+      userId: log.userId,
+      email: log.email,
+      subject: log.subject,
+      templateType: log.templateType,
+      status: log.status,
+      errorMessage: log.errorMessage,
+      createdAt: log.createdAt,
+      timeAgo: formatTimeAgo(log.createdAt)
+    }));
+
+    res.status(200).json({
+      logs: formattedLogs,
+      pagination: {
+        page,
+        limit,
+        total,
+        totalPages: Math.ceil(total / limit),
+      },
+    });
+  } catch (error) {
+    console.error("Error fetching email logs:", error);
+    res.status(500).json({ message: error.message });
+  }
+};
+
 module.exports = { 
   getAdminStats, 
   getBetaRequests, 
@@ -442,5 +490,6 @@ module.exports = {
   rejectWithdrawal,
   getAdminUsers,
   updateUser,
-  syncUserStreakAdmin
+  syncUserStreakAdmin,
+  getEmailLogs
 };
