@@ -257,6 +257,40 @@ const sendStreakWarningEmail = async (email, name, dailyCommitment) => {
   }
 };
 
+// 5b. Send Platform Link Nudge — for users with active deposit but no platform linked
+const sendPlatformLinkNudgeEmail = async (email, name, activeDeposit) => {
+  const subject = "Your ₹" + activeDeposit + " is live, but we can't track your solves yet 👀";
+  const type = "streak_warning";
+  try {
+    const html = wrapHTMLContent(
+      "Platform Not Connected",
+      "Your deposit is active, but your profile isn't linked yet 👀",
+      `Hey ${name || "there"},<br><br>
+       You've got <b>₹${activeDeposit}</b> in the game — real stakes, real commitment. But right now, we have no way to track whether you're actually solving problems each day.<br><br>
+       <b>Why?</b> You haven't linked your LeetCode or GeeksforGeeks profile yet.<br><br>
+       Without a linked profile:<br>
+       • We can't detect your daily solves<br>
+       • Your streak stays at zero<br>
+       • Daily deductions may still apply at midnight rollover<br><br>
+       It takes under 60 seconds to fix this. Go to Settings → Platforms and connect your profile now.`,
+      "Connect My Profile Now",
+      "https://consistpay.tech/settings?tab=platforms"
+    );
+
+    await transporter.sendMail({
+      from: `"ConsistPay" <${process.env.EMAIL_USER || "vanshvijay9784@gmail.com"}>`,
+      to: email,
+      subject,
+      html,
+    });
+    await logEmailOutcome(email, subject, type, "sent", "", html);
+    console.log(`[EmailService] Platform link nudge sent to ${email}`);
+  } catch (err) {
+    console.error(`[EmailService] Platform link nudge failed:`, err.message);
+    await logEmailOutcome(email, subject, type, "failed", err.message, html);
+  }
+};
+
 // 6. Send Deduction Email (Rollover Miss)
 const sendDeductionEmail = async (email, name, dailyCommitment, remainingDeposit, graceCoins = 0, isProtected = false) => {
   const subject = isProtected ? "Streak Protected! 🛡️" : "Oof. Yesterday was a slip. 💸";
@@ -427,6 +461,7 @@ module.exports = {
   sendVerificationNudgeEmail,
   sendContractActivatedEmail,
   sendStreakWarningEmail,
+  sendPlatformLinkNudgeEmail,
   sendDeductionEmail,
   sendLowBalanceEmail,
   sendMilestoneEmail,
