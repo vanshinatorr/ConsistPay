@@ -489,13 +489,18 @@ const sendCustomEmailAdmin = async (req, res) => {
       return res.status(400).json({ message: "Missing recipient, subject or email body." });
     }
 
-    const user = await User.findOne({ email: toEmail.toLowerCase().trim() });
+    // Security: Only allow sending to registered users
+    const user = await User.findOne({ email: toEmail.toLowerCase().trim(), onboardingComplete: true });
+    if (!user) {
+      return res.status(403).json({ message: "Recipient is not a registered ConsistPay user. Emails can only be sent to active registered users." });
+    }
+
     const { sendCustomDirectEmail } = require("../utils/emailService");
     
     // Dispatch email
     await sendCustomDirectEmail(
       toEmail.toLowerCase().trim(),
-      user ? user.name : "",
+      user.name,
       subject,
       body
     );
