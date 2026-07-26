@@ -1811,83 +1811,46 @@ export function AdminDashboard() {
             </div>
 
             <div className="space-y-4">
-              {/* Recipient — Registered Users Only Dropdown */}
+              {/* Recipient — Free-form with optional quick-select */}
               <div className="space-y-1.5">
-                <label className="text-[10px] font-bold uppercase tracking-wider text-zinc-500">
-                  Recipient <span className="text-violet-400 normal-case font-semibold">(Registered Users Only)</span>
-                </label>
-                {/* Search filter */}
+                <label className="text-[10px] font-bold uppercase tracking-wider text-zinc-500">Recipient Email</label>
                 <input
-                  type="text"
-                  placeholder="Search by name or email..."
-                  value={userEmailSearch}
-                  onChange={(e) => setUserEmailSearch(e.target.value)}
-                  className={`w-full px-4 py-2 text-xs rounded-xl border outline-none transition-all mb-1 ${
+                  type="email"
+                  required
+                  placeholder="e.g. friend@gmail.com"
+                  value={customEmail.toEmail}
+                  onChange={(e) => setCustomEmail(prev => ({ ...prev, toEmail: e.target.value }))}
+                  className={`w-full px-4 py-2.5 text-xs rounded-xl border outline-none transition-all ${
                     isDark
                       ? "bg-[#0C0C0F] border-white/[0.08] text-white focus:border-violet-500/50 placeholder:text-zinc-600"
                       : "bg-white border-zinc-200 text-zinc-800 focus:border-violet-500/50 placeholder:text-zinc-400"
                   }`}
                 />
-                {/* Users list */}
-                <div className={`rounded-xl border max-h-40 overflow-y-auto ${
-                  isDark ? "border-white/[0.08] bg-[#0C0C0F]" : "border-zinc-200 bg-white"
-                }`}>
-                  {allEmailUsers.length === 0 ? (
-                    <div className="px-4 py-3 text-xs text-zinc-500 text-center">Loading users...</div>
-                  ) : (
-                    allEmailUsers
-                      .filter((u: any) =>
-                        !userEmailSearch ||
-                        u.name?.toLowerCase().includes(userEmailSearch.toLowerCase()) ||
-                        u.email?.toLowerCase().includes(userEmailSearch.toLowerCase())
-                      )
-                      .map((u: any) => (
+                {/* Quick-select registered users */}
+                {allEmailUsers.length > 0 && (
+                  <div>
+                    <div className="text-[9px] font-bold uppercase tracking-wider text-zinc-500 mb-1.5 mt-2">Quick Select — Registered Users</div>
+                    <div className="flex flex-wrap gap-1.5">
+                      {allEmailUsers.map((u: any) => (
                         <button
                           key={u._id}
                           type="button"
-                          onClick={() => {
-                            setCustomEmail(prev => ({ ...prev, toEmail: u.email }));
-                            setUserEmailSearch("");
-                          }}
-                          className={`w-full flex items-center gap-3 px-4 py-2.5 text-left transition-colors border-b last:border-b-0 ${
+                          onClick={() => setCustomEmail(prev => ({ ...prev, toEmail: u.email }))}
+                          className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-medium transition-colors border ${
                             customEmail.toEmail === u.email
-                              ? isDark
-                                ? "bg-violet-900/30 border-white/[0.06]"
-                                : "bg-violet-50 border-zinc-100"
+                              ? "bg-violet-600 text-white border-violet-600"
                               : isDark
-                                ? "border-white/[0.04] hover:bg-white/[0.04]"
-                                : "border-zinc-100 hover:bg-zinc-50"
+                                ? "bg-white/5 text-zinc-400 border-white/10 hover:bg-white/10"
+                                : "bg-zinc-100 text-zinc-600 border-zinc-200 hover:bg-zinc-200"
                           }`}
                         >
-                          <div className={`w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-bold flex-shrink-0 ${
-                            customEmail.toEmail === u.email ? "bg-violet-600 text-white" : isDark ? "bg-white/10 text-zinc-400" : "bg-zinc-100 text-zinc-600"
-                          }`}>
-                            {u.name?.charAt(0).toUpperCase()}
-                          </div>
-                          <div className="min-w-0">
-                            <div className={`text-xs font-semibold truncate ${isDark ? "text-white" : "text-zinc-800"}`}>{u.name}</div>
-                            <div className="text-[10px] text-zinc-500 truncate">{u.email}</div>
-                          </div>
-                          {customEmail.toEmail === u.email && (
-                            <div className="ml-auto text-violet-500 text-xs">✓</div>
-                          )}
+                          <span className={`w-4 h-4 rounded-full flex items-center justify-center text-[8px] font-bold flex-shrink-0 ${
+                            customEmail.toEmail === u.email ? "bg-white/20 text-white" : isDark ? "bg-white/10 text-zinc-400" : "bg-zinc-300 text-zinc-600"
+                          }`}>{u.name?.charAt(0).toUpperCase()}</span>
+                          {u.name?.split(" ")[0]}
                         </button>
-                      ))
-                  )}
-                  {allEmailUsers.length > 0 &&
-                    allEmailUsers.filter((u: any) =>
-                      !userEmailSearch ||
-                      u.name?.toLowerCase().includes(userEmailSearch.toLowerCase()) ||
-                      u.email?.toLowerCase().includes(userEmailSearch.toLowerCase())
-                    ).length === 0 && (
-                      <div className="px-4 py-3 text-xs text-zinc-500 text-center">No users match your search.</div>
-                    )
-                  }
-                </div>
-                {customEmail.toEmail && (
-                  <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-emerald-500/10 border border-emerald-500/20 mt-1">
-                    <span className="text-emerald-400 text-xs">✓</span>
-                    <span className="text-xs text-emerald-400 font-medium truncate">{customEmail.toEmail}</span>
+                      ))}
+                    </div>
                   </div>
                 )}
               </div>
