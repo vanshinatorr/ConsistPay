@@ -10,7 +10,8 @@ const {
   getAdminUsers,
   updateUser,
   syncUserStreakAdmin,
-  getEmailLogs
+  getEmailLogs,
+  sendCustomEmailAdmin
 } = require("../controllers/adminController");
 const { protect } = require("../middleware/authMiddleware");
 
@@ -37,5 +38,6 @@ router.post("/withdrawals/:id/reject", protect, adminProtect, rejectWithdrawal);
 
 // Email logs tracking endpoint
 router.get("/email-logs", protect, adminProtect, getEmailLogs);
+router.post("/send-email", protect, adminProtect, sendCustomEmailAdmin);
 
 module.exports = router;

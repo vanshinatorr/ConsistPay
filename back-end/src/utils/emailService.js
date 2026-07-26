@@ -395,6 +395,31 @@ const sendDormancyEmail = async (email, name) => {
   }
 };
 
+// 10. Send Custom Direct Email from Admin Console
+const sendCustomDirectEmail = async (email, name, subject, bodyContent) => {
+  const type = "custom";
+  try {
+    const html = wrapHTMLContent(
+      "Notification Alert",
+      subject,
+      `Hey ${name || "there"},<br><br>${bodyContent.replace(/\n/g, "<br>")}`
+    );
+
+    await transporter.sendMail({
+      from: `"ConsistPay" <${process.env.EMAIL_USER || "vanshvijay9784@gmail.com"}>`,
+      to: email,
+      subject,
+      html,
+    });
+    await logEmailOutcome(email, subject, type, "sent");
+    console.log(`[EmailService] Custom direct email sent to ${email}`);
+  } catch (err) {
+    console.error(`[EmailService] Custom direct email failed:`, err.message);
+    await logEmailOutcome(email, subject, type, "failed", err.message);
+    throw err;
+  }
+};
+
 module.exports = {
   sendWelcomeEmail,
   sendSetupReminderEmail,
@@ -406,4 +431,5 @@ module.exports = {
   sendMilestoneEmail,
   sendDormancyEmail,
   logEmailOutcome,
+  sendCustomDirectEmail,
 };

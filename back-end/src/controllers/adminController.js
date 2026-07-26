@@ -481,6 +481,31 @@ const getEmailLogs = async (req, res) => {
   }
 };
 
+const sendCustomEmailAdmin = async (req, res) => {
+  try {
+    const { toEmail, subject, body } = req.body;
+    if (!toEmail || !subject || !body) {
+      return res.status(400).json({ message: "Missing recipient, subject or email body." });
+    }
+
+    const user = await User.findOne({ email: toEmail.toLowerCase().trim() });
+    const { sendCustomDirectEmail } = require("../utils/emailService");
+    
+    // Dispatch email
+    await sendCustomDirectEmail(
+      toEmail.toLowerCase().trim(),
+      user ? user.name : "",
+      subject,
+      body
+    );
+
+    res.status(200).json({ message: "Custom email sent successfully!" });
+  } catch (error) {
+    console.error("Error sending custom admin email:", error);
+    res.status(500).json({ message: error.message || "Failed to send email." });
+  }
+};
+
 module.exports = { 
   getAdminStats, 
   getBetaRequests, 
@@ -491,5 +516,6 @@ module.exports = {
   getAdminUsers,
   updateUser,
   syncUserStreakAdmin,
-  getEmailLogs
+  getEmailLogs,
+  sendCustomEmailAdmin
 };

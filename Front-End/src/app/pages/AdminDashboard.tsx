@@ -136,6 +136,11 @@ export function AdminDashboard() {
   const [emailLogsPage, setEmailLogsPage] = useState<number>(1);
   const [emailLogsTotalPages, setEmailLogsTotalPages] = useState<number>(1);
   const [emailLogsLoading, setEmailLogsLoading] = useState<boolean>(false);
+
+  // Custom email composer states
+  const [showCustomEmailModal, setShowCustomEmailModal] = useState<boolean>(false);
+  const [customEmail, setCustomEmail] = useState({ toEmail: "", subject: "", body: "" });
+  const [customEmailSending, setCustomEmailSending] = useState<boolean>(false);
   
   // 3-State Admin Console Mode: default is day_demo (Mock Data) on load/refresh!
   const [adminState, setAdminState] = useState<"day_real" | "day_demo" | "dark_real">("day_demo");
@@ -491,6 +496,56 @@ export function AdminDashboard() {
       fetchEmailLogs();
     }
   }, [activeTab, token, isUserAdmin, emailLogsPage, emailLogsSearch, isDemoMode]);
+
+  const handleSendCustomEmail = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!customEmail.toEmail || !customEmail.subject || !customEmail.body) {
+      alert("Please fill out all fields.");
+      return;
+    }
+    if (isDemoMode) {
+      setEmailLogs(prev => [
+        {
+          _id: "demo-" + Date.now(),
+          email: customEmail.toEmail,
+          subject: customEmail.subject,
+          templateType: "custom",
+          status: "sent",
+          errorMessage: "",
+          timeAgo: "Just now"
+        },
+        ...prev
+      ]);
+      setShowCustomEmailModal(false);
+      alert("Demo: Custom email sent successfully!");
+      return;
+    }
+    try {
+      setCustomEmailSending(true);
+      const res = await fetch(`${API}/api/admin/send-email`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify(customEmail)
+      });
+      const data = await res.json();
+      if (res.ok) {
+        alert("Custom email sent successfully!");
+        setShowCustomEmailModal(false);
+        setCustomEmail({ toEmail: "", subject: "", body: "" });
+        fetchEmailLogs();
+      } else {
+        alert(data.message || "Failed to send custom email.");
+      }
+    } catch (err: any) {
+      console.error(err);
+      alert(err.message || "An error occurred.");
+    } finally {
+      setCustomEmailSending(false);
+    }
+  };
 
   const handleApproveWithdrawal = async (id: string) => {
     if (isDemoMode) {
@@ -1329,6 +1384,16 @@ export function AdminDashboard() {
 
                     {/* Search Field */}
                     <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => {
+                          setCustomEmail({ toEmail: "", subject: "", body: "" });
+                          setShowCustomEmailModal(true);
+                        }}
+                        className="h-9 px-4 bg-violet-650 hover:bg-violet-600 active:scale-95 text-white rounded-xl text-xs font-bold transition-all shadow-md shadow-violet-500/10 cursor-pointer flex items-center gap-1.5 shrink-0"
+                      >
+                        <Mail className="w-3.5 h-3.5" />
+                        Send Custom Email
+                      </button>
                       <input
                         type="text"
                         placeholder="Search by email..."
@@ -1684,6 +1749,102 @@ export function AdminDashboard() {
               </button>
             </div>
           </div>
+        </div>
+      )}
+
+      {/* 5. Custom Email Composer Modal Overlay */}
+      {showCustomEmailModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-300">
+          <form
+            onSubmit={handleSendCustomEmail}
+            className={`w-full max-w-lg rounded-3xl border p-6 space-y-6 shadow-2xl relative transition-all duration-300 ${
+              isDark ? "bg-[#0E0E12] border-white/[0.04] text-white" : "bg-white border-zinc-200 text-zinc-800"
+            }`}
+          >
+            <div className="space-y-1">
+              <h3 className={`text-base font-bold tracking-tight ${isDark ? "text-white" : "text-zinc-900"}`}>
+                Direct Custom Email
+              </h3>
+              <p className={`text-[10px] ${isDark ? "text-zinc-555" : "text-zinc-400"}`}>
+                Send a manual customized transaction alert to any user email.
+              </p>
+            </div>
+
+            <div className="space-y-4">
+              {/* Recipient */}
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-bold uppercase tracking-wider text-zinc-500">Recipient Email</label>
+                <input
+                  type="email"
+                  required
+                  placeholder="e.g. user@gmail.com"
+                  value={customEmail.toEmail}
+                  onChange={(e) => setCustomEmail(prev => ({ ...prev, toEmail: e.target.value }))}
+                  className={`w-full px-4 py-2.5 text-xs rounded-xl border outline-none transition-all ${
+                    isDark 
+                      ? "bg-[#0C0C0F] border-white/[0.08] text-white focus:border-violet-500/50" 
+                      : "bg-white border-zinc-200 text-zinc-800 focus:border-violet-500/50"
+                  }`}
+                />
+              </div>
+
+              {/* Subject */}
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-bold uppercase tracking-wider text-zinc-500">Subject Line</label>
+                <input
+                  type="text"
+                  required
+                  placeholder="e.g. Profile Setup Verification Nudge"
+                  value={customEmail.subject}
+                  onChange={(e) => setCustomEmail(prev => ({ ...prev, subject: e.target.value }))}
+                  className={`w-full px-4 py-2.5 text-xs rounded-xl border outline-none transition-all ${
+                    isDark 
+                      ? "bg-[#0C0C0F] border-white/[0.08] text-white focus:border-violet-500/50" 
+                      : "bg-white border-zinc-200 text-zinc-800 focus:border-violet-500/50"
+                  }`}
+                />
+              </div>
+
+              {/* Body */}
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-bold uppercase tracking-wider text-zinc-500">Email Body (Plain Text or HTML)</label>
+                <textarea
+                  required
+                  rows={6}
+                  placeholder="Type your message here. You can use standard HTML tags like <b>, <i>, or <a href='...'> if needed."
+                  value={customEmail.body}
+                  onChange={(e) => setCustomEmail(prev => ({ ...prev, body: e.target.value }))}
+                  className={`w-full px-4 py-3 text-xs rounded-xl border outline-none transition-all resize-none ${
+                    isDark 
+                      ? "bg-[#0C0C0F] border-white/[0.08] text-white focus:border-violet-500/50" 
+                      : "bg-white border-zinc-200 text-zinc-800 focus:border-violet-500/50"
+                  }`}
+                />
+              </div>
+            </div>
+
+            <div className="flex gap-3 pt-2">
+              <button
+                type="button"
+                disabled={customEmailSending}
+                onClick={() => setShowCustomEmailModal(false)}
+                className={`flex-1 py-2.5 rounded-xl text-xs font-bold border transition-all cursor-pointer ${
+                  isDark
+                    ? "border-white/[0.04] hover:bg-white/5 text-zinc-400"
+                    : "border-zinc-200 hover:bg-zinc-50 text-zinc-650"
+                }`}
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                disabled={customEmailSending}
+                className="flex-1 py-2.5 bg-violet-600 hover:bg-violet-500 disabled:opacity-50 text-white-force rounded-xl text-xs font-bold transition-all shadow-md shadow-violet-500/10 cursor-pointer flex items-center justify-center gap-1.5"
+              >
+                {customEmailSending ? "Sending..." : "Send Email"}
+              </button>
+            </div>
+          </form>
         </div>
       )}
     </div>
