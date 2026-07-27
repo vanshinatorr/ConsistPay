@@ -27,6 +27,22 @@ class PlatformService {
 
     const normalizedUsername = username.trim();
 
+    // ─── Step 0: Confirm the username actually exists on the platform ─────────
+    if (platform === "LeetCode") {
+      try {
+        const provider = getProvider(platform);
+        await provider.fetchProfile(normalizedUsername);
+        // If fetchProfile throws, username doesn't exist — caught below
+      } catch (profileErr) {
+        // Re-throw with a clearer, user-friendly message
+        throw new Error(
+          `We couldn't find a LeetCode account with username "${normalizedUsername}". ` +
+          `Double-check the exact spelling — it's case-sensitive (e.g., "MyUser123", not "myuser123"). ` +
+          `Find yours at leetcode.com/[yourUsername].`
+        );
+      }
+    }
+
     // Ensure the external account is not already verified and linked to another user
     const existingVerified = await PlatformLinkage.findOne({
       platform,

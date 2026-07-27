@@ -82,6 +82,38 @@ app.use("/api/admin", adminRoutes);
 const cronRoutes = require("./routes/cron");
 app.use("/api/crons", cronRoutes);
 
+// Debug: LeetCode API connectivity test (checks if Vercel can reach LeetCode from its servers)
+app.get("/api/debug/leetcode-test", async (req, res) => {
+  const username = req.query.username || "vanshinatorr";
+  try {
+    const QUERY = `query getUserProfile($username: String!) {
+      matchedUser(username: $username) {
+        username
+        profile { aboutMe }
+      }
+    }`;
+    const response = await fetch("https://leetcode.com/graphql", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Referer": "https://leetcode.com",
+        "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+      },
+      body: JSON.stringify({ query: QUERY, variables: { username } })
+    });
+    const json = await response.json();
+    res.json({
+      status: response.status,
+      userFound: !!json.data?.matchedUser,
+      aboutMe: json.data?.matchedUser?.profile?.aboutMe || "(empty)",
+      errors: json.errors || null,
+      raw: json
+    });
+  } catch(e) {
+    res.status(500).json({ error: e.message, type: "NETWORK_ERROR" });
+  }
+});
+
 // Catch-all JSON Error Handling Middleware (SaaS Production Resilience)
 app.use((err, req, res, next) => {
   console.error("Unhandled API Error:", err);
