@@ -383,6 +383,7 @@ const getLeaderboard = async (req, res) => {
           streak: 1,
           plan: 1,
           avatar: 1,
+          isSimulated: 1,
           completed: {
             $size: {
               $filter: {
@@ -432,9 +433,48 @@ const getLeaderboard = async (req, res) => {
         }
       },
       // 4. Re-sort final list to maintain streak order
-      { $sort: { streak: -1 } }
+      { $sort: { streak: -1, completed: -1 } }
     ]);
-    res.status(200).json(users);
+
+    // Apply smooth time-seeded live activity variation for simulated users
+    // (creates realistic daily/hourly rank shifts without mutating core DB data)
+    const now = new Date();
+    const hourOfDay = now.getHours(); // 0-23
+    const dayOfYear = Math.floor((now - new Date(now.getFullYear(), 0, 0)) / 1000 / 60 / 60 / 24);
+
+    const dynamicUsers = users.map((u) => {
+      if (!u.isSimulated) return u;
+
+      // Create a deterministic hash per simulated user per hour
+      const idNum = parseInt(u._id.toString().substring(18), 16) || 0;
+      const hourHash = (idNum + hourOfDay * 7 + dayOfYear * 13) % 24;
+
+      // Simulated solve unlocked as day progresses (after 10 AM, 3 PM, 8 PM IST)
+      let bonusSolves = 0;
+      let bonusStreak = 0;
+
+      if (hourHash < 8 && hourOfDay >= 10) {
+        bonusSolves = 1 + (idNum % 2);
+        bonusStreak = (idNum % 5 === 0) ? 1 : 0;
+      } else if (hourHash < 16 && hourOfDay >= 15) {
+        bonusSolves = 2 + (idNum % 3);
+        bonusStreak = (idNum % 3 === 0) ? 1 : 0;
+      } else if (hourOfDay >= 20) {
+        bonusSolves = 1 + (idNum % 4);
+      }
+
+      const finalCompleted = (u.completed || 0) + bonusSolves;
+      const finalStreak = (u.streak || 0) + bonusStreak;
+
+      return {
+        ...u,
+        streak: finalStreak,
+        completed: finalCompleted,
+        consistency: Math.min(99, Math.max(82, (u.consistency || 90) + (idNum % 5) - 2))
+      };
+    });
+
+    res.status(200).json(dynamicUsers);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

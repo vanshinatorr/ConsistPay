@@ -27,6 +27,7 @@ const userSchema = new mongoose.Schema(
     lastGraceCoinEarnedMonth: { type: String, default: "" },
     syncLockedUntil: { type: Date, default: null },
     setupReminderSent: { type: Boolean, default: false },
+    isSimulated: { type: Boolean, default: false },
   },
   { timestamps: true }
 );
