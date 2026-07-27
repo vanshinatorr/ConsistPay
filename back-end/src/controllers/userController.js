@@ -363,9 +363,9 @@ const getLeaderboard = async (req, res) => {
     const users = await User.aggregate([
       // 1. Filter out only completed onboarding users
       { $match: { onboardingComplete: true } },
-      // 2. Sort and limit early to prevent joining the entire collections in-memory
-      { $sort: { streak: -1 } },
-      { $limit: 50 },
+      // 2. Sort by streak desc, activeDeposit desc, createdAt desc to prioritize active commitment plan users
+      { $sort: { streak: -1, activeDeposit: -1, createdAt: -1 } },
+      { $limit: 100 },
       // 3. Perform lookup only for the 50 matched users
       {
         $lookup: {
