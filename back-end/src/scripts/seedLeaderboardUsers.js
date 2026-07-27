@@ -15,59 +15,60 @@ function daysAgo(n) {
   return d;
 }
 
+// 45 100% Authentic Indian profiles with clean, human, Gen-Z styled usernames (NO underscores!)
 const SIMULATED_PROFILES = [
-  // ── Cohort 1: High Performers (Joined ~30 Days Ago) ──
-  { name: "Rohan Sharma", username: "rohan_codes", email: "rohan.sharma.sim@consistpay.in", streak: 27, solvesPerDay: 4, joinedDaysAgo: 30, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Rohan" },
-  { name: "Devansh Gupta", username: "devansh.dsa", email: "devansh.gupta.sim@consistpay.in", streak: 25, solvesPerDay: 5, joinedDaysAgo: 29, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Devansh" },
-  { name: "Priyansh Mehta", username: "priyansh.cpp", email: "priyansh.m.sim@consistpay.in", streak: 23, solvesPerDay: 3, joinedDaysAgo: 28, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Priyansh" },
-  { name: "Aarav Patel", username: "aarav_dev", email: "aarav.patel.sim@consistpay.in", streak: 22, solvesPerDay: 4, joinedDaysAgo: 27, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Aarav" },
-  { name: "Tanisha Roy", username: "tanisha_bits", email: "tanisha.roy.sim@consistpay.in", streak: 20, solvesPerDay: 3, joinedDaysAgo: 26, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Tanisha" },
-  { name: "Ananya Verma", username: "ananya_algo", email: "ananya.verma.sim@consistpay.in", streak: 19, solvesPerDay: 4, joinedDaysAgo: 25, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Ananya" },
-  { name: "Tanmay Singh", username: "tanmay_nitro", email: "tanmay.singh.sim@consistpay.in", streak: 18, solvesPerDay: 5, joinedDaysAgo: 24, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Tanmay" },
-  { name: "Ishaan Joshi", username: "ishaan_07", email: "ishaan.joshi.sim@consistpay.in", streak: 17, solvesPerDay: 3, joinedDaysAgo: 24, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Ishaan" },
-  { name: "Kavya Menon", username: "kavya.dev", email: "kavya.menon.sim@consistpay.in", streak: 16, solvesPerDay: 4, joinedDaysAgo: 23, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Kavya" },
-  { name: "Aditya Kumar", username: "aditya_py", email: "aditya.kumar.sim@consistpay.in", streak: 16, solvesPerDay: 3, joinedDaysAgo: 22, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Aditya" },
-  { name: "Sneha Reddy", username: "sneha_algo", email: "sneha.reddy.sim@consistpay.in", streak: 15, solvesPerDay: 4, joinedDaysAgo: 21, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Sneha" },
-  { name: "Vikram Malhotra", username: "vikram_stack", email: "vikram.m.sim@consistpay.in", streak: 15, solvesPerDay: 3, joinedDaysAgo: 21, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Vikram" },
+  // ── Cohort 1: Joined ~30 Days Ago (High Streaks: 15–27 days) ──
+  { name: "Rohan Sharma", username: "rohansharma", email: "rohan.sharma.sim@consistpay.in", streak: 27, solvesPerDay: 4, joinedDaysAgo: 30, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Rohan" },
+  { name: "Devansh Gupta", username: "devanshhh", email: "devansh.gupta.sim@consistpay.in", streak: 25, solvesPerDay: 5, joinedDaysAgo: 29, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Devansh" },
+  { name: "Priyansh Mehta", username: "priyansh04", email: "priyansh.m.sim@consistpay.in", streak: 23, solvesPerDay: 3, joinedDaysAgo: 28, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Priyansh" },
+  { name: "Aarav Patel", username: "aaravp", email: "aarav.patel.sim@consistpay.in", streak: 22, solvesPerDay: 4, joinedDaysAgo: 27, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Aarav" },
+  { name: "Tanisha Roy", username: "tanisharoy", email: "tanisha.roy.sim@consistpay.in", streak: 20, solvesPerDay: 3, joinedDaysAgo: 26, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Tanisha" },
+  { name: "Ananya Verma", username: "ananyav", email: "ananya.verma.sim@consistpay.in", streak: 19, solvesPerDay: 4, joinedDaysAgo: 25, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Ananya" },
+  { name: "Tanmay Singh", username: "tanmayy", email: "tanmay.singh.sim@consistpay.in", streak: 18, solvesPerDay: 5, joinedDaysAgo: 24, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Tanmay" },
+  { name: "Ishaan Joshi", username: "ishaanj", email: "ishaan.joshi.sim@consistpay.in", streak: 17, solvesPerDay: 3, joinedDaysAgo: 24, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Ishaan" },
+  { name: "Kavya Menon", username: "kavyamm", email: "kavya.menon.sim@consistpay.in", streak: 16, solvesPerDay: 4, joinedDaysAgo: 23, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Kavya" },
+  { name: "Aditya Kumar", username: "adityak", email: "aditya.kumar.sim@consistpay.in", streak: 16, solvesPerDay: 3, joinedDaysAgo: 22, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Aditya" },
+  { name: "Sneha Reddy", username: "snehared", email: "sneha.reddy.sim@consistpay.in", streak: 15, solvesPerDay: 4, joinedDaysAgo: 21, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Sneha" },
+  { name: "Vikram Malhotra", username: "vikramm", email: "vikram.m.sim@consistpay.in", streak: 15, solvesPerDay: 3, joinedDaysAgo: 21, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Vikram" },
 
-  // ── Cohort 2: Solid Mid-Tier (Joined ~15 Days Ago) ──
-  { name: "Riddhima Sen", username: "riddhima_cs", email: "riddhima.sen.sim@consistpay.in", streak: 14, solvesPerDay: 3, joinedDaysAgo: 17, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Riddhima" },
-  { name: "Siddharth Nair", username: "sid_builds", email: "siddharth.n.sim@consistpay.in", streak: 13, solvesPerDay: 4, joinedDaysAgo: 16, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Siddharth" },
-  { name: "Mehul Chawla", username: "mehul_leetcoder", email: "mehul.chawla.sim@consistpay.in", streak: 12, solvesPerDay: 3, joinedDaysAgo: 15, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Mehul" },
-  { name: "Shreya Agarwal", username: "shreya_codez", email: "shreya.a.sim@consistpay.in", streak: 11, solvesPerDay: 4, joinedDaysAgo: 14, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Shreya" },
-  { name: "Yashvardhan Rao", username: "yash_dsa_pro", email: "yash.rao.sim@consistpay.in", streak: 10, solvesPerDay: 3, joinedDaysAgo: 13, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Yash" },
-  { name: "Nisha Kapoor", username: "nisha_geek", email: "nisha.kapoor.sim@consistpay.in", streak: 10, solvesPerDay: 2, joinedDaysAgo: 13, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Nisha" },
-  { name: "Karthik Pillai", username: "karthik_kernel", email: "karthik.p.sim@consistpay.in", streak: 9, solvesPerDay: 3, joinedDaysAgo: 12, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Karthik" },
-  { name: "Avani Deshmukh", username: "avani_dsa", email: "avani.d.sim@consistpay.in", streak: 9, solvesPerDay: 4, joinedDaysAgo: 12, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Avani" },
-  { name: "Harsh Vardhan", username: "harsh_codex", email: "harsh.v.sim@consistpay.in", streak: 8, solvesPerDay: 2, joinedDaysAgo: 11, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Harsh" },
-  { name: "Diya Banerjee", username: "diya_logic", email: "diya.b.sim@consistpay.in", streak: 8, solvesPerDay: 3, joinedDaysAgo: 11, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Diya" },
-  { name: "Utkarsh Srivastava", username: "utkarsh_dev", email: "utkarsh.s.sim@consistpay.in", streak: 8, solvesPerDay: 3, joinedDaysAgo: 10, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Utkarsh" },
-  { name: "Prisha Saxena", username: "prisha_code", email: "prisha.saxena.sim@consistpay.in", streak: 8, solvesPerDay: 2, joinedDaysAgo: 10, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Prisha" },
-  { name: "Manav Shah", username: "manav_byte", email: "manav.shah.sim@consistpay.in", streak: 7, solvesPerDay: 3, joinedDaysAgo: 9, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Manav" },
+  // ── Cohort 2: Joined ~15 Days Ago (Medium Streaks: 8–14 days) ──
+  { name: "Riddhima Sen", username: "riddhimas", email: "riddhima.sen.sim@consistpay.in", streak: 14, solvesPerDay: 3, joinedDaysAgo: 17, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Riddhima" },
+  { name: "Siddharth Nair", username: "sidnair", email: "siddharth.n.sim@consistpay.in", streak: 13, solvesPerDay: 4, joinedDaysAgo: 16, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Siddharth" },
+  { name: "Mehul Chawla", username: "mehulc", email: "mehul.chawla.sim@consistpay.in", streak: 12, solvesPerDay: 3, joinedDaysAgo: 15, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Mehul" },
+  { name: "Shreya Agarwal", username: "shreyax", email: "shreya.a.sim@consistpay.in", streak: 11, solvesPerDay: 4, joinedDaysAgo: 14, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Shreya" },
+  { name: "Yashvardhan Rao", username: "yashv", email: "yash.rao.sim@consistpay.in", streak: 10, solvesPerDay: 3, joinedDaysAgo: 13, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Yash" },
+  { name: "Nisha Kapoor", username: "nishak", email: "nisha.kapoor.sim@consistpay.in", streak: 10, solvesPerDay: 2, joinedDaysAgo: 13, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Nisha" },
+  { name: "Karthik Pillai", username: "karthikp", email: "karthik.p.sim@consistpay.in", streak: 9, solvesPerDay: 3, joinedDaysAgo: 12, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Karthik" },
+  { name: "Avani Deshmukh", username: "avaniii", email: "avani.d.sim@consistpay.in", streak: 9, solvesPerDay: 4, joinedDaysAgo: 12, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Avani" },
+  { name: "Harsh Vardhan", username: "harshv", email: "harsh.v.sim@consistpay.in", streak: 8, solvesPerDay: 2, joinedDaysAgo: 11, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Harsh" },
+  { name: "Diya Banerjee", username: "diyab", email: "diya.b.sim@consistpay.in", streak: 8, solvesPerDay: 3, joinedDaysAgo: 11, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Diya" },
+  { name: "Utkarsh Srivastava", username: "utkarshs", email: "utkarsh.s.sim@consistpay.in", streak: 8, solvesPerDay: 3, joinedDaysAgo: 10, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Utkarsh" },
+  { name: "Prisha Saxena", username: "prishas", email: "prisha.saxena.sim@consistpay.in", streak: 8, solvesPerDay: 2, joinedDaysAgo: 10, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Prisha" },
+  { name: "Manav Shah", username: "manavs", email: "manav.shah.sim@consistpay.in", streak: 7, solvesPerDay: 3, joinedDaysAgo: 9, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Manav" },
 
-  // ── Cohort 3: Steady Starters (Joined ~5–7 Days Ago) ──
-  { name: "Samarth Jain", username: "samarth_cpp", email: "samarth.jain.sim@consistpay.in", streak: 7, solvesPerDay: 2, joinedDaysAgo: 8, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Samarth" },
-  { name: "Vaidehi Kulkarni", username: "vaidehi_codes", email: "vaidehi.k.sim@consistpay.in", streak: 6, solvesPerDay: 3, joinedDaysAgo: 7, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Vaidehi" },
-  { name: "Chirag Bhatt", username: "chirag_algo", email: "chirag.bhatt.sim@consistpay.in", streak: 6, solvesPerDay: 2, joinedDaysAgo: 7, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Chirag" },
-  { name: "Palak Tiwari", username: "palak_dev", email: "palak.tiwari.sim@consistpay.in", streak: 5, solvesPerDay: 3, joinedDaysAgo: 6, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Palak" },
-  { name: "Aaryan Sinha", username: "aaryan_solver", email: "aaryan.s.sim@consistpay.in", streak: 5, solvesPerDay: 2, joinedDaysAgo: 6, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Aaryan" },
-  { name: "Nidhi Tripathi", username: "nidhi_cs", email: "nidhi.t.sim@consistpay.in", streak: 5, solvesPerDay: 3, joinedDaysAgo: 6, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Nidhi" },
-  { name: "Gaurav Pandey", username: "gaurav_builds", email: "gaurav.p.sim@consistpay.in", streak: 4, solvesPerDay: 2, joinedDaysAgo: 5, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Gaurav" },
-  { name: "Ananya Iyer", username: "ananya_iyer_dev", email: "ananya.i.sim@consistpay.in", streak: 4, solvesPerDay: 3, joinedDaysAgo: 5, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=AnanyaIyer" },
-  { name: "Varun Nambiar", username: "varun_n", email: "varun.n.sim@consistpay.in", streak: 4, solvesPerDay: 2, joinedDaysAgo: 5, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Varun" },
-  { name: "Riya Singhal", username: "riya_codes", email: "riya.singhal.sim@consistpay.in", streak: 4, solvesPerDay: 2, joinedDaysAgo: 4, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Riya" },
-  { name: "Kunal Mehra", username: "kunal_dsa", email: "kunal.m.sim@consistpay.in", streak: 3, solvesPerDay: 3, joinedDaysAgo: 4, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Kunal" },
-  { name: "Shruti Hegde", username: "shruti_geek", email: "shruti.h.sim@consistpay.in", streak: 3, solvesPerDay: 2, joinedDaysAgo: 4, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Shruti" },
+  // ── Cohort 3: Joined ~5–7 Days Ago (Streaks: 4–7 days) ──
+  { name: "Samarth Jain", username: "samarthj", email: "samarth.jain.sim@consistpay.in", streak: 7, solvesPerDay: 2, joinedDaysAgo: 8, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Samarth" },
+  { name: "Vaidehi Kulkarni", username: "vaidehik", email: "vaidehi.k.sim@consistpay.in", streak: 6, solvesPerDay: 3, joinedDaysAgo: 7, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Vaidehi" },
+  { name: "Chirag Bhatt", username: "chiragb", email: "chirag.bhatt.sim@consistpay.in", streak: 6, solvesPerDay: 2, joinedDaysAgo: 7, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Chirag" },
+  { name: "Palak Tiwari", username: "palakt", email: "palak.tiwari.sim@consistpay.in", streak: 5, solvesPerDay: 3, joinedDaysAgo: 6, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Palak" },
+  { name: "Aaryan Sinha", username: "aaryans", email: "aaryan.s.sim@consistpay.in", streak: 5, solvesPerDay: 2, joinedDaysAgo: 6, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Aaryan" },
+  { name: "Nidhi Tripathi", username: "nidhit", email: "nidhi.t.sim@consistpay.in", streak: 5, solvesPerDay: 3, joinedDaysAgo: 6, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Nidhi" },
+  { name: "Gaurav Pandey", username: "gauravp", email: "gaurav.p.sim@consistpay.in", streak: 4, solvesPerDay: 2, joinedDaysAgo: 5, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Gaurav" },
+  { name: "Ananya Iyer", username: "ananyaiyer", email: "ananya.i.sim@consistpay.in", streak: 4, solvesPerDay: 3, joinedDaysAgo: 5, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=AnanyaIyer" },
+  { name: "Varun Nambiar", username: "varunn", email: "varun.n.sim@consistpay.in", streak: 4, solvesPerDay: 2, joinedDaysAgo: 5, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Varun" },
+  { name: "Riya Singhal", username: "riyas", email: "riya.singhal.sim@consistpay.in", streak: 4, solvesPerDay: 2, joinedDaysAgo: 4, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Riya" },
+  { name: "Kunal Mehra", username: "kunalm", email: "kunal.m.sim@consistpay.in", streak: 3, solvesPerDay: 3, joinedDaysAgo: 4, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Kunal" },
+  { name: "Shruti Hegde", username: "shrutih", email: "shruti.h.sim@consistpay.in", streak: 3, solvesPerDay: 2, joinedDaysAgo: 4, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Shruti" },
 
-  // ── Cohort 4: Recent Challengers (Joined 1–3 Days Ago) ──
-  { name: "Kabir Gill", username: "kabir_codes", email: "kabir.g.sim@consistpay.in", streak: 3, solvesPerDay: 2, joinedDaysAgo: 3, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Kabir" },
-  { name: "Trisha Dutt", username: "trisha_algo", email: "trisha.d.sim@consistpay.in", streak: 3, solvesPerDay: 3, joinedDaysAgo: 3, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Trisha" },
-  { name: "Abhinav Rastogi", username: "abhinav_dev", email: "abhinav.r.sim@consistpay.in", streak: 2, solvesPerDay: 2, joinedDaysAgo: 2, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Abhinav" },
-  { name: "Isha Mahajan", username: "isha_dsa", email: "isha.m.sim@consistpay.in", streak: 2, solvesPerDay: 2, joinedDaysAgo: 2, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Isha" },
-  { name: "Tushar Bhatia", username: "tushar_cpp", email: "tushar.b.sim@consistpay.in", streak: 2, solvesPerDay: 1, joinedDaysAgo: 2, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Tushar" },
-  { name: "Sanya Roy", username: "sanya_builds", email: "sanya.r.sim@consistpay.in", streak: 1, solvesPerDay: 2, joinedDaysAgo: 1, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Sanya" },
-  { name: "Pranav Pillai", username: "pranav_codes", email: "pranav.p.sim@consistpay.in", streak: 1, solvesPerDay: 1, joinedDaysAgo: 1, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Pranav" },
-  { name: "Bhavya Gupta", username: "bhavya_dsa", email: "bhavya.g.sim@consistpay.in", streak: 1, solvesPerDay: 2, joinedDaysAgo: 1, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Bhavya" },
+  // ── Cohort 4: Joined 1–3 Days Ago (Fresh Streaks: 1–3 days) ──
+  { name: "Kabir Gill", username: "kabirg", email: "kabir.g.sim@consistpay.in", streak: 3, solvesPerDay: 2, joinedDaysAgo: 3, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Kabir" },
+  { name: "Trisha Dutt", username: "trishad", email: "trisha.d.sim@consistpay.in", streak: 3, solvesPerDay: 3, joinedDaysAgo: 3, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Trisha" },
+  { name: "Abhinav Rastogi", username: "abhinavr", email: "abhinav.r.sim@consistpay.in", streak: 2, solvesPerDay: 2, joinedDaysAgo: 2, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Abhinav" },
+  { name: "Isha Mahajan", username: "isham", email: "isha.m.sim@consistpay.in", streak: 2, solvesPerDay: 2, joinedDaysAgo: 2, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Isha" },
+  { name: "Tushar Bhatia", username: "tusharb", email: "tushar.b.sim@consistpay.in", streak: 2, solvesPerDay: 1, joinedDaysAgo: 2, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Tushar" },
+  { name: "Sanya Roy", username: "sanyaroy", email: "sanya.r.sim@consistpay.in", streak: 1, solvesPerDay: 2, joinedDaysAgo: 1, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Sanya" },
+  { name: "Pranav Pillai", username: "pranavp", email: "pranav.p.sim@consistpay.in", streak: 1, solvesPerDay: 1, joinedDaysAgo: 1, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Pranav" },
+  { name: "Bhavya Gupta", username: "bhavyag", email: "bhavya.g.sim@consistpay.in", streak: 1, solvesPerDay: 2, joinedDaysAgo: 1, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Bhavya" },
 ];
 
 const SAMPLE_DSA_PROBLEMS = [
@@ -92,7 +93,7 @@ const SAMPLE_DSA_PROBLEMS = [
 ];
 
 async function seedSimulatedUsers() {
-  console.log("=== SEEDING 45 REALISTIC SIMULATED INDIAN LEADERBOARD USERS ===");
+  console.log("=== SEEDING 45 REALISTIC SIMULATED INDIAN LEADERBOARD USERS (NO UNDERSCORES) ===");
   await mongoose.connect(process.env.MONGO_URI);
 
   // Clean up existing simulated users
