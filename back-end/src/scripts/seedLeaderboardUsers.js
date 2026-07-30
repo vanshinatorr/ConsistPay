@@ -69,6 +69,13 @@ const SIMULATED_PROFILES = [
   { name: "Sanya Roy", username: "sanyaroy", email: "sanya.r.sim@consistpay.in", streak: 1, solvesPerDay: 2, joinedDaysAgo: 1, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Sanya" },
   { name: "Pranav Pillai", username: "pranavp", email: "pranav.p.sim@consistpay.in", streak: 1, solvesPerDay: 1, joinedDaysAgo: 1, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Pranav" },
   { name: "Bhavya Gupta", username: "bhavyag", email: "bhavya.g.sim@consistpay.in", streak: 1, solvesPerDay: 2, joinedDaysAgo: 1, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Bhavya" },
+
+  // Additional 5 profiles to bring total simulated count to 50 (57 users total)
+  { name: "Mayank Bhatt", username: "mayankb", email: "mayank.b.sim@consistpay.in", streak: 5, solvesPerDay: 2, joinedDaysAgo: 6, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Mayank" },
+  { name: "Khushi Sharma", username: "khushis", email: "khushi.s.sim@consistpay.in", streak: 4, solvesPerDay: 3, joinedDaysAgo: 5, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Khushi" },
+  { name: "Yashasvi Gupta", username: "yashasvig", email: "yashasvi.g.sim@consistpay.in", streak: 3, solvesPerDay: 2, joinedDaysAgo: 4, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Yashasvi" },
+  { name: "Aryan Varma", username: "aryanv", email: "aryan.v.sim@consistpay.in", streak: 2, solvesPerDay: 2, joinedDaysAgo: 3, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Aryan" },
+  { name: "Rohan Rastogi", username: "rohanr", email: "rohan.r.sim@consistpay.in", streak: 1, solvesPerDay: 1, joinedDaysAgo: 1, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=RohanR" },
 ];
 
 const SAMPLE_DSA_PROBLEMS = [
