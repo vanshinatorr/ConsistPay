@@ -280,7 +280,7 @@ export function ActiveBattle() {
             <div className="flex justify-between items-end">
               <div>
                 <p className="text-xs text-zinc-500 uppercase tracking-widest font-bold mb-1">Score (Days)</p>
-                <div className="text-4xl font-black">{myData.score} <span className="text-sm font-medium text-zinc-500">/ {currentDay}</span></div>
+                <div className="text-4xl font-black">{myData.score} <span className="text-sm font-medium text-zinc-500">/ {duration}</span></div>
               </div>
             </div>
           </div>
@@ -315,7 +315,7 @@ export function ActiveBattle() {
             <div className="flex justify-between items-end flex-row-reverse text-right">
               <div>
                 <p className="text-xs text-zinc-500 uppercase tracking-widest font-bold mb-1">Score (Days)</p>
-                <div className="text-4xl font-black">{oppData.score} <span className="text-sm font-medium text-zinc-500">/ {currentDay}</span></div>
+                <div className="text-4xl font-black">{oppData.score} <span className="text-sm font-medium text-zinc-500">/ {duration}</span></div>
               </div>
             </div>
           </div>

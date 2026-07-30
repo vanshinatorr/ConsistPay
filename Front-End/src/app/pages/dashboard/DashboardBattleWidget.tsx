@@ -383,7 +383,7 @@ export function DashboardBattleWidget({ onRefreshRequest, hideEmptyState = false
                               <span className="text-sm font-medium text-zinc-800 dark:text-white flex items-center gap-2">
                                 {myData.name || "You"} <span className="text-xs text-zinc-500 font-normal">(You)</span>
                               </span>
-                              <span className="text-xs font-semibold text-zinc-500 dark:text-zinc-400">{myData.score} / {challengeItem.currentDay} Days</span>
+                              <span className="text-xs font-semibold text-zinc-500 dark:text-zinc-400">{myData.score} / {challengeItem.duration} Days</span>
                            </div>
                            <div className="w-full h-1 bg-zinc-150 dark:bg-zinc-800/80 rounded-full overflow-hidden">
                               <div className="h-full bg-indigo-600 dark:bg-indigo-400 rounded-full transition-all duration-500" style={{ width: `${myProgressPercent}%` }} />
@@ -399,7 +399,7 @@ export function DashboardBattleWidget({ onRefreshRequest, hideEmptyState = false
                         <div className="flex-1">
                            <div className="flex justify-between items-center mb-1.5">
                               <span className="text-sm font-medium text-zinc-800 dark:text-white">{oppData.name || "Opponent"}</span>
-                              <span className="text-xs font-semibold text-zinc-500 dark:text-zinc-400">{oppData.score} / {challengeItem.currentDay} Days</span>
+                              <span className="text-xs font-semibold text-zinc-500 dark:text-zinc-400">{oppData.score} / {challengeItem.duration} Days</span>
                            </div>
                            <div className="w-full h-1 bg-zinc-150 dark:bg-zinc-800/80 rounded-full overflow-hidden">
                               <div className="h-full bg-zinc-300 dark:bg-zinc-600 rounded-full transition-all duration-500" style={{ width: `${oppProgressPercent}%` }} />
