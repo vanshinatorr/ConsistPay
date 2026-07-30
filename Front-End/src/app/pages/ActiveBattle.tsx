@@ -6,7 +6,7 @@ export function ActiveBattle() {
   const { id } = useParams();
   const navigate = useNavigate();
   useEffect(() => {
-    document.title = "Active Battle Arena | ConsistPay";
+    document.title = "1v1 Battle Arena | ConsistPay";
   }, []);
 
   const [challenge, setChallenge] = useState<any>(null);
