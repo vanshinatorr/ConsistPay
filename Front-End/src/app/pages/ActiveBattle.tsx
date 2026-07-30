@@ -129,7 +129,7 @@ export function ActiveBattle() {
   let leadColor = "text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 border-emerald-500/20";
   if (myData.score === oppData.score) {
     leadText = "Tied Score";
-    leadColor = "text-violet-600 dark:text-violet-400 bg-violet-500/10 border-violet-500/20";
+    leadColor = "text-zinc-700 dark:text-zinc-300 bg-zinc-100 dark:bg-white/5 border-zinc-200 dark:border-white/10";
   } else if (myData.score > oppData.score) {
     const diff = myData.score - oppData.score;
     leadText = `You Lead (+${diff})`;
@@ -296,9 +296,8 @@ export function ActiveBattle() {
           </div>
 
           {/* Clean 3-Column Table Header */}
-          <div className="hidden md:grid grid-cols-12 gap-3 pb-3 mb-2 text-xs font-bold text-zinc-400 uppercase tracking-wider border-b border-zinc-200 dark:border-white/5 px-3">
+          <div className="hidden md:grid grid-cols-12 gap-3 pb-3 mb-2 text-[11px] font-mono font-bold text-zinc-400 uppercase tracking-widest border-b border-zinc-200 dark:border-white/5 px-3">
             <div className="col-span-5 flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-violet-500" />
               <span>{myData.name || "You"}</span>
             </div>
             <div className="col-span-2 text-center">
@@ -306,7 +305,6 @@ export function ActiveBattle() {
             </div>
             <div className="col-span-5 flex items-center justify-end gap-2 text-right">
               <span>{oppData.name}</span>
-              <span className="w-2 h-2 rounded-full bg-emerald-500" />
             </div>
           </div>
 
@@ -321,10 +319,10 @@ export function ActiveBattle() {
               return (
                 <div
                   key={dayItem.dayNumber}
-                  className={`py-2.5 px-3 rounded-xl transition-colors grid grid-cols-1 md:grid-cols-12 gap-3 items-center ${
+                  className={`py-2.5 px-3 rounded-xl transition-all grid grid-cols-1 md:grid-cols-12 gap-3 items-center ${
                     isCurrent
-                      ? "bg-violet-50/60 dark:bg-violet-500/10 border border-violet-200 dark:border-violet-500/20 my-1"
-                      : "hover:bg-zinc-50 dark:hover:bg-white/[0.02]"
+                      ? "bg-emerald-500/[0.04] dark:bg-emerald-500/10 border border-emerald-500/20 dark:border-emerald-500/30 my-1 shadow-xs"
+                      : "hover:bg-zinc-100/60 dark:hover:bg-white/[0.02]"
                   }`}
                 >
                   {/* Left: You */}
@@ -355,7 +353,7 @@ export function ActiveBattle() {
                   <div className="md:col-span-2 flex items-center justify-center">
                     <span className={`px-2.5 py-0.5 rounded-full text-[11px] font-mono font-bold border ${
                       isCurrent
-                        ? "bg-violet-100 dark:bg-violet-500/20 border-violet-300 dark:border-violet-500/40 text-violet-700 dark:text-violet-300"
+                        ? "bg-emerald-500/10 dark:bg-emerald-500/20 border-emerald-500/30 text-emerald-700 dark:text-emerald-400"
                         : "bg-zinc-100 dark:bg-white/5 border-zinc-200 dark:border-white/10 text-zinc-600 dark:text-zinc-400"
                     }`}>
                       Day {dayItem.dayNumber}
