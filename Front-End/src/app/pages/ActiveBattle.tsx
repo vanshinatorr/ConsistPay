@@ -222,7 +222,6 @@ export function ActiveBattle() {
               <div className="min-w-0">
                 <div className="flex items-center gap-2">
                   <h3 className="font-bold text-lg text-zinc-900 dark:text-white truncate">{myData.name || "You"}</h3>
-                  <span className="text-[10px] font-bold text-violet-600 dark:text-violet-400 bg-violet-500/10 px-2 py-0.5 rounded">You</span>
                 </div>
                 <div className="mt-1 flex items-baseline gap-1.5">
                   <span className="text-2xl font-black text-zinc-900 dark:text-white">{myData.score}</span>
@@ -251,7 +250,6 @@ export function ActiveBattle() {
               </div>
               <div className="min-w-0">
                 <div className="flex items-center justify-end gap-2">
-                  <span className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded">Opponent</span>
                   <h3 className="font-bold text-lg text-zinc-900 dark:text-white truncate">{oppData.name}</h3>
                 </div>
                 <div className="mt-1 flex items-baseline justify-end gap-1.5">
@@ -301,13 +299,13 @@ export function ActiveBattle() {
           <div className="hidden md:grid grid-cols-12 gap-3 pb-3 mb-2 text-xs font-bold text-zinc-400 uppercase tracking-wider border-b border-zinc-200 dark:border-white/5 px-3">
             <div className="col-span-5 flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-violet-500" />
-              <span>{myData.name || "You"} (You)</span>
+              <span>{myData.name || "You"}</span>
             </div>
             <div className="col-span-2 text-center">
               <span>Timeline</span>
             </div>
             <div className="col-span-5 flex items-center justify-end gap-2 text-right">
-              <span>{oppData.name} (Opponent)</span>
+              <span>{oppData.name}</span>
               <span className="w-2 h-2 rounded-full bg-emerald-500" />
             </div>
           </div>
