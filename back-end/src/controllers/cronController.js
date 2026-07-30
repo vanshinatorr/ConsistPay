@@ -108,24 +108,15 @@ const runAutomatedGlobalSync = async (req, res) => {
   try {
     const { syncUserStreak } = require("../utils/streakHelper");
     
-    // Find all users with linked platform accounts or active challenges
-    const activeUsers = await User.find({
-      $or: [
-        { leetcodeUsername: { $exists: true, $ne: "" } },
-        { gfgUsername: { $exists: true, $ne: "" } },
-        { code360Username: { $exists: true, $ne: "" } },
-        { "platforms.leetcode.username": { $exists: true, $ne: "" } },
-        { "platforms.gfg.username": { $exists: true, $ne: "" } },
-        { activeDeposit: { $gt: 0 } }
-      ]
-    });
+    // Find ALL registered users in the database for background auto-sync
+    const allUsers = await User.find({});
 
-    console.log(`[Auto-Sync Cron] Starting background sync for ${activeUsers.length} users...`);
+    console.log(`[Auto-Sync Cron] Starting background sync for ALL ${allUsers.length} registered users...`);
 
     let syncedCount = 0;
     let failedCount = 0;
 
-    for (const user of activeUsers) {
+    for (const user of allUsers) {
       try {
         await syncUserStreak(user._id);
         syncedCount++;
@@ -135,11 +126,11 @@ const runAutomatedGlobalSync = async (req, res) => {
       }
     }
 
-    console.log(`[Auto-Sync Cron] Completed background sync. Synced: ${syncedCount}, Failed: ${failedCount}`);
+    console.log(`[Auto-Sync Cron] Completed global background sync. Synced: ${syncedCount}, Failed: ${failedCount}`);
 
     res.status(200).json({
       message: "Automated global sync cron finished successfully.",
-      totalUsers: activeUsers.length,
+      totalUsers: allUsers.length,
       syncedCount,
       failedCount
     });
