@@ -148,16 +148,10 @@ export function ActiveBattle() {
 
   const getPlatformBadge = (platform?: string) => {
     const p = (platform || "").toLowerCase();
-    if (p.includes("leetcode")) {
-      return <span className="px-2 py-0.5 rounded text-[10px] font-semibold bg-amber-500/10 dark:bg-amber-500/15 border border-amber-500/20 text-amber-700 dark:text-amber-400">LeetCode</span>;
-    }
-    if (p.includes("geeks") || p.includes("gfg")) {
-      return <span className="px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-500/10 dark:bg-emerald-500/15 border border-emerald-500/20 text-emerald-700 dark:text-emerald-400">GeeksforGeeks</span>;
-    }
-    if (p.includes("code360")) {
-      return <span className="px-2 py-0.5 rounded text-[10px] font-semibold bg-orange-500/10 dark:bg-orange-500/15 border border-orange-500/20 text-orange-700 dark:text-orange-400">Code360</span>;
-    }
-    return <span className="px-2 py-0.5 rounded text-[10px] font-semibold bg-violet-500/10 dark:bg-violet-500/15 border border-violet-500/20 text-violet-700 dark:text-violet-400">DSA Solve</span>;
+    if (p === 'leetcode' || p === 'lc') return <span className="px-1.5 py-0.5 text-[9px] font-mono font-bold text-amber-500 bg-amber-500/10 rounded border border-amber-500/20 shrink-0">LC</span>;
+    if (p === 'geeksforgeeks' || p === 'gfg') return <span className="px-1.5 py-0.5 text-[9px] font-mono font-bold text-emerald-500 bg-emerald-500/10 rounded border border-emerald-500/20 shrink-0">GFG</span>;
+    if (p === 'code360' || p === 'c360') return <span className="px-1.5 py-0.5 text-[9px] font-mono font-bold text-blue-500 bg-blue-500/10 rounded border border-blue-500/20 shrink-0">C360</span>;
+    return null;
   };
 
   return (
@@ -306,7 +300,22 @@ export function ActiveBattle() {
             </button>
           </div>
 
-          <div className="divide-y divide-zinc-100 dark:divide-white/5 border-t border-zinc-100 dark:border-white/5 pt-2">
+          {/* Clean 3-Column Table Header */}
+          <div className="hidden md:grid grid-cols-12 gap-3 pb-3 mb-2 text-xs font-bold text-zinc-400 uppercase tracking-wider border-b border-zinc-200 dark:border-white/5 px-3">
+            <div className="col-span-5 flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-violet-500" />
+              <span>{myData.name || "You"} (You)</span>
+            </div>
+            <div className="col-span-2 text-center">
+              <span>Timeline</span>
+            </div>
+            <div className="col-span-5 flex items-center justify-end gap-2 text-right">
+              <span>{oppData.name} (Opponent)</span>
+              <span className="w-2 h-2 rounded-full bg-emerald-500" />
+            </div>
+          </div>
+
+          <div className="divide-y divide-zinc-100 dark:divide-white/5 pt-1">
             {displayGrid.map((dayItem: any) => {
               const myStatus = isCreator ? dayItem.creatorStatus : dayItem.opponentStatus;
               const myProblem = isCreator ? dayItem.creatorProblem : dayItem.opponentProblem;
@@ -317,14 +326,14 @@ export function ActiveBattle() {
               return (
                 <div
                   key={dayItem.dayNumber}
-                  className={`py-3 px-3 rounded-xl transition-colors flex flex-col md:flex-row md:items-center justify-between gap-3 ${
+                  className={`py-2.5 px-3 rounded-xl transition-colors grid grid-cols-1 md:grid-cols-12 gap-3 items-center ${
                     isCurrent
-                      ? "bg-violet-50/60 dark:bg-violet-500/10 border border-violet-200 dark:border-violet-500/20"
+                      ? "bg-violet-50/60 dark:bg-violet-500/10 border border-violet-200 dark:border-violet-500/20 my-1"
                       : "hover:bg-zinc-50 dark:hover:bg-white/[0.02]"
                   }`}
                 >
                   {/* Left: You */}
-                  <div className="flex-1 flex items-center gap-2.5 min-w-0">
+                  <div className="md:col-span-5 flex items-center gap-2.5 min-w-0">
                     {myStatus === "completed" ? (
                       <CheckCircle className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
                     ) : myStatus === "missed" ? (
@@ -336,9 +345,8 @@ export function ActiveBattle() {
                     )}
 
                     <div className="min-w-0 flex items-center gap-2">
-                      <span className="text-xs font-bold text-zinc-800 dark:text-zinc-200 shrink-0">You:</span>
                       {myStatus === "completed" ? (
-                        <span className="text-xs font-medium text-zinc-900 dark:text-white truncate" title={myProblem}>
+                        <span className="text-xs font-semibold text-zinc-900 dark:text-white truncate" title={myProblem}>
                           {myProblem || "Verified Solve"}
                         </span>
                       ) : (
@@ -349,7 +357,7 @@ export function ActiveBattle() {
                   </div>
 
                   {/* Center: Day Pill */}
-                  <div className="shrink-0 flex items-center justify-center gap-2">
+                  <div className="md:col-span-2 flex items-center justify-center">
                     <span className={`px-2.5 py-0.5 rounded-full text-[11px] font-mono font-bold border ${
                       isCurrent
                         ? "bg-violet-100 dark:bg-violet-500/20 border-violet-300 dark:border-violet-500/40 text-violet-700 dark:text-violet-300"
@@ -360,12 +368,11 @@ export function ActiveBattle() {
                   </div>
 
                   {/* Right: Opponent */}
-                  <div className="flex-1 flex items-center justify-start md:justify-end gap-2.5 min-w-0">
+                  <div className="md:col-span-5 flex items-center justify-start md:justify-end gap-2.5 min-w-0 text-left md:text-right">
                     <div className="min-w-0 flex items-center gap-2">
                       {oppStatus === "completed" && getPlatformBadge(oppProblem?.platform)}
-                      <span className="text-xs font-bold text-zinc-800 dark:text-zinc-200 shrink-0">{oppData.name.split(" ")[0]}:</span>
                       {oppStatus === "completed" ? (
-                        <span className="text-xs font-medium text-zinc-900 dark:text-white truncate" title={oppProblem}>
+                        <span className="text-xs font-semibold text-zinc-900 dark:text-white truncate" title={oppProblem}>
                           {oppProblem || "Verified Solve"}
                         </span>
                       ) : (
