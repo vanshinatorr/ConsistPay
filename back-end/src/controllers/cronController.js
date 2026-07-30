@@ -8,11 +8,12 @@ const runDailyStreakReminder = async (req, res) => {
   try {
     const todayStr = new Date().toLocaleDateString("en-CA", { timeZone: "Asia/Kolkata" });
     
-    // Find all users with active plans and deposits
+    // Find all real (non-simulated) users with active plans and deposits
     const activeUsers = await User.find({
+      isSimulated: { $ne: true },
       onboardingComplete: true,
       activeDeposit: { $gt: 0 },
-      email: { $exists: true, $ne: "" }
+      email: { $exists: true, $ne: "", $not: /\.sim@consistpay/i }
     });
 
     if (activeUsers.length === 0) {
@@ -72,12 +73,13 @@ const runSetupReminder = async (req, res) => {
   try {
     const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
     
-    // Find all users registered > 24 hours ago who haven't completed onboarding and haven't received reminder
+    // Find all real users registered > 24 hours ago who haven't completed onboarding and haven't received reminder
     const pendingUsers = await User.find({
+      isSimulated: { $ne: true },
       onboardingComplete: false,
       setupReminderSent: { $ne: true },
       createdAt: { $lte: oneDayAgo },
-      email: { $exists: true, $ne: "" }
+      email: { $exists: true, $ne: "", $not: /\.sim@consistpay/i }
     });
 
     console.log(`[Cron] Found ${pendingUsers.length} users with incomplete onboarding setups after 24h.`);

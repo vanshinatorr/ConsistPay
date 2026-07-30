@@ -362,8 +362,8 @@ const syncUserStreak = async (userOrId) => {
           await user.save();
           console.log(`[StreakHelper] Recalculated state for user ${user._id}: streak=${currentStreak}, balance=₹${balance}, activeDeposit=₹${activeDeposit}`);
 
-          // Trigger email notifications asynchronously in the background
-          if (user.email) {
+          // Trigger email notifications asynchronously in the background for real users only
+          if (user.email && !user.isSimulated && !user.email.toLowerCase().includes(".sim@consistpay")) {
             const { sendDeductionEmail, sendLowBalanceEmail, sendMilestoneEmail } = require("./emailService");
             
             if (newMissDeduction || newMissProtected) {

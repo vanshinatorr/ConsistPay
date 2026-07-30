@@ -11,10 +11,42 @@ const transporter = nodemailer.createTransport({
   },
 });
 
+// Safe email dispatcher that automatically suppresses emails for simulated/fake accounts
+const sendMailSafe = async (options) => {
+  const { to } = options;
+  if (!to) return { success: false, reason: "No recipient email" };
+  const emailLower = to.toLowerCase().trim();
+  
+  if (
+    emailLower.endsWith(".sim@consistpay.in") ||
+    emailLower.includes("@consistpay.in") ||
+    emailLower.includes(".sim@") ||
+    emailLower.includes("simulated") ||
+    emailLower.includes("fake") ||
+    emailLower.endsWith("@example.com")
+  ) {
+    console.log(`[EmailService] Suppressed email sending to simulated user: ${to}`);
+    return { success: true, simulated: true };
+  }
+
+  try {
+    const user = await User.findOne({ email: emailLower }, "isSimulated");
+    if (user && user.isSimulated) {
+      console.log(`[EmailService] Suppressed email sending to isSimulated user: ${to}`);
+      return { success: true, simulated: true };
+    }
+  } catch (err) {
+    // Ignore DB error during email guard check
+  }
+
+  return await transporter.sendMail(options);
+};
+
 // Helper to log email outcomes to database (Success and Failure logs)
 const logEmailOutcome = async (email, subject, templateType, status, errorMessage = "", body = "") => {
   try {
     const user = await User.findOne({ email: email.toLowerCase() });
+    if (user && user.isSimulated) return; // Don't log simulated user emails
     await EmailLog.create({
       userId: user ? user._id : null,
       email: email.toLowerCase(),
@@ -109,7 +141,7 @@ const sendWelcomeEmail = async (email, name) => {
       "https://consistpay.tech/settings?tab=platforms"
     );
 
-    await transporter.sendMail({
+    await sendMailSafe({
       from: `"ConsistPay" <${process.env.EMAIL_USER || "vanshvijay9784@gmail.com"}>`,
       to: email,
       subject,
@@ -139,7 +171,7 @@ const sendSetupReminderEmail = async (email, name) => {
       "https://consistpay.tech/onboarding"
     );
 
-    await transporter.sendMail({
+    await sendMailSafe({
       from: `"ConsistPay" <${process.env.EMAIL_USER || "vanshvijay9784@gmail.com"}>`,
       to: email,
       subject,
@@ -172,7 +204,7 @@ const sendVerificationNudgeEmail = async (email, name, platform, verificationTok
       "https://consistpay.tech/settings?tab=platforms"
     );
 
-    await transporter.sendMail({
+    await sendMailSafe({
       from: `"ConsistPay" <${process.env.EMAIL_USER || "vanshvijay9784@gmail.com"}>`,
       to: email,
       subject,
@@ -211,7 +243,7 @@ const sendContractActivatedEmail = async (email, name, plan, dailyCommitment, ac
       "https://consistpay.tech/dashboard"
     );
 
-    await transporter.sendMail({
+    await sendMailSafe({
       from: `"ConsistPay" <${process.env.EMAIL_USER || "vanshvijay9784@gmail.com"}>`,
       to: email,
       subject,
@@ -243,7 +275,7 @@ const sendStreakWarningEmail = async (email, name, dailyCommitment) => {
       "https://consistpay.tech/dashboard"
     );
 
-    await transporter.sendMail({
+    await sendMailSafe({
       from: `"ConsistPay" <${process.env.EMAIL_USER || "vanshvijay9784@gmail.com"}>`,
       to: email,
       subject,
@@ -277,7 +309,7 @@ const sendPlatformLinkNudgeEmail = async (email, name, activeDeposit) => {
       "https://consistpay.tech/settings?tab=platforms"
     );
 
-    await transporter.sendMail({
+    await sendMailSafe({
       from: `"ConsistPay" <${process.env.EMAIL_USER || "vanshvijay9784@gmail.com"}>`,
       to: email,
       subject,
@@ -324,7 +356,7 @@ const sendDeductionEmail = async (email, name, dailyCommitment, remainingDeposit
       );
     }
 
-    await transporter.sendMail({
+    await sendMailSafe({
       from: `"ConsistPay" <${process.env.EMAIL_USER || "vanshvijay9784@gmail.com"}>`,
       to: email,
       subject,
@@ -354,7 +386,7 @@ const sendLowBalanceEmail = async (email, name, activeDeposit, dailyCommitment) 
       "https://consistpay.tech/dashboard"
     );
 
-    await transporter.sendMail({
+    await sendMailSafe({
       from: `"ConsistPay" <${process.env.EMAIL_USER || "vanshvijay9784@gmail.com"}>`,
       to: email,
       subject,
@@ -386,7 +418,7 @@ const sendMilestoneEmail = async (email, name, streak, securedBalance) => {
       "https://consistpay.tech/leaderboard"
     );
 
-    await transporter.sendMail({
+    await sendMailSafe({
       from: `"ConsistPay" <${process.env.EMAIL_USER || "vanshvijay9784@gmail.com"}>`,
       to: email,
       subject,
@@ -416,7 +448,7 @@ const sendDormancyEmail = async (email, name) => {
       "https://consistpay.tech/dashboard"
     );
 
-    await transporter.sendMail({
+    await sendMailSafe({
       from: `"ConsistPay" <${process.env.EMAIL_USER || "vanshvijay9784@gmail.com"}>`,
       to: email,
       subject,
