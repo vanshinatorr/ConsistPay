@@ -124,41 +124,20 @@ export function ActiveBattle() {
 
   const progressPercentage = Math.min(100, Math.round((currentDay / duration) * 100));
 
-  // Determine Comparison Lead Status Message
-  let leadMessage = "";
-  let leadStyle = "bg-zinc-100 dark:bg-zinc-800/50 border-zinc-200 dark:border-zinc-700/50 text-zinc-700 dark:text-zinc-300";
-  let leadIcon = <AlertCircle className="w-4 h-4" />;
-
-  if (status === "active" || status === "ACTIVE") {
-    if (myData.score === oppData.score) {
-      leadMessage = "It's a Tie! Both coders have matched scores. Solve today to take the lead!";
-      leadStyle = "bg-violet-500/10 border-violet-500/20 text-violet-700 dark:text-violet-300";
-      leadIcon = <Swords className="w-4 h-4 text-violet-500" />;
-    } else if (myData.score > oppData.score) {
-      const diff = myData.score - oppData.score;
-      leadMessage = `You are leading by ${diff} point${diff > 1 ? "s" : ""}! Keep up the momentum.`;
-      leadStyle = "bg-emerald-500/10 border-emerald-500/20 text-emerald-700 dark:text-emerald-300";
-      leadIcon = <Zap className="w-4 h-4 text-emerald-500 animate-pulse" />;
-    } else {
-      const diff = oppData.score - myData.score;
-      leadMessage = `${oppData.name} is leading by ${diff} point${diff > 1 ? "s" : ""}. Push harder to catch up!`;
-      leadStyle = "bg-rose-500/10 border-rose-500/20 text-rose-700 dark:text-rose-300";
-      leadIcon = <Sparkles className="w-4 h-4 text-rose-500" />;
-    }
-  } else if (status === "completed" || status === "COMPLETED") {
-    if (myData.score === oppData.score) {
-      leadMessage = "Challenge Completed: It's a Tie! Stakes refunded to both wallets.";
-      leadStyle = "bg-blue-500/10 border-blue-500/20 text-blue-700 dark:text-blue-300";
-      leadIcon = <Trophy className="w-4 h-4 text-blue-500" />;
-    } else if (myData.score > oppData.score) {
-      leadMessage = "Victory! You defeated your opponent and claimed the entire prize pool!";
-      leadStyle = "bg-amber-500/10 border-amber-500/20 text-amber-700 dark:text-amber-300";
-      leadIcon = <Trophy className="w-4 h-4 text-amber-500" />;
-    } else {
-      leadMessage = `Challenge Completed. ${oppData.name} claimed the victory. Rebuild your streak for the next duel!`;
-      leadStyle = "bg-zinc-200 dark:bg-zinc-800 border-zinc-300 dark:border-zinc-700 text-zinc-600 dark:text-zinc-400";
-      leadIcon = <ShieldAlert className="w-4 h-4" />;
-    }
+  // Lead status message calculation
+  let leadText = "";
+  let leadColor = "text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 border-emerald-500/20";
+  if (myData.score === oppData.score) {
+    leadText = "Tied Score";
+    leadColor = "text-violet-600 dark:text-violet-400 bg-violet-500/10 border-violet-500/20";
+  } else if (myData.score > oppData.score) {
+    const diff = myData.score - oppData.score;
+    leadText = `You Lead (+${diff})`;
+    leadColor = "text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 border-emerald-500/20";
+  } else {
+    const diff = oppData.score - myData.score;
+    leadText = `${oppData.name} Leads (+${diff})`;
+    leadColor = "text-rose-600 dark:text-rose-400 bg-rose-500/10 border-rose-500/20";
   }
 
   // Filter grid items (show active & past days by default to prevent endless scrolling)
@@ -184,12 +163,6 @@ export function ActiveBattle() {
   return (
     <div className="min-h-screen text-zinc-900 dark:text-white bg-zinc-50 dark:bg-[#0D0D0F] pb-16">
       
-      {/* Background Glow Effects */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
-        <div className="absolute top-0 right-1/4 w-96 h-96 bg-violet-500/10 rounded-full blur-[120px] dark:opacity-100 opacity-30" />
-        <div className="absolute bottom-1/4 left-1/4 w-96 h-96 bg-emerald-500/10 rounded-full blur-[120px] dark:opacity-100 opacity-30" />
-      </div>
-
       {/* Navbar */}
       <nav className="sticky top-0 z-50 border-b border-zinc-200 dark:border-white/[0.04] bg-white/80 dark:bg-[#0D0D0F]/80 backdrop-blur-xl">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
@@ -225,99 +198,91 @@ export function ActiveBattle() {
       {/* Main Container */}
       <main className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 space-y-6 relative z-10">
 
-        {/* Lead Alert Banner */}
-        <div className={`p-4 rounded-2xl border flex items-center gap-3 transition-all ${leadStyle}`}>
-          <div className="p-2 rounded-xl bg-white/20 dark:bg-white/10 shrink-0">
-            {leadIcon}
-          </div>
-          <p className="text-xs sm:text-sm font-bold tracking-tight">{leadMessage}</p>
-        </div>
+        {/* ─── PROFESSIONAL BATTLE ARENA MATCHUP BOARD ─── */}
+        <div className="rounded-2xl border border-zinc-200 dark:border-white/[0.06] bg-white dark:bg-[#0B0C10] p-6 sm:p-8 shadow-sm">
+          
+          {/* Top Bar inside Board */}
+          <div className="flex items-center justify-between pb-6 mb-6 border-b border-zinc-100 dark:border-white/5">
+            <div className="flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+              <span className="text-xs font-bold uppercase tracking-wider text-zinc-600 dark:text-zinc-300">
+                1v1 Duel Arena • Day {currentDay} of {duration}
+              </span>
+            </div>
 
-        {/* ─── 1V1 MATCHUP HERO CARD ─── */}
-        <div className="relative rounded-2xl border border-zinc-200 dark:border-white/[0.04] bg-white dark:bg-[#0B0C10] p-6 sm:p-8 shadow-sm overflow-hidden">
+            <span className={`px-3 py-1 rounded-full text-xs font-bold border ${leadColor}`}>
+              {leadText}
+            </span>
+          </div>
+
+          {/* Main 1v1 Clash Layout */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
             
-            {/* Contender: You */}
-            <div className="bg-zinc-50 dark:bg-[#0F0F13] border border-zinc-200 dark:border-white/[0.04] rounded-2xl p-5 relative overflow-hidden">
-              <div className="absolute top-0 left-0 w-1.5 h-full bg-violet-500" />
-              <div className="flex items-center gap-3.5 mb-3">
-                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center font-bold text-lg text-white shadow-md shrink-0">
-                  {myData.avatar?.startsWith("http") ? (
-                    <img src={myData.avatar} alt={myData.name} className="w-full h-full object-cover rounded-full" />
-                  ) : myAvatar}
-                </div>
-                <div className="min-w-0">
-                  <h3 className="font-bold text-base text-zinc-900 dark:text-white truncate">{myData.name || "You"}</h3>
-                  <p className="text-xs text-zinc-500 dark:text-zinc-400 font-medium">Contender (You)</p>
-                </div>
+            {/* Player 1 (You) */}
+            <div className="flex items-center gap-4">
+              <div className="w-14 h-14 rounded-full bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center font-bold text-xl text-white shadow-sm shrink-0">
+                {myData.avatar?.startsWith("http") ? (
+                  <img src={myData.avatar} alt={myData.name} className="w-full h-full object-cover rounded-full" />
+                ) : myAvatar}
               </div>
-              <div className="flex items-baseline justify-between pt-2 border-t border-zinc-200 dark:border-white/5">
-                <span className="text-xs text-zinc-500 uppercase tracking-widest font-bold">Score</span>
-                <div className="text-3xl font-black text-zinc-900 dark:text-white">
-                  {myData.score} <span className="text-sm font-medium text-zinc-500">/ {duration}</span>
+              <div className="min-w-0">
+                <div className="flex items-center gap-2">
+                  <h3 className="font-bold text-lg text-zinc-900 dark:text-white truncate">{myData.name || "You"}</h3>
+                  <span className="text-[10px] font-bold text-violet-600 dark:text-violet-400 bg-violet-500/10 px-2 py-0.5 rounded">You</span>
+                </div>
+                <div className="mt-1 flex items-baseline gap-1.5">
+                  <span className="text-2xl font-black text-zinc-900 dark:text-white">{myData.score}</span>
+                  <span className="text-xs text-zinc-500">/ {duration} Solved</span>
                 </div>
               </div>
             </div>
 
-            {/* VS & Prize Pool Center */}
-            <div className="flex flex-col items-center justify-center py-2 md:py-0">
-              <div className="text-center mb-3">
-                <span className="text-[10px] text-amber-500 dark:text-amber-400 font-bold uppercase tracking-widest flex items-center justify-center gap-1 mb-0.5">
-                  <Trophy className="w-3.5 h-3.5" /> Prize Pool
-                </span>
-                <div className="text-4xl sm:text-5xl font-black bg-gradient-to-r from-amber-500 to-yellow-500 dark:from-yellow-300 dark:to-yellow-500 bg-clip-text text-transparent">
-                  ₹{pool}
-                </div>
+            {/* Center Prize Pool */}
+            <div className="flex flex-col items-center justify-center py-4 md:py-0 border-y md:border-y-0 md:border-x border-zinc-100 dark:border-white/5">
+              <span className="text-[11px] font-bold uppercase tracking-widest text-amber-600 dark:text-amber-400 flex items-center gap-1.5 mb-1">
+                <Trophy className="w-3.5 h-3.5" /> Total Stakes
+              </span>
+              <div className="text-3xl sm:text-4xl font-black text-zinc-900 dark:text-white tracking-tight">
+                ₹{pool}
               </div>
-
-              <div className="w-10 h-10 rounded-full bg-zinc-100 dark:bg-white/5 border border-zinc-200 dark:border-white/10 flex items-center justify-center italic font-black text-zinc-500 text-xs shadow-sm">
-                VS
-              </div>
+              <span className="text-[11px] text-zinc-400 font-medium mt-1">Winner Takes All</span>
             </div>
 
-            {/* Opponent */}
-            <div className="bg-zinc-50 dark:bg-[#0F0F13] border border-zinc-200 dark:border-white/[0.04] rounded-2xl p-5 relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-1.5 h-full bg-emerald-500" />
-              <div className="flex items-center gap-3.5 mb-3 flex-row-reverse text-right">
-                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center font-bold text-lg text-white dark:text-black shadow-md shrink-0">
-                  {oppData.avatar?.startsWith("http") ? (
-                    <img src={oppData.avatar} alt={oppData.name} className="w-full h-full object-cover rounded-full" />
-                  ) : oppAvatar}
-                </div>
-                <div className="min-w-0">
-                  <h3 className="font-bold text-base text-zinc-900 dark:text-white truncate">{oppData.name}</h3>
-                  <p className="text-xs text-zinc-500 dark:text-zinc-400 font-medium">Opponent</p>
-                </div>
+            {/* Player 2 (Opponent) */}
+            <div className="flex items-center gap-4 flex-row-reverse text-right">
+              <div className="w-14 h-14 rounded-full bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center font-bold text-xl text-white dark:text-black shadow-sm shrink-0">
+                {oppData.avatar?.startsWith("http") ? (
+                  <img src={oppData.avatar} alt={oppData.name} className="w-full h-full object-cover rounded-full" />
+                ) : oppAvatar}
               </div>
-              <div className="flex items-baseline justify-between flex-row-reverse text-right pt-2 border-t border-zinc-200 dark:border-white/5">
-                <span className="text-xs text-zinc-500 uppercase tracking-widest font-bold">Score</span>
-                <div className="text-3xl font-black text-zinc-900 dark:text-white">
-                  {oppData.score} <span className="text-sm font-medium text-zinc-500">/ {duration}</span>
+              <div className="min-w-0">
+                <div className="flex items-center justify-end gap-2">
+                  <span className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded">Opponent</span>
+                  <h3 className="font-bold text-lg text-zinc-900 dark:text-white truncate">{oppData.name}</h3>
+                </div>
+                <div className="mt-1 flex items-baseline justify-end gap-1.5">
+                  <span className="text-2xl font-black text-zinc-900 dark:text-white">{oppData.score}</span>
+                  <span className="text-xs text-zinc-500">/ {duration} Solved</span>
                 </div>
               </div>
             </div>
 
           </div>
 
-          {/* Timeline Bar */}
-          <div className="mt-6 pt-5 border-t border-zinc-200 dark:border-white/5">
-            <div className="flex items-center justify-between text-xs font-semibold mb-2">
-              <span className="text-zinc-500 dark:text-zinc-400 flex items-center gap-1.5">
-                <Clock className="w-3.5 h-3.5 text-zinc-400" /> Day {currentDay} of {duration}
-              </span>
-              <span className="text-violet-600 dark:text-violet-400 font-mono">{progressPercentage}% Elapsed</span>
+          {/* Integrated Progress Bar */}
+          <div className="mt-6 pt-5 border-t border-zinc-100 dark:border-white/5">
+            <div className="flex items-center justify-between text-xs font-medium text-zinc-500 dark:text-zinc-400 mb-2">
+              <span>Timeline Progress</span>
+              <span className="font-mono text-zinc-700 dark:text-zinc-300 font-semibold">{progressPercentage}% Completed ({duration - currentDay} days remaining)</span>
             </div>
-            <div className="h-2 bg-zinc-150 dark:bg-zinc-800 rounded-full overflow-hidden">
+            <div className="h-2 bg-zinc-100 dark:bg-zinc-800 rounded-full overflow-hidden">
               <div
-                className="h-full bg-gradient-to-r from-violet-500 via-purple-500 to-emerald-500 rounded-full transition-all duration-700"
+                className="h-full bg-emerald-500 dark:bg-emerald-400 rounded-full transition-all duration-700"
                 style={{ width: `${progressPercentage}%` }}
               />
             </div>
-            <div className="flex justify-between items-center text-[11px] text-zinc-400 dark:text-zinc-500 mt-2 font-mono">
-              <span>Started: {startDate ? new Date(startDate).toLocaleDateString("en-IN") : "Day 1"}</span>
-              <span>Ends: {endDate ? new Date(endDate).toLocaleDateString("en-IN") : `Day ${duration}`}</span>
-            </div>
           </div>
+
         </div>
 
         {/* ─── 1V1 DUEL TIMELINE TRACK ─── */}
