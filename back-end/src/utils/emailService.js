@@ -44,19 +44,24 @@ const sendMailSafe = async (options) => {
 
 // Helper to log email outcomes to database (Success and Failure logs)
 const logEmailOutcome = async (email, subject, templateType, status, errorMessage = "", body = "") => {
+  if (!email) return;
+  const e = email.toLowerCase().trim();
+  if (e.endsWith(".sim@consistpay.in") || e.includes("@consistpay.in") || e.includes(".sim@") || e.includes("simulated") || e.includes("fake")) {
+    return;
+  }
   try {
-    const user = await User.findOne({ email: email.toLowerCase() });
+    const user = await User.findOne({ email: e });
     if (user && user.isSimulated) return; // Don't log simulated user emails
     await EmailLog.create({
       userId: user ? user._id : null,
-      email: email.toLowerCase(),
+      email: e,
       subject,
       templateType,
       status,
       errorMessage: errorMessage || "",
       body: body || "",
     });
-    console.log(`[EmailLog] Logged outcome: ${templateType} -> ${status} to ${email}`);
+    console.log(`[EmailLog] Logged outcome: ${templateType} -> ${status} to ${e}`);
   } catch (err) {
     console.error(`[EmailLog] Logging failed:`, err.message);
   }
