@@ -539,12 +539,20 @@ const getChallengeById = async (req, res) => {
     // Resolve any expired ones first
     await autoResolveChallenges(userId);
 
+    const { syncUserStreak } = require("../utils/streakHelper");
+    await syncUserStreak(userId).catch(e => console.error("Auto-sync error on challenge fetch:", e.message));
+
     const ch = await Challenge.findById(id)
       .populate("creatorId", "name email streak avatar")
       .populate("opponentId", "name email streak avatar");
 
     if (!ch) {
       return res.status(404).json({ message: "Challenge not found." });
+    }
+
+    if (ch.opponentId) {
+      const oppId = ch.opponentId._id || ch.opponentId;
+      await syncUserStreak(oppId).catch(e => console.error("Auto-sync opponent error:", e.message));
     }
 
     if (
