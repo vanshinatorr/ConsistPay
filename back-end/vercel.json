@@ -20,6 +20,10 @@
     {
       "path": "/api/crons/setup-reminder",
       "schedule": "0 15 * * *"
+    },
+    {
+      "path": "/api/crons/auto-sync",
+      "schedule": "15 18 * * *"
     }
   ]
 }

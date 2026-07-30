@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { runDailyStreakReminder, runSetupReminder } = require("../controllers/cronController");
+const { runDailyStreakReminder, runSetupReminder, runAutomatedGlobalSync } = require("../controllers/cronController");
 
 // Authentication middleware to secure cron endpoints
 // Vercel auto-sets CRON_SECRET and sends it as Bearer token when triggering crons
@@ -27,5 +27,6 @@ const cronAuth = (req, res, next) => {
 
 router.get("/streak-reminder", cronAuth, runDailyStreakReminder);
 router.get("/setup-reminder", cronAuth, runSetupReminder);
+router.get("/auto-sync", cronAuth, runAutomatedGlobalSync);
 
 module.exports = router;

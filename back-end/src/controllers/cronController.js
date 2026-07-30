@@ -103,7 +103,54 @@ const runSetupReminder = async (req, res) => {
   }
 };
 
+// 3. Automated Global Background Sync (Runs before midnight to sync all active platform solves)
+const runAutomatedGlobalSync = async (req, res) => {
+  try {
+    const { syncUserStreak } = require("../utils/streakHelper");
+    
+    // Find all users with linked platform accounts or active challenges
+    const activeUsers = await User.find({
+      $or: [
+        { leetcodeUsername: { $exists: true, $ne: "" } },
+        { gfgUsername: { $exists: true, $ne: "" } },
+        { code360Username: { $exists: true, $ne: "" } },
+        { "platforms.leetcode.username": { $exists: true, $ne: "" } },
+        { "platforms.gfg.username": { $exists: true, $ne: "" } },
+        { activeDeposit: { $gt: 0 } }
+      ]
+    });
+
+    console.log(`[Auto-Sync Cron] Starting background sync for ${activeUsers.length} users...`);
+
+    let syncedCount = 0;
+    let failedCount = 0;
+
+    for (const user of activeUsers) {
+      try {
+        await syncUserStreak(user._id);
+        syncedCount++;
+      } catch (err) {
+        console.error(`[Auto-Sync Cron] Sync failed for user ${user._id} (${user.name}):`, err.message);
+        failedCount++;
+      }
+    }
+
+    console.log(`[Auto-Sync Cron] Completed background sync. Synced: ${syncedCount}, Failed: ${failedCount}`);
+
+    res.status(200).json({
+      message: "Automated global sync cron finished successfully.",
+      totalUsers: activeUsers.length,
+      syncedCount,
+      failedCount
+    });
+  } catch (error) {
+    console.error("[Auto-Sync Cron] Global sync error:", error);
+    res.status(500).json({ message: "Internal server error in automated global sync cron." });
+  }
+};
+
 module.exports = {
   runDailyStreakReminder,
-  runSetupReminder
+  runSetupReminder,
+  runAutomatedGlobalSync
 };
