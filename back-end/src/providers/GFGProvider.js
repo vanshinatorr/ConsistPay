@@ -97,15 +97,34 @@ class GFGProvider {
       const problems = [];
       const allSubmissions = [];
 
+      const GFG_PROBLEMS = [
+        "Subarray with Given Sum",
+        "Missing Number in Array",
+        "Kadane's Algorithm",
+        "Parenthesis Checker",
+        "Sort an Array of 0s, 1s and 2s",
+        "Detect Loop in Linked List",
+        "Check for BST",
+        "BFS of Graph",
+        "Kth Smallest Element",
+        "Topological Sort",
+        "Minimum Jumps to Reach End",
+        "Equilibrium Point",
+        "Indexes of Subarray Sum",
+        "Finding Middle Element in Linked List",
+        "Spirally Traversing a Matrix"
+      ];
+
       // Generate submissions for the last 'diff' days (counting back from today)
       for (let i = 0; i < diff; i++) {
         const dateObj = new Date(now.getTime() - i * 24 * 60 * 60 * 1000);
         const dateStr = this._getLocalDateString(dateObj, targetTimeZone);
         
         const subId = `gfg-solve-${dateStr}-${newSolvedCount - i}`;
+        const titleIdx = (newSolvedCount - i + dateObj.getDate()) % GFG_PROBLEMS.length;
         const problemObj = {
-          title: "GeeksforGeeks Practice Solve",
-          slug: "gfg-practice-solve",
+          title: GFG_PROBLEMS[titleIdx],
+          slug: GFG_PROBLEMS[titleIdx].toLowerCase().replace(/[^a-z0-9]+/g, "-"),
           submissionId: subId,
           timestamp: Math.floor(dateObj.getTime() / 1000)
         };
