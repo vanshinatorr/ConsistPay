@@ -283,12 +283,9 @@ export function ActiveBattle() {
         <div className="bg-white dark:bg-[#0B0C10] border border-zinc-200 dark:border-white/[0.04] rounded-2xl p-6 sm:p-8 shadow-sm">
           
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6 pb-4 border-b border-zinc-200 dark:border-white/5">
-            <div className="flex items-center gap-2.5">
-              <Swords className="w-5 h-5 text-zinc-550 dark:text-zinc-400" />
-              <div>
-                <h3 className="text-base font-bold text-zinc-900 dark:text-white">1v1 Consistency Duel Track</h3>
-                <p className="text-xs text-zinc-500 dark:text-zinc-400">Day-by-day comparison of verified solves</p>
-              </div>
+            <div>
+              <h3 className="text-base font-bold text-zinc-900 dark:text-white">1v1 Consistency Duel Track</h3>
+              <p className="text-xs text-zinc-500 dark:text-zinc-400">Day-by-day comparison of verified solves</p>
             </div>
 
             <button
