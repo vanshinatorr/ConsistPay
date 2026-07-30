@@ -395,63 +395,6 @@ export function ActiveBattle() {
               );
             })}
           </div>
-
-        </div>
-
-        {/* ─── LIVE SOLVES ACTIVITY FEED ─── */}
-        <div className="bg-white dark:bg-[#0B0C10] border border-zinc-200 dark:border-white/[0.04] rounded-2xl p-6 sm:p-8 shadow-sm">
-          <div className="flex items-center gap-2 mb-6 pb-4 border-b border-zinc-200 dark:border-white/5">
-            <Zap className="w-5 h-5 text-amber-500" />
-            <h3 className="text-base font-bold text-zinc-900 dark:text-white">Live Solves Activity Feed</h3>
-          </div>
-
-          {feed.length > 0 ? (
-            <div className="space-y-3 max-h-[350px] overflow-y-auto pr-2 custom-scrollbar">
-              {feed.map((item: any) => {
-                const isItemMe = (item.isCreator && isCreator) || (!item.isCreator && !isCreator);
-                return (
-                  <div key={item.id} className="flex items-center justify-between p-4 bg-zinc-50/50 dark:bg-white/[0.02] border border-zinc-200 dark:border-white/5 rounded-xl">
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-lg bg-violet-500/10 border border-violet-500/20 flex items-center justify-center text-[10px] font-mono font-bold text-violet-600 dark:text-violet-400">
-                        {item.platform === "LeetCode" ? "LC" : item.platform === "Code360" ? "C360" : item.platform === "GFG" ? "GFG" : "CP"}
-                      </div>
-                      <div>
-                        <p className="text-sm font-semibold text-zinc-900 dark:text-white">
-                          {isItemMe ? "You" : item.solverName} solved <span className="text-violet-600 dark:text-violet-400 font-bold">"{item.problemName}"</span>
-                        </p>
-                        <p className="text-xs text-zinc-500">Day {item.dayNumber} of {duration}</p>
-                      </div>
-                    </div>
-                    <span className="text-[11px] text-zinc-400 font-mono">
-                      {new Date(item.createdAt).toLocaleTimeString("en-IN", { hour: '2-digit', minute: '2-digit', hour12: true })}
-                    </span>
-                  </div>
-                );
-              })}
-            </div>
-          ) : (
-            <p className="text-zinc-500 text-sm text-center py-6">No coding activity logged yet. Solved problems will show up here.</p>
-          )}
-        </div>
-
-        {/* ─── RULES & WARNINGS ─── */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="bg-white dark:bg-[#0B0C10] border border-emerald-500/20 rounded-2xl p-6 shadow-sm">
-            <h4 className="font-bold text-emerald-600 dark:text-emerald-400 mb-3 flex items-center gap-2">
-              <CheckCircle className="w-5 h-5" /> How to Win
-            </h4>
-            <p className="text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
-              Solve problems on LeetCode or GFG daily and sync on the dashboard. Each verified solve day adds +1 to your score. The coder with the most verified days at the end of {duration} days claims the whole <strong className="text-amber-500">₹{pool} Prize Pool</strong>!
-            </p>
-          </div>
-          <div className="bg-white dark:bg-[#0B0C10] border border-rose-500/20 rounded-2xl p-6 shadow-sm">
-            <h4 className="font-bold text-rose-600 dark:text-rose-400 mb-3 flex items-center gap-2">
-              <ShieldAlert className="w-5 h-5" /> Strict Deadlines
-            </h4>
-            <p className="text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
-              Missing a day gives your opponent the lead. A missed day can only be saved if you have enough Grace Coins. If both tie, the pool is split.
-            </p>
-          </div>
         </div>
 
       </main>
