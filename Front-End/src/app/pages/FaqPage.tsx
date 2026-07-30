@@ -78,7 +78,7 @@ const faqSections = [
       },
       {
         q: "Can grace coins be used in battles?",
-        a: "Yes. Grace coins may protect streak continuity during active battles.",
+        a: "No. Grace coins are strictly disabled during 1v1 PvP Battles to ensure 100% fair competition. Missing a day directly gives your opponent the lead.",
       },
     ],
   },
