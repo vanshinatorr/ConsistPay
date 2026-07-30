@@ -206,7 +206,7 @@ export function ActiveBattle() {
             <div className="flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
               <span className="text-xs font-bold uppercase tracking-wider text-zinc-600 dark:text-zinc-300">
-                1v1 Duel Arena • Day {currentDay} of {duration}
+                1v1 Duel Arena — Day {currentDay} of {duration}
               </span>
             </div>
 
