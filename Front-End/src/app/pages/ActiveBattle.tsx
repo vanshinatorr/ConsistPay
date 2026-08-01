@@ -340,38 +340,53 @@ export function ActiveBattle() {
                   } ${hasMultipleSolves ? "cursor-pointer" : ""}`}
                 >
                   {/* Left: You */}
-                  <div className="md:col-span-5 flex items-center gap-2.5 min-w-0">
-                    {myStatus === "completed" ? (
-                      <CheckCircle className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
-                    ) : myStatus === "missed" ? (
-                      <XCircle className="w-4 h-4 text-rose-500 shrink-0" />
-                    ) : myStatus === "pending" ? (
-                      <Clock className="w-4 h-4 text-amber-500 shrink-0" />
-                    ) : (
-                      <Lock className="w-3.5 h-3.5 text-zinc-400 shrink-0" />
-                    )}
-
-                    <div className="min-w-0 flex items-center gap-2">
+                  <div className="md:col-span-5 flex flex-col justify-center min-w-0">
+                    <div className="flex items-center gap-2.5 min-w-0">
                       {myStatus === "completed" ? (
-                        <span className="text-xs font-semibold text-zinc-900 dark:text-white truncate" title={myProblem}>
-                          {myProblem || "Verified Solve"}
-                        </span>
+                        <CheckCircle className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                      ) : myStatus === "missed" ? (
+                        <XCircle className="w-4 h-4 text-rose-500 shrink-0" />
+                      ) : myStatus === "pending" ? (
+                        <Clock className="w-4 h-4 text-amber-500 shrink-0" />
                       ) : (
-                        <span className="text-xs text-zinc-400">{myStatus === "missed" ? "Missed Day" : myStatus === "pending" ? "Waiting sync..." : "Locked"}</span>
+                        <Lock className="w-3.5 h-3.5 text-zinc-400 shrink-0" />
                       )}
-                      {myStatus === "completed" && getPlatformBadge(myProblem?.platform || dayItem.creatorPlatform || dayItem.opponentPlatform)}
-                      
-                      {myMoreCount > 0 && (
-                        <span className="text-[10px] font-mono text-zinc-400 dark:text-zinc-500 font-semibold shrink-0">
-                          (+{myMoreCount} solve{myMoreCount > 1 ? "s" : ""})
-                        </span>
-                      )}
+
+                      <div className="min-w-0 flex items-center gap-2">
+                        {myStatus === "completed" ? (
+                          <span className="text-xs font-semibold text-zinc-900 dark:text-white truncate" title={myProblem}>
+                            {myProblem || "Verified Solve"}
+                          </span>
+                        ) : (
+                          <span className="text-xs text-zinc-400">{myStatus === "missed" ? "Missed Day" : myStatus === "pending" ? "Waiting sync..." : "Locked"}</span>
+                        )}
+                        {myStatus === "completed" && getPlatformBadge(myProblem?.platform || dayItem.creatorPlatform || dayItem.opponentPlatform)}
+                        
+                        {myMoreCount > 0 && !isExpanded && (
+                          <span className="px-1.5 py-0.5 rounded text-[10px] font-mono font-bold bg-zinc-100 dark:bg-white/5 border border-zinc-200 dark:border-white/10 text-zinc-500 dark:text-zinc-400 shrink-0">
+                            +{myMoreCount}
+                          </span>
+                        )}
+                      </div>
                     </div>
+
+                    {/* Sub-thread for additional solves (if expanded or multiple) */}
+                    {isExpanded && mySolves.length > 1 && (
+                      <div className="pl-6.5 mt-1.5 space-y-1 animate-in fade-in duration-150">
+                        {mySolves.slice(1).map((s: any, idx: number) => (
+                          <div key={idx} className="flex items-center gap-2 text-[11px] text-zinc-600 dark:text-zinc-300 font-medium">
+                            <span className="text-zinc-400 font-mono text-[10px] shrink-0">↳</span>
+                            <span className="truncate">{s.problemName}</span>
+                            {getPlatformBadge(s.platform)}
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </div>
 
                   {/* Center: Day Pill */}
-                  <div className="md:col-span-2 flex items-center justify-center">
-                    <span className={`px-2.5 py-0.5 rounded-full text-[11px] font-mono font-bold border ${
+                  <div className="md:col-span-2 flex items-center justify-center self-start md:self-center py-1">
+                    <span className={`px-2.5 py-0.5 rounded-full text-[11px] font-mono font-bold border transition-colors ${
                       isCurrent
                         ? "bg-emerald-500/10 dark:bg-emerald-500/20 border-emerald-500/30 text-emerald-700 dark:text-emerald-400"
                         : "bg-zinc-100 dark:bg-white/5 border-zinc-200 dark:border-white/10 text-zinc-600 dark:text-zinc-400"
@@ -381,69 +396,48 @@ export function ActiveBattle() {
                   </div>
 
                   {/* Right: Opponent */}
-                  <div className="md:col-span-5 flex items-center justify-start md:justify-end gap-2.5 min-w-0 text-left md:text-right">
-                    <div className="min-w-0 flex items-center gap-2">
-                      {oppMoreCount > 0 && (
-                        <span className="text-[10px] font-mono text-zinc-400 dark:text-zinc-500 font-semibold shrink-0">
-                          (+{oppMoreCount} solve{oppMoreCount > 1 ? "s" : ""})
-                        </span>
-                      )}
-                      {oppStatus === "completed" && getPlatformBadge(oppProblem?.platform || dayItem.opponentPlatform || dayItem.creatorPlatform)}
+                  <div className="md:col-span-5 flex flex-col justify-center min-w-0 text-left md:text-right">
+                    <div className="flex items-center justify-start md:justify-end gap-2.5 min-w-0">
+                      <div className="min-w-0 flex items-center gap-2">
+                        {oppMoreCount > 0 && !isExpanded && (
+                          <span className="px-1.5 py-0.5 rounded text-[10px] font-mono font-bold bg-zinc-100 dark:bg-white/5 border border-zinc-200 dark:border-white/10 text-zinc-500 dark:text-zinc-400 shrink-0">
+                            +{oppMoreCount}
+                          </span>
+                        )}
+                        {oppStatus === "completed" && getPlatformBadge(oppProblem?.platform || dayItem.opponentPlatform || dayItem.creatorPlatform)}
+                        {oppStatus === "completed" ? (
+                          <span className="text-xs font-semibold text-zinc-900 dark:text-white truncate" title={oppProblem}>
+                            {oppProblem || "Verified Solve"}
+                          </span>
+                        ) : (
+                          <span className="text-xs text-zinc-400">{oppStatus === "missed" ? "Missed Day" : oppStatus === "pending" ? "Waiting sync..." : "Locked"}</span>
+                        )}
+                      </div>
+
                       {oppStatus === "completed" ? (
-                        <span className="text-xs font-semibold text-zinc-900 dark:text-white truncate" title={oppProblem}>
-                          {oppProblem || "Verified Solve"}
-                        </span>
+                        <CheckCircle className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                      ) : oppStatus === "missed" ? (
+                        <XCircle className="w-4 h-4 text-rose-500 shrink-0" />
+                      ) : oppStatus === "pending" ? (
+                        <Clock className="w-4 h-4 text-amber-500 shrink-0" />
                       ) : (
-                        <span className="text-xs text-zinc-400">{oppStatus === "missed" ? "Missed Day" : oppStatus === "pending" ? "Waiting sync..." : "Locked"}</span>
+                        <Lock className="w-3.5 h-3.5 text-zinc-400 shrink-0" />
                       )}
                     </div>
 
-                    {oppStatus === "completed" ? (
-                      <CheckCircle className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
-                    ) : oppStatus === "missed" ? (
-                      <XCircle className="w-4 h-4 text-rose-500 shrink-0" />
-                    ) : oppStatus === "pending" ? (
-                      <Clock className="w-4 h-4 text-amber-500 shrink-0" />
-                    ) : (
-                      <Lock className="w-3.5 h-3.5 text-zinc-400 shrink-0" />
+                    {/* Sub-thread for opponent additional solves */}
+                    {isExpanded && oppSolves.length > 1 && (
+                      <div className="pr-6.5 mt-1.5 space-y-1 animate-in fade-in duration-150">
+                        {oppSolves.slice(1).map((s: any, idx: number) => (
+                          <div key={idx} className="flex items-center justify-start md:justify-end gap-2 text-[11px] text-zinc-600 dark:text-zinc-300 font-medium">
+                            {getPlatformBadge(s.platform)}
+                            <span className="truncate">{s.problemName}</span>
+                            <span className="text-zinc-400 font-mono text-[10px] shrink-0">↲</span>
+                          </div>
+                        ))}
+                      </div>
                     )}
                   </div>
-
-                  {/* Sleek Aligned Solves Drawer */}
-                  {isExpanded && hasMultipleSolves && (
-                    <div className="col-span-1 md:col-span-12 mt-2 pt-2.5 border-t border-zinc-200/60 dark:border-white/5 grid grid-cols-1 md:grid-cols-12 gap-3 text-xs animate-in fade-in duration-200">
-                      {/* Left: Your All Solves */}
-                      <div className="md:col-span-5 space-y-1.5 pl-6">
-                        <div className="text-[10px] font-mono font-bold uppercase tracking-wider text-zinc-400 mb-1.5">
-                          Day {dayItem.dayNumber} Solves ({mySolves.length})
-                        </div>
-                        {mySolves.map((s: any, idx: number) => (
-                          <div key={idx} className="flex items-center gap-2 text-zinc-700 dark:text-zinc-300 font-medium">
-                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0" />
-                            <span className="truncate">{s.problemName}</span>
-                            {getPlatformBadge(s.platform)}
-                          </div>
-                        ))}
-                      </div>
-
-                      {/* Center Spacer */}
-                      <div className="hidden md:block md:col-span-2" />
-
-                      {/* Right: Opponent All Solves */}
-                      <div className="md:col-span-5 space-y-1.5 pr-6 text-left md:text-right">
-                        <div className="text-[10px] font-mono font-bold uppercase tracking-wider text-zinc-400 mb-1.5">
-                          Day {dayItem.dayNumber} Solves ({oppSolves.length})
-                        </div>
-                        {oppSolves.map((s: any, idx: number) => (
-                          <div key={idx} className="flex items-center justify-start md:justify-end gap-2 text-zinc-700 dark:text-zinc-300 font-medium">
-                            {getPlatformBadge(s.platform)}
-                            <span className="truncate">{s.problemName}</span>
-                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0" />
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
 
                 </div>
               );
