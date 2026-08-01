@@ -340,52 +340,37 @@ export function ActiveBattle() {
                   } ${hasMultipleSolves ? "cursor-pointer" : ""}`}
                 >
                   {/* Left: You */}
-                  <div className="md:col-span-5 flex flex-col justify-center min-w-0">
-                    <div className="flex items-center gap-2.5 min-w-0">
-                      {myStatus === "completed" ? (
-                        <CheckCircle className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
-                      ) : myStatus === "missed" ? (
-                        <XCircle className="w-4 h-4 text-rose-500 shrink-0" />
-                      ) : myStatus === "pending" ? (
-                        <Clock className="w-4 h-4 text-amber-500 shrink-0" />
-                      ) : (
-                        <Lock className="w-3.5 h-3.5 text-zinc-400 shrink-0" />
-                      )}
-
-                      <div className="min-w-0 flex items-center gap-2">
-                        {myStatus === "completed" ? (
-                          <span className="text-xs font-semibold text-zinc-900 dark:text-white truncate" title={myProblem}>
-                            {myProblem || "Verified Solve"}
-                          </span>
-                        ) : (
-                          <span className="text-xs text-zinc-400">{myStatus === "missed" ? "Missed Day" : myStatus === "pending" ? "Waiting sync..." : "Locked"}</span>
-                        )}
-                        {myStatus === "completed" && getPlatformBadge(myProblem?.platform || dayItem.creatorPlatform || dayItem.opponentPlatform)}
-                        
-                        {myMoreCount > 0 && !isExpanded && (
-                          <span className="px-1.5 py-0.5 rounded text-[10px] font-mono font-bold bg-zinc-100 dark:bg-white/5 border border-zinc-200 dark:border-white/10 text-zinc-500 dark:text-zinc-400 shrink-0">
-                            +{myMoreCount}
-                          </span>
-                        )}
-                      </div>
-                    </div>
-
-                    {/* Sub-thread for additional solves (if expanded or multiple) */}
-                    {isExpanded && mySolves.length > 1 && (
-                      <div className="pl-6.5 mt-1.5 space-y-1 animate-in fade-in duration-150">
-                        {mySolves.slice(1).map((s: any, idx: number) => (
-                          <div key={idx} className="flex items-center gap-2 text-[11px] text-zinc-600 dark:text-zinc-300 font-medium">
-                            <span className="text-zinc-400 font-mono text-[10px] shrink-0">↳</span>
-                            <span className="truncate">{s.problemName}</span>
-                            {getPlatformBadge(s.platform)}
-                          </div>
-                        ))}
-                      </div>
+                  <div className="md:col-span-5 flex items-center gap-2.5 min-w-0">
+                    {myStatus === "completed" ? (
+                      <CheckCircle className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                    ) : myStatus === "missed" ? (
+                      <XCircle className="w-4 h-4 text-rose-500 shrink-0" />
+                    ) : myStatus === "pending" ? (
+                      <Clock className="w-4 h-4 text-amber-500 shrink-0" />
+                    ) : (
+                      <Lock className="w-3.5 h-3.5 text-zinc-400 shrink-0" />
                     )}
+
+                    <div className="min-w-0 flex items-center gap-2">
+                      {myStatus === "completed" ? (
+                        <span className="text-xs font-semibold text-zinc-900 dark:text-white truncate" title={myProblem}>
+                          {myProblem || "Verified Solve"}
+                        </span>
+                      ) : (
+                        <span className="text-xs text-zinc-400">{myStatus === "missed" ? "Missed Day" : myStatus === "pending" ? "Waiting sync..." : "Locked"}</span>
+                      )}
+                      {myStatus === "completed" && getPlatformBadge(myProblem?.platform || dayItem.creatorPlatform || dayItem.opponentPlatform)}
+                      
+                      {mySolves.length > 1 && (
+                        <span className="px-1.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-zinc-100 dark:bg-white/5 border border-zinc-200 dark:border-white/10 text-zinc-600 dark:text-zinc-300 shrink-0">
+                          {mySolves.length} solves
+                        </span>
+                      )}
+                    </div>
                   </div>
 
                   {/* Center: Day Pill */}
-                  <div className="md:col-span-2 flex items-center justify-center self-start md:self-center py-1">
+                  <div className="md:col-span-2 flex items-center justify-center">
                     <span className={`px-2.5 py-0.5 rounded-full text-[11px] font-mono font-bold border transition-colors ${
                       isCurrent
                         ? "bg-emerald-500/10 dark:bg-emerald-500/20 border-emerald-500/30 text-emerald-700 dark:text-emerald-400"
@@ -396,48 +381,79 @@ export function ActiveBattle() {
                   </div>
 
                   {/* Right: Opponent */}
-                  <div className="md:col-span-5 flex flex-col justify-center min-w-0 text-left md:text-right">
-                    <div className="flex items-center justify-start md:justify-end gap-2.5 min-w-0">
-                      <div className="min-w-0 flex items-center gap-2">
-                        {oppMoreCount > 0 && !isExpanded && (
-                          <span className="px-1.5 py-0.5 rounded text-[10px] font-mono font-bold bg-zinc-100 dark:bg-white/5 border border-zinc-200 dark:border-white/10 text-zinc-500 dark:text-zinc-400 shrink-0">
-                            +{oppMoreCount}
-                          </span>
-                        )}
-                        {oppStatus === "completed" && getPlatformBadge(oppProblem?.platform || dayItem.opponentPlatform || dayItem.creatorPlatform)}
-                        {oppStatus === "completed" ? (
-                          <span className="text-xs font-semibold text-zinc-900 dark:text-white truncate" title={oppProblem}>
-                            {oppProblem || "Verified Solve"}
-                          </span>
-                        ) : (
-                          <span className="text-xs text-zinc-400">{oppStatus === "missed" ? "Missed Day" : oppStatus === "pending" ? "Waiting sync..." : "Locked"}</span>
-                        )}
-                      </div>
-
+                  <div className="md:col-span-5 flex items-center justify-start md:justify-end gap-2.5 min-w-0 text-left md:text-right">
+                    <div className="min-w-0 flex items-center justify-start md:justify-end gap-2">
+                      {oppSolves.length > 1 && (
+                        <span className="px-1.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-zinc-100 dark:bg-white/5 border border-zinc-200 dark:border-white/10 text-zinc-600 dark:text-zinc-300 shrink-0">
+                          {oppSolves.length} solves
+                        </span>
+                      )}
+                      {oppStatus === "completed" && getPlatformBadge(oppProblem?.platform || dayItem.opponentPlatform || dayItem.creatorPlatform)}
                       {oppStatus === "completed" ? (
-                        <CheckCircle className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
-                      ) : oppStatus === "missed" ? (
-                        <XCircle className="w-4 h-4 text-rose-500 shrink-0" />
-                      ) : oppStatus === "pending" ? (
-                        <Clock className="w-4 h-4 text-amber-500 shrink-0" />
+                        <span className="text-xs font-semibold text-zinc-900 dark:text-white truncate" title={oppProblem}>
+                          {oppProblem || "Verified Solve"}
+                        </span>
                       ) : (
-                        <Lock className="w-3.5 h-3.5 text-zinc-400 shrink-0" />
+                        <span className="text-xs text-zinc-400">{oppStatus === "missed" ? "Missed Day" : oppStatus === "pending" ? "Waiting sync..." : "Locked"}</span>
                       )}
                     </div>
 
-                    {/* Sub-thread for opponent additional solves */}
-                    {isExpanded && oppSolves.length > 1 && (
-                      <div className="pr-6.5 mt-1.5 space-y-1 animate-in fade-in duration-150">
-                        {oppSolves.slice(1).map((s: any, idx: number) => (
-                          <div key={idx} className="flex items-center justify-start md:justify-end gap-2 text-[11px] text-zinc-600 dark:text-zinc-300 font-medium">
-                            {getPlatformBadge(s.platform)}
-                            <span className="truncate">{s.problemName}</span>
-                            <span className="text-zinc-400 font-mono text-[10px] shrink-0">↲</span>
-                          </div>
-                        ))}
-                      </div>
+                    {oppStatus === "completed" ? (
+                      <CheckCircle className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                    ) : oppStatus === "missed" ? (
+                      <XCircle className="w-4 h-4 text-rose-500 shrink-0" />
+                    ) : oppStatus === "pending" ? (
+                      <Clock className="w-4 h-4 text-amber-500 shrink-0" />
+                    ) : (
+                      <Lock className="w-3.5 h-3.5 text-zinc-400 shrink-0" />
                     )}
                   </div>
+
+                  {/* Masterpiece Expanded Daily Activity Card */}
+                  {isExpanded && hasMultipleSolves && (
+                    <div className="col-span-1 md:col-span-12 my-2 p-4 rounded-2xl bg-zinc-50/90 dark:bg-[#12131A] border border-zinc-200/80 dark:border-white/[0.08] shadow-xs animate-in fade-in duration-200">
+                      <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
+                        
+                        {/* Left Side: You */}
+                        <div className="md:col-span-5 space-y-2">
+                          <div className="text-[10px] font-mono font-bold uppercase tracking-widest text-zinc-400 flex items-center gap-1.5">
+                            <span>Day {dayItem.dayNumber} Solves ({mySolves.length})</span>
+                          </div>
+                          <div className="space-y-1.5">
+                            {mySolves.map((s: any, idx: number) => (
+                              <div key={idx} className="flex items-center gap-2 text-xs font-medium text-zinc-800 dark:text-zinc-200">
+                                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0" />
+                                <span className="truncate">{s.problemName}</span>
+                                {getPlatformBadge(s.platform)}
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+
+                        {/* Center Separator Line */}
+                        <div className="hidden md:flex md:col-span-2 justify-center self-stretch items-center">
+                          <div className="w-[1px] bg-zinc-200 dark:bg-white/10 h-full" />
+                        </div>
+
+                        {/* Right Side: Opponent */}
+                        <div className="md:col-span-5 space-y-2 text-left md:text-right">
+                          <div className="text-[10px] font-mono font-bold uppercase tracking-widest text-zinc-400 flex items-center justify-start md:justify-end gap-1.5">
+                            <span>Day {dayItem.dayNumber} Solves ({oppSolves.length})</span>
+                          </div>
+                          <div className="space-y-1.5">
+                            {oppSolves.map((s: any, idx: number) => (
+                              <div key={idx} className="flex items-center justify-start md:justify-end gap-2 text-xs font-medium text-zinc-800 dark:text-zinc-200">
+                                {getPlatformBadge(s.platform)}
+                                <span className="truncate">{s.problemName}</span>
+                                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0" />
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+
+                      </div>
+                    </div>
+                  )}
 
                 </div>
               );
