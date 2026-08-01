@@ -599,25 +599,35 @@ const getChallengeById = async (req, res) => {
       }) : [];
 
       const creatorSolvesMap = new Map();
+      const seenCreatorKeys = new Set();
       creatorSubs.forEach(s => {
-        if (!creatorSolvesMap.has(s.date)) creatorSolvesMap.set(s.date, []);
-        creatorSolvesMap.get(s.date).push({
-          id: s._id,
-          problemName: s.problemName,
-          platform: s.platform,
-          createdAt: s.createdAt
-        });
+        const key = `${s.date}_${(s.problemName || "").toLowerCase().trim()}`;
+        if (!seenCreatorKeys.has(key)) {
+          seenCreatorKeys.add(key);
+          if (!creatorSolvesMap.has(s.date)) creatorSolvesMap.set(s.date, []);
+          creatorSolvesMap.get(s.date).push({
+            id: s._id,
+            problemName: s.problemName,
+            platform: s.platform,
+            createdAt: s.createdAt
+          });
+        }
       });
 
       const opponentSolvesMap = new Map();
+      const seenOpponentKeys = new Set();
       opponentSubs.forEach(s => {
-        if (!opponentSolvesMap.has(s.date)) opponentSolvesMap.set(s.date, []);
-        opponentSolvesMap.get(s.date).push({
-          id: s._id,
-          problemName: s.problemName,
-          platform: s.platform,
-          createdAt: s.createdAt
-        });
+        const key = `${s.date}_${(s.problemName || "").toLowerCase().trim()}`;
+        if (!seenOpponentKeys.has(key)) {
+          seenOpponentKeys.add(key);
+          if (!opponentSolvesMap.has(s.date)) opponentSolvesMap.set(s.date, []);
+          opponentSolvesMap.get(s.date).push({
+            id: s._id,
+            problemName: s.problemName,
+            platform: s.platform,
+            createdAt: s.createdAt
+          });
+        }
       });
 
       const todayStr = new Date().toLocaleDateString("en-CA", { timeZone: "Asia/Kolkata" });

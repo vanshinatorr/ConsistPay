@@ -362,8 +362,8 @@ export function ActiveBattle() {
                       {myStatus === "completed" && getPlatformBadge(myProblem?.platform || dayItem.creatorPlatform || dayItem.opponentPlatform)}
                       
                       {myMoreCount > 0 && (
-                        <span className="px-1.5 py-0.5 rounded text-[10px] font-mono font-bold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 shrink-0">
-                          +{myMoreCount} more
+                        <span className="text-[10px] font-mono text-zinc-400 dark:text-zinc-500 font-semibold shrink-0">
+                          (+{myMoreCount} solve{myMoreCount > 1 ? "s" : ""})
                         </span>
                       )}
                     </div>
@@ -384,8 +384,8 @@ export function ActiveBattle() {
                   <div className="md:col-span-5 flex items-center justify-start md:justify-end gap-2.5 min-w-0 text-left md:text-right">
                     <div className="min-w-0 flex items-center gap-2">
                       {oppMoreCount > 0 && (
-                        <span className="px-1.5 py-0.5 rounded text-[10px] font-mono font-bold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 shrink-0">
-                          +{oppMoreCount} more
+                        <span className="text-[10px] font-mono text-zinc-400 dark:text-zinc-500 font-semibold shrink-0">
+                          (+{oppMoreCount} solve{oppMoreCount > 1 ? "s" : ""})
                         </span>
                       )}
                       {oppStatus === "completed" && getPlatformBadge(oppProblem?.platform || dayItem.opponentPlatform || dayItem.creatorPlatform)}
@@ -409,43 +409,38 @@ export function ActiveBattle() {
                     )}
                   </div>
 
-                  {/* Expandable Solves Drawer */}
+                  {/* Sleek Aligned Solves Drawer */}
                   {isExpanded && hasMultipleSolves && (
-                    <div className="col-span-1 md:col-span-12 mt-1 pt-2.5 border-t border-zinc-200/60 dark:border-white/5 grid grid-cols-1 md:grid-cols-2 gap-4 px-1 text-xs animate-in fade-in duration-200">
+                    <div className="col-span-1 md:col-span-12 mt-2 pt-2.5 border-t border-zinc-200/60 dark:border-white/5 grid grid-cols-1 md:grid-cols-12 gap-3 text-xs animate-in fade-in duration-200">
                       {/* Left: Your All Solves */}
-                      <div className="space-y-1">
-                        <div className="text-[10px] font-mono font-bold uppercase tracking-wider text-zinc-400 mb-1 flex items-center gap-1.5">
-                          <span>All Solves on Day {dayItem.dayNumber} ({mySolves.length})</span>
+                      <div className="md:col-span-5 space-y-1.5 pl-6">
+                        <div className="text-[10px] font-mono font-bold uppercase tracking-wider text-zinc-400 mb-1.5">
+                          Day {dayItem.dayNumber} Solves ({mySolves.length})
                         </div>
-                        {mySolves.length > 0 ? (
-                          mySolves.map((s: any, idx: number) => (
-                            <div key={idx} className="flex items-center gap-2 p-1.5 rounded-lg bg-zinc-100/70 dark:bg-white/[0.03] border border-zinc-200/50 dark:border-white/5 text-zinc-800 dark:text-zinc-200">
-                              <span className="text-[10px] font-mono text-zinc-400 font-bold shrink-0">{idx + 1}.</span>
-                              <span className="truncate font-medium flex-1">{s.problemName}</span>
-                              {getPlatformBadge(s.platform)}
-                            </div>
-                          ))
-                        ) : (
-                          <span className="text-zinc-400 text-[11px] italic">No solves recorded</span>
-                        )}
+                        {mySolves.map((s: any, idx: number) => (
+                          <div key={idx} className="flex items-center gap-2 text-zinc-700 dark:text-zinc-300 font-medium">
+                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0" />
+                            <span className="truncate">{s.problemName}</span>
+                            {getPlatformBadge(s.platform)}
+                          </div>
+                        ))}
                       </div>
 
+                      {/* Center Spacer */}
+                      <div className="hidden md:block md:col-span-2" />
+
                       {/* Right: Opponent All Solves */}
-                      <div className="space-y-1 text-left md:text-right">
-                        <div className="text-[10px] font-mono font-bold uppercase tracking-wider text-zinc-400 mb-1 flex items-center justify-start md:justify-end gap-1.5">
-                          <span>All Solves on Day {dayItem.dayNumber} ({oppSolves.length})</span>
+                      <div className="md:col-span-5 space-y-1.5 pr-6 text-left md:text-right">
+                        <div className="text-[10px] font-mono font-bold uppercase tracking-wider text-zinc-400 mb-1.5">
+                          Day {dayItem.dayNumber} Solves ({oppSolves.length})
                         </div>
-                        {oppSolves.length > 0 ? (
-                          oppSolves.map((s: any, idx: number) => (
-                            <div key={idx} className="flex items-center justify-start md:justify-end gap-2 p-1.5 rounded-lg bg-zinc-100/70 dark:bg-white/[0.03] border border-zinc-200/50 dark:border-white/5 text-zinc-800 dark:text-zinc-200">
-                              {getPlatformBadge(s.platform)}
-                              <span className="truncate font-medium flex-1 md:flex-initial">{s.problemName}</span>
-                              <span className="text-[10px] font-mono text-zinc-400 font-bold shrink-0">{idx + 1}.</span>
-                            </div>
-                          ))
-                        ) : (
-                          <span className="text-zinc-400 text-[11px] italic">No solves recorded</span>
-                        )}
+                        {oppSolves.map((s: any, idx: number) => (
+                          <div key={idx} className="flex items-center justify-start md:justify-end gap-2 text-zinc-700 dark:text-zinc-300 font-medium">
+                            {getPlatformBadge(s.platform)}
+                            <span className="truncate">{s.problemName}</span>
+                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0" />
+                          </div>
+                        ))}
                       </div>
                     </div>
                   )}
