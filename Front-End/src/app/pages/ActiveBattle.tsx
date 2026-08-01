@@ -14,6 +14,11 @@ export function ActiveBattle() {
   const [error, setError] = useState("");
   const [showSuccess, setShowSuccess] = useState(false);
   const [showAllDays, setShowAllDays] = useState(false);
+  const [expandedDays, setExpandedDays] = useState<Record<number, boolean>>({});
+
+  const toggleDayExpand = (dayNumber: number) => {
+    setExpandedDays(prev => ({ ...prev, [dayNumber]: !prev[dayNumber] }));
+  };
 
   const API_URL = import.meta.env.VITE_API_URL;
   const token = localStorage.getItem("token") || "";
@@ -316,14 +321,23 @@ export function ActiveBattle() {
               const oppProblem = isCreator ? dayItem.opponentProblem : dayItem.creatorProblem;
               const isCurrent = dayItem.dayNumber === currentDay;
 
+              const mySolves: any[] = isCreator ? (dayItem.creatorSolves || []) : (dayItem.opponentSolves || []);
+              const oppSolves: any[] = isCreator ? (dayItem.opponentSolves || []) : (dayItem.creatorSolves || []);
+              
+              const myMoreCount = mySolves.length > 1 ? mySolves.length - 1 : 0;
+              const oppMoreCount = oppSolves.length > 1 ? oppSolves.length - 1 : 0;
+              const hasMultipleSolves = myMoreCount > 0 || oppMoreCount > 0;
+              const isExpanded = !!expandedDays[dayItem.dayNumber];
+
               return (
                 <div
                   key={dayItem.dayNumber}
+                  onClick={() => hasMultipleSolves && toggleDayExpand(dayItem.dayNumber)}
                   className={`py-2.5 px-3 rounded-xl transition-all grid grid-cols-1 md:grid-cols-12 gap-3 items-center ${
                     isCurrent
                       ? "bg-emerald-500/[0.04] dark:bg-emerald-500/10 border border-emerald-500/20 dark:border-emerald-500/30 my-1 shadow-xs"
                       : "hover:bg-zinc-100/60 dark:hover:bg-white/[0.02]"
-                  }`}
+                  } ${hasMultipleSolves ? "cursor-pointer" : ""}`}
                 >
                   {/* Left: You */}
                   <div className="md:col-span-5 flex items-center gap-2.5 min-w-0">
@@ -345,7 +359,13 @@ export function ActiveBattle() {
                       ) : (
                         <span className="text-xs text-zinc-400">{myStatus === "missed" ? "Missed Day" : myStatus === "pending" ? "Waiting sync..." : "Locked"}</span>
                       )}
-                      {myStatus === "completed" && getPlatformBadge(myProblem?.platform)}
+                      {myStatus === "completed" && getPlatformBadge(myProblem?.platform || dayItem.creatorPlatform || dayItem.opponentPlatform)}
+                      
+                      {myMoreCount > 0 && (
+                        <span className="px-1.5 py-0.5 rounded text-[10px] font-mono font-bold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 shrink-0">
+                          +{myMoreCount} more
+                        </span>
+                      )}
                     </div>
                   </div>
 
@@ -363,7 +383,12 @@ export function ActiveBattle() {
                   {/* Right: Opponent */}
                   <div className="md:col-span-5 flex items-center justify-start md:justify-end gap-2.5 min-w-0 text-left md:text-right">
                     <div className="min-w-0 flex items-center gap-2">
-                      {oppStatus === "completed" && getPlatformBadge(oppProblem?.platform)}
+                      {oppMoreCount > 0 && (
+                        <span className="px-1.5 py-0.5 rounded text-[10px] font-mono font-bold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 shrink-0">
+                          +{oppMoreCount} more
+                        </span>
+                      )}
+                      {oppStatus === "completed" && getPlatformBadge(oppProblem?.platform || dayItem.opponentPlatform || dayItem.creatorPlatform)}
                       {oppStatus === "completed" ? (
                         <span className="text-xs font-semibold text-zinc-900 dark:text-white truncate" title={oppProblem}>
                           {oppProblem || "Verified Solve"}
@@ -383,6 +408,47 @@ export function ActiveBattle() {
                       <Lock className="w-3.5 h-3.5 text-zinc-400 shrink-0" />
                     )}
                   </div>
+
+                  {/* Expandable Solves Drawer */}
+                  {isExpanded && hasMultipleSolves && (
+                    <div className="col-span-1 md:col-span-12 mt-1 pt-2.5 border-t border-zinc-200/60 dark:border-white/5 grid grid-cols-1 md:grid-cols-2 gap-4 px-1 text-xs animate-in fade-in duration-200">
+                      {/* Left: Your All Solves */}
+                      <div className="space-y-1">
+                        <div className="text-[10px] font-mono font-bold uppercase tracking-wider text-zinc-400 mb-1 flex items-center gap-1.5">
+                          <span>All Solves on Day {dayItem.dayNumber} ({mySolves.length})</span>
+                        </div>
+                        {mySolves.length > 0 ? (
+                          mySolves.map((s: any, idx: number) => (
+                            <div key={idx} className="flex items-center gap-2 p-1.5 rounded-lg bg-zinc-100/70 dark:bg-white/[0.03] border border-zinc-200/50 dark:border-white/5 text-zinc-800 dark:text-zinc-200">
+                              <span className="text-[10px] font-mono text-zinc-400 font-bold shrink-0">{idx + 1}.</span>
+                              <span className="truncate font-medium flex-1">{s.problemName}</span>
+                              {getPlatformBadge(s.platform)}
+                            </div>
+                          ))
+                        ) : (
+                          <span className="text-zinc-400 text-[11px] italic">No solves recorded</span>
+                        )}
+                      </div>
+
+                      {/* Right: Opponent All Solves */}
+                      <div className="space-y-1 text-left md:text-right">
+                        <div className="text-[10px] font-mono font-bold uppercase tracking-wider text-zinc-400 mb-1 flex items-center justify-start md:justify-end gap-1.5">
+                          <span>All Solves on Day {dayItem.dayNumber} ({oppSolves.length})</span>
+                        </div>
+                        {oppSolves.length > 0 ? (
+                          oppSolves.map((s: any, idx: number) => (
+                            <div key={idx} className="flex items-center justify-start md:justify-end gap-2 p-1.5 rounded-lg bg-zinc-100/70 dark:bg-white/[0.03] border border-zinc-200/50 dark:border-white/5 text-zinc-800 dark:text-zinc-200">
+                              {getPlatformBadge(s.platform)}
+                              <span className="truncate font-medium flex-1 md:flex-initial">{s.problemName}</span>
+                              <span className="text-[10px] font-mono text-zinc-400 font-bold shrink-0">{idx + 1}.</span>
+                            </div>
+                          ))
+                        ) : (
+                          <span className="text-zinc-400 text-[11px] italic">No solves recorded</span>
+                        )}
+                      </div>
+                    </div>
+                  )}
 
                 </div>
               );

@@ -598,8 +598,27 @@ const getChallengeById = async (req, res) => {
         date: { $gte: startStr, $lte: endStr }
       }) : [];
 
-      const creatorDatesMap = new Map(creatorSubs.map(s => [s.date, s]));
-      const opponentDatesMap = new Map(opponentSubs.map(s => [s.date, s]));
+      const creatorSolvesMap = new Map();
+      creatorSubs.forEach(s => {
+        if (!creatorSolvesMap.has(s.date)) creatorSolvesMap.set(s.date, []);
+        creatorSolvesMap.get(s.date).push({
+          id: s._id,
+          problemName: s.problemName,
+          platform: s.platform,
+          createdAt: s.createdAt
+        });
+      });
+
+      const opponentSolvesMap = new Map();
+      opponentSubs.forEach(s => {
+        if (!opponentSolvesMap.has(s.date)) opponentSolvesMap.set(s.date, []);
+        opponentSolvesMap.get(s.date).push({
+          id: s._id,
+          problemName: s.problemName,
+          platform: s.platform,
+          createdAt: s.createdAt
+        });
+      });
 
       const todayStr = new Date().toLocaleDateString("en-CA", { timeZone: "Asia/Kolkata" });
 
@@ -610,10 +629,10 @@ const getChallengeById = async (req, res) => {
         let creatorStatus = "future";
         let opponentStatus = "future";
 
-        const creatorSub = creatorDatesMap.get(dayStr);
-        const opponentSub = opponentDatesMap.get(dayStr);
+        const creatorSolves = creatorSolvesMap.get(dayStr) || [];
+        const opponentSolves = opponentSolvesMap.get(dayStr) || [];
 
-        if (creatorSub) {
+        if (creatorSolves.length > 0) {
           creatorStatus = "completed";
         } else if (dayStr === todayStr) {
           creatorStatus = "pending";
@@ -622,7 +641,7 @@ const getChallengeById = async (req, res) => {
         }
 
         if (ch.opponentId) {
-          if (opponentSub) {
+          if (opponentSolves.length > 0) {
             opponentStatus = "completed";
           } else if (dayStr === todayStr) {
             opponentStatus = "pending";
@@ -636,8 +655,14 @@ const getChallengeById = async (req, res) => {
           date: dayStr,
           creatorStatus,
           opponentStatus,
-          creatorProblem: creatorSub ? creatorSub.problemName : null,
-          opponentProblem: opponentSub ? opponentSub.problemName : null
+          creatorProblem: creatorSolves[0] ? creatorSolves[0].problemName : null,
+          creatorPlatform: creatorSolves[0] ? creatorSolves[0].platform : null,
+          creatorSolves,
+          creatorCount: creatorSolves.length,
+          opponentProblem: opponentSolves[0] ? opponentSolves[0].problemName : null,
+          opponentPlatform: opponentSolves[0] ? opponentSolves[0].platform : null,
+          opponentSolves,
+          opponentCount: opponentSolves.length
         });
       }
 
