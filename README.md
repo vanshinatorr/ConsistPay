@@ -89,3 +89,5 @@ npm run dev
 ```
 
 The application will start running locally. Open [http://localhost:5173](http://localhost:5173) in your browser to access the dashboard.
+
+Refer to [PRODUCTION_READINESS.md](PRODUCTION_READINESS.md) for serverless guidelines and database pooling details.
