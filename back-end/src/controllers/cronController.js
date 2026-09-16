@@ -1,11 +1,24 @@
 const User = require("../models/User");
 const Submission = require("../models/Submission");
 const PlatformLinkage = require("../models/PlatformLinkage");
-const { sendStreakWarningEmail, sendSetupReminderEmail, sendPlatformLinkNudgeEmail } = require("../utils/emailService");
+const { 
+  isAutomatedEmailEnabled,
+  sendStreakWarningEmail, 
+  sendSetupReminderEmail, 
+  sendPlatformLinkNudgeEmail 
+} = require("../utils/emailService");
 
 // 1. Send Daily Streak Warnings at 8:00 PM IST (14:30 UTC)
 const runDailyStreakReminder = async (req, res) => {
   try {
+    if (!isAutomatedEmailEnabled()) {
+      console.log("[Cron] Daily streak reminder skipped: automated emails are turned OFF.");
+      return res.status(200).json({
+        message: "Daily streak reminder is currently turned off.",
+        disabled: true,
+      });
+    }
+
     const todayStr = new Date().toLocaleDateString("en-CA", { timeZone: "Asia/Kolkata" });
     
     // Find all real (non-simulated) users with active plans and deposits
@@ -71,6 +84,14 @@ const runDailyStreakReminder = async (req, res) => {
 // 2. Send Onboarding Setup Reminder (24 hours after registration)
 const runSetupReminder = async (req, res) => {
   try {
+    if (!isAutomatedEmailEnabled()) {
+      console.log("[Cron] Onboarding setup reminder skipped: automated emails are turned OFF.");
+      return res.status(200).json({
+        message: "Onboarding setup reminder is currently turned off.",
+        disabled: true,
+      });
+    }
+
     const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
     
     // Find all real users registered > 24 hours ago who haven't completed onboarding and haven't received reminder

@@ -11,10 +11,22 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-// Safe email dispatcher that automatically suppresses emails for simulated/fake accounts
+// Helper to check whether automated emails are globally enabled (defaults to false / OFF)
+const isAutomatedEmailEnabled = () => {
+  return process.env.ENABLE_AUTOMATED_EMAILS === "true";
+};
+
+// Safe email dispatcher that automatically suppresses emails when automated emails are off, or for simulated/fake accounts
 const sendMailSafe = async (options) => {
   const { to } = options;
   if (!to) return { success: false, reason: "No recipient email" };
+
+  // Global toggle: Automated emails are OFF by default unless ENABLE_AUTOMATED_EMAILS="true"
+  if (!isAutomatedEmailEnabled()) {
+    console.log(`[EmailService] Automated emails are currently turned OFF. Suppressed sending to: ${to}`);
+    return { success: true, disabled: true, reason: "Automated emails are turned off" };
+  }
+
   const emailLower = to.toLowerCase().trim();
   
   if (
@@ -45,6 +57,10 @@ const sendMailSafe = async (options) => {
 // Helper to log email outcomes to database (Success and Failure logs)
 const logEmailOutcome = async (email, subject, templateType, status, errorMessage = "", body = "") => {
   if (!email) return;
+  // If automated emails are disabled, don't spam EmailLog for automated templates
+  if (!isAutomatedEmailEnabled() && templateType !== "otp" && templateType !== "custom") {
+    return;
+  }
   const e = email.toLowerCase().trim();
   if (e.endsWith(".sim@consistpay.in") || e.includes("@consistpay.in") || e.includes(".sim@") || e.includes("simulated") || e.includes("fake")) {
     return;
@@ -129,6 +145,7 @@ const wrapHTMLContent = (title, headerText, bodyText, buttonText = "", buttonUrl
 
 // 1. Send Welcome Email
 const sendWelcomeEmail = async (email, name) => {
+  if (!isAutomatedEmailEnabled()) return;
   const subject = "Commitment issues? We got you.";
   const type = "welcome";
   try {
@@ -162,6 +179,7 @@ const sendWelcomeEmail = async (email, name) => {
 
 // 2. Send Setup Reminder Email (24h Inactivity)
 const sendSetupReminderEmail = async (email, name) => {
+  if (!isAutomatedEmailEnabled()) return;
   const subject = "Don't leave your coding goals on read.";
   const type = "setup_reminder";
   try {
@@ -192,6 +210,7 @@ const sendSetupReminderEmail = async (email, name) => {
 
 // 3. Send Profile Verification Nudge Email
 const sendVerificationNudgeEmail = async (email, name, platform, verificationToken) => {
+  if (!isAutomatedEmailEnabled()) return;
   const subject = "One tiny detail is missing... ⏳";
   const type = "verification_nudge";
   try {
@@ -225,6 +244,7 @@ const sendVerificationNudgeEmail = async (email, name, platform, verificationTok
 
 // 4. Send Contract Activated Email
 const sendContractActivatedEmail = async (email, name, plan, dailyCommitment, activeDeposit, expiryDate) => {
+  if (!isAutomatedEmailEnabled()) return;
   const subject = "Your consistency contract is active. 💳";
   const type = "contract_activated";
   try {
@@ -264,6 +284,7 @@ const sendContractActivatedEmail = async (email, name, plan, dailyCommitment, ac
 
 // 5. Send Daily Streak Warning Email
 const sendStreakWarningEmail = async (email, name, dailyCommitment) => {
+  if (!isAutomatedEmailEnabled()) return;
   const subject = "Quick coding check-in (before midnight collects the tax) ⏳";
   const type = "streak_warning";
   try {
@@ -296,6 +317,7 @@ const sendStreakWarningEmail = async (email, name, dailyCommitment) => {
 
 // 5b. Send Platform Link Nudge — for users with active deposit but no platform linked
 const sendPlatformLinkNudgeEmail = async (email, name, activeDeposit) => {
+  if (!isAutomatedEmailEnabled()) return;
   const subject = "Your ₹" + activeDeposit + " is live, but we can't track your solves yet 👀";
   const type = "streak_warning";
   try {
@@ -330,6 +352,7 @@ const sendPlatformLinkNudgeEmail = async (email, name, activeDeposit) => {
 
 // 6. Send Deduction Email (Rollover Miss)
 const sendDeductionEmail = async (email, name, dailyCommitment, remainingDeposit, graceCoins = 0, isProtected = false) => {
+  if (!isAutomatedEmailEnabled()) return;
   const subject = isProtected ? "Streak Protected! 🛡️" : "Oof. Yesterday was a slip. 💸";
   const type = "deduction";
   try {
@@ -377,6 +400,7 @@ const sendDeductionEmail = async (email, name, dailyCommitment, remainingDeposit
 
 // 7. Send Low Deposit Warning Email
 const sendLowBalanceEmail = async (email, name, activeDeposit, dailyCommitment) => {
+  if (!isAutomatedEmailEnabled()) return;
   const subject = "Your deposit is running low. ⚠️";
   const type = "low_balance";
   try {
@@ -407,6 +431,7 @@ const sendLowBalanceEmail = async (email, name, activeDeposit, dailyCommitment) 
 
 // 8. Send Streak Milestone Celebration
 const sendMilestoneEmail = async (email, name, streak, securedBalance) => {
+  if (!isAutomatedEmailEnabled()) return;
   const subject = `${streak} days of pure focus. You're in the zone. 🚀`;
   const type = "milestone";
   try {
@@ -439,6 +464,7 @@ const sendMilestoneEmail = async (email, name, streak, securedBalance) => {
 
 // 9. Send Dormancy Re-engagement Email
 const sendDormancyEmail = async (email, name) => {
+  if (!isAutomatedEmailEnabled()) return;
   const subject = "Coding is a muscle. Let's do 1 easy solve today. 🕸️";
   const type = "dormancy";
   try {
@@ -493,6 +519,7 @@ const sendCustomDirectEmail = async (email, name, subject, bodyContent) => {
 };
 
 module.exports = {
+  isAutomatedEmailEnabled,
   sendWelcomeEmail,
   sendSetupReminderEmail,
   sendVerificationNudgeEmail,

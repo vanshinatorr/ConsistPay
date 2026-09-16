@@ -362,24 +362,26 @@ const syncUserStreak = async (userOrId) => {
           await user.save();
           console.log(`[StreakHelper] Recalculated state for user ${user._id}: streak=${currentStreak}, balance=₹${balance}, activeDeposit=₹${activeDeposit}`);
 
-          // Trigger email notifications asynchronously in the background for real users only
+          // Trigger email notifications asynchronously in the background for real users only (if automated emails are enabled)
           if (user.email && !user.isSimulated && !user.email.toLowerCase().includes(".sim@consistpay")) {
-            const { sendDeductionEmail, sendLowBalanceEmail, sendMilestoneEmail } = require("./emailService");
+            const { isAutomatedEmailEnabled, sendDeductionEmail, sendLowBalanceEmail, sendMilestoneEmail } = require("./emailService");
             
-            if (newMissDeduction || newMissProtected) {
-              sendDeductionEmail(user.email, user.name, user.dailyCommitment, activeDeposit, graceCoins, newMissProtected).catch(err =>
-                console.error("[EmailService Miss Background Error]:", err.message)
-              );
-            }
-            if (shouldSendLowBalance) {
-              sendLowBalanceEmail(user.email, user.name, activeDeposit, user.dailyCommitment).catch(err =>
-                console.error("[EmailService Low Balance Background Error]:", err.message)
-              );
-            }
-            if (shouldSendMilestone) {
-              sendMilestoneEmail(user.email, user.name, currentStreak, balance).catch(err =>
-                console.error("[EmailService Milestone Background Error]:", err.message)
-              );
+            if (isAutomatedEmailEnabled()) {
+              if (newMissDeduction || newMissProtected) {
+                sendDeductionEmail(user.email, user.name, user.dailyCommitment, activeDeposit, graceCoins, newMissProtected).catch(err =>
+                  console.error("[EmailService Miss Background Error]:", err.message)
+                );
+              }
+              if (shouldSendLowBalance) {
+                sendLowBalanceEmail(user.email, user.name, activeDeposit, user.dailyCommitment).catch(err =>
+                  console.error("[EmailService Low Balance Background Error]:", err.message)
+                );
+              }
+              if (shouldSendMilestone) {
+                sendMilestoneEmail(user.email, user.name, currentStreak, balance).catch(err =>
+                  console.error("[EmailService Milestone Background Error]:", err.message)
+                );
+              }
             }
           }
         }
