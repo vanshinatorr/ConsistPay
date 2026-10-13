@@ -28,9 +28,10 @@ const generateRandomAvatar = () => {
 // Generate a 6-digit OTP
 const generateOTP = () => Math.floor(100000 + Math.random() * 900000).toString();
 
-// Generate a JWT Token
+// Long-lived (30-day) session token issued after successful authentication
 const generateToken = (id) => jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: "30d" });
-// Generate a Temporary Token for incomplete signups
+
+// Short-lived (15-min) token carrying verified identity data during the two-step signup flow
 const generateTempToken = (data) => jwt.sign(data, process.env.JWT_SECRET, { expiresIn: "15m" });
 
 /**
@@ -64,10 +65,10 @@ const sendOtp = async (req, res) => {
     const hashedOtp = await bcrypt.hash(otp, 10);
     console.log("=== DEBUG OTP ===", otp);
 
-    // Delete existing OTPs for this identifier to prevent spam
+    // Remove any previous active OTPs for this user to prevent replay attacks and spam
     await Otp.deleteMany({ identifier });
 
-    // Create new OTP with 5 mins expiry
+    // Store bcrypt-hashed OTP with a 5-minute expiration time
     await Otp.create({
       identifier,
       otp: hashedOtp,
@@ -165,7 +166,7 @@ const verifyOtp = async (req, res) => {
     const isMatch = await bcrypt.compare(otp, otpRecord.otp);
     if (!isMatch) return res.status(400).json({ message: "Invalid OTP" });
 
-    // OTP Verified, clean up
+    // Delete verified OTP record immediately to ensure single-use security
     await Otp.deleteOne({ _id: otpRecord._id });
 
     const isEmail = identifier.includes('@');
@@ -174,7 +175,7 @@ const verifyOtp = async (req, res) => {
     let user = await User.findOne(query);
 
     if (user) {
-      // EXISTING USER -> Login directly
+      // Existing user: record the auth provider if new and return a full session token
       if (!user.authProviders.includes(isEmail ? "email" : "phone")) {
         user.authProviders.push(isEmail ? "email" : "phone");
         await user.save();
@@ -185,7 +186,7 @@ const verifyOtp = async (req, res) => {
         user: { _id: user._id, name: user.name, username: user.username, avatar: user.avatar }
       });
     } else {
-      // NEW USER -> Needs to complete profile
+      // New user: issue a short-lived temporary token to gate profile creation without saving an incomplete record
       const tempToken = generateTempToken({ identifier, type: isEmail ? "email" : "phone" });
       return res.status(200).json({
         isNewUser: true,
@@ -209,8 +210,8 @@ const googleAuth = async (req, res) => {
 
     let payload;
     
+    // Supports two Google flows: access token (custom login hook) or ID token (Google button)
     if (access_token) {
-      // Flow for custom useGoogleLogin button (returns access_token)
       const response = await fetch("https://www.googleapis.com/oauth2/v3/userinfo", {
         headers: { Authorization: `Bearer ${access_token}` }
       });
@@ -219,7 +220,6 @@ const googleAuth = async (req, res) => {
       }
       payload = await response.json();
     } else {
-      // Flow for standard GoogleLogin component (returns credential id_token)
       let ticket;
       try {
         ticket = await client.verifyIdToken({
@@ -311,6 +311,7 @@ const completeSignup = async (req, res) => {
       return res.status(400).json({ message: "Missing required fields and parameters must be strings" });
     }
 
+    // Verify tempToken to recover the previously authenticated email/phone/Google identity
     let decoded;
     try {
       decoded = jwt.verify(tempToken, process.env.JWT_SECRET);

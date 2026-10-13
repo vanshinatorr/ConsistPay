@@ -40,11 +40,11 @@ const runDailyStreakReminder = async (req, res) => {
     );
     const linkedUserIds = new Set(linkedPlatforms.map(p => p.userId.toString()));
 
-    // Separate: no-platform users vs platform-connected users
+    // Separate users with linked coding profiles from those who still need to connect one
     const noProfileUsers = activeUsers.filter(u => !linkedUserIds.has(u._id.toString()));
     const profileUsers = activeUsers.filter(u => linkedUserIds.has(u._id.toString()));
 
-    // Find which platform-connected users solved today
+    // Filter platform-connected users who have not recorded a completed solve today
     const completedToday = await Submission.find({ date: todayStr, status: "completed" });
     const solvedUserIds = new Set(completedToday.map(s => s.userId.toString()));
     const warningQueue = profileUsers.filter(u => !solvedUserIds.has(u._id.toString()));
@@ -126,12 +126,12 @@ const runSetupReminder = async (req, res) => {
   }
 };
 
-// 3. Automated Global Background Sync (Runs before midnight to sync all active platform solves)
+// 3. Global Pre-Midnight Sync: scrapes coding platforms for all users before midnight to prevent false streak breaks
 const runAutomatedGlobalSync = async (req, res) => {
   try {
     const { syncUserStreak } = require("../utils/streakHelper");
     
-    // Find ALL registered users in the database for background auto-sync
+    // Fetch all registered users to perform a nightly catch-up sync
     const allUsers = await User.find({});
 
     console.log(`[Auto-Sync Cron] Starting background sync for ALL ${allUsers.length} registered users...`);

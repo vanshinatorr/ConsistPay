@@ -7,3 +7,4 @@ Front-End/dist/
 .env.*.local
 *.env
 .antigravitycli/
+.agents/

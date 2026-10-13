@@ -20,7 +20,7 @@ const generateInviteCode = async () => {
   return code;
 };
 
-// Count completed submissions in a date range (Unique Days)
+// Counts distinct calendar days with at least one completed solve in IST during the battle
 const countCompletedSubmissions = async (userId, startDate, endDate, duration) => {
   if (!startDate || !endDate) return 0;
   const startStr = new Date(startDate).toLocaleDateString("en-CA", { timeZone: "Asia/Kolkata" });
@@ -47,7 +47,7 @@ const countCompletedSubmissions = async (userId, startDate, endDate, duration) =
   return result.length > 0 ? result[0].uniqueDays : 0;
 };
 
-// Resolve expired challenges and payout/refund
+// Lazy resolution for ended challenges: locks status, auto-syncs coding platforms, and distributes payouts
 const autoResolveChallenges = async (userId) => {
   const now = new Date();
   // Find active challenges for the user that have passed their end date
@@ -65,7 +65,7 @@ const autoResolveChallenges = async (userId) => {
 
   for (const challenge of expiredChallenges) {
     try {
-      // Atomically lock the challenge as completed before distributing payouts
+      // Lock status to "completed" atomically before calculating or distributing funds
       const lockedChallenge = await Challenge.findOneAndUpdate(
         { _id: challenge._id, status: "active" },
         { $set: { status: "completed" } },
@@ -217,12 +217,13 @@ const createChallenge = async (req, res) => {
     const user = await User.findById(userId);
     console.log("User details for challenge:", { name: user.name, plan: user.plan });
     
+    // Only users with an active Pro plan can create custom peer-to-peer challenges
     if (user.plan !== "pro") {
       console.log("Create challenge rejected: user plan is not pro");
       return res.status(403).json({ message: "Only Pro users can create custom challenges." });
     }
 
-    // Check if creator already has a pending challenge
+    // Limit each creator to at most one pending invitation at a time
     const existingPending = await Challenge.findOne({ creatorId: userId, status: "pending" });
     if (existingPending) {
       return res.status(400).json({ message: "You already have a pending battle invitation. Please cancel the existing invitation or wait for it to expire (5 mins) before creating a new one." });
@@ -238,10 +239,11 @@ const createChallenge = async (req, res) => {
       return res.status(400).json({ message: "Stake must be between ₹100 and ₹1000." });
     }
 
+    // Total cost consists of the user's matched stake plus a platform facilitation fee
     const entryFee = 19;
     const totalCost = stakeVal + entryFee;
 
-    // Deduct from battle wallet atomically and check balance to prevent race conditions (double spending)
+    // Deduct from battle wallet atomically with $gte to prevent double spending
     const updatedUser = await User.findOneAndUpdate(
       { _id: userId, battleBalance: { $gte: totalCost } },
       { $inc: { battleBalance: -totalCost } },

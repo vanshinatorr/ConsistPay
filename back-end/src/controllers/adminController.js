@@ -266,6 +266,7 @@ const getAdminWithdrawals = async (req, res) => {
   }
 };
 
+// Approve withdrawal: atomically marks pending request as completed and notifies the user
 const approveWithdrawal = async (req, res) => {
   try {
     const { id } = req.params;
@@ -295,6 +296,7 @@ const approveWithdrawal = async (req, res) => {
   }
 };
 
+// Reject withdrawal: atomically marks request as failed and refunds funds to the matching wallet
 const rejectWithdrawal = async (req, res) => {
   try {
     const { id } = req.params;
@@ -307,7 +309,7 @@ const rejectWithdrawal = async (req, res) => {
       return res.status(400).json({ message: "Withdrawal request not found or already resolved." });
     }
 
-    // Refund the amount to user's wallet
+    // Refund deducted amount back to user's wallet (battle or consistency)
     const User = require("../models/User");
     const user = await User.findById(withdrawal.userId);
     if (user) {

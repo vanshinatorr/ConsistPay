@@ -4,7 +4,7 @@ const platformService = require("../services/platformService");
  * Express controllers for external coding platforms integration.
  */
 
-// 1. Link Platform
+// 1. Link Platform: validates supported coding sites and generates an ownership verification token
 const linkPlatform = async (req, res) => {
   try {
     const { platform, username } = req.body;
@@ -30,7 +30,7 @@ const linkPlatform = async (req, res) => {
   }
 };
 
-// 2. Verify Ownership
+// 2. Verify Ownership: scrapes the user profile to confirm the verification token is in their bio
 const verifyPlatform = async (req, res) => {
   try {
     const { platform } = req.body;
@@ -51,7 +51,7 @@ const verifyPlatform = async (req, res) => {
   }
 };
 
-// 3. Sync Daily Solves
+// 3. Sync Daily Solves: fetches latest problem submissions, deduplicates, and evaluates daily consistency
 const syncPlatform = async (req, res) => {
   try {
     const { platform, timezone } = req.body;

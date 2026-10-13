@@ -7,8 +7,8 @@ const Submission = require("../models/Submission");
 const getTodaySubmission = async (req, res) => {
 
   try {
+    // Use en-CA locale to produce a consistent YYYY-MM-DD date key in Indian Standard Time (IST)
     const today = new Date().toLocaleDateString("en-CA", { timeZone: "Asia/Kolkata" });
-    
 
     // Find all completed submissions today
     const submissions = await Submission.find({
@@ -40,6 +40,7 @@ const getMySubmissions = async (req, res) => {
 const getCalendar = async (req, res) => {
   try {
     const { year } = req.query;
+    // Query submissions for the given year prefix to feed the annual contribution heatmap
     const submissions = await Submission.find({
       userId: req.user._id,
       date: { $regex: `^${year}-` }

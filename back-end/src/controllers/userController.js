@@ -2,6 +2,7 @@ const User = require("../models/User");
 const Submission = require("../models/Submission");
 const bcrypt = require("bcryptjs");
 
+// In-memory lock per user ID to serialize profile fetches and prevent duplicate streak/badge calculations
 const activeUserRequests = new Set();
 
 const checkAndNotifyBadges = async (user, totalSolved, totalMissed, totalProblemsSolved) => {
@@ -164,7 +165,7 @@ const getMe = async (req, res) => {
       user = await syncUserStreak(user);
     }
     
-    // Find unique days with at least one completed submission
+    // Query unique completed days within the active 30-day commitment cycle window
     const solvedQuery = { userId: req.user._id, status: "completed" };
     const missedQuery = { userId: req.user._id, status: "missed" };
 
@@ -230,6 +231,7 @@ const getMe = async (req, res) => {
     // Check dynamic achievements and write notifications if earned
     await checkAndNotifyBadges(user, totalSolved, totalMissed, totalProblemsSolved);
 
+    // Determine plan status: active, in 3-day renewal grace period, or expired
     let planStatus = "expired";
     let graceDaysLeft = 0;
     const now = new Date();
@@ -252,7 +254,7 @@ const getMe = async (req, res) => {
         }
       }
 
-      // Check 10% auto-credit check if plan has expired
+      // Credit 10% consistency bonus if a Pro user completed their cycle with zero unprotected misses
       if (now > expiresAt && !user.bonusCredited) {
         if (user.plan === "pro" && (user.currentCycleUnprotectedMisses || 0) === 0) {
           const totalDeposit = (user.dailyCommitment || 0) * 30;

@@ -9,6 +9,7 @@ key_id: process.env.RAZORPAY_KEY_ID,
 key_secret: process.env.RAZORPAY_KEY_SECRET,
 });
 
+// Constant-time string comparison to prevent timing attacks against payment HMAC signatures
 const timingSafeEqual = (a, b) => {
   if (typeof a !== "string" || typeof b !== "string") return false;
   const aBuf = Buffer.from(a, "utf-8");
@@ -63,6 +64,7 @@ try {
 
   const isMock = razorpay_order_id && razorpay_order_id.startsWith("mock_");
 
+  // 1. Verify payment signature using Razorpay webhook secret
   if (!isMock) {
     const keySecret = process.env.RAZORPAY_KEY_SECRET;
     if (!keySecret) {
@@ -84,7 +86,7 @@ try {
     dailyCommitment = req.body.dailyCommitment;
     depositAmount = req.body.depositAmount;
   } else {
-    // Fetch the order from Razorpay to verify details stored in notes on creation
+    // 2. Fetch order notes from Razorpay to verify user ownership and prevent client-side tampering
     const order = await razorpay.orders.fetch(razorpay_order_id);
     if (!order || !order.notes) {
       return res.status(400).json({ message: "Razorpay order details not found" });
@@ -146,6 +148,7 @@ try {
       user.balance = (user.balance || 0) - offset;
     }
 
+    // Activate 30-day consistency commitment cycle and initialize grace coins
     user.activeDeposit = depositVal;
     user.plan = planLower;
     user.dailyCommitment = commitment;
@@ -519,6 +522,7 @@ const withdrawFunds = async (req, res) => {
       return res.status(400).json({ message: "Please enter a valid UPI ID (e.g. name@upi)." });
     }
 
+    // Distinguish between the PVP battle wallet and the daily consistency commitment wallet
     const type = walletType === "battle" ? "battle" : "consistency";
     let updatedUser;
 
