@@ -6,3 +6,4 @@ Front-End/dist/
 .env.local
 .env.*.local
 *.env
+.antigravitycli/

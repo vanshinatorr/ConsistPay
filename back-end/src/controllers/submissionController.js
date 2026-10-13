@@ -5,9 +5,11 @@ const Submission = require("../models/Submission");
  */
 
 const getTodaySubmission = async (req, res) => {
+
   try {
     const today = new Date().toLocaleDateString("en-CA", { timeZone: "Asia/Kolkata" });
     
+
     // Find all completed submissions today
     const submissions = await Submission.find({
       userId: req.user._id,
@@ -15,10 +17,12 @@ const getTodaySubmission = async (req, res) => {
       status: "completed"
     }).sort({ createdAt: -1 });
 
+
     res.status(200).json({
       count: submissions.length,
       submission: submissions.length > 0 ? submissions[0] : null
     });
+    
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

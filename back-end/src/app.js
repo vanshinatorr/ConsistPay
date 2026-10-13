@@ -2,13 +2,21 @@ const express = require("express");
 const cors = require("cors");
 const path = require("path");
 const dotenv = require("dotenv");
+
+// dotenv is called here as well as in server.js because on Vercel the entry
+// point is app.js (see vercel.json), so server.js never runs. Loading env
+// vars in both files ensures they're available regardless of the entry path.
 dotenv.config({ path: path.join(__dirname, "../.env") });
 
 const dbMiddleware = require("./middleware/dbMiddleware");
 
 const app = express();
 
-// Middleware
+// ─── CORS Configuration ─────────────────────────────────────────────
+// Allow requests from local dev servers and the production domains.
+// The regex also accepts any *.vercel.app preview deployment URL so that
+// PR previews can talk to the API without an explicit whitelist entry.
+// Passing credentials: true lets the browser send cookies / auth headers.
 const allowedOrigins = [
   "http://localhost:5173", 
   "http://localhost:5174", 
@@ -20,6 +28,7 @@ const allowedOrigins = [
 
 app.use(cors({
   origin: function (origin, callback) {
+    // !origin covers server-to-server calls and curl (no Origin header)
     if (
       !origin || 
       allowedOrigins.includes(origin) || 
@@ -35,10 +44,17 @@ app.use(cors({
 
 
 
+// ─── Body Parsers ────────────────────────────────────────────────────
+// Parse JSON and URL-encoded bodies with a 10 MB cap to support
+// base64-encoded avatar uploads without hitting the default 100 KB limit.
 // app.use(express.json());
-
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ limit: "10mb", extended: true }));
+
+// ─── Lightweight Routes (no DB needed) ───────────────────────────────
+// These are registered BEFORE dbMiddleware so they respond instantly
+// without opening a database connection — important for health checks
+// and Vercel's favicon probes that fire on every cold start.
 
 // Test route
 app.get("/", (req, res) => {
@@ -49,10 +65,17 @@ app.get("/", (req, res) => {
 app.get("/favicon.ico", (req, res) => res.status(204).end());
 app.get("/favicon.png", (req, res) => res.status(204).end());
 
-// Apply DB connection guarantee middleware to all API routes
+// ─── Database Connection Middleware ──────────────────────────────────
+// From this point forward, every request is guaranteed to have an active
+// MongoDB connection before reaching any route handler. This eliminates
+// the Mongoose cold-start race condition on Vercel serverless functions.
+// All routes mounted AFTER this line inherit the guarantee automatically.
 app.use(dbMiddleware);
 
-// Routes
+// ─── API Route Mounting ──────────────────────────────────────────────
+// Each feature area has its own router file. Express processes them in
+// registration order, so if two routers match the same path the one
+// mounted first wins. All paths are prefixed under /api/<domain>.
 const authRoutes = require("./routes/auth");
 app.use("/api/auth", authRoutes);
 
@@ -114,7 +137,12 @@ app.get("/api/debug/leetcode-test", async (req, res) => {
   }
 });
 
-// Catch-all JSON Error Handling Middleware (SaaS Production Resilience)
+// ─── Global Error Handler ────────────────────────────────────────────
+// Express recognises this as an error-handling middleware because it has
+// four parameters (err, req, res, next). It must be registered AFTER all
+// routes so it catches errors thrown or forwarded by any handler above.
+// In production the stack trace is hidden; in development it's included
+// to make debugging easier.
 app.use((err, req, res, next) => {
   console.error("Unhandled API Error:", err);
   res.status(err.status || 500).json({

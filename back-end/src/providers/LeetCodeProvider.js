@@ -18,6 +18,7 @@ const GET_USER_PROFILE_QUERY = `
   }
 `;
 
+
 const RECENT_AC_SUBMISSIONS_QUERY = `
   query recentAcSubmissions($username: String!, $limit: Int!) {
     recentAcSubmissionList(username: $username, limit: $limit) {
@@ -116,6 +117,8 @@ class LeetCodeProvider {
   /**
    * Fetch solved problems on the current date relative to the user's timezone
    */
+
+  
   async fetchDailySolveStatus(username, targetTimeZone = "Asia/Kolkata", mockDate = null) {
     const data = await this._makeGraphQLRequest(RECENT_AC_SUBMISSIONS_QUERY, { username, limit: 100 });
     const submissions = data.recentAcSubmissionList || [];
