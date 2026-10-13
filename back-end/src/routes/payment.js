@@ -7,6 +7,13 @@ const {
 } = require("../controllers/paymentController");
 const { protect } = require("../middleware/authMiddleware");
 
+// ─── Payment & Wallet Routes (mounted at /api/payment) ───────────────
+// Three separate payment flows, all authenticated:
+//   1. Stake payments  — create-order → verify (Razorpay callback) or skip
+//   2. Withdrawals     — user requests payout, admin approves via admin routes
+//   3. PvP top-ups     — fund the battle wallet for challenge stakes
+
+// Stake payment flow (Razorpay)
 router.post("/create-order", protect, createOrder);
 router.post("/verify", protect, verifyPayment);
 router.post("/skip", protect, skipPayment);

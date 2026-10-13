@@ -2,6 +2,12 @@ const express = require("express");
 const router = express.Router();
 const { runDailyStreakReminder, runSetupReminder, runAutomatedGlobalSync } = require("../controllers/cronController");
 
+// ─── Cron Job Routes (mounted at /api/crons) ─────────────────────────
+// These endpoints are NOT called by users — they're triggered by Vercel's
+// built-in cron scheduler (see vercel.json). Because there is no browser
+// session or JWT, they use a separate auth mechanism (cronAuth) that
+// validates the CRON_SECRET or the x-vercel-cron header instead.
+
 // Authentication middleware to secure cron endpoints
 // Vercel auto-sets CRON_SECRET and sends it as Bearer token when triggering crons
 // Fallback: also accept requests with x-vercel-cron header (Vercel internal header)

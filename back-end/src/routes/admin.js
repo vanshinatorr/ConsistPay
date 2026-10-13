@@ -15,7 +15,16 @@ const {
 } = require("../controllers/adminController");
 const { protect } = require("../middleware/authMiddleware");
 
-// Custom admin protect middleware
+// ─── Admin Routes (mounted at /api/admin) ────────────────────────────
+// Every endpoint here runs through TWO middleware layers:
+//   1. protect      → authenticates the JWT (who are you?)
+//   2. adminProtect → authorizes the role  (are you allowed?)
+// This separation means a valid token alone is not enough — the user
+// must also have the "admin" role or match the owner email.
+
+// Custom admin protect middleware — authorization, not authentication.
+// Returns 403 (Forbidden) instead of 401 because the user IS authenticated
+// at this point, they just lack the required role.
 const adminProtect = (req, res, next) => {
   if (req.user && (req.user.role === "admin" || req.user.email === "vanshvijay9784@gmail.com")) {
     next();
@@ -24,6 +33,7 @@ const adminProtect = (req, res, next) => {
   }
 };
 
+// User & platform management
 router.get("/stats", protect, adminProtect, getAdminStats);
 router.get("/users", protect, adminProtect, getAdminUsers);
 router.put("/users/:id", protect, adminProtect, updateUser);

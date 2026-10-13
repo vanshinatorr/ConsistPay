@@ -12,6 +12,14 @@ const {
 } = require("../controllers/challengeController");
 const { protect } = require("../middleware/authMiddleware");
 
+// ─── Challenge / PvP Battle Routes (mounted at /api/challenges) ──────
+// Full lifecycle: create → share invite code → opponent joins → active
+// battle → winner determined by daily coding streaks → settlement.
+
+// Lazy-expiry middleware: on every request to this router, fire-and-forget
+// a sweep that marks stale "pending" challenges as expired. This supplements
+// the setInterval in server.js and guarantees cleanup runs even on Vercel
+// where the interval-based job doesn't exist (server.js isn't the entry point).
 const runChallengeExpiry = async (req, res, next) => {
   try {
     const { expirePendingChallenges } = require("../controllers/challengeController");
