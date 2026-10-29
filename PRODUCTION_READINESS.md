@@ -17,26 +17,26 @@ The application is split into a **React (Vite) Frontend** and a **Node.js (Expre
 
 ## 2. Serverless Optimization Safeguards (Vercel-Specific)
 
-We implemented critical SRE patterns in the backend to ensure zero crashes under serverless container scales (tested for 1000+ concurrent users):
+We implemented reliability patterns in the backend to handle serverless lifecycle constraints and transient database connection states:
 
 1. **`dbMiddleware.js` (Database Race Condition Guard):**
    - Located at `/back-end/src/middleware/dbMiddleware.js`.
-   - Forces Vercel to await a ready database connection (`readyState === 1`) before handing the request to the routing controller.
-   - Eliminates the `Cannot call users.findOne() before initial connection is complete` Mongoose error.
+   - Ensures the database connection is ready (`readyState === 1`) before passing the request to route handlers.
+   - Prevents `Cannot call users.findOne() before initial connection is complete` Mongoose errors in transient container lifecycles.
 
 2. **Connection Caching (`db.js`):**
    - Located at `/back-end/src/config/db.js`.
-   - Caches active Mongoose connection handlers so Vercel reuse instances instead of creating new sockets.
-   - Disables command buffering (`bufferCommands: false`) to fail fast rather than leaving queries hanging.
+   - Caches active Mongoose connection promises so serverless function warm instances reuse sockets instead of creating new connections on every request.
+   - Disables command buffering (`bufferCommands: false`) to fail fast on connection failures instead of queuing requests indefinitely.
 
 3. **Unhandled Exception Guard (`server.js`):**
-   - Process listeners check for `unhandledRejection` and `uncaughtException` in `server.js`.
-   - Intercepts unexpected errors (e.g. SMTP or downstream API timeout), logs the trace, and keeps the Node process alive instead of terminating with exit code 1.
+   - Process listeners handle `unhandledRejection` and `uncaughtException` in `server.js`.
+   - Catches unexpected downstream errors (e.g., SMTP or third-party API timeouts) and logs traces without abruptly terminating the process lifecycle.
 
 4. **In-Memory Rate Limiter (`rateLimiter.js`):**
    - Located at `/back-end/src/middleware/rateLimiter.js`.
-   - Protects `/api/auth/send-otp` (Max 5 requests / 10 mins) and `/api/platforms/sync` (Max 15 requests / 5 mins).
-   - Prevents DDoS vectors and saves your Gemini/Nodemailer API limits from automated spam.
+   - Applies an in-memory window limit on `/api/auth/send-otp` (Max 5 requests / 10 mins) and `/api/platforms/sync` (Max 15 requests / 5 mins).
+   - Mitigates rapid request bursts and helps conserve third-party API quotas.
 
 ---
 
@@ -81,7 +81,7 @@ If users report errors or the app stops responding, follow this triage flow:
 ### Step 3: Google Login "Failed" Error
 - If Google login fails, open the browser's console (`F12` -> Console).
 - If you see `redirect_uri_mismatch`, check **Google Cloud Console -> APIs & Services -> Credentials**.
-- Ensure your production frontend domain (e.g. `https://daily-coding-habit-tracker.vercel.app`) is added to **Authorized JavaScript Origins**.
+- Ensure your production frontend domain (e.g. `https://consistpay.tech` or your Vercel deployment URL) is added to **Authorized JavaScript Origins**.
 
 ### Step 4: Sync API Cooldown Failures
 - The sync action has a database cooldown of 30 seconds per user, and a rate limiter of 15 requests per 5 minutes per IP.

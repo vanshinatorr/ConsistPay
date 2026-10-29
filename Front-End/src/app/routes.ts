@@ -17,6 +17,7 @@ import { Payment } from "./pages/Payment";
 import FaqPage from "./pages/FaqPage";
 import { AdminDashboard } from "./pages/AdminDashboard";
 import { RootLayout } from "./components/RootLayout";
+import { CommunityChat } from "./pages/CommunityChat";
 import { 
   FitnessPage, StudyPage, RunningPage, CyclingPage, 
   MeditationPage, SkillLearningPage, WalletPage 
@@ -34,6 +35,7 @@ export const router = createBrowserRouter([
       { path: "/onboarding", Component: Onboarding },
       { path: "/payment", Component: Payment },
       { path: "/dashboard", Component: Dashboard },
+      { path: "/community", Component: CommunityChat },
       { path: "/pricing", Component: Pricing },
       { path: "/faq", Component: FaqPage },
       { path: "/create-challenge", Component: CreateChallenge },

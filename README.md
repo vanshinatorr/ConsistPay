@@ -169,9 +169,9 @@ npm run dev
 The API server will launch at `http://localhost:5000` with hot-reloading via `nodemon`.
 
 ### 4. Configure Frontend Environment
-In a new terminal window, navigate to the `Front-End` directory:
+In a new terminal window (from the repository root), navigate to the `Front-End` directory:
 ```bash
-cd ../Front-End
+cd Front-End
 cp .env.example .env
 ```
 
