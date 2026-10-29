@@ -1,17 +1,18 @@
 import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
-import { 
-  MessageSquare, Send, Users, Sparkles, Key, 
-  RefreshCw, AlertCircle, CheckCircle2, Hash, ArrowLeft, Loader2
+import {
+  Send, Sparkles, Key,
+  AlertCircle, Hash, ArrowLeft, Loader2
 } from "lucide-react";
 import { toast } from "sonner";
-import { 
-  NCEngine, 
-  OpenChannel, 
-  SendTextMessageParams, 
-  MessageHandler, 
-  ConnectionStatus 
+import {
+  NCEngine,
+  OpenChannel,
+  SendTextMessageParams,
+  MessageHandler,
 } from "@nexconn/chat";
+
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
 interface ChatMessage {
   id: string;
@@ -27,19 +28,15 @@ export function CommunityChat() {
   const [inputText, setInputText] = useState("");
   const [isSending, setIsSending] = useState(false);
   const [status, setStatus] = useState<"disconnected" | "connecting" | "connected" | "error">("disconnected");
-  const [statusDetail, setStatusDetail] = useState("");
+  const [statusDetail, setStatusDetail] = useState("Fetching connection credentials...");
+
+  // Manual fallback state — shown only when backend has no Nexconn credentials configured
+  const [showManualModal, setShowManualModal] = useState(false);
+  const [manualAppKey, setManualAppKey] = useState(import.meta.env.VITE_NEXCONN_APP_KEY || "");
+  const [manualUserToken, setManualUserToken] = useState(import.meta.env.VITE_NEXCONN_USER_TOKEN || "");
+
   const [channel, setChannel] = useState<OpenChannel | null>(null);
 
-  // Read environment variables (Safe client-side config only, no secrets)
-  const envAppKey = import.meta.env.VITE_NEXCONN_APP_KEY || "";
-  const envUserToken = import.meta.env.VITE_NEXCONN_USER_TOKEN || "";
-
-  // Dynamic session overrides if not in .env
-  const [appKey, setAppKey] = useState(envAppKey);
-  const [userToken, setUserToken] = useState(envUserToken);
-  const [showConfigModal, setShowConfigModal] = useState(!envAppKey || !envUserToken);
-
-  // Cached user info from ConsistPay authentication
   const cachedUser = (() => {
     try {
       const raw = localStorage.getItem("consistpay_user_data");
@@ -63,12 +60,12 @@ export function CommunityChat() {
     scrollToBottom();
   }, [messages]);
 
-  // Connect to Nexconn Engine
-  const connectNexconn = async (key: string, token: string) => {
-    if (!key || !token) {
-      setStatus("disconnected");
-      setStatusDetail("Nexconn App Key and User Token are required.");
-      setShowConfigModal(true);
+  // Core connection logic — works with any appKey + token pair regardless of source
+  const connectNexconn = async (appKey: string, token: string, userId: string) => {
+    if (!appKey || !token) {
+      setStatus("error");
+      setStatusDetail("App Key and User Token are required to connect.");
+      setShowManualModal(true);
       return;
     }
 
@@ -76,29 +73,25 @@ export function CommunityChat() {
       setStatus("connecting");
       setStatusDetail("Initializing Nexconn Engine...");
 
-      // 1. Initialize Engine (idempotent guard)
+      // Initialize engine once per page session
       if (!isInitializedRef.current) {
-        NCEngine.initialize({
-          appKey: key.trim(),
-        });
+        NCEngine.initialize({ appKey: appKey.trim() });
         isInitializedRef.current = true;
       }
 
-      // 2. Connect with User Token
-      setStatusDetail("Authenticating session with Nexconn server...");
+      setStatusDetail("Authenticating with Nexconn server...");
       const connectResult = await NCEngine.connect({ token: token.trim() });
 
       if (!connectResult.isOk) {
-        const errMsg = connectResult.error?.message || "Failed to authenticate session token.";
+        const errMsg = `Connection failed (Code: ${connectResult.code})`;
         setStatus("error");
-        setStatusDetail(`Connection error (Code: ${connectResult.code}): ${errMsg}`);
+        setStatusDetail(errMsg);
         toast.error("Nexconn authentication failed");
         return;
       }
 
-      const connectedUserId = connectResult.data?.userId || currentUserId;
+      const connectedUserId = connectResult.data?.userId || userId;
 
-      // 3. Enter Community Open Channel
       setStatusDetail("Entering #general-dsa community channel...");
       const communityChannel = new OpenChannel("consistpay-community");
       const enterResult = await communityChannel.enterChannel({ messageCount: 30 });
@@ -112,10 +105,10 @@ export function CommunityChat() {
       setChannel(communityChannel);
       setStatus("connected");
       setStatusDetail("Connected to live community chat");
-      setShowConfigModal(false);
+      setShowManualModal(false);
       toast.success("Joined ConsistPay Coding Community!");
 
-      // 4. Fetch initial recent message history
+      // Load recent message history
       try {
         const query = OpenChannel.createOpenChannelMessagesQuery({
           channelId: "consistpay-community",
@@ -137,11 +130,11 @@ export function CommunityChat() {
         console.warn("[Nexconn] Could not load message history:", historyErr);
       }
 
-      // 5. Register Real-Time Message Handler
+      // Register real-time message handler
       const handlerId = "consistpay-community-handler";
       NCEngine.removeMessageHandler(handlerId);
 
-      const messageHandler = new MessageHandler({
+      NCEngine.addMessageHandler(handlerId, new MessageHandler({
         onMessageReceived(event) {
           if (event.messages && event.messages.length > 0) {
             const incoming: ChatMessage[] = event.messages
@@ -154,41 +147,89 @@ export function CommunityChat() {
                 sentTime: m.sentTime || Date.now(),
                 isMe: m.senderUserId === connectedUserId,
               }));
-
             setMessages(prev => [...prev, ...incoming]);
           }
         },
-      });
-
-      NCEngine.addMessageHandler(handlerId, messageHandler);
+      }));
 
     } catch (err: any) {
-      console.error("[Nexconn Connection Exception]:", err);
+      console.error("[Nexconn Connection Error]:", err);
       setStatus("error");
-      setStatusDetail(err?.message || "Unexpected exception during Nexconn initialization.");
+      setStatusDetail(err?.message || "Unexpected error during Nexconn initialization.");
       toast.error(err?.message || "Nexconn connection failed");
+    }
+  };
+
+  // Fetch a secure connection token from the ConsistPay backend.
+  // The backend calls the Nexconn Server API using the App Secret (never exposed here).
+  const fetchTokenAndConnect = async () => {
+    const jwt = localStorage.getItem("token");
+    if (!jwt) {
+      setStatus("error");
+      setStatusDetail("You must be logged in to join the community chat.");
+      return;
+    }
+
+    try {
+      setStatus("connecting");
+      setStatusDetail("Fetching connection credentials from server...");
+
+      const res = await fetch(`${API_URL}/api/chat/token`, {
+        headers: { Authorization: `Bearer ${jwt}` },
+      });
+
+      if (!res.ok) {
+        throw new Error(`Backend returned ${res.status}`);
+      }
+
+      const data = await res.json();
+
+      if (!data.configured) {
+        // Backend has Nexconn credentials not set — fall back to manual modal
+        setStatus("disconnected");
+        setStatusDetail("Nexconn credentials are not configured on the server. Enter them manually below.");
+        setShowManualModal(true);
+        return;
+      }
+
+      if (!data.success || !data.token || !data.appKey) {
+        setStatus("error");
+        setStatusDetail(data.message || "Server failed to generate a Nexconn token.");
+        setShowManualModal(true);
+        return;
+      }
+
+      await connectNexconn(data.appKey, data.token, data.userId || currentUserId);
+
+    } catch (err: any) {
+      console.error("[Nexconn token fetch error]:", err);
+      // Network error or backend down — try VITE env vars as fallback
+      const envKey = import.meta.env.VITE_NEXCONN_APP_KEY;
+      const envToken = import.meta.env.VITE_NEXCONN_USER_TOKEN;
+      if (envKey && envToken) {
+        setStatusDetail("Backend unavailable — using local VITE_ env credentials.");
+        await connectNexconn(envKey, envToken, currentUserId);
+      } else {
+        setStatus("error");
+        setStatusDetail("Could not reach backend and no local credentials are set. Use manual setup.");
+        setShowManualModal(true);
+      }
     }
   };
 
   useEffect(() => {
     document.title = "Coding Community | ConsistPay";
-    if (appKey && userToken) {
-      connectNexconn(appKey, userToken);
-    } else {
-      setStatus("disconnected");
-      setStatusDetail("Nexconn App Key or User Token is missing.");
-    }
+    fetchTokenAndConnect();
 
     return () => {
       try {
         NCEngine.removeMessageHandler("consistpay-community-handler");
-        if (channel) {
-          channel.exitChannel().catch(() => {});
-        }
+        if (channel) channel.exitChannel().catch(() => {});
       } catch {
         // Safe cleanup
       }
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleSendMessage = async (e: React.FormEvent) => {
@@ -206,11 +247,10 @@ export function CommunityChat() {
       const res = await channel.sendMessage(sendParams);
 
       if (res.isOk) {
-        const sentMessage = res.data;
         setMessages(prev => [
           ...prev,
           {
-            id: sentMessage?.messageId || `${Date.now()}-${Math.random()}`,
+            id: res.data?.messageId || `${Date.now()}-${Math.random()}`,
             senderUserId: currentUserId,
             senderName: currentUserName,
             text,
@@ -253,13 +293,13 @@ export function CommunityChat() {
                 Community
               </span>
             </div>
-            <p className="text-xs text-zinc-500 dark:text-zinc-400 flex items-center gap-1.5 mt-0.5">
-              <span>Real-time peer discussions powered by Nexconn Chat</span>
+            <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">
+              Real-time peer discussions powered by Nexconn Chat
             </p>
           </div>
         </div>
 
-        {/* Status & Config Button */}
+        {/* Status + manual config button */}
         <div className="flex items-center gap-2.5">
           <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl border border-zinc-200/80 dark:border-white/[0.06] bg-white dark:bg-white/[0.02] text-xs">
             <span
@@ -277,19 +317,18 @@ export function CommunityChat() {
           </div>
 
           <button
-            onClick={() => setShowConfigModal(true)}
+            onClick={() => setShowManualModal(true)}
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-zinc-200 dark:border-white/[0.08] hover:border-violet-500/50 bg-white dark:bg-white/[0.02] hover:bg-violet-50 dark:hover:bg-violet-500/[0.06] text-xs text-zinc-700 dark:text-zinc-300 transition-colors cursor-pointer"
-            title="Nexconn Setup"
+            title="Manual Nexconn Setup"
           >
             <Key className="w-3.5 h-3.5 text-violet-500" />
-            <span className="hidden sm:inline">Nexconn Keys</span>
+            <span className="hidden sm:inline">Override</span>
           </button>
         </div>
       </div>
 
-      {/* Main Chat Flow */}
+      {/* Main Chat Area */}
       <div className="flex-1 flex flex-col justify-between overflow-hidden relative">
-        {/* Messages Stream */}
         <div className="flex-1 overflow-y-auto px-4 sm:px-6 py-6 space-y-4">
           {/* Welcome Banner */}
           <div className="max-w-xl mx-auto my-4 p-4 rounded-2xl bg-gradient-to-b from-violet-500/5 to-transparent border border-violet-500/10 text-center">
@@ -304,39 +343,36 @@ export function CommunityChat() {
             </p>
           </div>
 
-          {/* Configuration Alert if disconnected */}
+          {/* Status alert when not connected */}
           {status !== "connected" && (
             <div className="max-w-xl mx-auto p-4 rounded-2xl bg-amber-500/[0.06] border border-amber-500/20 text-xs text-amber-900 dark:text-amber-200 flex items-start gap-3">
               <AlertCircle className="w-5 h-5 text-amber-500 shrink-0 mt-0.5" />
               <div className="space-y-1.5 flex-1">
                 <div className="font-semibold text-amber-800 dark:text-amber-100">
-                  {status === "connecting" ? "Connecting to Nexconn Server" : "Nexconn Chat Configuration"}
+                  {status === "connecting" ? "Connecting..." : "Chat Unavailable"}
                 </div>
                 <p className="text-amber-700/90 dark:text-amber-300/80 leading-relaxed">
                   {statusDetail}
                 </p>
                 {status !== "connecting" && (
                   <button
-                    onClick={() => setShowConfigModal(true)}
+                    onClick={() => setShowManualModal(true)}
                     className="inline-flex items-center gap-1.5 text-xs font-semibold text-amber-600 dark:text-amber-300 underline cursor-pointer pt-1"
                   >
-                    Open Setup Dialog &rarr;
+                    Enter credentials manually →
                   </button>
                 )}
               </div>
             </div>
           )}
 
-          {/* Render Messages */}
+          {/* Messages */}
           {messages.map((m) => {
             const timeStr = new Date(m.sentTime).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
-
             return (
               <div
                 key={m.id}
-                className={`flex flex-col ${m.isMe ? "items-end" : "items-start"} max-w-2xl ${
-                  m.isMe ? "ml-auto" : "mr-auto"
-                }`}
+                className={`flex flex-col ${m.isMe ? "items-end ml-auto" : "items-start mr-auto"} max-w-2xl`}
               >
                 <div className="flex items-center gap-1.5 text-[11px] text-zinc-400 dark:text-zinc-500 px-1 mb-1">
                   <span className="font-medium text-zinc-700 dark:text-zinc-300">
@@ -345,12 +381,11 @@ export function CommunityChat() {
                   <span>•</span>
                   <span>{timeStr}</span>
                 </div>
-
                 <div
                   className={`px-4 py-2.5 rounded-2xl text-xs sm:text-sm leading-relaxed max-w-[85vw] sm:max-w-md break-words ${
                     m.isMe
-                      ? "bg-violet-600 text-white rounded-br-xs shadow-sm shadow-violet-500/20"
-                      : "bg-white dark:bg-[#16161F] text-zinc-800 dark:text-zinc-150 border border-zinc-200/80 dark:border-white/[0.06] rounded-bl-xs"
+                      ? "bg-violet-600 text-white rounded-br-sm shadow-sm shadow-violet-500/20"
+                      : "bg-white dark:bg-[#16161F] text-zinc-800 dark:text-zinc-100 border border-zinc-200/80 dark:border-white/[0.06] rounded-bl-sm"
                   }`}
                 >
                   {m.text}
@@ -358,16 +393,12 @@ export function CommunityChat() {
               </div>
             );
           })}
-
           <div ref={messagesEndRef} />
         </div>
 
         {/* Input Bar */}
         <div className="border-t border-zinc-200/80 dark:border-white/[0.06] bg-white/70 dark:bg-[#0F0F13]/80 backdrop-blur-md p-3 sm:p-4">
-          <form
-            onSubmit={handleSendMessage}
-            className="max-w-4xl mx-auto flex items-center gap-2"
-          >
+          <form onSubmit={handleSendMessage} className="max-w-4xl mx-auto flex items-center gap-2">
             <input
               type="text"
               value={inputText}
@@ -378,27 +409,23 @@ export function CommunityChat() {
                   : "Connect to Nexconn to send messages..."
               }
               disabled={status !== "connected" || isSending}
-              className="flex-1 bg-zinc-100 dark:bg-white/[0.03] border border-zinc-200/80 dark:border-white/[0.08] rounded-xl px-4 py-2.5 text-xs sm:text-sm text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 dark:placeholder:text-zinc-500 focus:outline-none focus:border-violet-500/80 dark:focus:border-violet-500/80 transition-all disabled:opacity-50"
+              className="flex-1 bg-zinc-100 dark:bg-white/[0.03] border border-zinc-200/80 dark:border-white/[0.08] rounded-xl px-4 py-2.5 text-xs sm:text-sm text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 dark:placeholder:text-zinc-500 focus:outline-none focus:border-violet-500/80 transition-all disabled:opacity-50"
             />
             <button
               type="submit"
               disabled={status !== "connected" || !inputText.trim() || isSending}
               className="px-4 py-2.5 rounded-xl bg-violet-600 hover:bg-violet-500 text-white text-xs sm:text-sm font-medium flex items-center gap-2 transition-all disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer shadow-sm shadow-violet-500/20"
             >
-              {isSending ? (
-                <Loader2 className="w-4 h-4 animate-spin" />
-              ) : (
-                <Send className="w-4 h-4" />
-              )}
+              {isSending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
               <span className="hidden sm:inline">Send</span>
             </button>
           </form>
         </div>
       </div>
 
-      {/* Nexconn Setup / Key Modal */}
-      {showConfigModal && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 z-50">
+      {/* Manual Credential Override Modal — shown when backend has no Nexconn config */}
+      {showManualModal && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
           <div className="bg-white dark:bg-[#121217] border border-zinc-200 dark:border-white/[0.08] rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4">
             <div className="flex items-center gap-2.5">
               <div className="w-8 h-8 rounded-xl bg-violet-500/10 flex items-center justify-center text-violet-600 dark:text-violet-400">
@@ -406,67 +433,58 @@ export function CommunityChat() {
               </div>
               <div>
                 <h3 className="text-sm font-semibold text-zinc-900 dark:text-white">
-                  Nexconn Chat Configuration
+                  Manual Nexconn Setup
                 </h3>
                 <p className="text-[11px] text-zinc-500 dark:text-zinc-400">
-                  Client configuration for live community chat
+                  Backend credentials not configured — enter them here temporarily
                 </p>
               </div>
             </div>
 
-            <div className="text-xs text-zinc-600 dark:text-zinc-300 space-y-3 bg-zinc-50 dark:bg-white/[0.02] p-3.5 rounded-xl border border-zinc-200/60 dark:border-white/[0.04]">
-              <p>
-                To enable live WebSocket messaging, configure your client credentials below or declare them in <code className="px-1.5 py-0.5 rounded bg-zinc-200 dark:bg-white/10 text-violet-600 dark:text-violet-400 font-mono">Front-End/.env</code>:
-              </p>
-              <div className="text-[11px] font-mono text-zinc-500 dark:text-zinc-400 bg-white dark:bg-black/30 p-2.5 rounded-lg border border-zinc-200/60 dark:border-white/[0.04]">
-                <div>VITE_NEXCONN_APP_KEY=your_app_key</div>
-                <div>VITE_NEXCONN_USER_TOKEN=your_user_token</div>
-              </div>
-              <p className="text-[11px] text-zinc-400 italic">
-                * Note: In production, user tokens are generated on your backend using the App Secret via the Nexconn Server API, keeping secrets safe.
-              </p>
+            <div className="text-xs text-zinc-500 dark:text-zinc-400 bg-zinc-50 dark:bg-white/[0.02] p-3 rounded-xl border border-zinc-200/60 dark:border-white/[0.04] space-y-1.5">
+              <p className="font-medium text-zinc-700 dark:text-zinc-300">To remove this dialog permanently:</p>
+              <p>Set <code className="px-1 rounded bg-zinc-200 dark:bg-white/10 font-mono text-violet-600 dark:text-violet-400">NEXCONN_APP_KEY</code> and your App Secret in <code className="px-1 rounded bg-zinc-200 dark:bg-white/10 font-mono text-violet-600 dark:text-violet-400">back-end/.env</code> — see <code className="font-mono">back-end/.env.example</code> for variable names.</p>
             </div>
 
             <div className="space-y-3">
               <div>
                 <label className="text-xs font-medium text-zinc-700 dark:text-zinc-300 block mb-1">
-                  Nexconn App Key
+                  App Key <span className="text-zinc-400">(public, from Nexconn Console)</span>
                 </label>
                 <input
                   type="text"
-                  value={appKey}
-                  onChange={(e) => setAppKey(e.target.value)}
-                  placeholder="e.g. nexconn_app_key_..."
+                  value={manualAppKey}
+                  onChange={(e) => setManualAppKey(e.target.value)}
+                  placeholder="Your Nexconn App Key"
                   className="w-full bg-zinc-50 dark:bg-white/[0.03] border border-zinc-200 dark:border-white/[0.08] rounded-xl px-3 py-2 text-xs text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 focus:outline-none focus:border-violet-500"
                 />
               </div>
-
               <div>
                 <label className="text-xs font-medium text-zinc-700 dark:text-zinc-300 block mb-1">
-                  User Connection Token
+                  User Connection Token <span className="text-zinc-400">(from Nexconn Console test user)</span>
                 </label>
                 <input
                   type="password"
-                  value={userToken}
-                  onChange={(e) => setUserToken(e.target.value)}
-                  placeholder="e.g. user_session_token_..."
+                  value={manualUserToken}
+                  onChange={(e) => setManualUserToken(e.target.value)}
+                  placeholder="Your test user token"
                   className="w-full bg-zinc-50 dark:bg-white/[0.03] border border-zinc-200 dark:border-white/[0.08] rounded-xl px-3 py-2 text-xs text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 focus:outline-none focus:border-violet-500"
                 />
               </div>
             </div>
 
-            <div className="flex items-center justify-end gap-2 pt-2">
+            <div className="flex items-center justify-end gap-2 pt-1">
               <button
                 type="button"
-                onClick={() => setShowConfigModal(false)}
+                onClick={() => setShowManualModal(false)}
                 className="px-3 py-1.5 rounded-xl text-xs text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-200 transition-colors cursor-pointer"
               >
-                Close
+                Cancel
               </button>
               <button
                 type="button"
-                onClick={() => connectNexconn(appKey, userToken)}
-                disabled={!appKey || !userToken || status === "connecting"}
+                onClick={() => connectNexconn(manualAppKey, manualUserToken, currentUserId)}
+                disabled={!manualAppKey || !manualUserToken || status === "connecting"}
                 className="px-4 py-1.5 rounded-xl bg-violet-600 hover:bg-violet-500 text-white text-xs font-medium transition-colors disabled:opacity-50 cursor-pointer flex items-center gap-1.5"
               >
                 {status === "connecting" && <Loader2 className="w-3.5 h-3.5 animate-spin" />}

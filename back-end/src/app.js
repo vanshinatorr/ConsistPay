@@ -105,6 +105,9 @@ app.use("/api/admin", adminRoutes);
 const cronRoutes = require("./routes/cron");
 app.use("/api/crons", cronRoutes);
 
+const chatRoutes = require("./routes/chat");
+app.use("/api/chat", chatRoutes);
+
 // Debug: LeetCode API connectivity test (checks if Vercel can reach LeetCode from its servers)
 app.get("/api/debug/leetcode-test", async (req, res) => {
   const username = req.query.username || "vanshinatorr";
